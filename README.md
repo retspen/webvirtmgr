@@ -10,7 +10,7 @@ are used to interacting with the underlying hypervisor. KVM primary supported pl
 Install (Fedora 16)
 $ git clone https://github.com/retspen/webvirtmgr
 
-# yum install Django kvm libvirtd httpd
+$ yum install Django kvm libvirtd httpd
 
 $ ./manage.py syncdb
 Creating tables ...
