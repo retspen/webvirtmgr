@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+     <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span3">
+          <div class="sidebar-nav well">
+            <ul class="nav nav-list">
+              <li class="nav-header">{% trans "Main Menu" %}</li>
+              	<li><a href="/dashboard/"><i class="icon-home"></i>{% trans "Dashboard" %}</a></li>
+              	<li><a href="/overview/{{ host_id }}/"><i class="icon-info-sign"></i>{% trans "Server" %} <strong>{{ kvm_host.hostname }}</strong></a></li>
+        			  <li class="nav-header"></i>{% trans "Server settings" %}</li>
+        			  	<li><a href="/newvm/{{ host_id }}/"><i class="icon-plus"></i>{% trans "New VM" %}</a></li>
+        			  	<li><a href="/storage/{{ host_id }}/"><i class="icon-folder-open"></i>{% trans "Storage" %}</a></li>
+        			  	<li><a href="/network/{{ host_id }}/"><i class="icon-signal"></i>{% trans "Virtual networks" %}</a></li>
+        			  	<li><a href="/snapshot/{{ host_id }}/"><i class="icon-download-alt"></i>{% trans "Snapshots" %}</a></li>
+        			  	<li class="active"><a href="/logs/{{ host_id }}/"><i class="icon-list-alt icon-white"></i>{% trans "Logs" %}</a></li>
+                      <li class="nav-header">{% trans "Virtual Machines" %}</li>
+        	           {% if not all_vm %}
+        			   <li><a href="/newvm/{{ host_id }}/"><i class="icon-plus"></i>{% trans "New VM" %}</a></li>
+        	   	       {% endif %}
+        			   {% for name, state in all_vm.items %}
+        			   <li><a href="/vm/{{ host_id }}/{{ name }}/"><font color="{% if state == 1 %}green{% endif %}{% if state == 5 %}red{% endif %}{% if state == 3 %}orange{% endif %}"><i class="icon-th-large"></i>{{ name }}</font></a></li>
+        			   {% endfor %}
+            </ul>
+          </div>
+        </div>
+		<div class="span8 well">
+			<div class="page-header">
+   				<h2>{% trans "Logging" %}</h2>
+   			</div>
+  		    {% if errors %}
+			    {% for error in errors %}
+			      <div class="alert alert-error">
+			      	<a class="close" data-dismiss="alert">&times;</a>
+			    	{{ error }}
+			      </div>
+			    {% endfor %}
+			{% endif %}
+			{% if all_logs %}
+			<table class="table table-condensed">
+            <thead>
+              <tr>
+                <th>№:</th>
+                <th>{% trans "Type" %}</th>
+                <th>{% trans "Message" %}</th>
+                <th style="width:100px;">{% trans "Date" %}</th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for name in all_logs %}
+                <tr>
+                  <td>{{ forloop.counter }}</td>
+                  <td><font color="{% if name.type == "user"%}green{% endif %}{% if name.type == "libvirt"%}red{% endif %}{% if name.type == "scheduler"%}orange{% endif %}">{{ name.type }}</font></td>
+                  <td>{{ name.message }}</td>
+                  <td>{{ name.date|date:"M d H:i:s" }}</td>
+                </tr>
+                {% endfor %}
+          </tbody>
+          </table>
+          {% else %}
+          <h4>{% trans "You have no logs" %}</h4>
+          {% endif %}
+        </div>
+    </div>
+{% endblock %}

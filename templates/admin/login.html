@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+  {% if user.is_authenticated %}
+      <div class="container">
+      <div class="hero-unit">
+        <h1>Web Virtual Manager</h1><br>
+        <p>{% trans "You have already sign in!" %}</p>
+      </div>
+  {% else %}
+    <div class="container">
+        <div class="row show-grid">
+          <div class="well span4 offset4" style="width:220px;">
+            <h2>{% trans "Log In" %}</h2>
+            <hr>
+            <form action="/admin/" method="post">
+              <label for="id_username" class="required">Имя:</label> <input id="id_username" type="text" name="username" maxlength="30" />
+              <label for="id_password" class="required">Пароль:</label> <input type="password" name="password" id="id_password" />
+              <hr>
+              <input type="hidden" name="this_is_the_login_form" value="1" />
+              <input name="next" id="next" type="hidden" value="/dashboard/">
+              <input type="submit" class="btn btn-primary pull-right" value="{% trans "Sign in" %}">
+            </form>
+          </div>
+        </div>
+  {% endif %}
+{% endblock %}

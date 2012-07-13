@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+     <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span3">
+          <div class="sidebar-nav well">
+            <ul class="nav nav-list">
+              <li class="nav-header">{% trans "Main Menu" %}</li>
+                <li><a href="/dashboard/"><i class="icon-home"></i>{% trans "Dashboard" %}</a></li>
+                <li><a href="/overview/{{ host_id }}/"><i class="icon-info-sign"></i>{% trans "Server" %} <strong>{{ kvm_host.hostname }}</strong></a></li>
+              <li class="nav-header"></i>{% trans "Server settings" %}</li>
+                <li><a href="/newvm/{{ host_id }}/"><i class="icon-plus"></i>{% trans "New VM" %}</a></li>
+                <li><a href="/storage/{{ host_id }}/"><i class="icon-folder-open"></i>{% trans "Storage" %}</a></li>
+                <li><a href="/network/{{ host_id }}/"><i class="icon-signal"></i>{% trans "Virtual networks" %}</a></li>
+                <li><a href="/snapshot/{{ host_id }}/{{ vname }}/"><i class="icon-download-alt"></i>{% trans "Snapshots" %}</a></li>
+                <li><a href="/logs/{{ host_id }}/"><i class="icon-list-alt"></i>{% trans "Logs" %}</a></li>
+              <li class="nav-header">{% trans "Virtual Machines" %}</li>
+                {% if not all_vm %}
+                <li><a href="/newvm/{{ host_id }}/"><i class="icon-plus"></i>{% trans "New VM" %}</a></li>
+                {% endif %}
+                {% for name, state in all_vm.items %}
+                {% if vname == name %} 
+                <li class="active"><a href="/vm/{{ host_id }}/{{ name }}/"><i class="icon-th-large icon-white"></i>{{name}}</a></li>
+                {% else %}
+                <li><a href="/vm/{{ host_id }}/{{ name }}/"><font color="{% if state == 1 %}green{% endif %}{% if state == 5 %}red{% endif %}{% if state == 3 %}orange{% endif %}"><i class="icon-th-large"></i>{{ name }}</font></a></li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+          </div>
+        </div>
+    <div class="span8 well">
+      <div class="page-header">
+          <h2>{% trans "Managing a virtual machine" %}</h2>
+        </div>
+          {% if message %}
+            <div class="alert alert-info">
+              <a class="close" data-dismiss="alert">&times;</a>
+            {{ message }}
+            </div>
+          {% endif %}
+          {% if errors %}
+          {% for error in errors %}
+            <div class="alert alert-error">
+              <a class="close" data-dismiss="alert">&times;</a>
+            {{ error }}
+            </div>
+          {% endfor %}
+          {% endif %}
+    <div class="tabbable"> 
+     <ul class="nav nav-tabs">
+      <li class="active"><a href="#tab1" data-toggle="tab">VM</a></li>
+      <li>{% if state = 5 or state = 3 %}<a>VNC</a>{% else %}<a href="#tab2" data-toggle="tab">VNC: {{ vnc_port }}</a>{% endif %}</li>
+      <li><a href="#tab3" data-toggle="tab">XML</a></li>
+    </ul>
+    <div class="tab-content">
+    <div class="tab-pane active" id="tab1">
+      <div class="row">
+      	<div class="span4">
+              <form action="/vm/{{ host_id }}/{{ vname }}/" method="post">
+                {% if state = 5 %}
+                 <button class="btn btn-primary" type="submit" name="start" value="start" title="{% trans "Start VM" %}"><i class="icon-play icon-white"></i></button>
+                 <a class="btn btn-primary disabled" title="{% trans "Suspend" %}"><i class="icon-pause icon-white"></i></a>
+                 <a class="btn btn-primary disabled" title="{% trans "Shutdown" %}"><i class="icon-stop icon-white"></i></a>
+                 <a class="btn btn-primary disabled" title="{% trans "Force shutdown" %}"><i class="icon-off icon-white"></i></a>
+                {% endif %}
+                {% if state = 3 %}
+                 <button class="btn btn-primary" type="submit" name="resume" value="resume" title="{% trans "Resume" %}"><i class="icon-play icon-white"></i></button>
+                 <a class="btn btn-primary disabled" title="{% trans "Suspend" %}"><i class="icon-pause icon-white"></i></a>
+                 <a class="btn btn-primary disabled" title="{% trans "Shutdown" %}"><i class="icon-stop icon-white"></i></a>
+                 <a class="btn btn-primary disabled" title="{% trans "Force shutdown" %}"><i class="icon-off icon-white"></i></a>
+                 <a class="btn btn-primary disabled" title="{% trans "Create snapshot" %}"><i class="icon-download-alt icon-white"></i></a>
+                {% endif %}
+                {% if state = 1 %}
+                <a class="btn btn-primary disabled" title="{% trans "Start VM" %}"><i class="icon-play icon-white"></i></a>
+                 <button class="btn btn-primary" type="submit" name="suspend" value="suspend" title="{% trans "Suspend" %}" onclick="return confirm('{% trans "Are you sure?" %}')"><i class="icon-pause icon-white"></i></button>
+                 <button class="btn btn-primary" type="submit" name="shutdown" value="suspend" title="{% trans "Shutdown" %}" onclick="return confirm('{% trans "Send shutdown signal?" %}')"><i class="icon-stop icon-white"></i></button>
+                 <button class="btn btn-primary" type="submit" name="destroy" value="destroy" title="{% trans "Force shutdown" %}" onclick="return confirm('{% trans "Force shutdown?" %}')"><i class="icon-off icon-white"></i></button>
+                {% endif %}
+              {% if state != 3 and hdd.2 == 'qcow2' %}
+                <button class="btn btn-primary" type="submit" name="snapshot" value="snapshot" title="{% trans "Create snapshot" %}" {% if state == 1 %}onclick="return confirm('{% trans "Attention: When enabled, the virtual machine snapshot will be created on a lot longer. The virtual machine before creating the snapshot automatically switches to Paused and will be locked until you create it. Continue?" %}')"{% endif %}><i class="icon-download-alt icon-white"></i></button>
+              {% endif %}
+                </form>
+               </div>
+              </div>
+              <div class="row">
+                <div class="span2">
+                  <p>{% trans "Name" %}</p>
+                  <p>{% trans "State" %}</p>
+                  <p>{% trans "Network" %}</p>
+                  <p>{% trans "Core" %}</p>
+                  <p>{% trans "CPU utilization" %}</p>
+                  <p>{% trans "Memory" %}</p>
+                  <p style="height:20px">{% trans "Memory use" %}</p>
+                  <p>{% trans "HDD image" %}</p>
+                  <p>{% trans "CD image" %}</p>
+                </div>
+                <div class="span4">
+                  <p><strong>{{ vname }}</strong> [ {{ vm_arch }} ]</p>
+                  <p>{% if state == 1 %}<font color="green">{% trans "power on" %}</font>{% endif %}{% if state == 5 %}<font color="red">{% trans "power off" %}</font>{% endif %}{% if state == 3 %}<font color="orange">{% trans "suspend" %}</font>{% endif %}</p>
+                  <p>{{ vm_nic.0 }} ( {{ vm_nic.1 }} )</p>
+                  <p>{% trans "allocated" %} {{ core }} {% trans "of" %} {{ all_core }}</p>
+                    <div class="progress progress-danger progress-striped active" style="margin-bottom: 9px; width:205px;">
+                      <div class="bar" style="width: {{ cpu_usage }}%;"><font color="black">{{ cpu_usage }}%</font></div>
+                    </div>
+                  <p>{% trans "allocated" %} {{ memory|filesizeformat }} {% trans "of" %} {{ mem_usage.0|filesizeformat }}</p>
+                    <div class="progress progress-warning progress-striped active" style="margin-bottom: 9px; width:205px;">
+                        <div class="bar" style="width: {% if state == 1 %} {{ mem_usage.1 }}%; {% else %} 0%; {% endif %}"><font color="black">{% if state == 1 %} {{ mem_usage.1 }}% {% else %} 0% {% endif %}</font></div> 
+                    </div>
+                  <p>{{ hdd.0 }} | {{ hdd.1|filesizeformat }}</p>
+                  <p>{% if cdrom == None %} {% else %} {{ cdrom.0 }} | {{ cdrom.2|filesizeformat }} {% endif %}
+                    <form action="/vm/{{ host_id }}/{{ vname }}/" method="post">
+                      {% if cdrom %}
+                      <button class="btn btn-primary" type="submit" name="disconnect" value="disconnect" title="{% trans "Disconnect" %}" onclick="return confirm('{% trans "Are you sure?" %}')"><i class="icon-eject icon-white"></i></button>
+                      {% else %}
+                      <select name="iso_img">
+                      {% if isos %}
+                        {% for iso in isos %}
+                          <option value="{{ iso }}">{{ iso }}</option>
+                        {% endfor %}
+                      {% else %}
+                        <option value="none">{% trans "None" %}</option>
+                      {% endif %}
+                      </select>
+                      <br>
+                      {% if isos %}
+                      <button class="btn btn-primary" type="submit" name="connect" value="connect" title="{% trans "Connect" %}"><i class="icon-play icon-white"></i></button>
+                      {% else %}
+                      <a class="btn btn-primary disabled" type="submit" name="connect" value="connect" title="{% trans "Connect" %}"><i class="icon-play icon-white"></i></a>
+                      {% endif %}
+                      {% endif %}
+                    </form>
+                  </p>
+                </div>
+              </div>
+              <form action="/vm/{{ host_id }}/{{ vname }}/" method="post">
+                {% if state != 1 and state != 3 and num_snapshot = 0 %}
+                <button class="btn btn-danger" type="submit" name="undefine" value="{% trans "Undefine" %}" onclick="return confirm('{% trans "Are you sure?" %}')"><i class="icon-trash icon-white"></i></button>
+                {% else %}
+                <button class="btn btn-danger disabled" type="button" value="{% trans "Undefine" %}"><i class="icon-trash icon-white"></i></button>
+                {% endif %}
+              </form>
+            {% if num_snapshot > 0 %}
+            <p><strong>{% trans "To cancel the definition of a virtual machine, delete images" %} <a href="/snapshot/{{ host_id }}/{{ vname }}/">{% trans "snapshots" %}</a></strong></p>
+            {% endif %}
+            </div>
+            <div class="tab-pane" id="tab2">
+              <applet archive="/media/java/vncviewer.jar" code="com.tightvnc.vncviewer.VncViewer" width="640" height="508">
+                <param name="SOCKETFACTORY" value="com.tightvnc.vncviewer.SshTunneledSocketFactory">
+                <param name="Show controls" value="Yes">
+                <param name="Offer relogin" value="Yes">
+                <param name="Open new window" value="No">
+                <param name="Scaling factor" value="auto">
+                <param name="SSHHOST" value="{{ kvm_host.ipaddr }}">
+                <param name="HOST" value="localhost">
+                <param name="PORT" value="{{ vnc_port }}">
+              </applet>
+            </div>
+            <div class="tab-pane" id="tab3">
+              <div class="row">
+                <div class="span8">
+<pre>{% for line in vm_xml %}
+{{ line }}{% endfor %}</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}

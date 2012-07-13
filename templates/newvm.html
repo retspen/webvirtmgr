@@ -1,0 +1,584 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+     <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span3">
+          <div class="sidebar-nav well">
+            <ul class="nav nav-list">
+              <li class="nav-header">{% trans "Main Menu" %}</li>
+                <li><a href=/dashboard/><i class="icon-home"></i>{% trans "Dashboard" %}</a></li>
+                <li><a href=/overview/{{ host_id }}/><i class="icon-info-sign"></i>{% trans "Server" %} <strong>{{ kvm_host.hostname }}</strong></a></li>
+              <li class="nav-header"></i>{% trans "Server settings" %}</li>
+                <li class="active"><a href=/newvm/{{ host_id }}/><i class="icon-plus icon-white"></i>{% trans "New VM" %}</a></li>
+                <li><a href=/storage/{{ host_id }}/><i class="icon-folder-open"></i>{% trans "Storage" %}</a></li>
+                <li><a href=/network/{{ host_id }}/><i class="icon-signal"></i>{% trans "Virtual networks" %}</a></li>
+                <li><a href="/snapshot/{{ host_id }}/"><i class="icon-download-alt"></i>{% trans "Snapshots" %}</a></li>
+                <li><a href="/logs/{{ host_id }}/"><i class="icon-list-alt"></i>{% trans "Logs" %}</a></li>
+              <li class="nav-header">{% trans "Virtual Machines" %}</li>
+                {% if not all_vm %}
+                <li><a href=/newvm/{{ host_id }}/><i class="icon-plus"></i>{% trans "New VM" %}</a></li>
+                {% endif %}
+                {% for name, state in all_vm.items %}
+                <li><a href=/vm/{{ host_id }}/{{ name }}/><font color="{% if state == 1 %}green{% endif %}{% if state == 5 %}red{% endif %}{% if state == 3 %}orange{% endif %}"><i class="icon-th-large"></i>{{ name }}</font></a></li>
+                {% endfor %}
+            </ul>
+          </div>
+        </div>
+    <div class="span8 well">
+      <div class="page-header">
+          <h2>{% trans "New virtual machine" %}</h2>
+        </div>
+          {% if errors %}
+          {% for error in errors %}
+            <div class="alert alert-error">
+              <a class="close" data-dismiss="alert">&times;</a>
+            {{ error }}
+            </div>
+          {% endfor %}
+          {% endif %}
+          <h4>{% trans "Templates new VM" %}</h4>
+          <br>
+          <table class="table table-bordered table-condensed">
+            <thead>
+              <tr>
+                <th>№</th>
+                <th>{% trans "Name" %}</th>
+                <th>{% trans "VCPUs" %}</th>
+                <th>{% trans "Memory" %}, Mb</th>
+                <th>{%trans "Disk" %}, Gb</th>
+                <th style="text-align:center;width:30px;"><i class="icon-plus"></i></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>m1.xlarge</td>
+                <td>8</td>
+                <td>16384</td>
+                <td>160</td>
+                <td>{% if addmem > 16384 %}<a data-toggle="modal" href="#myModalm1xlarge" class="btn btn-primary" title="{% trans "Create" %}"><i class="icon-plus icon-white"></i></a>{% else %}<a class="btn btn-primary disabled" title="{% trans "Create" %}"><i class="icon-plus icon-white"></i></a>{% endif %}</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>m1.large</td>
+                <td>4</td>
+                <td>8192</td>
+                <td>80</td>
+                <td>{% if addmem > 8192 %}<a data-toggle="modal" href="#myModalm1large" class="btn btn-primary" title="{% trans "Create" %}"><i class="icon-plus icon-white"></i></a>{% else %}<a class="btn btn-primary disabled" title="{% trans "Create" %}"><i class="icon-plus icon-white"></i></a>{% endif %}</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>m1.medium</td>
+                <td>2</td>
+                <td>4096</td>
+                <td>40</td>
+                <td>{% if addmem > 4096 %}<a data-toggle="modal" href="#myModalm1medium" class="btn btn-primary" title="{% trans "Create" %}"><i class="icon-plus icon-white"></i></a>{% else %}<a class="btn btn-primary disabled" title="{% trans "Create" %}"><i class="icon-plus icon-white"></i></a>{% endif %}</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>m1.small</td>
+                <td>1</td>
+                <td>2048</td>
+                <td>20</td>
+                <td>{% if addmem > 2048 %}<a data-toggle="modal" href="#myModalm1small" class="btn btn-primary" title="{% trans "Create" %}"><i class="icon-plus icon-white"></i></a>{% else %}<a class="btn btn-primary disabled" title="{% trans "Create" %}"><i class="icon-plus icon-white"></i></a>{% endif %}</td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>m1.mini</td>
+                <td>1</td>
+                <td>1024</td>
+                <td>10</td>
+                <td>{% if addmem > 1024 %}<a data-toggle="modal" href="#myModalm1mini" class="btn btn-primary" title="{% trans "Create" %}"><i class="icon-plus icon-white"></i></a>{% else %}<a class="btn btn-primary disabled" title="{% trans "Create" %}"><i class="icon-plus icon-white"></i></a>{% endif %}</td>
+              </tr>
+              <tr>
+                <td>6</td>
+                <td>m1.micro</td>
+                <td>1</td>
+                <td>512</td>
+                <td>5</td>
+                <td>{% if addmem > 512 %}<a data-toggle="modal" href="#myModalm1micro" class="btn btn-primary" title="{% trans "Create" %}"><i class="icon-plus icon-white"></i></a>{% else %}<a class="btn btn-primary disabled" title="{% trans "Create" %}"><i class="icon-plus icon-white"></i></a>{% endif %}</td>
+              </tr>
+            </tbody>
+            </table>
+          <div id="myModalCustomVM" class="modal hide fade">
+              <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+                  <h3>{% trans "New virtual machine" %}</h3>
+              </div>
+           <div class="modal-body">
+            <form class="form-horizontal" action="/newvm/{{ host_id }}/" method="post">
+              <fieldset>
+                <div class="control-group">
+                <label class="control-label">{% trans "Name" %}</label>
+                  <div class="controls">
+                    <input class="input-large focused" type="text" name="name" placeholder="Name" value="">
+                  </div>
+                </div>
+                <div class="control-group">
+                <label class="control-label">{% trans "Memory" %}</label>
+                  <div class="controls">
+                    <select name="memory">
+                      <option value="256">256 Mb</option>
+                    {% if addmem > 512 %}
+                      <option value="512">512 Mb</option>
+                    {% endif %}
+                    {% if addmem > 768 %}
+                      <option value="768">768 Mb</option>
+                    {% endif %}
+                    {% if addmem > 1024 %}
+                      <option value="1024">1024 Mb</option>
+                    {% endif %}
+                    {% if addmem > 2048 %}
+                      <option value="2048">2048 Mb</option>
+                    {% endif %}
+                    {% if addmem > 4096 %}
+                      <option value="4096">4096 Mb</option>
+                    {% endif %}
+                    {% if addmem > 8192 %}
+                      <option value="8192">8192 Mb</option>
+                    {% endif %}
+                    {% if addmem > 16384 %}
+                      <option value="16384">16384 Mb</option>
+                    {% endif %}
+                    </select>
+                  </div>
+                </div>     
+                <div class="control-group">
+                <label class="control-label">{% trans "Core" %}</label>
+                  <div class="controls">
+                    <select name="cpus">
+                    {% for cpu in cpus %}
+                      <option value="{{ cpu }}">{{ cpu }}</option>
+                    {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                <div class="control-group">
+                <label class="control-label">{% trans "CD image" %}</label>
+                  <div class="controls">
+                    <select name="iso">
+                    {% if all_iso != "error" %}
+                    {% for name in all_iso %}
+                      <option value="{{ name }}">{{ name }}</option>
+                    {% endfor %}
+                    {% endif %}
+                      <option value="">{% trans "Without image" %}</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="control-group">
+                <label class="control-label">{% trans "HDD image" %}</label>
+                  <div class="controls">
+                    <select name="img">
+                    {% if all_iso != "error" %}
+                    {% for name in all_img %}
+                      <option value="{{ name }}">{{ name }}</option>
+                    {% endfor %}
+                    {% else %}
+                      <option value="">{% trans "None" %}</option>
+                    {% endif %}
+                    </select>
+                  </div>
+                </div>
+                <div class="control-group">
+                <label class="control-label">{% trans "Network" %}</label>
+                  <div class="controls">
+                    <select name="bridge">
+                    {% for net in bridge %}
+                      <option value="{{ net }}">{{net}}</option>
+                    {% endfor %}
+                      <option value="br0">br0 ({% trans "set up?" %})</option>
+                    </select>
+                  </div>
+                </div>
+                </fieldset>
+              </div>
+              <div class="modal-footer">
+                <a href="#" class="btn" data-dismiss="modal">{% trans "Cancel" %}</a>
+                  <input class="btn btn-primary" type="submit" name="create" value="{% trans "Create" %}">
+                   </form>
+              </div>
+           </div>
+         <a data-toggle="modal" href="#myModalCustomVM" class="btn btn-primary">{% trans "Custom VM" %}</a>
+           <div id="myModalm1xlarge" class="modal hide fade">
+              <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+                  <h3>{% trans "New virtual machine" %} m1.xlarge</h3>
+              </div>
+           <div class="modal-body">
+            <form class="form-horizontal" action="/newvm/{{ host_id }}/" method="post">
+              <fieldset>
+                <div class="control-group">
+                <label class="control-label">{% trans "Name" %}</label>
+                  <div class="controls">
+                    <input class="input-large focused" type="text" name="name" placeholder="Name" value="">
+                    <input type="hidden" name="memory" value="16384">
+                    <input type="hidden" name="cpus" value="8">
+                    <input type="hidden" name="hdd" value="160">
+                  </div>
+                </div>
+                <div class="control-group">
+                <label class="control-label">{% trans "Storage pool" %}</label>
+                  <div class="controls">
+                    <select name="stg_pool">
+                    {% if storage != "error" %}
+                    {% for name in storages %}
+                      <option value="{{ name }}">{{ name }}</option>
+                    {% endfor %}
+                    {% else %}
+                      <option value="">{% trans "None" %}</option>
+                    {% endif %}
+                    </select>
+                  </div>
+                </div>
+                <div class="control-group">
+                <label class="control-label">{% trans "CD image" %}</label>
+                  <div class="controls">
+                    <select name="iso">
+                    {% if all_iso != "error" %}
+                    {% for name in all_iso %}
+                      <option value="{{ name }}">{{ name }}</option>
+                    {% endfor %}
+                    {% endif %}
+                      <option value="">{% trans "Without image" %}</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="control-group">
+                <label class="control-label">{% trans "Network" %}</label>
+                  <div class="controls">
+                    <select name="bridge">
+                    {% for net in bridge %}
+                      <option value="{{ net }}">{{net}}</option>
+                    {% endfor %}
+                      <option value="br0">br0 ({% trans "set up?" %})</option>
+                    </select>
+                  </div>
+                </div>
+                </fieldset>
+              </div>
+              <div class="modal-footer">
+                <a href="#" class="btn" data-dismiss="modal">{% trans "Cancel" %}</a>
+                  <input class="btn btn-primary" type="submit" name="create" value="{% trans "Create" %}">
+                   </form>
+              </div>
+           </div>
+           <div id="myModalm1large" class="modal hide fade">
+              <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+                  <h3>{% trans "New virtual machine" %} m1.large</h3>
+              </div>
+           <div class="modal-body">
+            <form class="form-horizontal" action="/newvm/{{ host_id }}/" method="post">
+              <fieldset>
+                <div class="control-group">
+                <label class="control-label">{% trans "Name" %}</label>
+                  <div class="controls">
+                    <input class="input-large focused" type="text" name="name" placeholder="Name" value="">
+                    <input type="hidden" name="memory" value="8192">
+                    <input type="hidden" name="cpus" value="4">
+                    <input type="hidden" name="hdd" value="80">
+                  </div>
+                </div>
+                <div class="control-group">
+                <label class="control-label">{% trans "Storage pool" %}</label>
+                  <div class="controls">
+                    <select name="stg_pool">
+                    {% if storage != "error" %}
+                    {% for name in storages %}
+                      <option value="{{ name }}">{{ name }}</option>
+                    {% endfor %}
+                    {% else %}
+                      <option value="">{% trans "None" %}</option>
+                    {% endif %}
+                    </select>
+                  </div>
+                </div>
+                <div class="control-group">
+                <label class="control-label">{% trans "CD image" %}</label>
+                  <div class="controls">
+                    <select name="iso">
+                    {% if all_iso != "error" %}
+                    {% for name in all_iso %}
+                      <option value="{{ name }}">{{ name }}</option>
+                    {% endfor %}
+                    {% endif %}
+                      <option value="">{% trans "Without image" %}</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="control-group">
+                <label class="control-label">{% trans "Network" %}</label>
+                  <div class="controls">
+                    <select name="bridge">
+                    {% for net in bridge %}
+                      <option value="{{ net }}">{{net}}</option>
+                    {% endfor %}
+                      <option value="br0">br0 ({% trans "set up?" %})</option>
+                    </select>
+                  </div>
+                </div>
+                </fieldset>
+              </div>
+              <div class="modal-footer">
+                <a href="#" class="btn" data-dismiss="modal">{% trans "Cancel" %}</a>
+                  <input class="btn btn-primary" type="submit" name="create" value="{% trans "Create" %}">
+                   </form>
+              </div>
+           </div>
+           <div id="myModalm1medium" class="modal hide fade">
+              <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+                  <h3>{% trans "New virtual machine" %} m1.medium</h3>
+              </div>
+           <div class="modal-body">
+            <form class="form-horizontal" action="/newvm/{{ host_id }}/" method="post">
+              <fieldset>
+                <div class="control-group">
+                <label class="control-label">{% trans "Name" %}</label>
+                  <div class="controls">
+                    <input class="input-large focused" type="text" name="name" placeholder="Name" value="">
+                    <input type="hidden" name="memory" value="4096">
+                    <input type="hidden" name="cpus" value="2">
+                    <input type="hidden" name="hdd" value="40">
+                  </div>
+                </div>
+                <div class="control-group">
+                <label class="control-label">{% trans "Storage pool" %}</label>
+                  <div class="controls">
+                    <select name="stg_pool">
+                    {% if storage != "error" %}
+                    {% for name in storages %}
+                      <option value="{{ name }}">{{ name }}</option>
+                    {% endfor %}
+                    {% else %}
+                      <option value="">{% trans "None" %}</option>
+                    {% endif %}
+                    </select>
+                  </div>
+                </div>
+                <div class="control-group">
+                <label class="control-label">{% trans "CD image" %}</label>
+                  <div class="controls">
+                    <select name="iso">
+                    {% if all_iso != "error" %}
+                    {% for name in all_iso %}
+                      <option value="{{ name }}">{{ name }}</option>
+                    {% endfor %}
+                    {% endif %}
+                      <option value="">{% trans "Without image" %}</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="control-group">
+                <label class="control-label">{% trans "Network" %}</label>
+                  <div class="controls">
+                    <select name="bridge">
+                    {% for net in bridge %}
+                      <option value="{{ net }}">{{net}}</option>
+                    {% endfor %}
+                      <option value="br0">br0 ({% trans "set up?" %})</option>
+                    </select>
+                  </div>
+                </div>
+                </fieldset>
+              </div>
+              <div class="modal-footer">
+                <a href="#" class="btn" data-dismiss="modal">{% trans "Cancel" %}</a>
+                  <input class="btn btn-primary" type="submit" name="create" value="{% trans "Create" %}">
+                   </form>
+              </div>
+           </div>
+           <div id="myModalm1small" class="modal hide fade">
+              <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+                  <h3>{% trans "New virtual machine" %} m1.small</h3>
+              </div>
+           <div class="modal-body">
+            <form class="form-horizontal" action="/newvm/{{ host_id }}/" method="post">
+              <fieldset>
+                <div class="control-group">
+                <label class="control-label">{% trans "Name" %}</label>
+                  <div class="controls">
+                    <input class="input-large focused" type="text" name="name" placeholder="Name" value="">
+                    <input type="hidden" name="memory" value"2048">
+                    <input type="hidden" name="cpus" value="1">
+                    <input type="hidden" name="hdd" value="20">
+                  </div>
+                </div>
+                <div class="control-group">
+                <label class="control-label">{% trans "Storage pool" %}</label>
+                  <div class="controls">
+                    <select name="stg_pool">
+                    {% if storage != "error" %}
+                    {% for name in storages %}
+                      <option value="{{ name }}">{{ name }}</option>
+                    {% endfor %}
+                    {% else %}
+                      <option value="">{% trans "None" %}</option>
+                    {% endif %}
+                    </select>
+                  </div>
+                </div>
+                <div class="control-group">
+                <label class="control-label">{% trans "CD image" %}</label>
+                  <div class="controls">
+                    <select name="iso">
+                    {% if all_iso != "error" %}
+                    {% for name in all_iso %}
+                      <option value="{{ name }}">{{ name }}</option>
+                    {% endfor %}
+                    {% endif %}
+                      <option value="">{% trans "Without image" %}</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="control-group">
+                <label class="control-label">{% trans "Network" %}</label>
+                  <div class="controls">
+                    <select name="bridge">
+                    {% for net in bridge %}
+                      <option value="{{ net }}">{{net}}</option>
+                    {% endfor %}
+                      <option value="br0">br0 ({% trans "set up?" %})</option>
+                    </select>
+                  </div>
+                </div>
+                </fieldset>
+              </div>
+              <div class="modal-footer">
+                <a href="#" class="btn" data-dismiss="modal">{% trans "Cancel" %}</a>
+                  <input class="btn btn-primary" type="submit" name="create" value="{% trans "Create" %}">
+                   </form>
+              </div>
+           </div>
+           <div id="myModalm1mini" class="modal hide fade">
+              <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+                  <h3>{% trans "New virtual machine" %} m1.mini</h3>
+              </div>
+           <div class="modal-body">
+            <form class="form-horizontal" action="/newvm/{{ host_id }}/" method="post">
+              <fieldset>
+                <div class="control-group">
+                <label class="control-label">{% trans "Name" %}</label>
+                  <div class="controls">
+                    <input class="input-large focused" type="text" name="name" placeholder="Name" value="">
+                    <input type="hidden" name="memory" value="1024">
+                    <input type="hidden" name="cpus" value="1">
+                    <input type="hidden" name="hdd" value="10">
+                  </div>
+                </div>
+                <div class="control-group">
+                <label class="control-label">{% trans "Storage pool" %}</label>
+                  <div class="controls">
+                    <select name="stg_pool">
+                    {% if storage != "error" %}
+                    {% for name in storages %}
+                      <option value="{{ name }}">{{ name }}</option>
+                    {% endfor %}
+                    {% else %}
+                      <option value="">{% trans "None" %}</option>
+                    {% endif %}
+                    </select>
+                  </div>
+                </div>
+                <div class="control-group">
+                <label class="control-label">{% trans "CD image" %}</label>
+                  <div class="controls">
+                    <select name="iso">
+                    {% if all_iso != "error" %}
+                    {% for name in all_iso %}
+                      <option value="{{ name }}">{{ name }}</option>
+                    {% endfor %}
+                    {% endif %}
+                      <option value="">{% trans "Without image" %}</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="control-group">
+                <label class="control-label">{% trans "Network" %}</label>
+                  <div class="controls">
+                    <select name="bridge">
+                    {% for net in bridge %}
+                      <option value="{{ net }}">{{net}}</option>
+                    {% endfor %}
+                      <option value="br0">br0 ({% trans "set up?" %})</option>
+                    </select>
+                  </div>
+                </div>
+                </fieldset>
+              </div>
+              <div class="modal-footer">
+                <a href="#" class="btn" data-dismiss="modal">{% trans "Cancel" %}</a>
+                  <input class="btn btn-primary" type="submit" name="create" value="{% trans "Create" %}">
+                   </form>
+              </div>
+           </div>
+           <div id="myModalm1micro" class="modal hide fade">
+              <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+                  <h3>{% trans "New virtual machine" %} m1.micro</h3>
+              </div>
+           <div class="modal-body">
+            <form class="form-horizontal" action="/newvm/{{ host_id }}/" method="post">
+              <fieldset>
+                <div class="control-group">
+                <label class="control-label">{% trans "Name" %}</label>
+                  <div class="controls">
+                    <input class="input-large focused" type="text" name="name" placeholder="Name" value="">
+                    <input type="hidden" name="memory" value="512">
+                    <input type="hidden" name="cpus" value="1">
+                    <input type="hidden" name="hdd" value="5">
+                  </div>
+                </div>
+                <div class="control-group">
+                <label class="control-label">{% trans "Storage pool" %}</label>
+                  <div class="controls">
+                    <select name="stg_pool">
+                    {% if storage != "error" %}
+                    {% for name in storages %}
+                      <option value="{{ name }}">{{ name }}</option>
+                    {% endfor %}
+                    {% else %}
+                      <option value="">{% trans "None" %}</option>
+                    {% endif %}
+                    </select>
+                  </div>
+                </div>
+                <div class="control-group">
+                <label class="control-label">{% trans "CD image" %}</label>
+                  <div class="controls">
+                    <select name="iso">
+                    {% if all_iso != "error" %}
+                    {% for name in all_iso %}
+                      <option value="{{ name }}">{{ name }}</option>
+                    {% endfor %}
+                    {% endif %}
+                      <option value="">{% trans "Without image" %}</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="control-group">
+                <label class="control-label">{% trans "Network" %}</label>
+                  <div class="controls">
+                    <select name="bridge">
+                    {% for net in bridge %}
+                      <option value="{{ net }}">{{net}}</option>
+                    {% endfor %}
+                      <option value="br0">br0 ({% trans "set up?" %})</option>
+                    </select>
+                  </div>
+                </div>
+                </fieldset>
+              </div>
+              <div class="modal-footer">
+                <a href="#" class="btn" data-dismiss="modal">{% trans "Cancel" %}</a>
+                  <input class="btn btn-primary" type="submit" name="create" value="{% trans "Create" %}">
+                   </form>
+              </div>
+           </div>
+       </div>
+     </div>
+{% endblock %}

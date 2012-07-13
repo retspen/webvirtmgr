@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+     <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span3">
+          <div class="sidebar-nav well">
+            <ul class="nav nav-list">
+              <li class="nav-header">{% trans "Main Menu" %}</li>
+              	<li><a href="/dashboard/"><i class="icon-home"></i>{% trans "Dashboard" %}</a></li>
+              	<li class="active"><a href="/overview/{{ host_id }}/"><i class="icon-info-sign icon-white"></i>{% trans "Server" %} <strong>{{ kvm_host.hostname }}</strong></a></li>
+			  <li class="nav-header"></i>{% trans "Server settings" %}</li>
+			  	<li><a href="/newvm/{{ host_id }}/"><i class="icon-plus"></i>{% trans "New VM" %}</a></li>
+			  	<li><a href="/storage/{{ host_id }}/"><i class="icon-folder-open"></i>{% trans "Storage" %}</a></li>
+			  	<li><a href="/network/{{ host_id }}/"><i class="icon-signal"></i>{% trans "Virtual networks" %}</a></li>
+			  	<li><a href="/snapshot/{{ host_id }}/"><i class="icon-download-alt"></i>{% trans "Snapshots" %}</a></li>
+			  	<li><a href="/logs/{{ host_id }}/"><i class="icon-list-alt"></i>{% trans "Logs" %}</a></li>
+              <li class="nav-header">{% trans "Virtual Machines" %}</li>
+	           {% if not all_vm %}
+			   <li><a href="/newvm/{{ host_id }}/"><i class="icon-plus"></i>{% trans "New VM" %}</a></li>
+	   	       {% endif %}
+			   {% for name, state in all_vm.items %}
+			   <li><a href="/vm/{{ host_id }}/{{ name }}/"><font color="{% if state == 1 %}green{% endif %}{% if state == 5 %}red{% endif %}{% if state == 3 %}orange{% endif %}"><i class="icon-th-large"></i>{{ name }}</font></a></li>
+			   {% endfor %}
+            </ul>
+          </div>
+        </div>
+		<div class="span8 well">
+			<div class="page-header">
+   				<h2>{% trans "Overview" %}</h2>
+   			</div>
+  		    {% if errors %}
+			    {% for error in errors %}
+			      <div class="alert alert-error">
+			      	<a class="close" data-dismiss="alert">&times;</a>
+			    	{{ error }}
+			      </div>
+			    {% endfor %}
+			{% endif %}
+			<div class="row">
+				<div class="span3">
+					<p>{% trans "Hostname" %}</p>
+					<p>{% trans "Processor(s)" %}</p>
+					<p>{% trans "CPU utilization" %}</p>
+					<p>{% trans "Memory" %} ({{ mem_usage.0|filesizeformat }} / {{ mem_usage.1|filesizeformat }})</p>
+					<p>{% trans "Type connection" %}</p>
+					<p>{% trans "Libvirt version" %}</p>
+				</div>
+				<div class="span4">
+					<p><strong>{{ host_info.0 }}</strong></p>
+					<p>{{ host_info.2 }} x {{ host_info.3 }}</p>
+					<div class="progress progress-danger progress-striped active" style="margin-bottom: 9px; width:270px;">
+        				<div class="bar" style="width: {{ cpu_usage }}%"><font color="black">{{ cpu_usage }}%</font></div>
+      				</div>
+					<div class="progress progress-warning progress-striped active" style="margin-bottom: 9px; width:270px;">
+        				<div class="bar" style="width: {{ mem_usage.2 }}%"><font color="black">{{ mem_usage.2 }}%</font></div>
+      				</div>
+					<p>{{ conn_type }}</p>
+					<p>{{ lib_virt_ver }}</p>
+					<p>{{ sys_info }}</p>
+				</div>
+			</div>
+			{% if all_vm.items %}
+			<hr>
+			<h3>{% trans "Virtual Machines" %}</h3>
+			<hr>
+        	<table class="table table-condensed">
+            <thead>
+              <tr>
+                <th>{% trans "Name" %}</th>
+                <th style="width:100px;">{% trans "Status" %}</th>
+                <th style="width:160px;">{% trans "Action" %}</th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for name, state in all_vm.items %}
+                <tr>
+                	<td><a href="/vm/{{ host_id }}/{{ name }}/"><strong>{{ name }}</strong></a></td>
+                	<td>{% if state == 1 %}<font color="green">{% trans "power on" %}</font>{% endif %}{% if state == 5 %}<font color="red">{% trans "power off" %}</font>{% endif %}{% if state == 3 %}<font color="orange">{% trans "suspend" %}</font>{% endif %}</td>
+                	<td>
+                		<form action="/overview/{{ host_id }}/" method="post" style="height:10px;">
+                			<input type="hidden" name="vname" value="{{ name }}" />
+			                {% if state = 5 %}
+			                 <button class="btn btn-primary" type="submit" name="start" value="start" title="{% trans "Start VM" %}"><i class="icon-play icon-white"></i></button>
+			                 <a class="btn btn-primary disabled" title="{% trans "Suspend" %}"><i class="icon-pause icon-white"></i></a>
+			                 <a class="btn btn-primary disabled" title="{% trans "Shutdown" %}"><i class="icon-stop icon-white"></i></a>
+			                 <a class="btn btn-primary disabled" title="{% trans "Force shutdown" %}"><i class="icon-off icon-white"></i></a>
+			                {% endif %}
+			                {% if state = 3 %}
+			                 <button class="btn btn-primary" type="submit" name="resume" value="resume" title="{% trans "Resume" %}"><i class="icon-play icon-white"></i></button>
+			                 <a class="btn btn-primary disabled" title="{% trans "Suspend" %}"><i class="icon-pause icon-white"></i></a>
+			                 <a class="btn btn-primary disabled" title="{% trans "Shutdown" %}"><i class="icon-stop icon-white"></i></a>
+			                 <a class="btn btn-primary disabled" title="{% trans "Force shutdown" %}"><i class="icon-off icon-white"></i></a>
+			                {% endif %}
+			                {% if state = 1 %}
+			                <a class="btn btn-primary disabled" title="{% trans "Start VM" %}"><i class="icon-play icon-white"></i></a>
+			                 <button class="btn btn-primary" type="submit" name="suspend" value="suspend" title="{% trans "Suspend" %}" onclick="return confirm('{% trans "Are you sure?" %}')"><i class="icon-pause icon-white"></i></button>
+			                 <button class="btn btn-primary" type="submit" name="shutdown" value="suspend" title="{% trans "Shutdown" %}" onclick="return confirm('{% trans "Send shutdown signal?" %}')"><i class="icon-stop icon-white"></i></button>
+			                 <button class="btn btn-primary" type="submit" name="destroy" value="destroy" title="{% trans "Force shutdown" %}" onclick="return confirm('{% trans "Force shutdown?" %}')"><i class="icon-off icon-white"></i></button>
+			                {% endif %}
+			            </form>
+			        </td>
+                </tr>
+                {% endfor %}
+          	</tbody>
+          </table>
+          {% endif %}
+        </div>
+    </div>
+{% endblock %}

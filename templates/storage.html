@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+     <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span3">
+          <div class="sidebar-nav well">
+            <ul class="nav nav-list">
+              <li class="nav-header">{% trans "Main Menu" %}</li>
+                <li><a href="/dashboard/"><i class="icon-home"></i>{% trans "Dashboard" %}</a></li>
+                <li><a href="/overview/{{ host_id }}/"><i class="icon-info-sign"></i>{% trans "Server" %} <strong>{{ kvm_host.hostname }}</strong></a></li>
+              <li class="nav-header"></i>{% trans "Server settings" %}</li>
+                <li><a href="/newvm/{{ host_id }}/"><i class="icon-plus"></i>{% trans "New VM" %}</a></li>
+                <li><a href="/storage/{{ host_id }}/"><i class="icon-folder-open"></i>{% trans "Storage" %}</a></li>
+                <li><a href="/network/{{ host_id }}/"><i class="icon-signal"></i>{% trans "Virtual networks" %}</a></li>
+                <li><a href="/snapshot/{{ host_id }}/"><i class="icon-download-alt"></i>{% trans "Snapshots" %}</a></li>
+                <li><a href="/logs/{{ host_id }}/"><i class="icon-list-alt"></i>{% trans "Logs" %}</a></li>
+              <li class="nav-header">{% trans "Storage pool" %}</li>
+                <li><a data-toggle="modal" href="#myModalnewstg"><i class="icon-plus"></i>{% trans "New pool" %}</a></li>
+	            {% for name, status in pools.items %}
+	  			{% if pool == name %}
+	            <li class="active"><a href="/storage/{{ host_id }}/{{ name }}/"><i class="icon-folder-open icon-white"></i> {{ name }}</a></li>
+	            {% else %}
+	            <li><a href="/storage/{{ host_id }}/{{ name }}/"><font color="{% if status == 1 %}green{% else %}red{% endif %}"><i class="icon-folder-open"></i> {{ name }}</font></a></li>
+	            {% endif %}
+				{% endfor %}
+              <li class="nav-header">{% trans "Virtual Machines" %}</li>
+	            {% if not all_vm %}
+	            <li><a href="/newvm/{{ host_id }}/"><i class="icon-plus"></i>{% trans "New VM" %}</a></li>
+	            {% endif %}
+	            {% for name, state in all_vm.items %}
+	            <li><a href="/vm/{{ host_id }}/{{ name }}/"><font color="{% if state == 1 %}green{% endif %}{% if state == 5 %}red{% endif %}{% if state == 3 %}orange{% endif %}"><i class="icon-th-large"></i>{{ name }}</font></a></li>
+	            {% endfor %}
+            </ul>
+          </div>
+        </div>
+    <div class="span8 well">
+      <div class="page-header">
+          <h2>{% trans "Storage" %}</h2>
+        </div>
+ 		<div class="row">
+            <div id="myModalnewstg" class="modal hide fade">
+              <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+                  <h3>{% trans "New storage pool" %}</h3>
+              </div>
+           <div class="modal-body">
+ 		   <form class="form-horizontal" action="/storage/{{ host_id }}/{{ pool }}/" method="post">
+ 			<fieldset>
+	          <div class="control-group">
+	          <label class="control-label">{% trans "Pool name" %}</label>
+	            <div class="controls">
+	            	<input type="text" class="input-medium" name="name_pool" value="">
+	            </div>
+	           </div>
+	          <div class="control-group">
+	          <label class="control-label">{% trans "Pool path" %}</label>
+	            <div class="controls">
+	             <input type="text" class="input-medium" name="path_pool" value="/var/lib/libvirt/images/">
+	            </div>
+	           </div>
+	         </fieldset>
+              </div>
+              <div class="modal-footer">
+                <a href="#" class="btn" data-dismiss="modal">{% trans "Cancel" %}</a>
+                   <input type="submit" class="btn btn-primary" name="new_stg_pool" value="{% trans "Create" %}">
+                   </form>
+              </div>
+           </div>
+           {% if pool == "new_stg_pool" %}
+           <div class="span4">
+           		<h4>{% trans "Storage pools not found" %}</h4>
+       	   </div>
+           {% else %}
+			<div class="span3">
+				<p>{% trans "Pool name" %}</p>
+				<p>{% trans "Pool path" %}</p>
+				<p>{% trans "Size" %} ({{ info.3|filesizeformat }} / {{ info.2|filesizeformat }})</p>
+				<p>{% trans "State" %}</p>
+			</div>
+			<div class="span3">
+				<p><strong>{{ pool }}</strong></p>
+				<p>{% if not spath %}{% trans "None" %}{% else %}{{ spath }}{% endif %}</p>
+				<div class="progress progress-warning progress-striped active" style="margin-bottom: 9px; width:200px;">
+        				<div class="bar" style="width: {{ info.4 }}%"><font color="black">{{ info.4 }}%</font></div>
+        		</div>
+				<form action="/storage/{{ host_id }}/{{ pool }}/" method="post" style="height:10px;">
+					{% if status = 0 %}
+					<button type="submit" class="btn btn-primary" name="start_pool" value="start_pool" title="{% trans "Enable" %}"><i class="icon-play icon-white"></i></button>
+					<button type="submit" class="btn btn-danger" name="del_pool" value="del_pool" title="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')"><i class="icon-trash icon-white"></i></button>
+					{% else %}
+					<button type="submit" class="btn btn-primary" name="stop_pool" value="stop_pool" title="{% trans "Disable" %}" onclick="return confirm('{% trans "Are you sure?" %}')"><i class="icon-stop icon-white"></i></button>
+					{% endif %}
+				</form>
+			</div>
+			{% endif %}
+		</div>
+	  {% if volinfo %}
+	  <hr>
+      <div class="page-header">
+          <h3>{% trans "Images" %}</h3>
+        </div>
+	  <table class="table table-condensed">
+		  <thead>
+	    	<tr>
+	    		<th>{% trans "Name" %}</th>
+		    	<th>{% trans "Size" %}</th>
+		    	<th>{% trans "Format" %}</th>
+		    	<th colspan="2">{% trans "Action" %}</th>
+		    </tr>
+		   </thead>
+		   <tbody>
+			   {% for name, info in volinfo.items %}
+				<tr>
+				  <td>{{ name }}</td><td>{{ info.0|filesizeformat }}</td><td>{{ info.1 }}</td>
+				  <td style="width:30px;">
+					<div id="myModalclone{{ forloop.counter }}" class="modal hide fade">
+		            <div class="modal-header">
+		              <button class="close" data-dismiss="modal">&times;</button>
+		              <h3>{% trans "Clone image" %} <font color="red">{{ name }}</font></h3>
+		            </div>
+		            <div class="modal-body">
+				      <form class="form-horizontal" action="/storage/{{ host_id }}/{{ pool }}/" method="post">
+				        <fieldset>
+				          <div class="control-group">
+				          <label class="control-label">{% trans "Name" %}</label>
+				            <div class="controls">
+				            	<input type="text" class="input-large" name="new_img" placeholder="Name" value="">
+				            	<input type="hidden" class="input-large" name="img" value="{{ name }}">.img
+				            </div> 
+				           </div> 
+						</fieldset>
+		            </div>
+		            <div class="modal-footer">
+		              <a href="#" class="btn" data-dismiss="modal">{% trans "Cancel" %}</a>
+		              <input type="submit" class="btn btn-primary" name="vol_clone" value="{% trans "Clone" %}">
+		              </form>
+		            </div>
+		         	</div>				  	
+		          	{% if info.1 == "qcow2" %}<a data-toggle="modal" href="#myModalclone{{ forloop.counter }}" class="btn btn-primary"><i class="icon-th icon-white"></i></a>{% else %}<a class="btn btn-primary disabled"><i class="icon-th icon-white"></i></a>{% endif %}
+				  </td>	
+				  <td style="width:30px;">
+					  <form action="/storage/{{ host_id }}/{{ pool }}/" method="post" style="height:10px;">
+					  	<input type="hidden" name="img" value="{{ name }}">
+						<button type="submit" class="btn btn-danger" name="vol_del" value="vol_del" title="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')"><i class="icon-trash icon-white"></i></button>
+					  </form>
+				  </td>
+				</tr>
+				{% endfor %}
+		    </tbody>
+      </table>
+      {% else %}
+       <hr>
+       <h4>{% trans "No images or pool is not active" %}</h4><br>
+       {% endif %}
+	   {% if status = 1 %}
+	   {% if errors %}
+		{% for error in errors %}
+	     <div class="alert alert-error">
+		   	<a class="close" data-dismiss="alert">&times;</a>
+		   	{{ error }}
+		 </div>
+		{% endfor %}
+		{% endif %}
+		<div id="myModaladd" class="modal hide fade">
+		    <div class="modal-header">
+			    <button class="close" data-dismiss="modal">&times;</button>
+		        <h3>{% trans "New image" %}</h3>
+		    </div>
+		 <div class="modal-body">
+	      <form class="form-horizontal" action="/storage/{{ host_id }}/{{ pool }}/" method="post">
+	        <fieldset>
+	          <div class="control-group">
+	          <label class="control-label">{% trans "Name" %}</label>
+	            <div class="controls">
+	            	<input type="text" class="input-large" name="img" placeholder="Name" value=""> .img
+	            </div>
+	           </div>
+	          <div class="control-group">
+	          <label class="control-label">{% trans "Size" %}</label>
+	            <div class="controls">
+	              <select name="size_max">
+	              	{% for num in hdd_size %}
+	                <option value="{{ num }}" {% if num == 8 %}selected{% endif %}>{{ num }} {% trans "Gb" %}</option>
+	                {% endfor %}
+	              </select>
+	            </div>
+	          </div>
+	          </fieldset>
+		    </div>
+		    <div class="modal-footer">
+		    	<a href="#" class="btn" data-dismiss="modal">{% trans "Cancel" %}</a>
+		        <input type="submit" class="btn btn-primary" name="vol_add" value="{% trans "Create" %}">
+		     </form>
+		    </div>
+		  </div>				  	
+		 <a data-toggle="modal" href="#myModaladd" class="btn btn-primary">{% trans "New image" %}</a>
+	 </div>
+   </div>
+{% else %}
+	</div>
+</div>
+{% endif %}
+{% endblock %}

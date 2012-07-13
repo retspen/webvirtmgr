@@ -1,0 +1,1194 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Anatoliy Guskov <anatoliy.guskov@gmail.com>, 2012.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-07-04 19:51+0300\n"
+"PO-Revision-Date: 2012-05-06 14:41+0300\n"
+"Last-Translator: Anatoliy Guskov <anatoliy.guskov@gmail.com>\n"
+"Language-Team: RU <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+
+#: dashboard/views.py:46
+msgid "Add server: "
+msgstr "Добавление сервера: "
+
+#: dashboard/views.py:84
+msgid "IP address can not be a private address space"
+msgstr "IP адрес не может быть частным адресным пространством"
+
+#: dashboard/views.py:87
+msgid "The host name must not exceed 20 characters"
+msgstr "Имя хоста не должно превышать 20 символов"
+
+#: dashboard/views.py:90
+msgid ""
+"Hostname must contain only numbers, or the domain name separated by \".\""
+msgstr ""
+"Имя хоста должно содержать только цифры или доменное имя разделенное \".\""
+
+#: dashboard/views.py:93
+msgid "The host name must not contain any characters and Russian characters"
+msgstr "Имя хоста не должно содержать символы и русские буквы"
+
+#: dashboard/views.py:99
+msgid "This host is already connected"
+msgstr "Такой хост уже подключен"
+
+#: dashboard/views.py:102
+msgid "No hostname has been entered"
+msgstr "Не было введено имя хоста"
+
+#: dashboard/views.py:105
+msgid "No IP address has been entered"
+msgstr "Не был введен IP адрес"
+
+#: network/views.py:329
+msgid "The name of the network pool must not exceed 20 characters"
+msgstr "Название сетевого пула не должно превышать 20 символов"
+
+#: network/views.py:332
+msgid ""
+"The name of the network pool must not contain any characters and Russian "
+"characters"
+msgstr "Название сетевого пула не должно содержать символы и русские буквы"
+
+#: network/views.py:335 storage/views.py:374
+msgid "Enter the name of the pool"
+msgstr "Введите название пула"
+
+#: network/views.py:338
+msgid "Enter the IP subnet"
+msgstr "Введите IP подсеть"
+
+#: network/views.py:347
+msgid "IP subnet must be 192.168.1.0/24 or 192.168.1.0/26"
+msgstr "IP-подсеть должна быть 192.168.1.0/24 или 192.168.1.0/26"
+
+#: network/views.py:353 storage/views.py:381
+msgid "Such a pool already exists"
+msgstr "Возможно пул с такими данными существует"
+
+#: network/views.py:359
+msgid ""
+"Pool is created, but when I run the pool fails, you may specify an existing "
+"network"
+msgstr ""
+"Пул создан, но при запуске пула возникла ошибка, возможно указана "
+"существующая сеть"
+
+#: network/views.py:362
+msgid "Creating a network pool: "
+msgstr "Создание сетевого пула: "
+
+#: network/views.py:369
+msgid "Stop network pool: "
+msgstr "Остановка сетевого пула: "
+
+#: network/views.py:374
+msgid "Start network pool: "
+msgstr "Запуск сетевого пула: "
+
+#: network/views.py:379
+msgid "Delete network pool: "
+msgstr "Удаление сетевого пула: "
+
+#: newvm/views.py:313
+msgid "Storage pools are not available or are not active"
+msgstr "Возможно пулы хранения не доступны или не активны"
+
+#: newvm/views.py:317
+msgid "Network pools are not available or are not active"
+msgstr "Возможно сетевые пулы не доступны или не активны"
+
+#: newvm/views.py:340
+msgid "This is the name of the virtual machine already exists"
+msgstr "Такое название виртуальной машины уже существует"
+
+#: newvm/views.py:343
+msgid "The name of the virtual machine must not exceed 20 characters"
+msgstr "Название виртуальной машины не должно превышать 20 символов"
+
+#: newvm/views.py:346
+msgid ""
+"The name of the virtual machine must not contain any characters and Russian "
+"characters"
+msgstr ""
+"Название виртуальной машины не должно содержать символы и русские буквы"
+
+#: newvm/views.py:349
+msgid ""
+"Images of the HDD to a virtual machine not available. You need to create an "
+"HDD image"
+msgstr ""
+"Образы HDD для виртуальной машины отсутствуют. Необходимо созадть HDD образ"
+
+#: newvm/views.py:352
+msgid "Enter the name of the virtual machine"
+msgstr "Введите название виртуальной машины"
+
+#: newvm/views.py:362
+msgid "Creating a virtual machine: "
+msgstr "Создание виртуальной машины: "
+
+#: overview/views.py:151
+msgid "Error connecting: Check the KVM login and KVM password"
+msgstr "Ошибка подключения: проверьте KVM логин и KVM пароль"
+
+#: overview/views.py:167 vm/views.py:387
+msgid "Suspend VM: "
+msgstr "Приостановка ВМ: "
+
+#: overview/views.py:172 vm/views.py:392
+msgid "Error: VM alredy suspended"
+msgstr "Ошибка: возможно виртуальная машина уже приостановлена"
+
+#: overview/views.py:177 vm/views.py:397
+msgid "Resume VM: "
+msgstr "Возобновление ВМ: "
+
+#: overview/views.py:182 vm/views.py:402
+msgid "Error: VM alredy resume"
+msgstr "Ошибка: возможно виртуальная машина уже возобновлена"
+
+#: overview/views.py:187 vm/views.py:407
+msgid "Start VM: "
+msgstr "Запуск ВМ: "
+
+#: overview/views.py:192 vm/views.py:412
+msgid "Error: VM alredy start"
+msgstr "Ошибка: возможно виртуальная машина уже запущена"
+
+#: overview/views.py:197 vm/views.py:417
+msgid "Shutdown VM: "
+msgstr "Выключить ВМ: "
+
+#: overview/views.py:202 overview/views.py:212 vm/views.py:422 vm/views.py:432
+msgid "Error: VM alredy shutdown"
+msgstr "Ошибка: возможно виртуальная машина уже выключена"
+
+#: overview/views.py:207 vm/views.py:427
+msgid "Force shutdown VM: "
+msgstr "Принудительно выключение ВМ: "
+
+#: snapshot/views.py:235
+msgid "Delete snapshot VM: "
+msgstr "Удаление снапшота ВМ: "
+
+#: snapshot/views.py:242
+msgid "Revert snapshot VM: "
+msgstr "Восстановление снапшота ВМ: "
+
+#: snapshot/views.py:246
+msgid "Successful revert snapshot: "
+msgstr "Успешное восстановление снапшота: "
+
+#: storage/views.py:368
+msgid "The name of the storage pool must not exceed 20 characters"
+msgstr "Название пула хранилища не должно превышать 20 символов"
+
+#: storage/views.py:371
+msgid ""
+"The name of the storage pool must not contain any characters and Russian "
+"characters"
+msgstr "Название пула хранилища не должно содержать символы и русские буквы"
+
+#: storage/views.py:377
+msgid "Enter the path of the pool"
+msgstr "Введите путь пула"
+
+#: storage/views.py:387
+msgid ""
+"Pool is created, but when I run the pool fails, you may specify the path "
+"does not exist"
+msgstr ""
+"Пул создан, но при запуске пула возникла ошибка, возможно указан не "
+"существующий путь"
+
+#: storage/views.py:391
+msgid "Creating a storage pool: "
+msgstr "Создание пула хранилища: "
+
+#: storage/views.py:399
+msgid "Stop storage pool: "
+msgstr "Остановка пула хранилища: "
+
+#: storage/views.py:405
+msgid "Start storage pool: "
+msgstr "Запуск пула хранилища: "
+
+#: storage/views.py:411
+msgid "Delete storage pool: "
+msgstr "Удаление пула хранилища: "
+
+#: storage/views.py:418
+msgid "Delete image: "
+msgstr "Удаление образа: "
+
+#: storage/views.py:427 storage/views.py:453
+msgid "The name of the images must not exceed 20 characters"
+msgstr "Название образа не должно превышать 20 символов"
+
+#: storage/views.py:430 storage/views.py:456
+msgid ""
+"The name of the image must not contain any characters and Russian characters"
+msgstr "Название образ не должно содержать символы и русские буквы"
+
+#: storage/views.py:433 storage/views.py:450
+msgid "Enter image name"
+msgstr "Введите имя образа"
+
+#: storage/views.py:436
+msgid "Enter image size"
+msgstr "Введите размер образа"
+
+#: storage/views.py:440
+msgid "Create image: "
+msgstr "Создание образа: "
+
+#: storage/views.py:459
+msgid "The image of the same name already exists"
+msgstr "Образ с таким именем уже существует"
+
+#: storage/views.py:462
+msgid "You can only clone a virtual machine images"
+msgstr "Клонировать можно только образы виртуальных машин"
+
+#: storage/views.py:466
+msgid "Cloning image: "
+msgstr "Клонирование образа: "
+
+#: templates/404.html:8
+msgid "Page not found"
+msgstr "Страница не найдена"
+
+#: templates/500.html:8
+msgid "Internal Server Error"
+msgstr "Внутренняя ошибка сервера"
+
+#: templates/base.html:48 templates/features.html:5 templates/index.html:33
+msgid "Features"
+msgstr "Особенности"
+
+#: templates/base.html:49 templates/screenshot.html:12
+msgid "Screenshots"
+msgstr "Скриншоты"
+
+#: templates/base.html:50 templates/docs.html:5
+msgid "Docs"
+msgstr "Документация"
+
+#: templates/base.html:51 templates/support.html:12
+msgid "Support"
+msgstr "Поддержка"
+
+#: templates/base.html:58 templates/registration/password_change_form.html:7
+#, fuzzy
+msgid "Change password"
+msgstr "Новый пароль"
+
+#: templates/base.html:59
+msgid "Sign out"
+msgstr "Выйти"
+
+#: templates/base.html:64 templates/registration/login.html:20
+msgid "Sign in"
+msgstr "Войти"
+
+#: templates/dashboard.html:6 templates/logs.html:10 templates/network.html:10
+#: templates/newvm.html:10 templates/overview.html:10
+#: templates/screenshot.html:19 templates/screenshot.html.py:21
+#: templates/snapshot.html:10 templates/storage.html:10 templates/vm.html:10
+msgid "Dashboard"
+msgstr "Центр управления"
+
+#: templates/dashboard.html:12 templates/dashboard.html.py:85
+#: templates/dashboard.html:87 templates/newvm.html:46
+#: templates/newvm.html.py:113 templates/newvm.html:213
+#: templates/newvm.html.py:276 templates/newvm.html:339
+#: templates/newvm.html.py:402 templates/newvm.html:465
+#: templates/newvm.html.py:528 templates/overview.html:70
+#: templates/snapshot.html:56 templates/storage.html:106
+#: templates/storage.html.py:126 templates/storage.html:174
+#: templates/vm.html:88
+msgid "Name"
+msgstr "Название"
+
+#: templates/dashboard.html:13 templates/dashboard.html.py:91
+#: templates/overview.html:42
+msgid "Hostname"
+msgstr "Имя хоста"
+
+#: templates/dashboard.html:14 templates/overview.html:71
+msgid "Status"
+msgstr "Статус"
+
+#: templates/dashboard.html:15 templates/overview.html:72
+#: templates/snapshot.html:58 templates/storage.html:109
+msgid "Action"
+msgstr "Действие"
+
+#: templates/dashboard.html:23
+msgid "available"
+msgstr "доступен"
+
+#: templates/dashboard.html:23
+msgid "not available"
+msgstr "не доступен"
+
+#: templates/dashboard.html:28 templates/dashboard.html.py:53
+msgid "Authorization"
+msgstr "Авторизация"
+
+#: templates/dashboard.html:34 templates/dashboard.html.py:97
+msgid "KVM login"
+msgstr "KVM логин"
+
+#: templates/dashboard.html:40 templates/dashboard.html.py:103
+msgid "KVM password"
+msgstr "KVM пароль"
+
+#: templates/dashboard.html:48 templates/dashboard.html.py:111
+#: templates/network.html:140 templates/newvm.html:198
+#: templates/newvm.html.py:262 templates/newvm.html:325
+#: templates/newvm.html.py:388 templates/newvm.html:451
+#: templates/newvm.html.py:514 templates/newvm.html:577
+#: templates/storage.html:65 templates/storage.html.py:135
+#: templates/storage.html:192
+msgid "Cancel"
+msgstr "Отмена"
+
+#: templates/dashboard.html:49 templates/dashboard.html.py:53
+msgid "Manage"
+msgstr "Управление"
+
+#: templates/dashboard.html:58 templates/network.html:71
+#: templates/snapshot.html:79 templates/storage.html:90
+#: templates/storage.html.py:145
+msgid "Delete"
+msgstr "Удалить"
+
+#: templates/dashboard.html:58 templates/network.html:71
+#: templates/network.html.py:73 templates/overview.html:97
+#: templates/snapshot.html:70 templates/snapshot.html.py:79
+#: templates/storage.html:90 templates/storage.html.py:92
+#: templates/storage.html:145 templates/vm.html:76 templates/vm.html.py:114
+#: templates/vm.html.py:130
+msgid "Are you sure?"
+msgstr "Вы уверены?"
+
+#: templates/dashboard.html:74
+msgid "You have no connection to the host"
+msgstr "У Вас отсутствуют подключения к хостам"
+
+#: templates/dashboard.html:79
+msgid "Add new host"
+msgstr "Подключить новый хост"
+
+#: templates/dashboard.html:93
+msgid "IP or Domain"
+msgstr "IP или Домен"
+
+#: templates/dashboard.html:99 templates/dashboard.html.py:105
+msgid "Optional"
+msgstr "Не обязательно"
+
+#: templates/dashboard.html:112
+msgid "Add"
+msgstr "Добавить"
+
+#: templates/dashboard.html:116
+msgid "Add connect"
+msgstr "Подключить"
+
+#: templates/docs.html:7
+msgid "Setting up the server to work with the service"
+msgstr "Настройка сервера для работы с сервисом"
+
+#: templates/docs.html:10
+msgid "Install packages libvirt-bin, KVM"
+msgstr "Установите пакеты libvirt-bin и KVM"
+
+#: templates/docs.html:16
+msgid "Install packages libvirt-bin, KVM, sasl2-bin"
+msgstr "Установите пакеты libvirt-bin, KVM и sasl2-bin"
+
+#: templates/docs.html:22
+msgid "Uncomment the line in the file <code>/etc/sysconfig/libvirtd</code>"
+msgstr "Раскоментируйте строчку в файле <code>/etc/sysconfig/libvirtd</code>"
+
+#: templates/docs.html:28
+msgid ""
+"Add the option <code>-l</code> in the file <code>/etc/default/libvirt-bin</"
+"code>"
+msgstr ""
+"Добавьте параметр <code>-l</code> в фаил <code>/etc/default/libvirt-bin</"
+"code>"
+
+#: templates/docs.html:34
+msgid "The file <code>/etc/libvirt/libvirtd.conf</code> uncomment the line"
+msgstr ""
+"В файле <code>/etc/libvirt/libvirtd.conf</code> раскоментируйте строчку"
+
+#: templates/docs.html:41
+msgid "Start the daemon libvirtd"
+msgstr "Запускаем деном libvirtd"
+
+#: templates/docs.html:47
+msgid ""
+"Restart the daemon libvirtd, because after installation it runs automatically"
+msgstr ""
+"Перезапустите демон libvirtd, потому что после установке он запускается "
+"автоматичкский"
+
+#: templates/docs.html:52
+msgid ""
+"Adding users and setting their passwords is done with the <code>saslpasswd2</"
+"code> command. When running this command it is important to tell it that the "
+"appname is <code>libvirt</code>. As an example, to add a user <code>fred</"
+"code>, run"
+msgstr ""
+"Командой <code>saslpasswd2</code> создаем пользователя, который получит "
+"доступ к libvirt. При запуске команды необходимо указать приложение "
+"<code>libvirt</code>. Например, создаем пользователя <code>fred</code>"
+
+#: templates/docs.html:68
+msgid ""
+"To see a list of all accounts the <code>sasldblistusers2</code> command can "
+"be used. This command expects to be given the path to the libvirt user "
+"database, which is kept in <code>/etc/libvirt/passwd.db</code>"
+msgstr ""
+"Для просмотра и проверки созаднных аккаунтов можно использовать команду "
+"<code>sasldblistusers2</code>. Для этого команде необходимо указать базу "
+"пользоватей libvirt, которая находиться и создается по умолчанию <code>/etc/"
+"libvirt/passwd.db</code>"
+
+#: templates/docs.html:82
+msgid ""
+"To disable a user's access, use the command <code>saslpasswd2</code> with "
+"the <code>-d</code>"
+msgstr ""
+"Для выключения доступа используйте команду <code>saslpasswd2</code> вместе с "
+"ключом <code>-d</code>"
+
+#: templates/docs.html:94
+msgid "Configuring the firewall"
+msgstr "Настройки firewall"
+
+#: templates/docs.html:97
+msgid "Open access to ports libvirt"
+msgstr "Открыть доступ к портам libvirt"
+
+#: templates/docs.html:103
+msgid ""
+"Create a file <code>/etc/ufw/applications.d/libvirtd</code> and it add the "
+"following lines"
+msgstr ""
+"Cоздать фаил <code>/etc/ufw/applications.d/libvirtd</code> и в него добавить "
+"следующие строки"
+
+#: templates/docs.html:110
+msgid "Add a firewall rule in the chain"
+msgstr "Добавляем правило в цепочку фаирвола"
+
+#: templates/docs.html:115
+msgid "Test connection"
+msgstr "Тест подключения"
+
+#: templates/docs.html:116
+msgid ""
+"Before you add the ip address of your server in the control center perform "
+"the following test"
+msgstr ""
+"Перед тем как добавить IP адрес в центр управления выполните следующий тест"
+
+#: templates/docs.html:118
+msgid "<strong>IP_address</strong>"
+msgstr "<strong>IP_адрес</strong>"
+
+#: templates/features.html:7
+msgid ""
+"created as a centralized tool for managing virtual machines through a web "
+"browser for personal use. This project is an alternative to <strong>virt-"
+"manager</strong> for the browser. The project is <strong>absolutely free</"
+"strong> and is developed in free time."
+msgstr ""
+"создавался как централизованное средство управления виртуальными машинами "
+"через веб браузер для личного использования. Эта альтернатива <strong>virt-"
+"manager</strong> только для браузера. Проект является <strong>абсолютно "
+"бесплатным</strong> и разрабатывается в свободное от работы время."
+
+#: templates/features.html:11
+msgid "Host system"
+msgstr "Хост система"
+
+#: templates/features.html:13 templates/features.html.py:26
+msgid "View CPU usage"
+msgstr "Просмотр загрузки ЦПУ"
+
+#: templates/features.html:14 templates/features.html.py:27
+msgid "View memory usage"
+msgstr "Просмотр загрузки памяти"
+
+#: templates/features.html:15
+msgid "Manage network pool"
+msgstr "Управление сетевым пулом"
+
+#: templates/features.html:16
+msgid "Manage storage pool"
+msgstr "Управление пулом хранилица"
+
+#: templates/features.html:17
+msgid "Manage VMs image"
+msgstr "Работа с образами ВМ"
+
+#: templates/features.html:18
+msgid "Cloning image VMs"
+msgstr "Клонирование образов ВМ"
+
+#: templates/features.html:19
+msgid "Manage snapshots"
+msgstr "Управление снапшотами"
+
+#: templates/features.html:20
+msgid "View logs"
+msgstr "Посмотр логов"
+
+#: templates/features.html:24
+msgid "Virtual machine"
+msgstr "Виртуальная машина"
+
+#: templates/features.html:28
+msgid "Manage ISO images"
+msgstr "Работа с ISO образами"
+
+#: templates/features.html:29 templates/overview.html:86
+#: templates/overview.html.py:92 templates/overview.html:98
+#: templates/vm.html:64 templates/vm.html.py:70 templates/vm.html.py:77
+msgid "Shutdown"
+msgstr "Выключить"
+
+#: templates/features.html:30 templates/overview.html:87
+#: templates/overview.html.py:93 templates/overview.html:99
+#: templates/vm.html:65 templates/vm.html.py:71 templates/vm.html.py:78
+msgid "Force shutdown"
+msgstr "Завершить"
+
+#: templates/features.html:31
+msgid "Installation"
+msgstr "Установка"
+
+#: templates/features.html:32
+msgid "VNC access"
+msgstr "Доступ по VNC"
+
+#: templates/features.html:33
+msgid "Create snaphosts"
+msgstr "Создание снапшотов"
+
+#: templates/index.html:7
+msgid ""
+"<strong>WebVirtMgr</strong> is a <strong>libvirt</strong>-based Web "
+"interface for managing virtual machines. It allows you to create and "
+"configure new domains, and adjust a domain's resource allocation. A VNC "
+"viewer over a SSH tunnel presents a full graphical console to the guest "
+"domain. <strong>KVM</strong> is currently the only hypervisor supported"
+msgstr ""
+"<strong>WebVirtMgr</strong> сервис централизованного управления виртуальными "
+"машинами. В качестве основных технологий используются: гипервизор "
+"<strong>KVM</strong> и библиотека управления виртуализацией <strong>libvirt</"
+"strong>. Создание, установка, резервное копирование, настройка и запуск "
+"виртуальных машин реализованы в виде простого для освоения web-интерфейса. "
+"Полный доступ к виртуальной машине осуществляется через VNC."
+
+#: templates/index.html:10
+msgid "Sign up"
+msgstr "Зарегистрироваться"
+
+#: templates/index.html:14
+msgid "Demo"
+msgstr "Демо"
+
+#: templates/index.html:21
+msgid "View a demo"
+msgstr "Посмотреть демо"
+
+#: templates/index.html:25
+msgid "Easy to use"
+msgstr "Простота использования"
+
+#: templates/index.html:26
+msgid ""
+"To work with this service you will need the OS Linux and Web browser with "
+"installed Java plug-in. An intuitive web interface, any system administrator "
+"can handle it with basic qualifications."
+msgstr ""
+"Для работы с сервисом вам понадобится ОС Linux и веб-браузер с установленным "
+"Java плагином. Интуитивно понятный веб-интерфейс с которым может справится "
+"любой системный администратор с любой квалификацией."
+
+#: templates/index.html:29
+msgid "Security"
+msgstr "Безопасность"
+
+#: templates/index.html:30
+msgid ""
+"WebVirtMgr service work with data encrypted connection. Service has access "
+"only to the KVM hypervisor via libvirt library, not to the entire OS, that "
+"improves the security of the server."
+msgstr ""
+"Сервис WebVirtMgr использует для передачи данных шифрованное соединение. "
+"Сервис получает доступ только к гипервизору KVM через библиотеку libvirt, а "
+"не ко всей ОС что повышает безопасность сервера в целом."
+
+#: templates/index.html:34
+msgid ""
+"Full control of virtualization. Creating, shutdown, installation, snapshots "
+"- all this and more you can do with your virtual machines. All your actions "
+"will be logged."
+msgstr ""
+"Полный контроль над виртуализацией. Создание, выключение, установка, "
+"снапшоты - все это и не только вы можете делать с вашими виртуальными "
+"машинами. Все ваши действия будут фиксироваться в журнале событий."
+
+#: templates/logs.html:9 templates/network.html:9 templates/newvm.html:9
+#: templates/overview.html:9 templates/snapshot.html:9
+#: templates/storage.html:9 templates/vm.html:9
+msgid "Main Menu"
+msgstr "Главное меню"
+
+#: templates/logs.html:11 templates/network.html:11 templates/newvm.html:11
+#: templates/overview.html:11 templates/snapshot.html:11
+#: templates/storage.html:11 templates/vm.html:11
+msgid "Server"
+msgstr "Сервер"
+
+#: templates/logs.html:12 templates/network.html:12 templates/newvm.html:12
+#: templates/overview.html:12 templates/snapshot.html:12
+#: templates/storage.html:12 templates/vm.html:12
+msgid "Server settings"
+msgstr "Настройки сервера"
+
+#: templates/logs.html:13 templates/logs.html.py:20 templates/network.html:13
+#: templates/network.html.py:29 templates/newvm.html:13
+#: templates/newvm.html.py:20 templates/overview.html:13
+#: templates/overview.html.py:20 templates/snapshot.html:13
+#: templates/snapshot.html.py:31 templates/storage.html:13
+#: templates/storage.html.py:29 templates/vm.html:13 templates/vm.html.py:20
+msgid "New VM"
+msgstr "Создать ВМ"
+
+#: templates/logs.html:14 templates/network.html:14 templates/newvm.html:14
+#: templates/overview.html:14 templates/snapshot.html:14
+#: templates/storage.html:14 templates/storage.html.py:39 templates/vm.html:14
+msgid "Storage"
+msgstr "Хранилище"
+
+#: templates/logs.html:15 templates/network.html:15
+#: templates/network.html.py:39 templates/newvm.html:15
+#: templates/overview.html:15 templates/snapshot.html:15
+#: templates/storage.html:15 templates/vm.html:15
+msgid "Virtual networks"
+msgstr "Виртуальные сети"
+
+#: templates/logs.html:16 templates/network.html:16 templates/newvm.html:16
+#: templates/overview.html:16 templates/screenshot.html:49
+#: templates/screenshot.html.py:51 templates/snapshot.html:16
+#: templates/storage.html:16 templates/vm.html:16
+msgid "Snapshots"
+msgstr "Снапшоты"
+
+#: templates/logs.html:17 templates/network.html:17 templates/newvm.html:17
+#: templates/overview.html:17 templates/snapshot.html:17
+#: templates/storage.html:17 templates/vm.html:17
+msgid "Logs"
+msgstr "Логи"
+
+#: templates/logs.html:18 templates/network.html:27 templates/newvm.html:18
+#: templates/overview.html:18 templates/overview.html.py:65
+#: templates/snapshot.html:29 templates/storage.html:27 templates/vm.html:18
+msgid "Virtual Machines"
+msgstr "Виртуальные машины"
+
+#: templates/logs.html:30 templates/screenshot.html:55
+#: templates/screenshot.html.py:57
+msgid "Logging"
+msgstr "Логирование"
+
+#: templates/logs.html:45
+msgid "Type"
+msgstr "Тип"
+
+#: templates/logs.html:46
+msgid "Message"
+msgstr "Сообщение"
+
+#: templates/logs.html:47 templates/snapshot.html:57
+msgid "Date"
+msgstr "Дата"
+
+#: templates/logs.html:62
+msgid "You have no logs"
+msgstr "У Вас отсутствуют какие либо логи"
+
+#: templates/network.html:18 templates/screenshot.html:43
+#: templates/screenshot.html.py:45
+msgid "Network pool"
+msgstr "Сетевой пул"
+
+#: templates/network.html:19 templates/storage.html:19
+msgid "New pool"
+msgstr "Новый пул"
+
+#: templates/network.html:56
+msgid "Network pool not found"
+msgstr "Сетевые пулы не найдены"
+
+#: templates/network.html:61 templates/network.html.py:111
+#: templates/storage.html:51 templates/storage.html.py:76
+msgid "Pool name"
+msgstr "Название пула"
+
+#: templates/network.html:62
+msgid "Device pool"
+msgstr "Устройство пула"
+
+#: templates/network.html:63 templates/storage.html:79 templates/vm.html:89
+msgid "State"
+msgstr "Состояние"
+
+#: templates/network.html:70 templates/storage.html:89
+msgid "Enable"
+msgstr "Включить"
+
+#: templates/network.html:73 templates/storage.html:92
+msgid "Disable"
+msgstr "Выключить"
+
+#: templates/network.html:80
+msgid "IPv4 configuration:"
+msgstr "Конфигурация IPv4:"
+
+#: templates/network.html:83 templates/network.html.py:129
+msgid "Type forwarding"
+msgstr "Тип шлюза"
+
+#: templates/network.html:84 templates/network.html.py:117
+msgid "Subnet pool"
+msgstr "Подсеть пула"
+
+#: templates/network.html:87
+msgid "Start"
+msgstr "Начало"
+
+#: templates/network.html:88
+msgid "End"
+msgstr "Конец"
+
+#: templates/network.html:93
+msgid "on"
+msgstr "включен"
+
+#: templates/network.html:93
+msgid "off"
+msgstr "не включен"
+
+#: templates/network.html:105
+msgid "New network pool"
+msgstr "Новый сетевой пул"
+
+#: templates/network.html:141 templates/newvm.html:60
+#: templates/newvm.html.py:68 templates/newvm.html:76
+#: templates/newvm.html.py:84 templates/newvm.html:92
+#: templates/newvm.html.py:100 templates/newvm.html:199
+#: templates/newvm.html.py:263 templates/newvm.html:326
+#: templates/newvm.html.py:389 templates/newvm.html:452
+#: templates/newvm.html.py:515 templates/newvm.html:578
+#: templates/storage.html:66 templates/storage.html.py:193
+msgid "Create"
+msgstr "Создать"
+
+#: templates/newvm.html:30 templates/newvm.html.py:107
+#: templates/newvm.html:207 templates/newvm.html.py:270
+#: templates/newvm.html:333 templates/newvm.html.py:396
+#: templates/newvm.html:459 templates/newvm.html.py:522
+#: templates/screenshot.html:31 templates/screenshot.html.py:33
+msgid "New virtual machine"
+msgstr "Новая виртуальная машина"
+
+#: templates/newvm.html:40
+msgid "Templates new VM"
+msgstr "Шаблоны новых ВМ"
+
+#: templates/newvm.html:47
+msgid "VCPUs"
+msgstr "VCPUs"
+
+#: templates/newvm.html:48 templates/newvm.html.py:119
+#: templates/overview.html:45 templates/vm.html:93
+msgid "Memory"
+msgstr "Память"
+
+#: templates/newvm.html:49
+msgid "Disk"
+msgstr "Диск"
+
+#: templates/newvm.html:148 templates/vm.html:91
+msgid "Core"
+msgstr "Ядра процессора"
+
+#: templates/newvm.html:158 templates/newvm.html.py:236
+#: templates/newvm.html:299 templates/newvm.html.py:362
+#: templates/newvm.html:425 templates/newvm.html.py:488
+#: templates/newvm.html:551 templates/vm.html:96
+msgid "CD image"
+msgstr "Образ СD"
+
+#: templates/newvm.html:166 templates/newvm.html.py:244
+#: templates/newvm.html:307 templates/newvm.html.py:370
+#: templates/newvm.html:433 templates/newvm.html.py:496
+#: templates/newvm.html:559
+msgid "Without image"
+msgstr "Без образа"
+
+#: templates/newvm.html:171 templates/vm.html:95
+msgid "HDD image"
+msgstr "Образ HDD"
+
+#: templates/newvm.html:179 templates/newvm.html.py:230
+#: templates/newvm.html:293 templates/newvm.html.py:356
+#: templates/newvm.html:419 templates/newvm.html.py:482
+#: templates/newvm.html:545 templates/snapshot.html:20
+#: templates/storage.html:83
+msgid "None"
+msgstr "Отсутствует"
+
+#: templates/newvm.html:185 templates/newvm.html.py:249
+#: templates/newvm.html:312 templates/newvm.html.py:375
+#: templates/newvm.html:438 templates/newvm.html.py:501
+#: templates/newvm.html:564 templates/vm.html:90
+msgid "Network"
+msgstr "Сетевой мост"
+
+#: templates/newvm.html:191 templates/newvm.html.py:255
+#: templates/newvm.html:318 templates/newvm.html.py:381
+#: templates/newvm.html:444 templates/newvm.html.py:507
+#: templates/newvm.html:570
+msgid "set up?"
+msgstr "если настроен?"
+
+#: templates/newvm.html:203
+msgid "Custom VM"
+msgstr "Определить ВМ"
+
+#: templates/newvm.html:222 templates/newvm.html.py:285
+#: templates/newvm.html:348 templates/newvm.html.py:411
+#: templates/newvm.html:474 templates/newvm.html.py:537
+#: templates/screenshot.html:37 templates/screenshot.html.py:39
+#: templates/storage.html:18
+msgid "Storage pool"
+msgstr "Пул хранилища"
+
+#: templates/overview.html:30
+msgid "Overview"
+msgstr "Обзор"
+
+#: templates/overview.html:43
+msgid "Processor(s)"
+msgstr "Процессор(ы)"
+
+#: templates/overview.html:44 templates/vm.html:92
+msgid "CPU utilization"
+msgstr "Загрузка процессора"
+
+#: templates/overview.html:46
+msgid "Type connection"
+msgstr "Тип подключения"
+
+#: templates/overview.html:47
+msgid "Libvirt version"
+msgstr "Версия libvirt"
+
+#: templates/overview.html:79 templates/vm.html:100
+msgid "power on"
+msgstr "вкючено"
+
+#: templates/overview.html:79 templates/vm.html:100
+msgid "power off"
+msgstr "выключено"
+
+#: templates/overview.html:79 templates/vm.html:100
+msgid "suspend"
+msgstr "приостановлено"
+
+#: templates/overview.html:84 templates/overview.html.py:96
+#: templates/vm.html:62 templates/vm.html.py:75
+msgid "Start VM"
+msgstr "Запуск"
+
+#: templates/overview.html:85 templates/overview.html.py:91
+#: templates/overview.html:97 templates/vm.html:63 templates/vm.html.py:69
+#: templates/vm.html.py:76
+msgid "Suspend"
+msgstr "Приостановить"
+
+#: templates/overview.html:90 templates/vm.html:68
+msgid "Resume"
+msgstr "Возобновить"
+
+#: templates/overview.html:98 templates/vm.html:77
+msgid "Send shutdown signal?"
+msgstr "Послать сигнал выключения?"
+
+#: templates/overview.html:99 templates/vm.html:78
+msgid "Force shutdown?"
+msgstr "Выключить принудительно?"
+
+#: templates/screenshot.html:25 templates/screenshot.html.py:27
+msgid "Server overview"
+msgstr "Обзор сервера"
+
+#: templates/screenshot.html:61 templates/screenshot.html.py:63
+#: templates/vm.html:34
+msgid "Managing a virtual machine"
+msgstr "Управление виртуальной машиной"
+
+#: templates/screenshot.html:67 templates/screenshot.html.py:69
+msgid "VNC pannel"
+msgstr "VNC панель"
+
+#: templates/snapshot.html:18
+msgid "VM snapshots"
+msgstr "Снапшоты вм"
+
+#: templates/snapshot.html:41
+msgid "The virtual machine snapshots"
+msgstr "Снапшоты виртуальной машины"
+
+#: templates/snapshot.html:51
+msgid "You have no snapshots"
+msgstr "У Вас отсутствуют какие либо снапшоты"
+
+#: templates/snapshot.html:70 templates/snapshot.html.py:72
+msgid "Revert"
+msgstr "Возвратиться"
+
+#: templates/storage.html:45
+msgid "New storage pool"
+msgstr "Новый пул хранилища"
+
+#: templates/storage.html:57 templates/storage.html.py:77
+msgid "Pool path"
+msgstr "Путь пула"
+
+#: templates/storage.html:72
+msgid "Storage pools not found"
+msgstr "Пулы хранилища не найдены"
+
+#: templates/storage.html:78 templates/storage.html.py:107
+#: templates/storage.html:180
+msgid "Size"
+msgstr "Размер"
+
+#: templates/storage.html:101
+msgid "Images"
+msgstr "Образы"
+
+#: templates/storage.html:108
+msgid "Format"
+msgstr "Формат"
+
+#: templates/storage.html:120
+msgid "Clone image"
+msgstr "Клонирование образа"
+
+#: templates/storage.html:136
+msgid "Clone"
+msgstr "Клонировать"
+
+#: templates/storage.html:154
+msgid "No images or pool is not active"
+msgstr "Как либо образы отсутствуют или пул не активен"
+
+#: templates/storage.html:168 templates/storage.html.py:197
+msgid "New image"
+msgstr "Новый образ"
+
+#: templates/storage.html:184
+msgid "Gb"
+msgstr "ГБ"
+
+#: templates/support.html:14
+msgid "Contact us"
+msgstr "Контакты"
+
+#: templates/support.html:15
+msgid "If you have additional questions you can send us an e-mail."
+msgstr ""
+"Если у вас возникли дополнительные вопросы вы всегда можете отправить нам e-"
+"mail."
+
+#: templates/support.html:19
+msgid "FAQ"
+msgstr "FAQ"
+
+#: templates/vm.html:72 templates/vm.html.py:81
+msgid "Create snapshot"
+msgstr "Создать снапшот"
+
+#: templates/vm.html:81
+msgid ""
+"Attention: When enabled, the virtual machine snapshot will be created on a "
+"lot longer. The virtual machine before creating the snapshot automatically "
+"switches to Paused and will be locked until you create it. Continue?"
+msgstr ""
+"Внимание: при включенной виртуальной машине снапшот будет создаваться на "
+"много дольше. Виртуальная машина перед созданием снапшота автоматический "
+"перейдет в режим Приостановлена и будет заблокирована пока не создаст его. "
+"Продолжить?"
+
+#: templates/vm.html:94
+msgid "Memory use"
+msgstr "Используется"
+
+#: templates/vm.html:102 templates/vm.html.py:106
+msgid "allocated"
+msgstr "выделено"
+
+#: templates/vm.html:102 templates/vm.html.py:106
+msgid "of"
+msgstr "из"
+
+#: templates/vm.html:114
+msgid "Disconnect"
+msgstr "Отключить"
+
+#: templates/vm.html:122
+msgid "Connect"
+msgstr "Подключить"
+
+#: templates/vm.html:130 templates/vm.html.py:132
+msgid "Undefine"
+msgstr "Удалить"
+
+#: templates/vm.html:136
+msgid "To cancel the definition of a virtual machine, delete images"
+msgstr "Для того чтобы удалить виртуальную машину удалите ее"
+
+#: templates/vm.html:136
+msgid "snapshots"
+msgstr "снапшоты"
+
+#: templates/registration/activate.html:7
+#: templates/registration/activation_complete.html:7
+msgid "Your account has been successfully activated"
+msgstr "Ваш аккаунт уже был успешно активирован"
+
+#: templates/registration/activation_complete.html:8
+msgid "You can"
+msgstr "Теперь Вы можете выполнить"
+
+#: templates/registration/activation_complete.html:8
+msgid "sign in"
+msgstr "Войти"
+
+#: templates/registration/login.html:8
+#: templates/registration/password_reset_form.html:8
+#: templates/registration/registration_form.html:8
+msgid "You have already sign in!"
+msgstr "Вы уже вошли!"
+
+#: templates/registration/login.html:14
+msgid "Log In"
+msgstr "Вход"
+
+#: templates/registration/login.html:21
+msgid "Lost password?"
+msgstr "Забыли пароль?"
+
+#: templates/registration/logout.html:9
+msgid "Logout"
+msgstr "Выход"
+
+#: templates/registration/password_change_done.html:7
+#: templates/registration/password_reset_complete.html:7
+msgid "Your password was successfully changed."
+msgstr "Ваш пароль успешно изменен."
+
+#: templates/registration/password_change_done.html:8
+#: templates/registration/password_reset_done.html:8
+msgid "Go to home page"
+msgstr "Перейти на главную страницу"
+
+#: templates/registration/password_change_form.html:12
+msgid "Change"
+msgstr ""
+
+#: templates/registration/password_reset_confirm.html:6
+#: templates/registration/password_reset_form.html:14
+msgid "Password recovery"
+msgstr "Восстановление пароля"
+
+#: templates/registration/password_reset_confirm.html:8
+msgid "New password"
+msgstr "Новый пароль"
+
+#: templates/registration/password_reset_confirm.html:10
+msgid "Confirm password"
+msgstr "Подтвердить пароль"
+
+#: templates/registration/password_reset_done.html:7
+msgid "We have sent instructions on how to reset your password on the email."
+msgstr "Мы отправлены инструкции о том, как изменить пароль на email."
+
+#: templates/registration/password_reset_form.html:20
+msgid "Rocevery"
+msgstr "Восстановить"
+
+#: templates/registration/registration_complete.html:7
+msgid "Thank you for registering on our website."
+msgstr "Спасибо за регистрацию на нашем сайте."
+
+#: templates/registration/registration_complete.html:7
+msgid "In your email send link to activate your account."
+msgstr "На Ваш email отправлена ссылка для активации учетной записи."
+
+#: templates/registration/registration_form.html:14
+msgid "Registration"
+msgstr "Регистрация"
+
+#: vm/views.py:436
+msgid "Create snapshot for VM: "
+msgstr "Создание снапшота для ВМ: "
+
+#: vm/views.py:440
+msgid "Successful create snapshot"
+msgstr "Успешное создание снапшота"
+
+#: vm/views.py:444
+msgid "Error: create snapshot"
+msgstr "Ошибка: Создания снапшота"
+
+#: vm/views.py:448
+msgid "Enable autostart for VM: "
+msgstr "Включение автозапуска для ВМ: "
+
+#: vm/views.py:457
+msgid "Disable autostart for VM: "
+msgstr "Выключение автозапуска для ВМ: "
+
+#: vm/views.py:479
+msgid "Undefine VM: "
+msgstr "Удаление ВМ: "
+
+#~ msgid "sing in"
+#~ msgstr "вход"

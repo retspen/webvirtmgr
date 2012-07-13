@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+     <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span3">
+          <div class="sidebar-nav well">
+            <ul class="nav nav-list">
+              <li class="nav-header">{% trans "Main Menu" %}</li>
+                <li><a href="/dashboard/"><i class="icon-home"></i>{% trans "Dashboard" %}</a></li>
+                <li><a href="/overview/{{ host_id }}/"><i class="icon-info-sign"></i>{% trans "Server" %} <strong>{{ kvm_host.hostname }}</strong></a></li>
+              <li class="nav-header"></i>{% trans "Server settings" %}</li>
+                <li><a href="/newvm/{{ host_id }}/"><i class="icon-plus"></i>{% trans "New VM" %}</a></li>
+                <li><a href="/storage/{{ host_id }}/"><i class="icon-folder-open"></i>{% trans "Storage" %}</a></li>
+                <li><a href="/network/{{ host_id }}/"><i class="icon-signal"></i>{% trans "Virtual networks" %}</a></li>
+                <li><a href="/snapshot/{{ host_id }}/"><i class="icon-download-alt"></i>{% trans "Snapshots" %}</a></li>
+                <li><a href="/logs/{{ host_id }}/"><i class="icon-list-alt"></i>{% trans "Logs" %}</a></li>
+              <li class="nav-header">{% trans "Network pool" %}</li>
+                <li><a data-toggle="modal" href="#myModalnewnet"><i class="icon-plus"></i>{% trans "New pool" %}</a></li>
+              {% for name, status in pools.items %}
+              {% if pool == name %}
+              <li class="active"><a href="/network/{{ host_id }}/{{ name }}/"><i class="icon-folder-open icon-white"></i> {{ name }}</a></li>
+              {% else %}
+              <li><a href="/network/{{ host_id }}/{{ name }}/"><font color="{% if status == 1 %}green{% else %}red{% endif %}"><i class="icon-folder-open"></i> {{ name }}</font></a></li>
+              {% endif %}
+              {% endfor %}
+              <li class="nav-header">{% trans "Virtual Machines" %}</li>
+              {% if not all_vm %}
+              <li><a href="/newvm/{{ host_id }}/"><i class="icon-plus"></i>{% trans "New VM" %}</a></li>
+              {% endif %}
+              {% for name, state in all_vm.items %}
+              <li><a href="/vm/{{ host_id }}/{{ name }}/"><font color="{% if state == 1 %}green{% endif %}{% if state == 5 %}red{% endif %}{% if state == 3 %}orange{% endif %}"><i class="icon-th-large"></i>{{ name }}</font></a></li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+    <div class="span8 well">
+      <div class="page-header">
+          <h2>{% trans "Virtual networks" %}</h2>
+        </div>
+      {% if errors %}
+      <div class="row">
+       <div class="span6">
+      {% for error in errors %}
+       <div class="alert alert-error">
+        <a class="close" data-dismiss="alert">&times;</a>
+        {{ error }}
+       </div>
+      </div>
+      {% endfor %}
+      </div>
+      {% endif %}
+      <div class="row">
+      {% if pool = "new_net_pool" %}
+        <div class="span4">
+          <h4>{% trans "Network pool not found" %}</h4>
+        </div>
+      </div>
+      {% else %}
+        <div class="span2">
+          <p>{% trans "Pool name" %}</p>
+          <p>{% trans "Device pool" %}</p>
+          <p>{% trans "State" %}</p>
+        </div>
+        <div class="span3">
+          <p><strong>{{ pool }}</strong></p>
+          <p>{{ bridge }}</p>
+          <form action="/network/{{ host_id }}/{{ pool }}/" method="post" style="height:10px;">
+      			{% if status = 0 %}
+      			<button type="submit" class="btn btn-primary" name="start_pool" value="start_pool" title="{% trans "Enable" %}"><i class="icon-play icon-white"></i></button>
+            <button type="submit" class="btn btn-danger" name="del_pool" value="del_pool" title="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')"><i class="icon-trash icon-white"></i></button>
+      			{% else %}
+      			<button type="submit" class="btn btn-primary" name="stop_pool" value="stop_pool" title="{% trans "Disable" %}" onclick="return confirm('{% trans "Are you sure?" %}')"><i class="icon-stop icon-white"></i></button>
+      			{% endif %}
+      		  </form>
+      	</div>
+      </div>
+      {% if status != 0 %}
+      <hr>
+      <h4>{% trans "IPv4 configuration:" %}</h4><br>
+      <div class="row">
+        <div class="span2">
+          <p>{% trans "Type forwarding" %}</p>
+          <p>{% trans "Subnet pool" %}</p>
+          <p>DHCP</p>
+          {% if dhcprange %}
+          <p>{% trans "Start" %}</p>
+          <p>{% trans "End" %}</p> {% endif %}
+        </div>
+        <div class="span3">
+          <p>{% if netmode.0 == 'nat' %} NAT {% endif %} {% if netmode.0 == 'route' %} ROUTE {% endif %} {% if not netmode.0 %} ISOLATE {% endif %}</p>
+          <p>{{ network }}</p>
+          <p>{% if dhcprange %}<font color="green">{% trans "on" %}</font>{% else %}<font color="red">{% trans "off" %}</font>{% endif %}</p>
+          {% for dhcp in dhcprange %} 
+            <p>{{ dhcp }}</p>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+    {% endif %}
+    </div>
+    <div id="myModalnewnet" class="modal hide fade">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal">&times;</button>
+            <h3>{% trans "New network pool" %}</h3>
+      </div>
+      <div class="modal-body">
+      <form class="form-horizontal" action="/network/{{ host_id }}/{{ pool }}/" method="post">
+        <fieldset>
+          <div class="control-group">
+          <label class="control-label">{% trans "Pool name" %}</label>
+            <div class="controls">
+              <input type="text" class="input-medium" name="name_pool" placeholder="Name" value="">
+            </div>
+          </div>
+          <div class="control-group">
+          <label class="control-label">{% trans "Subnet pool" %}</label>
+            <div class="controls">
+              <input type="text" class="input-medium"  name="net_addr" value="192.168.100.0/24">
+            </div>
+          </div>
+          <div class="control-group">
+          <label class="control-label">DHCP</label>
+            <div class="controls">
+              <input type="checkbox" name="dhcp" value="yes">
+            </div>
+          </div>
+          <div class="control-group">
+          <label class="control-label">{% trans "Type forwarding" %}</label>
+            <div class="controls">
+              <select class="input-medium" name="forward"> 
+                <option value="nat">NAT</option>
+                <option value="route">Route</option>
+                <option value="none">Isolate</option>
+              </select>
+            </div>
+          </div>
+         </div>
+          <div class="modal-footer">
+            <a href="#" class="btn" data-dismiss="modal">{% trans "Cancel" %}</a>
+              <input class="btn btn-primary" type="submit" name="new_net_pool" value="{% trans "Create" %}">
+            </form>
+           </div>
+         </div>
+  </div>
+{% endblock %}

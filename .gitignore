@@ -1,0 +1,4 @@
+webvirtmgr.db
+*.pyc
+.DS_Store
+._*
