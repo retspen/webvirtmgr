@@ -139,18 +139,7 @@ def index(request, host_id):
 			return "error"
 
 	errors = []
-	conn = vm_conn()
-	if conn != "error":
-		all_vm = get_all_vm()
-		host_info = get_info()
-		mem_usage = get_mem_usage()
-		cpu_usage = get_cpu_usage()
-		lib_virt_ver = conn.getLibVersion()
-		conn_type = conn.getURI()
-	else:
-		msg = _('Error connecting: Check the KVM login and KVM password')
-		errors.append(msg)
-		
+
 	if request.method == 'POST':
 		login_kvm = request.POST.get('login_kvm','')
 		passwd_kvm = request.POST.get('passwd_kvm','')
@@ -160,6 +149,7 @@ def index(request, host_id):
 			return HttpResponseRedirect('/overview/%s/' % (host_id))
 		vname = request.POST.get('vname','')
 		if vname:
+			conn = vm_conn()
 			dom = get_dom(vname)
 		if request.POST.get('suspend',''):
 			try:
@@ -214,9 +204,20 @@ def index(request, host_id):
             
 		if not errors:
 			return HttpResponseRedirect('/overview/%s/' % (host_id))
-	
+
+	conn = vm_conn()
+
 	if conn != "error":
+		all_vm = get_all_vm()
+		host_info = get_info()
+		mem_usage = get_mem_usage()
+		cpu_usage = get_cpu_usage()
+		lib_virt_ver = conn.getLibVersion()
+		conn_type = conn.getURI()
 		conn.close()
+	else:
+		msg = _('Error connecting: Check the KVM login and KVM password')
+		errors.append(msg)
 		
 	return render_to_response('overview.html', locals())
 
