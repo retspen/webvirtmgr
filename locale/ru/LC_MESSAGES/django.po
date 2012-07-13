@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-04 19:51+0300\n"
+"POT-Creation-Date: 2012-07-13 15:30+0300\n"
 "PO-Revision-Date: 2012-05-06 14:41+0300\n"
 "Last-Translator: Anatoliy Guskov <anatoliy.guskov@gmail.com>\n"
 "Language-Team: RU <LL@li.org>\n"
@@ -275,38 +275,16 @@ msgstr "Страница не найдена"
 msgid "Internal Server Error"
 msgstr "Внутренняя ошибка сервера"
 
-#: templates/base.html:48 templates/features.html:5 templates/index.html:33
-msgid "Features"
-msgstr "Особенности"
-
-#: templates/base.html:49 templates/screenshot.html:12
-msgid "Screenshots"
-msgstr "Скриншоты"
-
-#: templates/base.html:50 templates/docs.html:5
+#: templates/base.html:44 templates/docs.html:5
 msgid "Docs"
 msgstr "Документация"
 
-#: templates/base.html:51 templates/support.html:12
-msgid "Support"
-msgstr "Поддержка"
-
-#: templates/base.html:58 templates/registration/password_change_form.html:7
-#, fuzzy
-msgid "Change password"
-msgstr "Новый пароль"
-
-#: templates/base.html:59
+#: templates/base.html:48
 msgid "Sign out"
 msgstr "Выйти"
 
-#: templates/base.html:64 templates/registration/login.html:20
-msgid "Sign in"
-msgstr "Войти"
-
 #: templates/dashboard.html:6 templates/logs.html:10 templates/network.html:10
 #: templates/newvm.html:10 templates/overview.html:10
-#: templates/screenshot.html:19 templates/screenshot.html.py:21
 #: templates/snapshot.html:10 templates/storage.html:10 templates/vm.html:10
 msgid "Dashboard"
 msgstr "Центр управления"
@@ -382,7 +360,7 @@ msgstr "Удалить"
 #: templates/snapshot.html:70 templates/snapshot.html.py:79
 #: templates/storage.html:90 templates/storage.html.py:92
 #: templates/storage.html:145 templates/vm.html:76 templates/vm.html.py:114
-#: templates/vm.html.py:130
+#: templates/vm.html.py:138
 msgid "Are you sure?"
 msgstr "Вы уверены?"
 
@@ -515,150 +493,20 @@ msgstr ""
 msgid "<strong>IP_address</strong>"
 msgstr "<strong>IP_адрес</strong>"
 
-#: templates/features.html:7
-msgid ""
-"created as a centralized tool for managing virtual machines through a web "
-"browser for personal use. This project is an alternative to <strong>virt-"
-"manager</strong> for the browser. The project is <strong>absolutely free</"
-"strong> and is developed in free time."
-msgstr ""
-"создавался как централизованное средство управления виртуальными машинами "
-"через веб браузер для личного использования. Эта альтернатива <strong>virt-"
-"manager</strong> только для браузера. Проект является <strong>абсолютно "
-"бесплатным</strong> и разрабатывается в свободное от работы время."
+#: templates/index.html:8 templates/admin/login.html:8
+#: templates/registration/login.html:8
+msgid "You have already sign in!"
+msgstr "Вы уже вошли!"
 
-#: templates/features.html:11
-msgid "Host system"
-msgstr "Хост система"
+#: templates/index.html:14 templates/admin/login.html:14
+#: templates/registration/login.html:14
+msgid "Log In"
+msgstr "Вход"
 
-#: templates/features.html:13 templates/features.html.py:26
-msgid "View CPU usage"
-msgstr "Просмотр загрузки ЦПУ"
-
-#: templates/features.html:14 templates/features.html.py:27
-msgid "View memory usage"
-msgstr "Просмотр загрузки памяти"
-
-#: templates/features.html:15
-msgid "Manage network pool"
-msgstr "Управление сетевым пулом"
-
-#: templates/features.html:16
-msgid "Manage storage pool"
-msgstr "Управление пулом хранилица"
-
-#: templates/features.html:17
-msgid "Manage VMs image"
-msgstr "Работа с образами ВМ"
-
-#: templates/features.html:18
-msgid "Cloning image VMs"
-msgstr "Клонирование образов ВМ"
-
-#: templates/features.html:19
-msgid "Manage snapshots"
-msgstr "Управление снапшотами"
-
-#: templates/features.html:20
-msgid "View logs"
-msgstr "Посмотр логов"
-
-#: templates/features.html:24
-msgid "Virtual machine"
-msgstr "Виртуальная машина"
-
-#: templates/features.html:28
-msgid "Manage ISO images"
-msgstr "Работа с ISO образами"
-
-#: templates/features.html:29 templates/overview.html:86
-#: templates/overview.html.py:92 templates/overview.html:98
-#: templates/vm.html:64 templates/vm.html.py:70 templates/vm.html.py:77
-msgid "Shutdown"
-msgstr "Выключить"
-
-#: templates/features.html:30 templates/overview.html:87
-#: templates/overview.html.py:93 templates/overview.html:99
-#: templates/vm.html:65 templates/vm.html.py:71 templates/vm.html.py:78
-msgid "Force shutdown"
-msgstr "Завершить"
-
-#: templates/features.html:31
-msgid "Installation"
-msgstr "Установка"
-
-#: templates/features.html:32
-msgid "VNC access"
-msgstr "Доступ по VNC"
-
-#: templates/features.html:33
-msgid "Create snaphosts"
-msgstr "Создание снапшотов"
-
-#: templates/index.html:7
-msgid ""
-"<strong>WebVirtMgr</strong> is a <strong>libvirt</strong>-based Web "
-"interface for managing virtual machines. It allows you to create and "
-"configure new domains, and adjust a domain's resource allocation. A VNC "
-"viewer over a SSH tunnel presents a full graphical console to the guest "
-"domain. <strong>KVM</strong> is currently the only hypervisor supported"
-msgstr ""
-"<strong>WebVirtMgr</strong> сервис централизованного управления виртуальными "
-"машинами. В качестве основных технологий используются: гипервизор "
-"<strong>KVM</strong> и библиотека управления виртуализацией <strong>libvirt</"
-"strong>. Создание, установка, резервное копирование, настройка и запуск "
-"виртуальных машин реализованы в виде простого для освоения web-интерфейса. "
-"Полный доступ к виртуальной машине осуществляется через VNC."
-
-#: templates/index.html:10
-msgid "Sign up"
-msgstr "Зарегистрироваться"
-
-#: templates/index.html:14
-msgid "Demo"
-msgstr "Демо"
-
-#: templates/index.html:21
-msgid "View a demo"
-msgstr "Посмотреть демо"
-
-#: templates/index.html:25
-msgid "Easy to use"
-msgstr "Простота использования"
-
-#: templates/index.html:26
-msgid ""
-"To work with this service you will need the OS Linux and Web browser with "
-"installed Java plug-in. An intuitive web interface, any system administrator "
-"can handle it with basic qualifications."
-msgstr ""
-"Для работы с сервисом вам понадобится ОС Linux и веб-браузер с установленным "
-"Java плагином. Интуитивно понятный веб-интерфейс с которым может справится "
-"любой системный администратор с любой квалификацией."
-
-#: templates/index.html:29
-msgid "Security"
-msgstr "Безопасность"
-
-#: templates/index.html:30
-msgid ""
-"WebVirtMgr service work with data encrypted connection. Service has access "
-"only to the KVM hypervisor via libvirt library, not to the entire OS, that "
-"improves the security of the server."
-msgstr ""
-"Сервис WebVirtMgr использует для передачи данных шифрованное соединение. "
-"Сервис получает доступ только к гипервизору KVM через библиотеку libvirt, а "
-"не ко всей ОС что повышает безопасность сервера в целом."
-
-#: templates/index.html:34
-msgid ""
-"Full control of virtualization. Creating, shutdown, installation, snapshots "
-"- all this and more you can do with your virtual machines. All your actions "
-"will be logged."
-msgstr ""
-"Полный контроль над виртуализацией. Создание, выключение, установка, "
-"снапшоты - все это и не только вы можете делать с вашими виртуальными "
-"машинами. Все ваши действия будут фиксироваться в журнале событий."
+#: templates/index.html:28 templates/admin/login.html:20
+#: templates/registration/login.html:20
+msgid "Sign in"
+msgstr "Войти"
 
 #: templates/logs.html:9 templates/network.html:9 templates/newvm.html:9
 #: templates/overview.html:9 templates/snapshot.html:9
@@ -701,8 +549,7 @@ msgid "Virtual networks"
 msgstr "Виртуальные сети"
 
 #: templates/logs.html:16 templates/network.html:16 templates/newvm.html:16
-#: templates/overview.html:16 templates/screenshot.html:49
-#: templates/screenshot.html.py:51 templates/snapshot.html:16
+#: templates/overview.html:16 templates/snapshot.html:16
 #: templates/storage.html:16 templates/vm.html:16
 msgid "Snapshots"
 msgstr "Снапшоты"
@@ -719,8 +566,7 @@ msgstr "Логи"
 msgid "Virtual Machines"
 msgstr "Виртуальные машины"
 
-#: templates/logs.html:30 templates/screenshot.html:55
-#: templates/screenshot.html.py:57
+#: templates/logs.html:30
 msgid "Logging"
 msgstr "Логирование"
 
@@ -740,8 +586,7 @@ msgstr "Дата"
 msgid "You have no logs"
 msgstr "У Вас отсутствуют какие либо логи"
 
-#: templates/network.html:18 templates/screenshot.html:43
-#: templates/screenshot.html.py:45
+#: templates/network.html:18
 msgid "Network pool"
 msgstr "Сетевой пул"
 
@@ -821,7 +666,6 @@ msgstr "Создать"
 #: templates/newvm.html:207 templates/newvm.html.py:270
 #: templates/newvm.html:333 templates/newvm.html.py:396
 #: templates/newvm.html:459 templates/newvm.html.py:522
-#: templates/screenshot.html:31 templates/screenshot.html.py:33
 msgid "New virtual machine"
 msgstr "Новая виртуальная машина"
 
@@ -868,7 +712,7 @@ msgstr "Образ HDD"
 #: templates/newvm.html:293 templates/newvm.html.py:356
 #: templates/newvm.html:419 templates/newvm.html.py:482
 #: templates/newvm.html:545 templates/snapshot.html:20
-#: templates/storage.html:83
+#: templates/storage.html:83 templates/vm.html:122
 msgid "None"
 msgstr "Отсутствует"
 
@@ -893,7 +737,6 @@ msgstr "Определить ВМ"
 #: templates/newvm.html:222 templates/newvm.html.py:285
 #: templates/newvm.html:348 templates/newvm.html.py:411
 #: templates/newvm.html:474 templates/newvm.html.py:537
-#: templates/screenshot.html:37 templates/screenshot.html.py:39
 #: templates/storage.html:18
 msgid "Storage pool"
 msgstr "Пул хранилища"
@@ -941,6 +784,18 @@ msgstr "Запуск"
 msgid "Suspend"
 msgstr "Приостановить"
 
+#: templates/overview.html:86 templates/overview.html.py:92
+#: templates/overview.html:98 templates/vm.html:64 templates/vm.html.py:70
+#: templates/vm.html.py:77
+msgid "Shutdown"
+msgstr "Выключить"
+
+#: templates/overview.html:87 templates/overview.html.py:93
+#: templates/overview.html:99 templates/vm.html:65 templates/vm.html.py:71
+#: templates/vm.html.py:78
+msgid "Force shutdown"
+msgstr "Завершить"
+
 #: templates/overview.html:90 templates/vm.html:68
 msgid "Resume"
 msgstr "Возобновить"
@@ -952,19 +807,6 @@ msgstr "Послать сигнал выключения?"
 #: templates/overview.html:99 templates/vm.html:78
 msgid "Force shutdown?"
 msgstr "Выключить принудительно?"
-
-#: templates/screenshot.html:25 templates/screenshot.html.py:27
-msgid "Server overview"
-msgstr "Обзор сервера"
-
-#: templates/screenshot.html:61 templates/screenshot.html.py:63
-#: templates/vm.html:34
-msgid "Managing a virtual machine"
-msgstr "Управление виртуальной машиной"
-
-#: templates/screenshot.html:67 templates/screenshot.html.py:69
-msgid "VNC pannel"
-msgstr "VNC панель"
 
 #: templates/snapshot.html:18
 msgid "VM snapshots"
@@ -1027,19 +869,9 @@ msgstr "Новый образ"
 msgid "Gb"
 msgstr "ГБ"
 
-#: templates/support.html:14
-msgid "Contact us"
-msgstr "Контакты"
-
-#: templates/support.html:15
-msgid "If you have additional questions you can send us an e-mail."
-msgstr ""
-"Если у вас возникли дополнительные вопросы вы всегда можете отправить нам e-"
-"mail."
-
-#: templates/support.html:19
-msgid "FAQ"
-msgstr "FAQ"
+#: templates/vm.html:34
+msgid "Managing a virtual machine"
+msgstr "Управление виртуальной машиной"
 
 #: templates/vm.html:72 templates/vm.html.py:81
 msgid "Create snapshot"
@@ -1072,99 +904,25 @@ msgstr "из"
 msgid "Disconnect"
 msgstr "Отключить"
 
-#: templates/vm.html:122
+#: templates/vm.html:127 templates/vm.html.py:129
 msgid "Connect"
 msgstr "Подключить"
 
-#: templates/vm.html:130 templates/vm.html.py:132
+#: templates/vm.html:138 templates/vm.html.py:140
 msgid "Undefine"
 msgstr "Удалить"
 
-#: templates/vm.html:136
+#: templates/vm.html:144
 msgid "To cancel the definition of a virtual machine, delete images"
 msgstr "Для того чтобы удалить виртуальную машину удалите ее"
 
-#: templates/vm.html:136
+#: templates/vm.html:144
 msgid "snapshots"
 msgstr "снапшоты"
 
-#: templates/registration/activate.html:7
-#: templates/registration/activation_complete.html:7
-msgid "Your account has been successfully activated"
-msgstr "Ваш аккаунт уже был успешно активирован"
-
-#: templates/registration/activation_complete.html:8
-msgid "You can"
-msgstr "Теперь Вы можете выполнить"
-
-#: templates/registration/activation_complete.html:8
-msgid "sign in"
-msgstr "Войти"
-
-#: templates/registration/login.html:8
-#: templates/registration/password_reset_form.html:8
-#: templates/registration/registration_form.html:8
-msgid "You have already sign in!"
-msgstr "Вы уже вошли!"
-
-#: templates/registration/login.html:14
-msgid "Log In"
-msgstr "Вход"
-
-#: templates/registration/login.html:21
-msgid "Lost password?"
-msgstr "Забыли пароль?"
-
-#: templates/registration/logout.html:9
+#: templates/registration/logged_out.html:9
 msgid "Logout"
 msgstr "Выход"
-
-#: templates/registration/password_change_done.html:7
-#: templates/registration/password_reset_complete.html:7
-msgid "Your password was successfully changed."
-msgstr "Ваш пароль успешно изменен."
-
-#: templates/registration/password_change_done.html:8
-#: templates/registration/password_reset_done.html:8
-msgid "Go to home page"
-msgstr "Перейти на главную страницу"
-
-#: templates/registration/password_change_form.html:12
-msgid "Change"
-msgstr ""
-
-#: templates/registration/password_reset_confirm.html:6
-#: templates/registration/password_reset_form.html:14
-msgid "Password recovery"
-msgstr "Восстановление пароля"
-
-#: templates/registration/password_reset_confirm.html:8
-msgid "New password"
-msgstr "Новый пароль"
-
-#: templates/registration/password_reset_confirm.html:10
-msgid "Confirm password"
-msgstr "Подтвердить пароль"
-
-#: templates/registration/password_reset_done.html:7
-msgid "We have sent instructions on how to reset your password on the email."
-msgstr "Мы отправлены инструкции о том, как изменить пароль на email."
-
-#: templates/registration/password_reset_form.html:20
-msgid "Rocevery"
-msgstr "Восстановить"
-
-#: templates/registration/registration_complete.html:7
-msgid "Thank you for registering on our website."
-msgstr "Спасибо за регистрацию на нашем сайте."
-
-#: templates/registration/registration_complete.html:7
-msgid "In your email send link to activate your account."
-msgstr "На Ваш email отправлена ссылка для активации учетной записи."
-
-#: templates/registration/registration_form.html:14
-msgid "Registration"
-msgstr "Регистрация"
 
 #: vm/views.py:436
 msgid "Create snapshot for VM: "
@@ -1189,6 +947,3 @@ msgstr "Выключение автозапуска для ВМ: "
 #: vm/views.py:479
 msgid "Undefine VM: "
 msgstr "Удаление ВМ: "
-
-#~ msgid "sing in"
-#~ msgstr "вход"
