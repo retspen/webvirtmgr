@@ -11,7 +11,7 @@ Install (Fedora 14 and above)
 
 $ git clone https://github.com/retspen/webvirtmgr
 
-$ yum install Django python-libvirt python-virtinst httpd mod_python
+$ yum install Django python-virtinst httpd mod_python
 
 $ ./manage.py syncdb
 
