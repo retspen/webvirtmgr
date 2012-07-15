@@ -1,36 +1,35 @@
-Applince WebVirtMgr for personal use
+# Applince WebVirtMgr for personal use
+
+## 1. Introduction
 
 WebVirtMgr is a libvirt-based Web interface for managing virtual machines. It allows you to create and configure new domains, and adjust a domain's resource allocation. A VNC viewer over a SSH tunnel presents a full graphical console to the guest domain. KVM is currently the only hypervisor supported
 
-Technology:
+### Technology:
 
-The application logic is written in Python & Django. The LIBVIRT Python bindings 
-are used to interacting with the underlying hypervisor. KVM primary supported platform.
+The application logic is written in Python & Django. The LIBVIRT Python bindings are used to interacting with the underlying hypervisor.
 
-Install (Fedora 14 and above)
 
-$ git clone https://github.com/retspen/webvirtmgr
+## 2. Install (Fedora 14 and above)
 
-$ yum install Django python-virtinst httpd mod_python
+Run:
 
-$ ./manage.py syncdb
+    $ yum install Django python-virtinst httpd mod_python
+    $ git clone https://github.com/retspen/webvirtmgr
+    $ cd webvirtmgr
+    $ ./manage.py syncdb
 
-You just installed Django's auth system, which means you don't have any superusers defined.
+Enter the user information:
 
-Would you like to create one now? (yes/no): yes (Put: yes)
+    You just installed Django's auth system, which means you don't have any superusers defined.
+    Would you like to create one now? (yes/no): yes (Put: yes)
+    Username (Leave blank to use 'admin'): admin (Put: your username or login)
+    E-mail address: username@domain.local (Put: your email)
+    Password: xxxxxx (Put: your password)
+    Password (again): xxxxxx (Put: confirm password)
+    Superuser created successfully.
 
-Username (Leave blank to use 'admin'): admin (Put: your username or login)
+Run app for test:
 
-E-mail address: username@domain.local (Put: your email)
+    $ ./manage.py runserver x.x.x.x:8080 (x.x.x.x - your IP address server)
 
-Password: xxxxxx (Put: your password)
-
-Password (again): xxxxxx (Put: confirm password)
-
-Superuser created successfully.
-
-Run appliance for test:
-
-$ ./manage.py runserver x.x.x.x:8080 (x.x.x.x - your IP address server)
-
-Setup your apache for Django.
+## 3. Setup your apache for Django.
