@@ -9,11 +9,24 @@ WebVirtMgr is a libvirt-based Web interface for managing virtual machines. It al
 The application logic is written in Python & Django. The LIBVIRT Python bindings are used to interacting with the underlying hypervisor.
 
 
-## 2. Install (Fedora 14 and above)
+## 2. Installation
+
+### Fedora 14 and above
 
 Run:
 
-    $ yum install Django python-virtinst httpd mod_python
+    $ yum install git Django python-virtinst httpd mod_python
+
+### Ubuntu 10.04 and above
+
+Run:
+
+    $ sudo apt-get install git python-django virtinst apache2 libapache2-mod-python
+
+## 3. Setup
+
+Run: 
+
     $ git clone https://github.com/retspen/webvirtmgr
     $ cd webvirtmgr
     $ ./manage.py syncdb
@@ -32,4 +45,4 @@ Run app for test:
 
     $ ./manage.py runserver x.x.x.x:8080 (x.x.x.x - your IP address server)
 
-## 3. Setup your apache for Django.
+## 4. Setup your apache for Django.
