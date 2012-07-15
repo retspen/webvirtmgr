@@ -5,6 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from webvirtmgr.model.models import *
+from django.template import RequestContext
 
 def index(request, host_id):
 	
@@ -100,7 +101,7 @@ def index(request, host_id):
 	if all_vm_snap:
 		return HttpResponseRedirect('/snapshot/%s/%s/' % (host_id, all_vm_snap.keys()[0]))
 
-	return render_to_response('snapshot.html', locals())
+	return render_to_response('snapshot.html', locals(), context_instance=RequestContext(request))
 
 def snapshot(request, host_id, vname):
 
@@ -248,7 +249,7 @@ def snapshot(request, host_id, vname):
 
 	conn.close()
 
-	return render_to_response('snapshot.html', locals())
+	return render_to_response('snapshot.html', locals(), context_instance=RequestContext(request))
 
 def redir(request):
 	if not request.user.is_authenticated():

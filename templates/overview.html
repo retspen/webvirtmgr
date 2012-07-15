@@ -78,7 +78,7 @@
                 	<td><a href="/vm/{{ host_id }}/{{ name }}/"><strong>{{ name }}</strong></a></td>
                 	<td>{% if state == 1 %}<font color="green">{% trans "power on" %}</font>{% endif %}{% if state == 5 %}<font color="red">{% trans "power off" %}</font>{% endif %}{% if state == 3 %}<font color="orange">{% trans "suspend" %}</font>{% endif %}</td>
                 	<td>
-                		<form action="/overview/{{ host_id }}/" method="post" style="height:10px;">
+                		<form action="/overview/{{ host_id }}/" method="post" style="height:10px;">{% csrf_token %}
                 			<input type="hidden" name="vname" value="{{ name }}" />
 			                {% if state = 5 %}
 			                 <button class="btn btn-primary" type="submit" name="start" value="start" title="{% trans "Start VM" %}"><i class="icon-play icon-white"></i></button>

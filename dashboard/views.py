@@ -4,8 +4,10 @@ from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from webvirtmgr.model.models import *
+from django.template import RequestContext
 
 def index(request):
+
 	if not request.user.is_authenticated():
 		return HttpResponseRedirect('/user/login')
 
@@ -55,10 +57,6 @@ def index(request):
 	def get_host_status(hosts):
 		for host, info in hosts.items():
 			print host, info
-
-#	if request.session['login_kvm'] or request.session['passwd_kvm']:
-#		del request.session['login_kvm']
-#		del request.session['passwd_kvm']
 
 	host_info = get_hosts_status()
 	errors = []
@@ -113,4 +111,4 @@ def index(request):
 			if not errors:
 				add_host(name, ipaddr, login, passw)
 				return HttpResponseRedirect('/dashboard/')
-	return render_to_response('dashboard.html', locals())
+	return render_to_response('dashboard.html', locals(), context_instance=RequestContext(request))

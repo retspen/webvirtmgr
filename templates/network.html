@@ -65,7 +65,7 @@
         <div class="span3">
           <p><strong>{{ pool }}</strong></p>
           <p>{{ bridge }}</p>
-          <form action="/network/{{ host_id }}/{{ pool }}/" method="post" style="height:10px;">
+          <form action="/network/{{ host_id }}/{{ pool }}/" method="post" style="height:10px;">{% csrf_token %}
       			{% if status = 0 %}
       			<button type="submit" class="btn btn-primary" name="start_pool" value="start_pool" title="{% trans "Enable" %}"><i class="icon-play icon-white"></i></button>
             <button type="submit" class="btn btn-danger" name="del_pool" value="del_pool" title="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')"><i class="icon-trash icon-white"></i></button>
@@ -105,7 +105,7 @@
             <h3>{% trans "New network pool" %}</h3>
       </div>
       <div class="modal-body">
-      <form class="form-horizontal" action="/network/{{ host_id }}/{{ pool }}/" method="post">
+      <form class="form-horizontal" action="/network/{{ host_id }}/{{ pool }}/" method="post">{% csrf_token %}
         <fieldset>
           <div class="control-group">
           <label class="control-label">{% trans "Pool name" %}</label>

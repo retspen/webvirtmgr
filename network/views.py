@@ -6,6 +6,7 @@ from webvirtmgr.network.IPy import IP
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from webvirtmgr.model.models import *
+from django.template import RequestContext
 
 def index(request, host_id):
 	
@@ -347,7 +348,7 @@ def pool(request, host_id, pool):
 				msg = _('IP subnet must be 192.168.1.0/24 or 192.168.1.0/26')
 				errors.append(msg)
 			if errors:
-				return render_to_response('network.html', locals())
+				return render_to_response('network.html', locals(), context_instance=RequestContext(request))
 			if not errors:
 				if create_net_pool(name_pool, forward, gw_ipaddr, netmask, dhcp, start_dhcp, end_dhcp) is "error":
 					msg = _('Such a pool already exists')
@@ -364,7 +365,7 @@ def pool(request, host_id, pool):
 						add_error(msg, 'user')
 						return HttpResponseRedirect('/network/%s/%s/' % (host_id, name_pool))
 					if errors:
-						return render_to_response('network.html', locals())
+						return render_to_response('network.html', locals(), context_instance=RequestContext(request))
 		if request.POST.get('stop_pool',''):
 			msg = _('Stop network pool: ')
 			msg = msg + pool
@@ -385,7 +386,7 @@ def pool(request, host_id, pool):
 
 	conn.close()
 
-	return render_to_response('network.html', locals())
+	return render_to_response('network.html', locals(), context_instance=RequestContext(request))
 
 def redir(request):
 	if not request.user.is_authenticated():

@@ -13,7 +13,7 @@
           <div class="well span4 offset4" style="width:220px;">
             <h2>{% trans "Log In" %}</h2>
             <hr>
-            <form action="/admin/" method="post">
+            <form action="/admin/" method="post">{% csrf_token %}
               {{ form }}
               <hr>
               <input name="next" id="next" type="hidden" value="/dashboard/">

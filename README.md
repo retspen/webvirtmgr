@@ -7,11 +7,11 @@ Technology:
 The application logic is written in Python & Django. The LIBVIRT Python bindings 
 are used to interacting with the underlying hypervisor. KVM primary supported platform.
 
-Install (Fedora 16)
+Install (Fedora 14 and above)
 
 $ git clone https://github.com/retspen/webvirtmgr
 
-$ yum install Django kvm libvirtd httpd
+$ yum install Django python-libvirt python-virtinst httpd mod_python
 
 $ ./manage.py syncdb
 

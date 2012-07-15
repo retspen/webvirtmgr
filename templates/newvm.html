@@ -107,7 +107,7 @@
                   <h3>{% trans "New virtual machine" %}</h3>
               </div>
            <div class="modal-body">
-            <form class="form-horizontal" action="/newvm/{{ host_id }}/" method="post">
+            <form class="form-horizontal" action="/newvm/{{ host_id }}/" method="post">{% csrf_token %}
               <fieldset>
                 <div class="control-group">
                 <label class="control-label">{% trans "Name" %}</label>
@@ -207,7 +207,7 @@
                   <h3>{% trans "New virtual machine" %} m1.xlarge</h3>
               </div>
            <div class="modal-body">
-            <form class="form-horizontal" action="/newvm/{{ host_id }}/" method="post">
+            <form class="form-horizontal" action="/newvm/{{ host_id }}/" method="post">{% csrf_token %}
               <fieldset>
                 <div class="control-group">
                 <label class="control-label">{% trans "Name" %}</label>
@@ -270,7 +270,7 @@
                   <h3>{% trans "New virtual machine" %} m1.large</h3>
               </div>
            <div class="modal-body">
-            <form class="form-horizontal" action="/newvm/{{ host_id }}/" method="post">
+            <form class="form-horizontal" action="/newvm/{{ host_id }}/" method="post">{% csrf_token %}
               <fieldset>
                 <div class="control-group">
                 <label class="control-label">{% trans "Name" %}</label>
@@ -333,7 +333,7 @@
                   <h3>{% trans "New virtual machine" %} m1.medium</h3>
               </div>
            <div class="modal-body">
-            <form class="form-horizontal" action="/newvm/{{ host_id }}/" method="post">
+            <form class="form-horizontal" action="/newvm/{{ host_id }}/" method="post">{% csrf_token %}
               <fieldset>
                 <div class="control-group">
                 <label class="control-label">{% trans "Name" %}</label>
@@ -396,7 +396,7 @@
                   <h3>{% trans "New virtual machine" %} m1.small</h3>
               </div>
            <div class="modal-body">
-            <form class="form-horizontal" action="/newvm/{{ host_id }}/" method="post">
+            <form class="form-horizontal" action="/newvm/{{ host_id }}/" method="post">{% csrf_token %}
               <fieldset>
                 <div class="control-group">
                 <label class="control-label">{% trans "Name" %}</label>
@@ -459,7 +459,7 @@
                   <h3>{% trans "New virtual machine" %} m1.mini</h3>
               </div>
            <div class="modal-body">
-            <form class="form-horizontal" action="/newvm/{{ host_id }}/" method="post">
+            <form class="form-horizontal" action="/newvm/{{ host_id }}/" method="post">{% csrf_token %}
               <fieldset>
                 <div class="control-group">
                 <label class="control-label">{% trans "Name" %}</label>
@@ -522,7 +522,7 @@
                   <h3>{% trans "New virtual machine" %} m1.micro</h3>
               </div>
            <div class="modal-body">
-            <form class="form-horizontal" action="/newvm/{{ host_id }}/" method="post">
+            <form class="form-horizontal" action="/newvm/{{ host_id }}/" method="post">{% csrf_token %}
               <fieldset>
                 <div class="control-group">
                 <label class="control-label">{% trans "Name" %}</label>

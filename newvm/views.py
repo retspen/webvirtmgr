@@ -5,6 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from webvirtmgr.model.models import *
+from django.template import RequestContext
 
 def index(request, host_id):
 
@@ -366,7 +367,7 @@ def index(request, host_id):
 
 	conn.close()
 
-	return render_to_response('newvm.html', locals())
+	return render_to_response('newvm.html', locals(), context_instance=RequestContext(request))
 
 def redir(request):
 	if not request.user.is_authenticated():

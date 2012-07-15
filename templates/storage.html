@@ -45,7 +45,7 @@
                   <h3>{% trans "New storage pool" %}</h3>
               </div>
            <div class="modal-body">
- 		   <form class="form-horizontal" action="/storage/{{ host_id }}/{{ pool }}/" method="post">
+ 		   <form class="form-horizontal" action="/storage/{{ host_id }}/{{ pool }}/" method="post">{% csrf_token %}
  			<fieldset>
 	          <div class="control-group">
 	          <label class="control-label">{% trans "Pool name" %}</label>
@@ -84,7 +84,7 @@
 				<div class="progress progress-warning progress-striped active" style="margin-bottom: 9px; width:200px;">
         				<div class="bar" style="width: {{ info.4 }}%"><font color="black">{{ info.4 }}%</font></div>
         		</div>
-				<form action="/storage/{{ host_id }}/{{ pool }}/" method="post" style="height:10px;">
+				<form action="/storage/{{ host_id }}/{{ pool }}/" method="post" style="height:10px;">{% csrf_token %}
 					{% if status = 0 %}
 					<button type="submit" class="btn btn-primary" name="start_pool" value="start_pool" title="{% trans "Enable" %}"><i class="icon-play icon-white"></i></button>
 					<button type="submit" class="btn btn-danger" name="del_pool" value="del_pool" title="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')"><i class="icon-trash icon-white"></i></button>
@@ -120,7 +120,7 @@
 		              <h3>{% trans "Clone image" %} <font color="red">{{ name }}</font></h3>
 		            </div>
 		            <div class="modal-body">
-				      <form class="form-horizontal" action="/storage/{{ host_id }}/{{ pool }}/" method="post">
+				      <form class="form-horizontal" action="/storage/{{ host_id }}/{{ pool }}/" method="post">{% csrf_token %}
 				        <fieldset>
 				          <div class="control-group">
 				          <label class="control-label">{% trans "Name" %}</label>
@@ -140,7 +140,7 @@
 		          	{% if info.1 == "qcow2" %}<a data-toggle="modal" href="#myModalclone{{ forloop.counter }}" class="btn btn-primary"><i class="icon-th icon-white"></i></a>{% else %}<a class="btn btn-primary disabled"><i class="icon-th icon-white"></i></a>{% endif %}
 				  </td>	
 				  <td style="width:30px;">
-					  <form action="/storage/{{ host_id }}/{{ pool }}/" method="post" style="height:10px;">
+					  <form action="/storage/{{ host_id }}/{{ pool }}/" method="post" style="height:10px;">{% csrf_token %}
 					  	<input type="hidden" name="img" value="{{ name }}">
 						<button type="submit" class="btn btn-danger" name="vol_del" value="vol_del" title="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')"><i class="icon-trash icon-white"></i></button>
 					  </form>
@@ -168,7 +168,7 @@
 		        <h3>{% trans "New image" %}</h3>
 		    </div>
 		 <div class="modal-body">
-	      <form class="form-horizontal" action="/storage/{{ host_id }}/{{ pool }}/" method="post">
+	      <form class="form-horizontal" action="/storage/{{ host_id }}/{{ pool }}/" method="post">{% csrf_token %}
 	        <fieldset>
 	          <div class="control-group">
 	          <label class="control-label">{% trans "Name" %}</label>

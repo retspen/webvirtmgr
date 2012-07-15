@@ -28,7 +28,7 @@
                             <h3>{% trans "Authorization" %}</h3>
                         </div>
                      <div class="modal-body">
-                        <form class="form-horizontal" action="/overview/{{ info.0 }}/" method="post">
+                        <form class="form-horizontal" action="/overview/{{ info.0 }}/" method="post">{% csrf_token %}
                           <fieldset>
                             <div class="control-group">
                             <label class="control-label">{% trans "KVM login" %}</label>
@@ -53,7 +53,7 @@
                     <a data-toggle="modal" href="#myModalkvm" class="btn btn-primary">{% trans "Authorization" %}</a>{% else %}{% if info.4 == 1 and info.3 %}<button class="btn btn-primary" onclick="location.href='/overview/{{ info.0 }}/'">{% trans "Manage" %}</button>{% else %}<a href="#" class="btn btn-primary disabled">{% trans "Manage" %}</a>{% endif %}{% endif %}
                   </td>
                   <td style="width:30px;">
-                    <form action="/dashboard/" method="post" style="height:10px;">
+                    <form action="/dashboard/" method="post" style="height:10px;">{% csrf_token %}
                       <input type="hidden" name="host" value="{{name}}">
                       <button type="submit" class="btn btn-danger" name="delete" value="delete" title="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')"><i class="icon-trash icon-white"></i></button>
                     </form>
@@ -79,7 +79,7 @@
                 <h3>{% trans "Add new host" %}</h3>
             </div>
          <div class="modal-body">
-            <form class="form-horizontal" action="/dashboard/" method="post">
+            <form class="form-horizontal" action="/dashboard/" method="post">{% csrf_token %}
               <fieldset>
                 <div class="control-group">
                 <label class="control-label">{% trans "Name" %}</label>

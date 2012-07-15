@@ -5,7 +5,7 @@ from django.shortcuts import render_to_response
 from django.utils.translation import ugettext_lazy as _
 from django.http import HttpResponseRedirect
 from webvirtmgr.model.models import *
-
+from django.template import RequestContext
 
 def index(request, host_id, vname):
 
@@ -438,7 +438,7 @@ def index(request, host_id, vname):
             add_error(msg, 'user')
             vm_create_snapshot()
             message = _('Successful create snapshot')
-            return render_to_response('vm.html', locals())
+            return render_to_response('vm.html', locals(), context_instance=RequestContext(request))
          except libvirt.libvirtError as e:
             add_error(e, 'libvirt')
             msg = _('Error: create snapshot')
@@ -486,11 +486,11 @@ def index(request, host_id, vname):
       if not errors:
          return HttpResponseRedirect('/vm/%s/%s/' % (host_id, vname))
       else:
-         return render_to_response('vm.html', locals())
+         return render_to_response('vm.html', locals(), context_instance=RequestContext(request))
 
    conn.close()
    
-   return render_to_response('vm.html', locals())
+   return render_to_response('vm.html', locals(), context_instance=RequestContext(request))
 
 def redir_two(request, host_id):
    if not request.user.is_authenticated():

@@ -64,7 +64,7 @@
                   <td><strong>{{ name }}<strong></td>
                   <td>{{ time.0|date:"M d H:i:s" }}</td>
                   <td style="width:30px;">
-                    <form action="/snapshot/{{ host_id }}/{{ vname }}/" method="post" style="height:10px;">
+                    <form action="/snapshot/{{ host_id }}/{{ vname }}/" method="post" style="height:10px;">{% csrf_token %}
                       <input type="hidden" name="name" value="{{ name }}">
                       {% if time.1 != 3 %}
                       <button type="submit" class="btn btn-primary" name="revert" value="revert" title="{% trans "Revert" %}" onclick="return confirm('{% trans "Are you sure?" %}')"><i class="icon-download-alt icon-white"></i></button>
@@ -74,7 +74,7 @@
                     </form>
                   </td>
                   <td style="width:30px;">
-                    <form action="/snapshot/{{ host_id }}/{{ vname }}/" method="post" style="height:10px;">
+                    <form action="/snapshot/{{ host_id }}/{{ vname }}/" method="post" style="height:10px;">{% csrf_token %}
                       <input type="hidden" name="name" value="{{ name }}">
                       <button type="submit" class="btn btn-danger" name="delete" value="delete" title="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')"><i class="icon-trash icon-white"></i></button>
                     </form>

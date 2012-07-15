@@ -5,10 +5,9 @@ from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from webvirtmgr.model.models import *
+from django.template import RequestContext
 
 def index(request, host_id):
-
-	""" Overview block """
 
 	if not request.user.is_authenticated():
 		return HttpResponseRedirect('/user/login/')
@@ -219,7 +218,7 @@ def index(request, host_id):
 		msg = _('Error connecting: Check the KVM login and KVM password')
 		errors.append(msg)
 		
-	return render_to_response('overview.html', locals())
+	return render_to_response('overview.html', locals(), context_instance=RequestContext(request))
 
 def redir(request):
 	""" redirect if not have in request host_id """

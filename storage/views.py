@@ -5,6 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from webvirtmgr.model.models import *
+from django.template import RequestContext
 
 def index(request, host_id):
 
@@ -393,7 +394,7 @@ def pool(request, host_id, pool):
 						add_error(msg,'user')
 						return HttpResponseRedirect('/storage/%s/%s/' % (host_id, name_pool))
 				if errors:
-					return render_to_response('storage.html', locals())
+					return render_to_response('storage.html', locals(), context_instance=RequestContext(request))
 		if request.POST.get('stop_pool',''):
 			pool_stop()
 			msg = _('Stop storage pool: ')
@@ -470,7 +471,7 @@ def pool(request, host_id, pool):
 
 	conn.close()
 				
-	return render_to_response('storage.html', locals())
+	return render_to_response('storage.html', locals(), context_instance=RequestContext(request))
 
 def redir(request):
 	if not request.user.is_authenticated():
