@@ -15,7 +15,7 @@ The application logic is written in Python & Django. The LIBVIRT Python bindings
 
 Run:
 
-    $ yum install git Django python-virtinst httpd mod_python
+    # yum install git Django python-virtinst httpd mod_python
 
 ### Ubuntu 10.04 and above
 
@@ -23,11 +23,20 @@ Run:
 
     $ sudo apt-get install git python-django virtinst apache2 libapache2-mod-python
 
+### CentOS, RedHat (6.x)
+
+Run:
+
+    # yum install git python-virtinst httpd mod_wsgi
+    # git clone https://github.com/django/django.git
+    # cd django
+    # python setup.py install
+
 ## 3. Setup
 
 Run: 
 
-    $ git clone https://github.com/retspen/webvirtmgr
+    $ git clone git://github.com/retspen/webvirtmgr.git
     $ cd webvirtmgr
     $ ./manage.py syncdb
 
