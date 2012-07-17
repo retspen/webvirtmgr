@@ -2,7 +2,7 @@
 
 ## 1. Introduction
 
-WebVirtMgr is a libvirt-based Web interface for managing virtual machines. It allows you to create and configure new domains, and adjust a domain's resource allocation. A VNC viewer over a SSH tunnel presents a full graphical console to the guest domain. KVM is currently the only hypervisor supported
+WebVirtMgr is a libvirt-based Web interface for managing virtual machines. It allows you to create and configure new domains, and adjust a domain's resource allocation. A VNC viewer over a SSH tunnel presents a full graphical console to the guest domain. KVM is currently the only hypervisor supported.
 
 ### Technology:
 
@@ -53,6 +53,10 @@ Enter the user information:
 
 Run app for test:
 
-    $ ./manage.py runserver x.x.x.x:8080 (x.x.x.x - your IP address server)
+    $ ./manage.py runserver x.x.x.x:8000 (x.x.x.x - your IP address server)
+    
+Enter in your browser:
+    
+    http://x.x.x.x:8000 (x.x.x.x - your IP address server)
 
 ## 4. Setup your apache for Django.
