@@ -27,9 +27,10 @@ Run:
 
 Run:
 
-    # yum install git python-virtinst httpd mod_wsgi
-    # git clone https://github.com/django/django.git
-    # cd django
+    # yum install wget git python-virtinst httpd mod_wsgi
+    # wget https://www.djangoproject.com/download/1.3.1/tarball/
+    # tar -zxf Django-1.3.1.tar.gz
+    # cd Django-1.3.1
     # python setup.py install
 
 ## 3. Setup
