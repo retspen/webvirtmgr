@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-13 15:30+0300\n"
+"POT-Creation-Date: 2012-07-17 10:07+0300\n"
 "PO-Revision-Date: 2012-05-06 14:41+0300\n"
 "Last-Translator: Anatoliy Guskov <anatoliy.guskov@gmail.com>\n"
 "Language-Team: RU <LL@li.org>\n"
@@ -18,67 +18,67 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 
-#: dashboard/views.py:46
+#: dashboard/views.py:48
 msgid "Add server: "
 msgstr "Добавление сервера: "
 
-#: dashboard/views.py:84
+#: dashboard/views.py:82
 msgid "IP address can not be a private address space"
 msgstr "IP адрес не может быть частным адресным пространством"
 
-#: dashboard/views.py:87
+#: dashboard/views.py:85
 msgid "The host name must not exceed 20 characters"
 msgstr "Имя хоста не должно превышать 20 символов"
 
-#: dashboard/views.py:90
+#: dashboard/views.py:88
 msgid ""
 "Hostname must contain only numbers, or the domain name separated by \".\""
 msgstr ""
 "Имя хоста должно содержать только цифры или доменное имя разделенное \".\""
 
-#: dashboard/views.py:93
+#: dashboard/views.py:91
 msgid "The host name must not contain any characters and Russian characters"
 msgstr "Имя хоста не должно содержать символы и русские буквы"
 
-#: dashboard/views.py:99
+#: dashboard/views.py:97
 msgid "This host is already connected"
 msgstr "Такой хост уже подключен"
 
-#: dashboard/views.py:102
+#: dashboard/views.py:100
 msgid "No hostname has been entered"
 msgstr "Не было введено имя хоста"
 
-#: dashboard/views.py:105
+#: dashboard/views.py:103
 msgid "No IP address has been entered"
 msgstr "Не был введен IP адрес"
 
-#: network/views.py:329
+#: network/views.py:330
 msgid "The name of the network pool must not exceed 20 characters"
 msgstr "Название сетевого пула не должно превышать 20 символов"
 
-#: network/views.py:332
+#: network/views.py:333
 msgid ""
 "The name of the network pool must not contain any characters and Russian "
 "characters"
 msgstr "Название сетевого пула не должно содержать символы и русские буквы"
 
-#: network/views.py:335 storage/views.py:374
+#: network/views.py:336 storage/views.py:375
 msgid "Enter the name of the pool"
 msgstr "Введите название пула"
 
-#: network/views.py:338
+#: network/views.py:339
 msgid "Enter the IP subnet"
 msgstr "Введите IP подсеть"
 
-#: network/views.py:347
+#: network/views.py:348
 msgid "IP subnet must be 192.168.1.0/24 or 192.168.1.0/26"
 msgstr "IP-подсеть должна быть 192.168.1.0/24 или 192.168.1.0/26"
 
-#: network/views.py:353 storage/views.py:381
+#: network/views.py:354 storage/views.py:382
 msgid "Such a pool already exists"
 msgstr "Возможно пул с такими данными существует"
 
-#: network/views.py:359
+#: network/views.py:360
 msgid ""
 "Pool is created, but when I run the pool fails, you may specify an existing "
 "network"
@@ -86,127 +86,127 @@ msgstr ""
 "Пул создан, но при запуске пула возникла ошибка, возможно указана "
 "существующая сеть"
 
-#: network/views.py:362
+#: network/views.py:363
 msgid "Creating a network pool: "
 msgstr "Создание сетевого пула: "
 
-#: network/views.py:369
+#: network/views.py:370
 msgid "Stop network pool: "
 msgstr "Остановка сетевого пула: "
 
-#: network/views.py:374
+#: network/views.py:375
 msgid "Start network pool: "
 msgstr "Запуск сетевого пула: "
 
-#: network/views.py:379
+#: network/views.py:380
 msgid "Delete network pool: "
 msgstr "Удаление сетевого пула: "
 
-#: newvm/views.py:313
+#: newvm/views.py:314
 msgid "Storage pools are not available or are not active"
 msgstr "Возможно пулы хранения не доступны или не активны"
 
-#: newvm/views.py:317
+#: newvm/views.py:318
 msgid "Network pools are not available or are not active"
 msgstr "Возможно сетевые пулы не доступны или не активны"
 
-#: newvm/views.py:340
+#: newvm/views.py:341
 msgid "This is the name of the virtual machine already exists"
 msgstr "Такое название виртуальной машины уже существует"
 
-#: newvm/views.py:343
+#: newvm/views.py:344
 msgid "The name of the virtual machine must not exceed 20 characters"
 msgstr "Название виртуальной машины не должно превышать 20 символов"
 
-#: newvm/views.py:346
+#: newvm/views.py:347
 msgid ""
 "The name of the virtual machine must not contain any characters and Russian "
 "characters"
 msgstr ""
 "Название виртуальной машины не должно содержать символы и русские буквы"
 
-#: newvm/views.py:349
+#: newvm/views.py:350
 msgid ""
 "Images of the HDD to a virtual machine not available. You need to create an "
 "HDD image"
 msgstr ""
 "Образы HDD для виртуальной машины отсутствуют. Необходимо созадть HDD образ"
 
-#: newvm/views.py:352
+#: newvm/views.py:353
 msgid "Enter the name of the virtual machine"
 msgstr "Введите название виртуальной машины"
 
-#: newvm/views.py:362
+#: newvm/views.py:363
 msgid "Creating a virtual machine: "
 msgstr "Создание виртуальной машины: "
 
-#: overview/views.py:151
-msgid "Error connecting: Check the KVM login and KVM password"
-msgstr "Ошибка подключения: проверьте KVM логин и KVM пароль"
-
-#: overview/views.py:167 vm/views.py:387
+#: overview/views.py:156 vm/views.py:387
 msgid "Suspend VM: "
 msgstr "Приостановка ВМ: "
 
-#: overview/views.py:172 vm/views.py:392
+#: overview/views.py:161 vm/views.py:392
 msgid "Error: VM alredy suspended"
 msgstr "Ошибка: возможно виртуальная машина уже приостановлена"
 
-#: overview/views.py:177 vm/views.py:397
+#: overview/views.py:166 vm/views.py:397
 msgid "Resume VM: "
 msgstr "Возобновление ВМ: "
 
-#: overview/views.py:182 vm/views.py:402
+#: overview/views.py:171 vm/views.py:402
 msgid "Error: VM alredy resume"
 msgstr "Ошибка: возможно виртуальная машина уже возобновлена"
 
-#: overview/views.py:187 vm/views.py:407
+#: overview/views.py:176 vm/views.py:407
 msgid "Start VM: "
 msgstr "Запуск ВМ: "
 
-#: overview/views.py:192 vm/views.py:412
+#: overview/views.py:181 vm/views.py:412
 msgid "Error: VM alredy start"
 msgstr "Ошибка: возможно виртуальная машина уже запущена"
 
-#: overview/views.py:197 vm/views.py:417
+#: overview/views.py:186 vm/views.py:417
 msgid "Shutdown VM: "
 msgstr "Выключить ВМ: "
 
-#: overview/views.py:202 overview/views.py:212 vm/views.py:422 vm/views.py:432
+#: overview/views.py:191 overview/views.py:201 vm/views.py:422 vm/views.py:432
 msgid "Error: VM alredy shutdown"
 msgstr "Ошибка: возможно виртуальная машина уже выключена"
 
-#: overview/views.py:207 vm/views.py:427
+#: overview/views.py:196 vm/views.py:427
 msgid "Force shutdown VM: "
 msgstr "Принудительно выключение ВМ: "
 
-#: snapshot/views.py:235
+#: overview/views.py:218
+msgid "Error connecting: Check the KVM login and KVM password"
+msgstr "Ошибка подключения: проверьте KVM логин и KVM пароль"
+
+#: snapshot/views.py:236
 msgid "Delete snapshot VM: "
 msgstr "Удаление снапшота ВМ: "
 
-#: snapshot/views.py:242
+#: snapshot/views.py:243
 msgid "Revert snapshot VM: "
 msgstr "Восстановление снапшота ВМ: "
 
-#: snapshot/views.py:246
+#: snapshot/views.py:247
 msgid "Successful revert snapshot: "
 msgstr "Успешное восстановление снапшота: "
 
-#: storage/views.py:368
+#: storage/views.py:369
 msgid "The name of the storage pool must not exceed 20 characters"
 msgstr "Название пула хранилища не должно превышать 20 символов"
 
-#: storage/views.py:371
+#: storage/views.py:372
 msgid ""
 "The name of the storage pool must not contain any characters and Russian "
 "characters"
 msgstr "Название пула хранилища не должно содержать символы и русские буквы"
 
-#: storage/views.py:377
+#: storage/views.py:378
 msgid "Enter the path of the pool"
 msgstr "Введите путь пула"
 
-#: storage/views.py:387
+#: storage/views.py:388
 msgid ""
 "Pool is created, but when I run the pool fails, you may specify the path "
 "does not exist"
@@ -214,56 +214,56 @@ msgstr ""
 "Пул создан, но при запуске пула возникла ошибка, возможно указан не "
 "существующий путь"
 
-#: storage/views.py:391
+#: storage/views.py:392
 msgid "Creating a storage pool: "
 msgstr "Создание пула хранилища: "
 
-#: storage/views.py:399
+#: storage/views.py:400
 msgid "Stop storage pool: "
 msgstr "Остановка пула хранилища: "
 
-#: storage/views.py:405
+#: storage/views.py:406
 msgid "Start storage pool: "
 msgstr "Запуск пула хранилища: "
 
-#: storage/views.py:411
+#: storage/views.py:412
 msgid "Delete storage pool: "
 msgstr "Удаление пула хранилища: "
 
-#: storage/views.py:418
+#: storage/views.py:419
 msgid "Delete image: "
 msgstr "Удаление образа: "
 
-#: storage/views.py:427 storage/views.py:453
+#: storage/views.py:428 storage/views.py:454
 msgid "The name of the images must not exceed 20 characters"
 msgstr "Название образа не должно превышать 20 символов"
 
-#: storage/views.py:430 storage/views.py:456
+#: storage/views.py:431 storage/views.py:457
 msgid ""
 "The name of the image must not contain any characters and Russian characters"
 msgstr "Название образ не должно содержать символы и русские буквы"
 
-#: storage/views.py:433 storage/views.py:450
+#: storage/views.py:434 storage/views.py:451
 msgid "Enter image name"
 msgstr "Введите имя образа"
 
-#: storage/views.py:436
+#: storage/views.py:437
 msgid "Enter image size"
 msgstr "Введите размер образа"
 
-#: storage/views.py:440
+#: storage/views.py:441
 msgid "Create image: "
 msgstr "Создание образа: "
 
-#: storage/views.py:459
+#: storage/views.py:460
 msgid "The image of the same name already exists"
 msgstr "Образ с таким именем уже существует"
 
-#: storage/views.py:462
+#: storage/views.py:463
 msgid "You can only clone a virtual machine images"
 msgstr "Клонировать можно только образы виртуальных машин"
 
-#: storage/views.py:466
+#: storage/views.py:467
 msgid "Cloning image: "
 msgstr "Клонирование образа: "
 
@@ -492,21 +492,6 @@ msgstr ""
 #: templates/docs.html:118
 msgid "<strong>IP_address</strong>"
 msgstr "<strong>IP_адрес</strong>"
-
-#: templates/index.html:8 templates/admin/login.html:8
-#: templates/registration/login.html:8
-msgid "You have already sign in!"
-msgstr "Вы уже вошли!"
-
-#: templates/index.html:14 templates/admin/login.html:14
-#: templates/registration/login.html:14
-msgid "Log In"
-msgstr "Вход"
-
-#: templates/index.html:28 templates/admin/login.html:20
-#: templates/registration/login.html:20
-msgid "Sign in"
-msgstr "Войти"
 
 #: templates/logs.html:9 templates/network.html:9 templates/newvm.html:9
 #: templates/overview.html:9 templates/snapshot.html:9
@@ -919,6 +904,18 @@ msgstr "Для того чтобы удалить виртуальную маш�
 #: templates/vm.html:144
 msgid "snapshots"
 msgstr "снапшоты"
+
+#: templates/admin/login.html:8
+msgid "You have already sign in!"
+msgstr "Вы уже вошли!"
+
+#: templates/admin/login.html:14
+msgid "Log In"
+msgstr "Вход"
+
+#: templates/admin/login.html:20
+msgid "Sign in"
+msgstr "Войти"
 
 #: templates/registration/logged_out.html:9
 msgid "Logout"
