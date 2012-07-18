@@ -36,7 +36,7 @@ Run:
 ## 3. Setup
 
 Run: 
-
+    
     $ git clone git://github.com/retspen/webvirtmgr.git
     $ cd webvirtmgr
     $ ./manage.py syncdb
@@ -59,4 +59,22 @@ Enter in your browser:
     
     http://x.x.x.x:8000 (x.x.x.x - your IP address server)
 
-## 4. Setup your apache for Django.
+## 4. Setup apache for Django.
+
+Add virtual host in apacрe:
+
+    <VirtualHost *:80>
+        ServerAdmin webmaster@dummy-host.example.com
+        ServerName dummy-host.example.com
+
+        SetHandler python-program
+        PythonHandler django.core.handlers.modpython
+        SetEnv DJANGO_SETTINGS_MODULE webvirtmgr.settings
+        PythonOption django.root /webvirtmgr
+        PythonDebug On
+        PythonPath "['/var/www'] + sys.path"
+        
+        ErrorLog logs/webvirtmgr-error_log
+        CustomLog logs/webvirtmgr-access_log common
+    </VirtualHost>
+    
