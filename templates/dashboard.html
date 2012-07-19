@@ -22,7 +22,7 @@
                   <td>{{ info.1 }}</td>
                   <td>{% if info.4 == 1 %}<font color="green">{% trans "available" %}</font>{% else %}<font color="red">{% trans "not available" %}</font>{% endif %}</td>
                   <td style="width:30px;">{% if not info.3 and info.4 == 1 %}
-                     <div id="myModalkvm" class="modal hide fade">
+                     <div id="myModalkvm{{ info.0 }}" class="modal hide fade">
                         <div class="modal-header">
                           <button class="close" data-dismiss="modal">&times;</button>
                             <h3>{% trans "Authorization" %}</h3>
@@ -50,7 +50,7 @@
                          </form>
                         </div>
                       </div>   
-                    <a data-toggle="modal" href="#myModalkvm" class="btn btn-primary">{% trans "Authorization" %}</a>{% else %}{% if info.4 == 1 and info.3 %}<button class="btn btn-primary" onclick="location.href='/overview/{{ info.0 }}/'">{% trans "Manage" %}</button>{% else %}<a href="#" class="btn btn-primary disabled">{% trans "Manage" %}</a>{% endif %}{% endif %}
+                    <a data-toggle="modal" href="#myModalkvm{{ info.0 }}" class="btn btn-primary">{% trans "Authorization" %}</a>{% else %}{% if info.4 == 1 and info.3 %}<button class="btn btn-primary" onclick="location.href='/overview/{{ info.0 }}/'">{% trans "Manage" %}</button>{% else %}<a href="#" class="btn btn-primary disabled">{% trans "Manage" %}</a>{% endif %}{% endif %}
                   </td>
                   <td style="width:30px;">
                     <form action="/dashboard/" method="post" style="height:10px;">{% csrf_token %}
