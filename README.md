@@ -58,7 +58,7 @@ Enter in your browser:
 
 ## 4. Setup apache for Django.
 
-Add virtual host in apacрe:
+Add virtual host in apache:
 
     <VirtualHost *:80>
         ServerAdmin webmaster@dummy-host.example.com
