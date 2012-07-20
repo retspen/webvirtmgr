@@ -27,11 +27,9 @@ Run:
 
 Run:
 
-    # yum install wget git python-virtinst httpd mod_wsgi
-    # wget https://www.djangoproject.com/download/1.3.1/tarball/
-    # tar xzvf Django-1.3.1.tar.gz
-    # cd Django-1.3.1
-    # python setup.py install
+    # yum install git python-virtinst httpd mod_wsgi
+    # rpm -Uvh http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-7.noarch.rpm
+    # yum install Django
 
 ## 3. Setup
 
