@@ -27,9 +27,8 @@ Run:
 
 Run:
 
-    # yum install git python-virtinst httpd mod_wsgi
     # rpm -Uvh http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-7.noarch.rpm
-    # yum install Django
+    # yum install git python-virtinst httpd mod_wsgi Django
 
 ## 3. Setup
 
