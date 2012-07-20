@@ -15,7 +15,7 @@ The application logic is written in Python & Django. The LIBVIRT Python bindings
 
 Run:
 
-    # yum install git Django python-virtinst httpd mod_python
+    $ su -c 'yum install git Django python-virtinst httpd mod_python'
 
 ### Ubuntu 10.04 and above
 
@@ -27,8 +27,8 @@ Run:
 
 Run:
 
-    # rpm -Uvh http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-7.noarch.rpm
-    # yum install git python-virtinst httpd mod_wsgi Django
+    $ su -c 'rpm -Uvh http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-7.noarch.rpm'
+    $ su -c 'yum install git python-virtinst httpd mod_wsgi Django'
 
 ## 3. Setup
 
