@@ -62,6 +62,9 @@
                 {% endfor %}
           </tbody>
           </table>
+        {% else %}
+          <h4>{% trans "You have no connection to the host" %}</h4><br>
+        {% endif %}
         {% if errors %}
           {% for error in errors %}
             <div class="alert alert-error" style="width:400px">
@@ -69,9 +72,6 @@
               {{ error }}
             </div>
           {% endfor %}
-        {% endif %}
-        {% else %}
-          <h4>{% trans "You have no connection to the host" %}</h4><br>
         {% endif %}
         <div id="myModal" class="modal hide fade">
             <div class="modal-header">
