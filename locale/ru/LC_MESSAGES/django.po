@@ -7,48 +7,44 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-17 10:07+0300\n"
+"POT-Creation-Date: 2012-07-31 18:40+0300\n"
 "PO-Revision-Date: 2012-05-06 14:41+0300\n"
 "Last-Translator: Anatoliy Guskov <anatoliy.guskov@gmail.com>\n"
 "Language-Team: RU <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"Language: \n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
+"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 
 #: dashboard/views.py:48
 msgid "Add server: "
 msgstr "Добавление сервера: "
 
-#: dashboard/views.py:82
-msgid "IP address can not be a private address space"
-msgstr "IP адрес не может быть частным адресным пространством"
-
-#: dashboard/views.py:85
+#: dashboard/views.py:78
 msgid "The host name must not exceed 20 characters"
 msgstr "Имя хоста не должно превышать 20 символов"
 
-#: dashboard/views.py:88
+#: dashboard/views.py:81
 msgid ""
 "Hostname must contain only numbers, or the domain name separated by \".\""
 msgstr ""
 "Имя хоста должно содержать только цифры или доменное имя разделенное \".\""
 
-#: dashboard/views.py:91
+#: dashboard/views.py:84
 msgid "The host name must not contain any characters and Russian characters"
 msgstr "Имя хоста не должно содержать символы и русские буквы"
 
-#: dashboard/views.py:97
+#: dashboard/views.py:90
 msgid "This host is already connected"
 msgstr "Такой хост уже подключен"
 
-#: dashboard/views.py:100
+#: dashboard/views.py:93
 msgid "No hostname has been entered"
 msgstr "Не было введено имя хоста"
 
-#: dashboard/views.py:103
+#: dashboard/views.py:96
 msgid "No IP address has been entered"
 msgstr "Не был введен IP адрес"
 
@@ -364,7 +360,7 @@ msgstr "Удалить"
 msgid "Are you sure?"
 msgstr "Вы уверены?"
 
-#: templates/dashboard.html:74
+#: templates/dashboard.html:66
 msgid "You have no connection to the host"
 msgstr "У Вас отсутствуют подключения к хостам"
 
