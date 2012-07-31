@@ -72,15 +72,8 @@ def index(request):
 			login = request.POST.get('sshusr','')
 			passw = request.POST.get('passw','')
 			simbol = re.search('[^a-zA-Z0-9\_]+', name)
-			ipsimbol = re.search('[^a-z0-9\.]+', ipaddr)
+			ipsimbol = re.search('[^a-z0-9\.\-]+', ipaddr)
 			domain = re.search('[\.]+', ipaddr)
-			privat_ip1 = re.search('^172\.', ipaddr)
-			privat_ip2 = re.search('^192\.', ipaddr)
-			privat_ip3 = re.search('^10\.', ipaddr)
-			privat_ip4 = re.search('^127\.', ipaddr)
-			if privat_ip1 or privat_ip2 or privat_ip3 or privat_ip4:
-				msg = _('IP address can not be a private address space')
-				errors.append(msg)
 			if len(name) > 20:
 				msg = _('The host name must not exceed 20 characters')
 				errors.append(msg)
