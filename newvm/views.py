@@ -181,7 +181,7 @@ def index(request, host_id):
 				emulator.append(util.get_xml_path(xml,"/capabilities/guest[1]/arch/emulator"))
 				emulator.append(util.get_xml_path(xml,"/capabilities/guest[2]/arch/emulator"))
 			else:
-				emulator = util.get_xml_path(xml,"/capabilities/guest[1]/arch/@name")
+				emulator = util.get_xml_path(xml,"/capabilities/guest[1]/arch/emulator")
 			return emulator
 		except libvirt.libvirtError as e:
 			add_error(e, 'libvirt')
