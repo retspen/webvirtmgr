@@ -232,7 +232,7 @@ def index(request, host_id):
 					  <currentMemory>%s</currentMemory>
 					  <vcpu>%s</vcpu>
 					  <os>
-					    <type arch='x86_64' machine='%s'>hvm</type>
+					    <type arch='%s' machine='%s'>hvm</type>
 					    <boot dev='hd'/>
 					    <boot dev='cdrom'/>
 					    <bootmenu enable='yes'/>
@@ -246,7 +246,7 @@ def index(request, host_id):
 					  <on_poweroff>destroy</on_poweroff>
 					  <on_reboot>restart</on_reboot>
 					  <on_crash>restart</on_crash>
-					  <devices>""" % (domtype, name, mem, memaloc, cpus, machine)
+					  <devices>""" % (domtype, name, mem, memaloc, cpus, arch, machine)
 				
 			if arch == 'x86_64':
 				xml += """<emulator>%s</emulator>""" % (emul[1])
