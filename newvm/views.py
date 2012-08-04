@@ -346,7 +346,7 @@ def index(request, host_id):
 		if simbol:
 			msg = _('The name of the virtual machine must not contain any characters and Russian characters')
 			errors.append(msg)
-		if not img or not request.POST.get('hdd',''):
+		if not img and not request.POST.get('hdd',''):
 			msg = _('Images of the HDD to a virtual machine not available. You need to create an HDD image')
 			errors.append(msg)
 		if not name:
