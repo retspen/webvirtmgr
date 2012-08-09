@@ -69,7 +69,7 @@ Add virtual host in apache:
         SetEnv DJANGO_SETTINGS_MODULE webvirtmgr.settings
         PythonOption django.root /webvirtmgr
         PythonDebug On
-        PythonPath "['/var/www'] + sys.path" #Attention: PythonPath - without folder webvirtmgr
+        PythonPath "['/var/www'] + sys.path"
         
         ErrorLog logs/webvirtmgr-error_log
         CustomLog logs/webvirtmgr-access_log common
