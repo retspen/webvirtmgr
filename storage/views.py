@@ -228,7 +228,7 @@ def pool(request, host_id, pool):
 				if stg.info()[3] == 0:
 					percent = 0
 				else:
-					percent = (stg.info()[2] * 100) / stg.info()[3]
+					percent = (stg.info()[2] * 100) / stg.info()[1]
 				stg_info = stg.info()
 				stg_info.append(percent)
 				return stg_info
