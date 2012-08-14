@@ -23,7 +23,7 @@ Run:
 
     $ sudo apt-get install git python-django virtinst apache2 libapache2-mod-python
 
-### CentOS, RedHat (6.x)
+### CentOS, RedHat 6.2 and above
 
 Run:
 
