@@ -56,7 +56,7 @@ Enter in your browser:
     
     http://x.x.x.x:8000 (x.x.x.x - your IP address server)
 
-## 4. Setup apache for Django.
+## 4. Setup apache (Virtual Host).
 
 Add virtual host in apache:
 
