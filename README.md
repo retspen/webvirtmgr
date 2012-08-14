@@ -11,13 +11,13 @@ The application logic is written in Python & Django. The LIBVIRT Python bindings
 
 ## 2. Installation
 
-### Fedora 14 and above
+### Fedora 15 and above
 
 Run:
 
     $ su -c 'yum -y install git Django python-virtinst httpd mod_python'
 
-### Ubuntu 10.04 and above
+### Ubuntu 11.04 and above
 
 Run:
 
