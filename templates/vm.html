@@ -50,7 +50,7 @@
     <div class="tabbable"> 
      <ul class="nav nav-tabs">
       <li class="active"><a href="#tab1" data-toggle="tab">VM</a></li>
-      <li>{% if state = 5 or state = 3 %}<a>VNC</a>{% else %}<a href="#tab2" data-toggle="tab">VNC: {{ vnc_port }}</a>{% endif %}</li>
+      <li>{% if state = 5 or state = 3 %}<a>VNC</a>{% else %}<a href="#tab2" data-toggle="tab" onclick="startApplet()">VNC: {{ vnc_port }}</a>{% endif %}</li>
       <li><a href="#tab3" data-toggle="tab">XML</a></li>
     </ul>
     <div class="tab-content">
@@ -145,17 +145,24 @@
             {% endif %}
             </div>
             <div class="tab-pane" id="tab2">
-              <applet archive="/media/java/vncviewer.jar" code="com.tightvnc.vncviewer.VncViewer" width="640" height="508">
-                <param name="SOCKETFACTORY" value="com.tightvnc.vncviewer.SshTunneledSocketFactory">
-                <param name="Show controls" value="Yes">
-                <param name="Offer relogin" value="Yes">
-                <param name="Open new window" value="No">
-                <param name="Scaling factor" value="auto">
-                <param name="SSHHOST" value="{{ kvm_host.ipaddr }}">
-                <param name="FINGERPRINT" value="DISABLE">
-		<param name="HOST" value="localhost">
-                <param name="PORT" value="{{ vnc_port }}">
-              </applet>
+              <script type="text/javascript">
+                function startApplet() {
+                  appletsource='<applet archive="/media/java/vncviewer.jar" code="com.tightvnc.vncviewer.VncViewer" width="640" height="508">\n';
+                  appletsource+='<param name="SOCKETFACTORY" value="com.tightvnc.vncviewer.SshTunneledSocketFactory">\n';
+                  appletsource+='<param name="Show controls" value="Yes">\n';
+                  appletsource+='<param name="Offer relogin" value="Yes">\n';
+                  appletsource+='<param name="Open new window" value="No">\n';
+                  appletsource+='<param name="Scaling factor" value="auto">\n';
+                  appletsource+='<param name="SSHHOST" value="{{ kvm_host.ipaddr }}">\n';
+                  appletsource+='<param name="FINGERPRINT" value="DISABLE">\n';
+                  appletsource+='<param name="HOST" value="localhost">\n';
+                  appletsource+='<param name="PORT" value="{{ vnc_port }}">\n';
+                  appletsource+='Sorry, the VNC Applet could not be started. Please make sure that Java 1.4.2 (or later) is installed and active in your browser (<a href="http://java.sun.com/getjava">Click here to install Java now</a>)\n';
+                  appletsource+='</applet>\n';
+                  document.getElementById('tab2').innerHTML=appletsource;
+                  }
+              </script>
+              <input type="button" value="Open screen" onclick="startApplet()" />
             </div>
             <div class="tab-pane" id="tab3">
               <div class="row">
