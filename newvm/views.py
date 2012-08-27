@@ -256,13 +256,13 @@ def index(request, host_id):
 			xml += """<disk type='file' device='disk'>
 					      <driver name='qemu' type='qcow2'/>
 					      <source file='%s'/>
-					      <target dev='hda' bus='ide'/>
+					      <target dev='vda' bus='virtio'/>
 					      <address type='drive' controller='0' bus='0' unit='0'/>
 					    </disk>
 					    <disk type='file' device='cdrom'>
 					      <driver name='qemu' type='raw'/>
 					      <source file='%s'/>
-					      <target dev='hdc' bus='ide'/>
+					      <target dev='vdc' bus='virtio'/>
 					      <readonly/>
 					      <address type='drive' controller='0' bus='1' unit='0'/>
 					    </disk>
