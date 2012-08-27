@@ -257,14 +257,12 @@ def index(request, host_id):
 					      <driver name='qemu' type='qcow2'/>
 					      <source file='%s'/>
 					      <target dev='vda' bus='virtio'/>
-					      <address type='drive' controller='0' bus='0' unit='0'/>
 					    </disk>
 					    <disk type='file' device='cdrom'>
 					      <driver name='qemu' type='raw'/>
 					      <source file='%s'/>
 					      <target dev='vdc' bus='virtio'/>
 					      <readonly/>
-					      <address type='drive' controller='0' bus='1' unit='0'/>
 					    </disk>
 					    <controller type='ide' index='0'>
 					      <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x1'/>
