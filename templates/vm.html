@@ -50,13 +50,12 @@
     <div class="tabbable"> 
      <ul class="nav nav-tabs">
       <li class="active"><a href="#tab1" data-toggle="tab">VM</a></li>
-      <li>{% if state = 5 or state = 3 %}<a>VNC</a>{% else %}<a href="#tab2" data-toggle="tab" onclick="startApplet()">VNC: {{ vnc_port }}</a>{% endif %}</li>
-      <li><a href="#tab3" data-toggle="tab">XML</a></li>
+      <li><a href="#tab2" data-toggle="tab">XML</a></li>
     </ul>
     <div class="tab-content">
     <div class="tab-pane active" id="tab1">
       <div class="row">
-        <div class="span4">
+        <div class="span5">
               <form action="/vm/{{ host_id }}/{{ vname }}/" method="post">{% csrf_token %}
                 {% if state = 5 %}
                  <button class="btn btn-primary" type="submit" name="start" value="start" title="{% trans "Start VM" %}"><i class="icon-play icon-white"></i></button>
@@ -67,24 +66,27 @@
                 {% if state = 3 %}
                  <button class="btn btn-primary" type="submit" name="resume" value="resume" title="{% trans "Resume" %}"><i class="icon-play icon-white"></i></button>
                  <a class="btn btn-primary disabled" title="{% trans "Suspend" %}"><i class="icon-pause icon-white"></i></a>
-                 <a class="btn btn-primary disabled" title="{% trans "Shutdown" %}"><i class="icon-stop icon-white"></i></a>
                  <a class="btn btn-primary disabled" title="{% trans "Force shutdown" %}"><i class="icon-off icon-white"></i></a>
                  <a class="btn btn-primary disabled" title="{% trans "Create snapshot" %}"><i class="icon-download-alt icon-white"></i></a>
                 {% endif %}
                 {% if state = 1 %}
                 <a class="btn btn-primary disabled" title="{% trans "Start VM" %}"><i class="icon-play icon-white"></i></a>
                  <button class="btn btn-primary" type="submit" name="suspend" value="suspend" title="{% trans "Suspend" %}" onclick="return confirm('{% trans "Are you sure?" %}')"><i class="icon-pause icon-white"></i></button>
-                 <button class="btn btn-primary" type="submit" name="shutdown" value="suspend" title="{% trans "Shutdown" %}" onclick="return confirm('{% trans "Send shutdown signal?" %}')"><i class="icon-stop icon-white"></i></button>
                  <button class="btn btn-primary" type="submit" name="destroy" value="destroy" title="{% trans "Force shutdown" %}" onclick="return confirm('{% trans "Force shutdown?" %}')"><i class="icon-off icon-white"></i></button>
                 {% endif %}
               {% if state != 3 and hdd.2 == 'qcow2' %}
                 <button class="btn btn-primary" type="submit" name="snapshot" value="snapshot" title="{% trans "Create snapshot" %}" {% if state == 1 %}onclick="return confirm('{% trans "Attention: When enabled, the virtual machine snapshot will be created on a lot longer. The virtual machine before creating the snapshot automatically switches to Paused and will be locked until you create it. Continue?" %}')"{% endif %}><i class="icon-download-alt icon-white"></i></button>
               {% endif %}
+              {% if state = 1 %}
+                <button class="btn btn-primary" title="VNC" onclick="open_vnc()"><i class="icon-eye-open icon-white"></i></button>
+              {% else %}
+                <a class="btn btn-primary disabled" title="VNC"><i class="icon-eye-open icon-white"></i></a>
+              {% endif %}
                 </form>
                </div>
               </div>
               <div class="row">
-                <div class="span2">
+                <div class="span3">
                   <p>{% trans "Name" %}</p>
                   <p>{% trans "State" %}</p>
                   <p>{% trans "Network" %}</p>
@@ -145,34 +147,21 @@
             {% endif %}
             </div>
             <div class="tab-pane" id="tab2">
-              <script type="text/javascript">
-                function startApplet() {
-                  appletsource='<applet archive="/media/java/vncviewer.jar" code="com.tightvnc.vncviewer.VncViewer" width="640" height="508">\n';
-                  appletsource+='<param name="SOCKETFACTORY" value="com.tightvnc.vncviewer.SshTunneledSocketFactory">\n';
-                  appletsource+='<param name="Show controls" value="Yes">\n';
-                  appletsource+='<param name="Offer relogin" value="Yes">\n';
-                  appletsource+='<param name="Open new window" value="No">\n';
-                  appletsource+='<param name="Scaling factor" value="auto">\n';
-                  appletsource+='<param name="SSHHOST" value="{{ kvm_host.ipaddr }}">\n';
-                  appletsource+='<param name="HOST" value="localhost">\n';
-                  appletsource+='<param name="PORT" value="{{ vnc_port }}">\n';
-                  appletsource+='Sorry, the VNC Applet could not be started. Please make sure that Java 1.4.2 (or later) is installed and active in your browser (<a href="http://java.sun.com/getjava">Click here to install Java now</a>)\n';
-                  appletsource+='</applet>\n';
-                  document.getElementById('tab2').innerHTML=appletsource;
-                  }
-              </script>
-              <input type="button" value="Open screen" onclick="startApplet()" />
-            </div>
-            <div class="tab-pane" id="tab3">
               <div class="row">
-                <div class="span8">
+                <div class="span9">
 <pre>{% for line in vm_xml %}
 {{ line }}{% endfor %}</pre>
                 </div>
-              </div>
+              </div>             
             </div>
           </div>
         </div>
       </div>
     </div>
+    <script>
+    function open_vnc()
+    {
+      window.open('/vnc/{{ host_id }}/{{ vname }}/','','width=800,height=600')
+    }
+    </script>
 {% endblock %}

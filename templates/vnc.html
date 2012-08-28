@@ -1,0 +1,21 @@
+<html>
+<head>
+  <title>WebVirtMgr - VNC {{ vname }}</title>
+  <style type="text/css">
+      body { padding: 0; margin: 0;}
+  </style>
+</head>
+<body>
+<applet archive="/media/java/vncviewer.jar" code="com.tightvnc.vncviewer.VncViewer" width="800" height="600">
+	<param name="SOCKETFACTORY" value="com.tightvnc.vncviewer.SshTunneledSocketFactory">
+	<param name="Show controls" value="No">
+	<param name="Offer relogin" value="Yes">
+	<param name="Open new window" value="No">
+	<param name="Scaling factor" value="100">
+	<param name="SSHHOST" value="{{ kvm_host.ipaddr }}">
+	<param name="HOST" value="localhost">
+	<param name="PORT" value="{{ vnc_port }}">
+	Sorry, the VNC Applet could not be started. Please make sure that Java 1.4.2 (or later) is installed and active in your browser (<a href="http://java.sun.com/getjava">Click here to install Java now</a>)
+</applet>
+</body>
+</html>
