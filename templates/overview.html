@@ -26,9 +26,8 @@
           </div>
         </div>
 		<div class="span8 well">
-			<div class="page-header">
    				<h2>{% trans "Overview" %}</h2>
-   			</div>
+   				<hr>
   		    {% if errors %}
 			    {% for error in errors %}
 			      <div class="alert alert-error">
@@ -38,7 +37,7 @@
 			    {% endfor %}
 			{% endif %}
 			<div class="row">
-				<div class="span3">
+				<div class="span4">
 					<p>{% trans "Hostname" %}</p>
 					<p>{% trans "Processor(s)" %}</p>
 					<p>{% trans "CPU utilization" %}</p>
@@ -49,10 +48,10 @@
 				<div class="span4">
 					<p><strong>{{ host_info.0 }}</strong></p>
 					<p>{{ host_info.2 }} x {{ host_info.3 }}</p>
-					<div class="progress progress-danger progress-striped active" style="margin-bottom: 9px; width:270px;">
+					<div class="progress progress-danger progress-striped active" style="margin-bottom: 5px; width:270px;">
         				<div class="bar" style="width: {{ cpu_usage }}%"><font color="black">{{ cpu_usage }}%</font></div>
       				</div>
-					<div class="progress progress-warning progress-striped active" style="margin-bottom: 9px; width:270px;">
+					<div class="progress progress-warning progress-striped active" style="margin-bottom: 5px; width:270px;">
         				<div class="bar" style="width: {{ mem_usage.2 }}%"><font color="black">{{ mem_usage.2 }}%</font></div>
       				</div>
 					<p>{{ conn_type }}</p>
@@ -69,7 +68,7 @@
               <tr>
                 <th>{% trans "Name" %}</th>
                 <th style="width:100px;">{% trans "Status" %}</th>
-                <th style="width:160px;">{% trans "Action" %}</th>
+                <th style="width:200px;">{% trans "Action" %}</th>
               </tr>
             </thead>
             <tbody>
@@ -83,20 +82,26 @@
 			                {% if state = 5 %}
 			                 <button class="btn btn-primary" type="submit" name="start" value="start" title="{% trans "Start VM" %}"><i class="icon-play icon-white"></i></button>
 			                 <a class="btn btn-primary disabled" title="{% trans "Suspend" %}"><i class="icon-pause icon-white"></i></a>
-			                 <a class="btn btn-primary disabled" title="{% trans "Shutdown" %}"><i class="icon-stop icon-white"></i></a>
 			                 <a class="btn btn-primary disabled" title="{% trans "Force shutdown" %}"><i class="icon-off icon-white"></i></a>
+			                 <a class="btn btn-primary disabled" title="VNC"><i class="icon-eye-open icon-white"></i></a>
 			                {% endif %}
 			                {% if state = 3 %}
 			                 <button class="btn btn-primary" type="submit" name="resume" value="resume" title="{% trans "Resume" %}"><i class="icon-play icon-white"></i></button>
 			                 <a class="btn btn-primary disabled" title="{% trans "Suspend" %}"><i class="icon-pause icon-white"></i></a>
-			                 <a class="btn btn-primary disabled" title="{% trans "Shutdown" %}"><i class="icon-stop icon-white"></i></a>
 			                 <a class="btn btn-primary disabled" title="{% trans "Force shutdown" %}"><i class="icon-off icon-white"></i></a>
+			                 <a class="btn btn-primary disabled" title="VNC"><i class="icon-eye-open icon-white"></i></a>
 			                {% endif %}
 			                {% if state = 1 %}
 			                <a class="btn btn-primary disabled" title="{% trans "Start VM" %}"><i class="icon-play icon-white"></i></a>
 			                 <button class="btn btn-primary" type="submit" name="suspend" value="suspend" title="{% trans "Suspend" %}" onclick="return confirm('{% trans "Are you sure?" %}')"><i class="icon-pause icon-white"></i></button>
-			                 <button class="btn btn-primary" type="submit" name="shutdown" value="suspend" title="{% trans "Shutdown" %}" onclick="return confirm('{% trans "Send shutdown signal?" %}')"><i class="icon-stop icon-white"></i></button>
 			                 <button class="btn btn-primary" type="submit" name="destroy" value="destroy" title="{% trans "Force shutdown" %}" onclick="return confirm('{% trans "Force shutdown?" %}')"><i class="icon-off icon-white"></i></button>
+			                 <button class="btn btn-primary" title="VNC" onclick="open_vnc()"><i class="icon-eye-open icon-white"></i></button>
+			                    <script>
+							    function open_vnc()
+							    {
+							      window.open('/vnc/{{ host_id }}/{{ name }}/','','width=800,height=600')
+							    }
+							    </script>
 			                {% endif %}
 			            </form>
 			        </td>
@@ -106,5 +111,6 @@
           </table>
           {% endif %}
         </div>
+    </div>
     </div>
 {% endblock %}
