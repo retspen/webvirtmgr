@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-19 15:48+0300\n"
+"POT-Creation-Date: 2012-08-28 14:42+0300\n"
 "PO-Revision-Date: 2012-05-06 14:41+0300\n"
 "Last-Translator: Anatoliy Guskov <anatoliy.guskov@gmail.com>\n"
 "Language-Team: RU <LL@li.org>\n"
@@ -98,41 +98,41 @@ msgstr "Запуск сетевого пула: "
 msgid "Delete network pool: "
 msgstr "Удаление сетевого пула: "
 
-#: newvm/views.py:314
+#: newvm/views.py:312
 msgid "Storage pools are not available or are not active"
 msgstr "Возможно пулы хранения не доступны или не активны"
 
-#: newvm/views.py:318
+#: newvm/views.py:316
 msgid "Network pools are not available or are not active"
 msgstr "Возможно сетевые пулы не доступны или не активны"
 
-#: newvm/views.py:341
+#: newvm/views.py:339
 msgid "This is the name of the virtual machine already exists"
 msgstr "Такое название виртуальной машины уже существует"
 
-#: newvm/views.py:344
+#: newvm/views.py:342
 msgid "The name of the virtual machine must not exceed 20 characters"
 msgstr "Название виртуальной машины не должно превышать 20 символов"
 
-#: newvm/views.py:347
+#: newvm/views.py:345
 msgid ""
 "The name of the virtual machine must not contain any characters and Russian "
 "characters"
 msgstr ""
 "Название виртуальной машины не должно содержать символы и русские буквы"
 
-#: newvm/views.py:350
+#: newvm/views.py:348
 msgid ""
 "Images of the HDD to a virtual machine not available. You need to create an "
 "HDD image"
 msgstr ""
 "Образы HDD для виртуальной машины отсутствуют. Необходимо созадть HDD образ"
 
-#: newvm/views.py:353
+#: newvm/views.py:351
 msgid "Enter the name of the virtual machine"
 msgstr "Введите название виртуальной машины"
 
-#: newvm/views.py:363
+#: newvm/views.py:361
 msgid "Creating a virtual machine: "
 msgstr "Создание виртуальной машины: "
 
@@ -293,7 +293,7 @@ msgstr "Центр управления"
 #: templates/newvm.html.py:528 templates/overview.html:70
 #: templates/snapshot.html:56 templates/storage.html:106
 #: templates/storage.html.py:126 templates/storage.html:174
-#: templates/vm.html:88
+#: templates/vm.html:89
 msgid "Name"
 msgstr "Название"
 
@@ -355,8 +355,8 @@ msgstr "Удалить"
 #: templates/network.html.py:73 templates/overview.html:97
 #: templates/snapshot.html:70 templates/snapshot.html.py:79
 #: templates/storage.html:90 templates/storage.html.py:92
-#: templates/storage.html:145 templates/vm.html:76 templates/vm.html.py:114
-#: templates/vm.html.py:138
+#: templates/storage.html:145 templates/vm.html:73 templates/vm.html.py:115
+#: templates/vm.html.py:139
 msgid "Are you sure?"
 msgstr "Вы уверены?"
 
@@ -588,7 +588,7 @@ msgstr "Название пула"
 msgid "Device pool"
 msgstr "Устройство пула"
 
-#: templates/network.html:63 templates/storage.html:79 templates/vm.html:89
+#: templates/network.html:63 templates/storage.html:79 templates/vm.html:90
 msgid "State"
 msgstr "Состояние"
 
@@ -659,7 +659,7 @@ msgid "VCPUs"
 msgstr "VCPUs"
 
 #: templates/newvm.html:48 templates/newvm.html.py:119
-#: templates/overview.html:45 templates/vm.html:93
+#: templates/overview.html:45 templates/vm.html:94
 msgid "Memory"
 msgstr "Память"
 
@@ -667,14 +667,14 @@ msgstr "Память"
 msgid "Disk"
 msgstr "Диск"
 
-#: templates/newvm.html:148 templates/vm.html:91
+#: templates/newvm.html:148 templates/vm.html:92
 msgid "Core"
 msgstr "Ядра процессора"
 
 #: templates/newvm.html:158 templates/newvm.html.py:236
 #: templates/newvm.html:299 templates/newvm.html.py:362
 #: templates/newvm.html:425 templates/newvm.html.py:488
-#: templates/newvm.html:551 templates/vm.html:96
+#: templates/newvm.html:551 templates/vm.html:97
 msgid "CD image"
 msgstr "Образ СD"
 
@@ -685,7 +685,7 @@ msgstr "Образ СD"
 msgid "Without image"
 msgstr "Без образа"
 
-#: templates/newvm.html:171 templates/vm.html:95
+#: templates/newvm.html:171 templates/vm.html:96
 msgid "HDD image"
 msgstr "Образ HDD"
 
@@ -693,14 +693,14 @@ msgstr "Образ HDD"
 #: templates/newvm.html:293 templates/newvm.html.py:356
 #: templates/newvm.html:419 templates/newvm.html.py:482
 #: templates/newvm.html:545 templates/snapshot.html:20
-#: templates/storage.html:83 templates/vm.html:122
+#: templates/storage.html:83 templates/vm.html:123
 msgid "None"
 msgstr "Отсутствует"
 
 #: templates/newvm.html:185 templates/newvm.html.py:249
 #: templates/newvm.html:312 templates/newvm.html.py:375
 #: templates/newvm.html:438 templates/newvm.html.py:501
-#: templates/newvm.html:564 templates/vm.html:90
+#: templates/newvm.html:564 templates/vm.html:91
 msgid "Network"
 msgstr "Сетевой мост"
 
@@ -730,7 +730,7 @@ msgstr "Обзор"
 msgid "Processor(s)"
 msgstr "Процессор(ы)"
 
-#: templates/overview.html:44 templates/vm.html:92
+#: templates/overview.html:44 templates/vm.html:93
 msgid "CPU utilization"
 msgstr "Загрузка процессора"
 
@@ -742,50 +742,49 @@ msgstr "Тип подключения"
 msgid "Libvirt version"
 msgstr "Версия libvirt"
 
-#: templates/overview.html:79 templates/vm.html:100
+#: templates/overview.html:79 templates/vm.html:101
 msgid "power on"
 msgstr "вкючено"
 
-#: templates/overview.html:79 templates/vm.html:100
+#: templates/overview.html:79 templates/vm.html:101
 msgid "power off"
 msgstr "выключено"
 
-#: templates/overview.html:79 templates/vm.html:100
+#: templates/overview.html:79 templates/vm.html:101
 msgid "suspend"
 msgstr "приостановлено"
 
 #: templates/overview.html:84 templates/overview.html.py:96
-#: templates/vm.html:62 templates/vm.html.py:75
+#: templates/vm.html:61 templates/vm.html.py:72
 msgid "Start VM"
 msgstr "Запуск"
 
 #: templates/overview.html:85 templates/overview.html.py:91
-#: templates/overview.html:97 templates/vm.html:63 templates/vm.html.py:69
-#: templates/vm.html.py:76
+#: templates/overview.html:97 templates/vm.html:62 templates/vm.html.py:67
+#: templates/vm.html.py:73
 msgid "Suspend"
 msgstr "Приостановить"
 
 #: templates/overview.html:86 templates/overview.html.py:92
-#: templates/overview.html:98 templates/vm.html:64 templates/vm.html.py:70
-#: templates/vm.html.py:77
+#: templates/overview.html:98
 msgid "Shutdown"
 msgstr "Выключить"
 
 #: templates/overview.html:87 templates/overview.html.py:93
-#: templates/overview.html:99 templates/vm.html:65 templates/vm.html.py:71
-#: templates/vm.html.py:78
+#: templates/overview.html:99 templates/vm.html:63 templates/vm.html.py:68
+#: templates/vm.html.py:74
 msgid "Force shutdown"
 msgstr "Завершить"
 
-#: templates/overview.html:90 templates/vm.html:68
+#: templates/overview.html:90 templates/vm.html:66
 msgid "Resume"
 msgstr "Возобновить"
 
-#: templates/overview.html:98 templates/vm.html:77
+#: templates/overview.html:98
 msgid "Send shutdown signal?"
 msgstr "Послать сигнал выключения?"
 
-#: templates/overview.html:99 templates/vm.html:78
+#: templates/overview.html:99 templates/vm.html:74
 msgid "Force shutdown?"
 msgstr "Выключить принудительно?"
 
@@ -854,11 +853,11 @@ msgstr "ГБ"
 msgid "Managing a virtual machine"
 msgstr "Управление виртуальной машиной"
 
-#: templates/vm.html:72 templates/vm.html.py:81
+#: templates/vm.html:69 templates/vm.html.py:77
 msgid "Create snapshot"
 msgstr "Создать снапшот"
 
-#: templates/vm.html:81
+#: templates/vm.html:77
 msgid ""
 "Attention: When enabled, the virtual machine snapshot will be created on a "
 "lot longer. The virtual machine before creating the snapshot automatically "
@@ -869,35 +868,35 @@ msgstr ""
 "перейдет в режим Приостановлена и будет заблокирована пока не создаст его. "
 "Продолжить?"
 
-#: templates/vm.html:94
+#: templates/vm.html:95
 msgid "Memory use"
 msgstr "Используется"
 
-#: templates/vm.html:102 templates/vm.html.py:106
+#: templates/vm.html:103 templates/vm.html.py:107
 msgid "allocated"
 msgstr "выделено"
 
-#: templates/vm.html:102 templates/vm.html.py:106
+#: templates/vm.html:103 templates/vm.html.py:107
 msgid "of"
 msgstr "из"
 
-#: templates/vm.html:114
+#: templates/vm.html:115
 msgid "Disconnect"
 msgstr "Отключить"
 
-#: templates/vm.html:127 templates/vm.html.py:129
+#: templates/vm.html:128 templates/vm.html.py:130
 msgid "Connect"
 msgstr "Подключить"
 
-#: templates/vm.html:138 templates/vm.html.py:140
+#: templates/vm.html:139 templates/vm.html.py:141
 msgid "Undefine"
 msgstr "Удалить"
 
-#: templates/vm.html:144
+#: templates/vm.html:145
 msgid "To cancel the definition of a virtual machine, delete images"
 msgstr "Для того чтобы удалить виртуальную машину удалите ее"
 
-#: templates/vm.html:144
+#: templates/vm.html:145
 msgid "snapshots"
 msgstr "снапшоты"
 
