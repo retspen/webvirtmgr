@@ -97,7 +97,7 @@
 			                 <button class="btn btn-primary" type="submit" name="destroy" value="destroy" title="{% trans "Force shutdown" %}" onclick="return confirm('{% trans "Force shutdown?" %}')"><i class="icon-off icon-white"></i></button>
 			                 <button class="btn btn-primary" title="VNC" onclick="open_vnc_{{ name }}()"><i class="icon-eye-open icon-white"></i></button>
 		                     <script>
-							 function open_vnc_{{ name }}() { window.open('/vnc/{{ host_id }}/{{ name }}/','','width=800,height=600') }
+							 function open_vnc_{{ name }}() { window.open('/vnc/{{ host_id }}/{{ name }}/','','width=968,height=552') }
 							 </script>
 			                {% endif %}
 			            </form>
