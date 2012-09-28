@@ -253,6 +253,6 @@ def snapshot(request, host_id, vname):
 
 def redir(request):
 	if not request.user.is_authenticated():
-		return HttpResponseRedirect('/user/login')
+		return HttpResponseRedirect('/')
 	else:
 		return HttpResponseRedirect('/dashboard')
