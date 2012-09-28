@@ -390,6 +390,6 @@ def pool(request, host_id, pool):
 
 def redir(request):
 	if not request.user.is_authenticated():
-		return HttpResponseRedirect('/user/login')
+		return HttpResponseRedirect('/')
 	else:
 		return HttpResponseRedirect('/dashboard')
