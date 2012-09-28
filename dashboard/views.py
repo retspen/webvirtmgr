@@ -9,7 +9,7 @@ from django.template import RequestContext
 def index(request):
 
 	if not request.user.is_authenticated():
-		return HttpResponseRedirect('/user/login')
+		return HttpResponseRedirect('/')
 
 	def get_hosts_status():
 		kvm_host = Host.objects.filter(user=request.user.id)
