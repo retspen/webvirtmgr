@@ -10,7 +10,7 @@ from django.template import RequestContext
 def index(request, host_id):
 
 	if not request.user.is_authenticated():
-		return HttpResponseRedirect('/user/login/')
+		return HttpResponseRedirect('/')
 
 	def add_error(msg, type_err):
 		error_msg = Log(host_id=host_id, 
@@ -223,6 +223,6 @@ def index(request, host_id):
 def redir(request):
 	""" redirect if not have in request host_id """
 	if not request.user.is_authenticated():
-		return HttpResponseRedirect('/user/login/')
+		return HttpResponseRedirect('/')
 	else:
 		return HttpResponseRedirect('/dashboard/')
