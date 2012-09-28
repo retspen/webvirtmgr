@@ -10,7 +10,7 @@ from django.template import RequestContext
 def index(request, host_id):
 
 	if not request.user.is_authenticated():
-		return HttpResponseRedirect('/user/login')
+		return HttpResponseRedirect('/')
 
 	kvm_host = Host.objects.get(user=request.user.id, id=host_id)
 
@@ -475,6 +475,6 @@ def pool(request, host_id, pool):
 
 def redir(request):
 	if not request.user.is_authenticated():
-		return HttpResponseRedirect('/user/login')
+		return HttpResponseRedirect('/')
 	else:
 		return HttpResponseRedirect('/dashboard/')
