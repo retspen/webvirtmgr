@@ -63,12 +63,12 @@ def index(request, host_id, vname):
 
 def redir_two(request, host_id):
    if not request.user.is_authenticated():
-      return HttpResponseRedirect('/user/login/')
+      return HttpResponseRedirect('/')
    else:
       return HttpResponseRedirect('/dashboard/')
 
 def redir_one(request):
    if not request.user.is_authenticated():
-      return HttpResponseRedirect('/user/login/')
+      return HttpResponseRedirect('/')
    else:
       return HttpResponseRedirect('/')
