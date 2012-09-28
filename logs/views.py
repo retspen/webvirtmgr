@@ -6,13 +6,13 @@ from webvirtmgr.model.models import *
 
 def redir(request):
 	if not request.user.is_authenticated():
-		return HttpResponseRedirect('/user/login/')
+		return HttpResponseRedirect('/')
 	else:
 		return HttpResponseRedirect('/dashboard/')
 
 def logs(request, host_id):
 	if not request.user.is_authenticated():
-		return HttpResponseRedirect('/user/login/')
+		return HttpResponseRedirect('/')
 
 	kvm_host = Host.objects.get(user=request.user.id, id=host_id)
 	all_logs = Log.objects.filter(host=host_id, user=request.user.id).order_by('-date')[:50]
