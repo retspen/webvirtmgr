@@ -58,7 +58,7 @@ Enter in your browser:
 
 ## 4. Setup Web (Virtual Host or WSGI)
 
-1. Virtual Host 
+###1. Virtual Host 
 
 Add file webvirtmgr.conf in conf.d directory (Ubuntu: "/etc/apache2/conf.d" or RedHat,Fedora,CentOS: "/etc/httpd/conf.d"):
 
@@ -77,7 +77,7 @@ Add file webvirtmgr.conf in conf.d directory (Ubuntu: "/etc/apache2/conf.d" or R
         CustomLog logs/webvirtmgr-access_log common
     </VirtualHost>
 
-2. WSGI
+###2. WSGI
 
 Add file webvirtmgr.conf in conf.d directory (Ubuntu: "/etc/apache2/conf.d" or RedHat,Fedora,CentOS: "/etc/httpd/conf.d"):
 
