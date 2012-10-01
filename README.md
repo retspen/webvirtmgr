@@ -59,6 +59,7 @@ Enter in your browser:
 ## 4. Setup Web (Virtual Host or WSGI)
 
 1. Virtual Host 
+
 Add file webvirtmgr.conf in conf.d directory (Ubuntu: "/etc/apache2/conf.d" or RedHat,Fedora,CentOS: "/etc/httpd/conf.d"):
 
     <VirtualHost *:80>
@@ -77,6 +78,7 @@ Add file webvirtmgr.conf in conf.d directory (Ubuntu: "/etc/apache2/conf.d" or R
     </VirtualHost>
 
 2. WSGI
+
 Add file webvirtmgr.conf in conf.d directory (Ubuntu: "/etc/apache2/conf.d" or RedHat,Fedora,CentOS: "/etc/httpd/conf.d"):
 
     WSGIScriptAlias / /var/www/webvirtmgr/wsgi/django.wsgi
@@ -86,3 +88,4 @@ Add file webvirtmgr.conf in conf.d directory (Ubuntu: "/etc/apache2/conf.d" or R
       Order allow,deny
       Allow from all
     </Directory>
+
