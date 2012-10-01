@@ -15,20 +15,20 @@ The application logic is written in Python & Django. The LIBVIRT Python bindings
 
 Run:
 
-    $ su -c 'yum -y install git Django python-virtinst httpd mod_python'
+    $ su -c 'yum -y install git Django python-virtinst httpd mod_python mod_wsgi'
 
 ### Ubuntu 12.04 and above
 
 Run:
 
-    $ sudo apt-get install git python-django virtinst apache2 libapache2-mod-python
+    $ sudo apt-get install git python-django virtinst apache2 libapache2-mod-python libapache2-mod-wsgi
 
 ### CentOS 6.2, RedHat 6.2 and above
 
 Run:
 
     $ su -c 'rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/i386/epel-release-6-7.noarch.rpm'
-    $ su -c 'yum -y install git python-virtinst httpd mod_python Django'
+    $ su -c 'yum -y install git python-virtinst httpd mod_python mod_wsgi Django'
 
 ## 3. Setup
 
@@ -56,9 +56,10 @@ Enter in your browser:
     
     http://x.x.x.x:8000 (x.x.x.x - your IP address server)
 
-## 4. Setup apache (Virtual Host).
+## 4. Setup Web (Virtual Host or WSGI)
 
-Add virtual host in apache:
+1. Virtual Host 
+Add file webvirtmgr.conf in conf.d directory (Ubuntu: "/etc/apache2/conf.d" or RedHat,Fedora,CentOS: "/etc/httpd/conf.d"):
 
     <VirtualHost *:80>
         ServerAdmin webmaster@dummy-host.example.com
@@ -73,4 +74,15 @@ Add virtual host in apache:
         
         ErrorLog logs/webvirtmgr-error_log
         CustomLog logs/webvirtmgr-access_log common
-    </VirtualHost>    
+    </VirtualHost>
+
+2. WSGI
+Add file webvirtmgr.conf in conf.d directory (Ubuntu: "/etc/apache2/conf.d" or RedHat,Fedora,CentOS: "/etc/httpd/conf.d"):
+
+    WSGIScriptAlias / /var/www/webvirtmgr/wsgi/django.wsgi
+    Alias /static /var/www/webvirtmgr/static/
+    Alias /media /var/www/webvirtmgr/media/
+    <Directory /var/www/webvirtmgr/wsgi>
+      Order allow,deny
+      Allow from all
+    </Directory>
