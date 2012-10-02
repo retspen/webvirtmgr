@@ -73,8 +73,8 @@ Add file webvirtmgr.conf in conf.d directory (Ubuntu: "/etc/apache2/conf.d" or R
         PythonDebug On
         PythonPath "['/var/www'] + sys.path"
         
-        ErrorLog logs/webvirtmgr-error_log
-        CustomLog logs/webvirtmgr-access_log common
+        ErrorLog ${APACHE_LOG_DIR}/webvirtmgr-error_log
+        CustomLog ${APACHE_LOG_DIR}/webvirtmgr-access_log common
     </VirtualHost>
 
 ###2. WSGI
