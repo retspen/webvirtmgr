@@ -56,7 +56,7 @@ Enter in your browser:
     
     http://x.x.x.x:8000 (x.x.x.x - your IP address server)
 
-## 4. Setup Web (Virtual Host or WSGI)
+## 4. Setup Web (Choose only one method: Virtual Host or WSGI)
 
 ###1. Virtual Host 
 
