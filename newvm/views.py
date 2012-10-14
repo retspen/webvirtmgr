@@ -217,16 +217,10 @@ def index(request, host_id):
 	def add_vm(name, mem, cpus, machine, emul, img, iso, bridge):
 		try:
 			arch = conn.getInfo()[0]
-			hostcap = conn.getCapabilities()
-			iskvm = re.search('kvm', hostcap)
-			if iskvm:
-				domtype = 'kvm'
-			else:
-				domtype = 'qemu'
 			if not iso:
 				iso = ''
 			memaloc = mem
-			xml = """<domain type='%s'>
+			xml = """<domain type='kvm'>
 					  <name>%s</name>
 					  <memory>%s</memory>
 					  <currentMemory>%s</currentMemory>
@@ -246,7 +240,7 @@ def index(request, host_id):
 					  <on_poweroff>destroy</on_poweroff>
 					  <on_reboot>restart</on_reboot>
 					  <on_crash>restart</on_crash>
-					  <devices>""" % (domtype, name, mem, memaloc, cpus, arch, machine)
+					  <devices>""" % (name, mem, memaloc, cpus, arch, machine)
 				
 			if arch == 'x86_64':
 				xml += """<emulator>%s</emulator>""" % (emul[1])
