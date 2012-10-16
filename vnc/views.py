@@ -23,17 +23,30 @@ def index(request, host_id, vname):
    kvm_host = Host.objects.get(user=usr_id, id=host_id)
    host_ip = kvm_host.ipaddr
 
-   def creds(credentials, user_data):
-      for credential in credentials:
-         if credential[0] == libvirt.VIR_CRED_AUTHNAME:
-            credential[4] = kvm_host.login
-            if len(credential[4]) == 0:
-               credential[4] = credential[3]
-         elif credential[0] == libvirt.VIR_CRED_PASSPHRASE:
-            credential[4] = kvm_host.passwd
-         else:
-            return -1
-      return 0
+   if not kvm_host.login or not kvm_host.passwd:
+      def creds(credentials, user_data):
+         for credential in credentials:
+            if credential[0] == libvirt.VIR_CRED_AUTHNAME:
+               credential[4] = request.session['login_kvm']
+               if len(credential[4]) == 0:
+                  credential[4] = credential[3]
+            elif credential[0] == libvirt.VIR_CRED_PASSPHRASE:
+               credential[4] = request.session['passwd_kvm']
+            else:
+               return -1
+         return 0
+   else:
+      def creds(credentials, user_data):
+         for credential in credentials:
+            if credential[0] == libvirt.VIR_CRED_AUTHNAME:
+               credential[4] = kvm_host.login
+               if len(credential[4]) == 0:
+                  credential[4] = credential[3]
+            elif credential[0] == libvirt.VIR_CRED_PASSPHRASE:
+               credential[4] = kvm_host.passwd
+            else:
+               return -1
+         return 0
 
    def get_dom(vname):
       try:
