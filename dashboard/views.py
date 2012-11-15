@@ -71,7 +71,7 @@ def index(request):
 			ipaddr = request.POST.get('ipaddr','')
 			login = request.POST.get('sshusr','')
 			passw = request.POST.get('passw','')
-			simbol = re.search('[^a-zA-Z0-9\_]+', name)
+			simbol = re.search('[^a-zA-Z0-9\-]+', name)
 			ipsimbol = re.search('[^a-z0-9\.\-]+', ipaddr)
 			domain = re.search('[\.]+', ipaddr)
 			if len(name) > 20:
