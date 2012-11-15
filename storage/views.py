@@ -357,7 +357,7 @@ def pool(request, host_id, pool):
 			start = get_stg_info('start')
 			listvol = get_stg_info('list')
 			volinfo = get_vl_info(listvol)
-			hdd_size = range(1,101)
+			hdd_size = range(1,321)
 		errors = []
 
 	if request.method == 'POST':
