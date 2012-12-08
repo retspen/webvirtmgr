@@ -61,20 +61,20 @@
                  <button class="btn btn-primary" type="submit" name="start" value="start" title="{% trans "Start VM" %}"><i class="icon-play icon-white"></i></button>
                  <a class="btn btn-primary disabled" title="{% trans "Suspend" %}"><i class="icon-pause icon-white"></i></a>
                  <a class="btn btn-primary disabled" title="{% trans "Force shutdown" %}"><i class="icon-off icon-white"></i></a>
-                 <a class="btn btn-primary disabled" title="{% trans "Soft off" %}"><i class="icon-off icon-white"></i></a>
+                 <a class="btn btn-primary disabled" title="{% trans "Soft off" %}"><i class="icon-stop icon-white"></i></a>
                 {% endif %}
                 {% if state = 3 %}
                  <button class="btn btn-primary" type="submit" name="resume" value="resume" title="{% trans "Resume" %}"><i class="icon-play icon-white"></i></button>
                  <a class="btn btn-primary disabled" title="{% trans "Suspend" %}"><i class="icon-pause icon-white"></i></a>
                  <a class="btn btn-primary disabled" title="{% trans "Force shutdown" %}"><i class="icon-off icon-white"></i></a>
-                 <a class="btn btn-primary disabled" title="{% trans "Soft off" %}"><i class="icon-off icon-white"></i></a>
+                 <a class="btn btn-primary disabled" title="{% trans "Soft off" %}"><i class="icon-stop icon-white"></i></a>
                  <a class="btn btn-primary disabled" title="{% trans "Create snapshot" %}"><i class="icon-download-alt icon-white"></i></a>
                 {% endif %}
                 {% if state = 1 %}
                 <a class="btn btn-primary disabled" title="{% trans "Start VM" %}"><i class="icon-play icon-white"></i></a>
                  <button class="btn btn-primary" type="submit" name="suspend" value="suspend" title="{% trans "Suspend" %}" onclick="return confirm('{% trans "Are you sure?" %}')"><i class="icon-pause icon-white"></i></button>
                  <button class="btn btn-primary" type="submit" name="destroy" value="destroy" title="{% trans "Force shutdown" %}" onclick="return confirm('{% trans "Force shutdown?" %}')"><i class="icon-off icon-white"></i></button>
-                 <button class="btn btn-primary" type="submit" name="destroy" value="shutdown" title="{% trans "Soft off" %}"><i class="icon-off icon-white"></i></button>
+                 <button class="btn btn-primary" type="submit" name="shutdown" value="shutdown" title="{% trans "Soft off" %}"><i class="icon-stop icon-white"></i></button>
                 {% endif %}
               {% if state != 3 and hdd.2 == 'qcow2' %}
                 <button class="btn btn-primary" type="submit" name="snapshot" value="snapshot" title="{% trans "Create snapshot" %}" {% if state == 1 %}onclick="return confirm('{% trans "Attention: When enabled, the virtual machine snapshot will be created on a lot longer. The virtual machine before creating the snapshot automatically switches to Paused and will be locked until you create it. Continue?" %}')"{% endif %}><i class="icon-download-alt icon-white"></i></button>
