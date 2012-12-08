@@ -77,6 +77,16 @@ Add file webvirtmgr.conf in conf.d directory (Ubuntu: "/etc/apache2/conf.d" or R
         CustomLog ${APACHE_LOG_DIR}/webvirtmgr-access_log common
     </VirtualHost>
 
+Copy the folder and change owner:
+
+    # cp -r webvirtmgr /var/www/
+    # chown www-data.www-data /var/www/webvirtmgr/
+    # chown www-data.www-data /var/www/webvirtmgr/*
+
+Reload apache:
+    
+    # service apache2 reload
+    
 ###2. WSGI
 
 Add file webvirtmgr.conf in conf.d directory (Ubuntu: "/etc/apache2/conf.d" or RedHat,Fedora,CentOS: "/etc/httpd/conf.d"):
