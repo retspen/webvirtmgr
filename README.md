@@ -77,11 +77,10 @@ Add file webvirtmgr.conf in conf.d directory (Ubuntu: "/etc/apache2/conf.d" or R
         CustomLog ${APACHE_LOG_DIR}/webvirtmgr-access_log common
     </VirtualHost>
 
-Copy the folder and change owner:
+Copy the folder and change owner (Ubuntu: "www-data:www-data", Fedora, Redhat, CentOS: "apache:apache"):
 
-    # cp -r webvirtmgr /var/www/
-    # chown www-data.www-data /var/www/webvirtmgr/
-    # chown www-data.www-data /var/www/webvirtmgr/*
+    $ sudo cp -r webvirtmgr /var/www/
+    $ sudo chown -R www-data:www-data /var/www/webvirtmgr/
 
 Reload apache:
     
