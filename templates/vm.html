@@ -73,7 +73,7 @@
                 {% if state = 1 %}
                 <a class="btn btn-primary disabled" title="{% trans "Start VM" %}"><i class="icon-play icon-white"></i></a>
                  <button class="btn btn-primary" type="submit" name="suspend" value="suspend" title="{% trans "Suspend" %}" onclick="return confirm('{% trans "Are you sure?" %}')"><i class="icon-pause icon-white"></i></button>
-                 <button class="btn btn-primary" type="submit" name="shutdown" value="shutdown" title="{% trans "Soft off" %}"><i class="icon-stop icon-white"></i></button>
+                 <button class="btn btn-primary" type="submit" name="shutdown" value="shutdown" title="{% trans "Soft off" %}" onclick="return confirm('{% trans "Sending ACPI Off..." %}')"><i class="icon-stop icon-white"></i></button>
                  <button class="btn btn-primary" type="submit" name="destroy" value="destroy" title="{% trans "Force shutdown" %}" onclick="return confirm('{% trans "Force shutdown?" %}')"><i class="icon-off icon-white"></i></button>
                 {% endif %}
               {% if state != 3 and hdd.2 == 'qcow2' %}
