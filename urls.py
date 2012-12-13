@@ -1,61 +1,30 @@
 from django.conf.urls.defaults import patterns, include, url
 from webvirtmgr import settings
-from django.contrib import admin
-admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Static pages
-    url(r'^$', 'webvirtmgr.pages.views.index'),
-    url(r'^docs/$', 'webvirtmgr.pages.views.docs'),
-    
-    # Host
-    url(r'^dashboard/$', 'webvirtmgr.dashboard.views.index'),
+    url(r'^$', 'webvirtmgr.polls.views.index'),
 
-    # NewVM
-    url(r'^newvm/(\d+)/$', 'webvirtmgr.newvm.views.index'),
-    url(r'^newvm/', 'webvirtmgr.newvm.views.redir'),
+    url(r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}),
+    url(r'^logout/$', 'django.contrib.auth.views.logout', {'template_name': 'logout.html'}),
 
-    # Overview
-    url(r'^overview/(\d+)/$', 'webvirtmgr.overview.views.index'),
-    url(r'^overview/', 'webvirtmgr.overview.views.redir'),
+    url(r'^dashboard/$', 'webvirtmgr.polls.views.dashboard'),
 
-    # Storage
-    url(r'^storage/(\d+)/$', 'webvirtmgr.storage.views.index'),
-    url(r'^storage/(\d+)/(\w+)/$', 'webvirtmgr.storage.views.pool'),
-    url(r'^storage/', 'webvirtmgr.storage.views.redir'),
+    url(r'^overview/(\d+)/$', 'webvirtmgr.polls.views.overview'),
 
-    # Network
-    url(r'^network/(\d+)/$', 'webvirtmgr.network.views.index'),
-    url(r'^network/(\d+)/(\w+)/$', 'webvirtmgr.network.views.pool'),
-    url(r'^network/', 'webvirtmgr.network.views.redir'),
+    url(r'^newvm/(\d+)/$', 'webvirtmgr.polls.views.newvm'),
 
-    # Snapshot
-    url(r'^snapshot/(\d+)/$', 'webvirtmgr.snapshot.views.index'),
-    url(r'^snapshot/(\d+)/(\w+)/$', 'webvirtmgr.snapshot.views.snapshot'),
-    url(r'^snapshot/', 'webvirtmgr.snapshot.views.redir'),
-    
-    # Logs
-    url(r'^logs/(\d+)/$', 'webvirtmgr.logs.views.logs'),
-    url(r'^logs/', 'webvirtmgr.logs.views.redir'),
+    url(r'^storage/(\d+)/$', 'polls.views.storage'),
+    url(r'^storage/(\d+)/(\w+)/$', 'polls.views.storage_pool'),
 
-    # Interfaces
-    #url(r'^interfaces/(\w+)/$', 'webvirtmgr.interfaces.views.index'),
-    #url(r'^interfaces/(\w+)/(\w+)/$', 'webvirtmgr.interfaces.views.ifcfg'),
-    #url(r'^interfaces/', 'webvirtmgr.interfaces.views.redir'),
+    url(r'^network/(\d+)/$', 'polls.views.network'),
+    url(r'^network/(\d+)/(\w+)/$', 'polls.views.network_pool'),
 
-    # VM
-    url(r'^vm/(\d+)/(\w+)/$', 'webvirtmgr.vm.views.index'),
-    url(r'^vm/(\d+)/$', 'webvirtmgr.vm.views.redir_two'),
-    url(r'^vm/', 'webvirtmgr.vm.views.redir_one'),
-    
-    # VNC    
-    url(r'^vnc/(\d+)/(\w+)/$', 'webvirtmgr.vnc.views.index'),
-    url(r'^vnc/(\d+)/$', 'webvirtmgr.vnc.views.redir_two'),
-    url(r'^vnc/', 'webvirtmgr.vnc.views.redir_one'),
+    url(r'^vm/(\d+)/(\w+)/$', 'polls.views.vm'),
 
-    # Media
-    url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT, 'show_indexes': False}),
+    url(r'^vnc/(\d+)/(\w+)/$', 'polls.views.vnc'),
 
-    # Uncomment the next line to enable the admin:
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^snapshot/(\d+)/$', 'polls.views.snapshot'),
+    url(r'^snapshot/(\d+)/(\w+)/$', 'polls.views.dom_snapshot'),
+
+    url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT, 'show_indexes': True}),
 )

@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+{% block title %}Create VM{% endblock %}
+{% block content %}
+    <ul class="nav nav-tabs">
+      <li><a href="/overview/{{ host_id }}/"><i class="icon-info-sign"></i> Overview</a></li>
+      <li class="active">
+        <a href="/newvm/{{ host_id }}/"><i class="icon-plus"></i> Create VM</a>
+      </li>
+      <li><a href="/storage/{{ host_id }}/"><i class="icon-folder-open"></i> Storage pool</a></li>
+      <li><a href="/network/{{ host_id }}/"><i class="icon-signal"></i> Network pool</a></li>
+      <li><a href="/snapshot/{{ host_id }}/"><i class="icon-download-alt"></i> Snapshots</a></li>
+    </ul>
+    {% if errors %}
+    {% for error in errors %}
+    <div class="span6 alert alert-block alert-error">
+      <a class="close" data-dismiss="alert">&times;</a>
+      <p>{{ error }}</p>
+    </div>
+    {% endfor %}
+    {% endif %}
+    <div class="row">
+      <div class="span7">
+        <h4>Flavors</h4>
+        <table class="table table-striped table-bordered">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>VCPU</th>
+              <th>RAM</th>
+              <th>HDD</th>
+              <th style="width:5px;">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for key, value in flavors.items %}
+            <tr>
+              <td>{{ forloop.counter }}</td>
+              <td>{{ value.0 }}</td>
+              <td>{{ value.1 }} </td>
+              <td>{{ value.2 }} MB</td>
+              <td>{{ value.3 }} GB</td>
+              <td>
+                 <div id="addModal{{ forloop.counter }}" class="modal hide fade">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3 id="poolModalLabel">Add New Virtual Machine - {{ value.0 }}</h3>
+                  </div>
+                  <div class="modal-body">
+                    <form class="form-horizontal" action="/newvm/{{ host_id }}/" method="post">{% csrf_token %}
+                      <fieldset><br>
+                        <div class="control-group">
+                        <label class="control-label">Name</label>
+                          <div class="controls">
+                            <input type="text" class="input-large" name="name" placeholder="Name">
+                            <input type="hidden" class="input-large" name="vcpu" value="{{ value.1 }}">
+                            <input type="hidden" class="input-large" name="ram" value="{{ value.2 }}">
+                            <input type="hidden" class="input-large" name="hdd_size" value="{{ value.3 }}">
+                          </div> 
+                         </div>
+                        <div class="control-group">
+                          <label class="control-label">Storage</label>
+                          <div class="controls">
+                            <select name="storage">
+                              {% for storage in all_storages %}
+                              <option value="{{ storage }}">{{ storage }}</option>
+                              {% endfor %}
+                            </select>
+                          </div> 
+                        </div>
+                        <div class="control-group">
+                          <label class="control-label">Network</label>
+                          <div class="controls">
+                            <select name="network">
+                              {% for network in all_networks %}
+                              <option value="{{ network }}">{{ network }}</option>
+                              {% endfor %}
+                              <option value="br0">br0</option>
+                            </select>
+                          </div> 
+                        </div>
+                      </fieldset>
+                      </div>
+                      <div class="modal-footer">
+                        <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+                        <input type="submit" class="btn btn-success" name="newvm" value="Submit">
+                        </form>
+                      </div>
+                    </div>
+                  <a data-toggle="modal" href="#addModal{{ forloop.counter }}" class="btn btn-success">Create</a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <a data-toggle="modal" href="#addModalCustom" class="btn btn-success">Custom</a>
+          <div id="addModalCustom" class="modal hide fade">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h3 id="poolModalLabel">Add New Virtual Machine</h3>
+            </div>
+            <div class="modal-body">
+              <form class="form-horizontal" action="/newvm/{{ host_id }}/" method="post">{% csrf_token %}
+                <fieldset><br>
+                  <div class="control-group">
+                  <label class="control-label">Name</label>
+                    <div class="controls">
+                      <input type="text" class="input-large" name="name" placeholder="Name">
+                    </div> 
+                   </div>
+                  <div class="control-group">
+                    <label class="control-label">VCPU</label>
+                    <div class="controls">
+                      <select name="vcpu">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="4">4</option>
+                        <option value="6">6</option>
+                        <option value="8">8</option>
+                      </select>
+                    </div> 
+                  </div>
+                  <div class="control-group">
+                    <label class="control-label">RAM</label>
+                    <div class="controls">
+                      <select name="ram">
+                        <option value="256">256 MB</option>
+                        <option value="512">512 MB</option>
+                        <option value="768">768 MB</option>
+                        <option value="1024">1 GB</option>
+                        <option value="2048">2 GB</option>
+                        <option value="4096">4 GB</option>
+                        <option value="8192">8 GB</option>
+                        <option value="16384">16 GB</option>
+                      </select>
+                    </div> 
+                  </div>
+                  <div class="control-group">
+                    <label class="control-label">HDD</label>
+                    <div class="controls">
+                      <select name="img">
+                      {% if all_img %}
+                      {% for name in all_img %}
+                        <option value="{{ name }}">{{ name }}</option>
+                      {% endfor %}
+                      {% else %}
+                        <option value="">None</option>
+                      {% endif %}
+                      </select>
+                    </div> 
+                  </div>
+                  <div class="control-group">
+                    <label class="control-label">Storage</label>
+                    <div class="controls">
+                      <select name="storage">
+                        {% for storage in all_storages %}
+                        <option value="{{ storage }}">{{ storage }}</option>
+                        {% endfor %}
+                      </select>
+                    </div> 
+                  </div>
+                  <div class="control-group">
+                    <label class="control-label">Network</label>
+                    <div class="controls">
+                      <select name="network">
+                        {% for network in all_networks %}
+                        <option value="{{ network }}">{{ network }}</option>
+                        {% endfor %}
+                        <option value="br0">br0</option>
+                      </select>
+                    </div> 
+                  </div>
+                </fieldset>
+                </div>
+                <div class="modal-footer">
+                  <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+                  <input type="submit" class="btn btn-success" name="newvm" value="Submit">
+                  </form>
+                </div>
+              </div>
+      </div> <!-- /span7 -->
+      <div class="span2">
+        <h4>Virtual Machines</h4>
+        {% if not all_vm %}
+        <p style="margin: 10px;"><a href="/newvm/{{ host_id }}"><i class="icon-plus"></i> Create VM</a></p>
+        {% else %}
+          {% for vm in all_vm %}
+          <p><a href="/vm/{{ host_id }}/{{ vm }}/"><h5><i class="icon-th-large"></i> {{ vm }}</h5></a></p>
+          {% endfor %}
+      {% endif %}
+      </div>
+    </div> <!-- /row -->
+{% endblock %}
