@@ -270,6 +270,11 @@ def overview(request, host_id):
     if type(conn) == dict:
         return HttpResponseRedirect('/dashboard')
     else:
+        have_kvm = test_cpu_accel(conn)
+        if not have_kvm:
+            errors = []
+            errors.append('Your CPU doesn\'t support hardware virtualization')
+
         all_vm = get_all_vm(conn)
         host_info = get_host_info()
         mem_usage = get_mem_usage()
@@ -420,9 +425,13 @@ def newvm(request, host_id):
     conn = libvirt_conn(host)
 
     if type(conn) == dict:
-        add_log(host.hostname, conn.values()[0], request.user.id)
-        return HttpResponseRedirect('/manage/')
+        return HttpResponseRedirect('/dashboard')
     else:
+        have_kvm = test_cpu_accel(conn)
+        if not have_kvm:
+            errors = []
+            errors.append('Your CPU doesn\'t support hardware virtualization')
+
         all_vm = get_all_vm(conn)
         all_networks = get_all_networks(conn)
         all_storages = get_all_storages(conn)
@@ -787,8 +796,7 @@ def network(request, host_id):
     conn = libvirt_conn(host)
 
     if type(conn) == dict:
-        add_log(host.hostname, conn.values()[0], request.user.id)
-        return HttpResponseRedirect('/manage/')
+        return HttpResponseRedirect('/dashboard')
     else:
         virtnet = {}
         for network in conn.listNetworks():
@@ -1197,9 +1205,9 @@ def vm(request, host_id, vname):
                     if dom.info()[0] == 1:
                         dom.destroy()
                     dom.undefine()
+                    return HttpResponseRedirect('/overview/%s/' % host_id)
                 except libvirtError as msg_error:
                     errors.append(msg_error.message)
-                return HttpResponseRedirect('/overview/%s/' % host_id)
             if 'snapshot' in request.POST:
                 try:
                     import time
@@ -1380,3 +1388,7 @@ def dom_snapshot(request, host_id, vname):
                 message = message + name
 
     return render_to_response('snapshot.html', locals(), context_instance=RequestContext(request))
+
+
+def page_setup(request):
+    return render_to_response('setup.html', locals(), context_instance=RequestContext(request))

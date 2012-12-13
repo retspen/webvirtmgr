@@ -26,5 +26,7 @@ urlpatterns = patterns('',
     url(r'^snapshot/(\d+)/$', 'polls.views.snapshot'),
     url(r'^snapshot/(\d+)/(\w+)/$', 'polls.views.dom_snapshot'),
 
+    url(r'^setup/$', 'polls.views.page_setup', name='page_setup'),
+
     url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT, 'show_indexes': True}),
 )
