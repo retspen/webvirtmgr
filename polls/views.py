@@ -151,7 +151,7 @@ def dashboard(request):
         if 'del_host' in request.POST:
             host_id = request.POST.get('host_id', '')
             del_host(host_id)
-            return HttpResponseRedirect('/dashboard')
+            return HttpResponseRedirect(request.get_full_path())
         if request.POST.get('add_host', ''):
             name = request.POST.get('hostname', '')
             ipaddr = request.POST.get('ipaddr', '')
@@ -192,7 +192,7 @@ def dashboard(request):
                 errors.append(msg)
             if not errors:
                 add_host(name, ipaddr, login, passwd)
-                return HttpResponseRedirect('/dashboard')
+                return HttpResponseRedirect(request.get_full_path())
 
     return render_to_response('dashboard.html', locals(), context_instance=RequestContext(request))
 
@@ -259,7 +259,7 @@ def overview(request, host_id):
                 diff_usage = None
             return diff_usage
         except libvirtError as e:
-            return "error"
+            return e.message
 
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
@@ -268,7 +268,8 @@ def overview(request, host_id):
     conn = libvirt_conn(host)
 
     if type(conn) == dict:
-        return HttpResponseRedirect('/dashboard')
+        errors = []
+        errors.append(conn.values()[0])
     else:
         have_kvm = test_cpu_accel(conn)
         if not have_kvm:
@@ -324,7 +325,7 @@ def newvm(request, host_id):
             </volume>""" % (name, size)
         stg.createXML(xml, 0)
 
-    def add_vm(name, ram, vcpu, image, net, passwd):
+    def add_vm(name, ram, vcpu, image, net):
         import virtinst.util as util
         import re
 
@@ -404,7 +405,7 @@ def newvm(request, host_id):
                     </interface>
                     <input type='tablet' bus='usb'/>
                     <input type='mouse' bus='ps2'/>
-                    <graphics type='vnc' port='-1' autoport='yes' keymap='en-us' passwd='%s'/>
+                    <graphics type='vnc' port='-1' autoport='yes' keymap='en-us'/>
                     <video>
                       <model type='cirrus' vram='9216' heads='1'/>
                       <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x0'/>
@@ -413,7 +414,7 @@ def newvm(request, host_id):
                       <address type='pci' domain='0x0000' bus='0x00' slot='0x05' function='0x0'/>
                     </memballoon>
                   </devices>
-                </domain>""" % (passwd)
+                </domain>"""
         conn.defineXML(xml)
         dom = conn.lookupByName(name)
         dom.setAutostart(1)
@@ -425,7 +426,7 @@ def newvm(request, host_id):
     conn = libvirt_conn(host)
 
     if type(conn) == dict:
-        return HttpResponseRedirect('/dashboard')
+        return HttpResponseRedirect('/overview/%s/' % host_id)
     else:
         have_kvm = test_cpu_accel(conn)
         if not have_kvm:
@@ -474,11 +475,6 @@ def newvm(request, host_id):
                     msg = 'Enter the name of the virtual machine'
                     errors.append(msg)
                 if not errors:
-                    from string import letters, digits
-                    from random import choice
-
-                    vnc_passwd = ''.join([choice(letters + digits) for i in range(12)])
-
                     if hdd_size:
                         stg = conn.storagePoolLookupByName(storage)
                         add_vol(vname, hdd_size)
@@ -488,7 +484,7 @@ def newvm(request, host_id):
                     else:
                         image = get_img_path(img, all_storages)
 
-                    add_vm(vname, ram, vcpu, image, net, vnc_passwd)
+                    add_vm(vname, ram, vcpu, image, net)
 
                     return HttpResponseRedirect('/vm/%s/%s/' % (host_id, vname))
 
@@ -511,7 +507,7 @@ def storage(request, host_id):
     conn = libvirt_conn(host)
 
     if type(conn) == dict:
-        return HttpResponseRedirect('/dashboard')
+        return HttpResponseRedirect('/overview/%s/' % host_id)
     else:
         storages = {}
         for storage in conn.listStoragePools():
@@ -796,7 +792,7 @@ def network(request, host_id):
     conn = libvirt_conn(host)
 
     if type(conn) == dict:
-        return HttpResponseRedirect('/dashboard')
+        return HttpResponseRedirect('/overview/%s/' % host_id)
     else:
         virtnet = {}
         for network in conn.listNetworks():
@@ -897,7 +893,7 @@ def network_pool(request, host_id, pool):
     conn = libvirt_conn(host)
 
     if type(conn) == dict:
-        return HttpResponseRedirect('/dashboard')
+        return HttpResponseRedirect('/overview/%s/' % host_id)
     else:
         if pool == 'add':
             if request.method == 'POST':
@@ -1145,7 +1141,7 @@ def vm(request, host_id, vname):
     conn = libvirt_conn(host)
 
     if type(conn) == dict:
-        return HttpResponseRedirect('/dashboard')
+        return HttpResponseRedirect('/overview/%s/' % host_id)
     else:
         all_vm = get_all_vm(conn)
         dom = conn.lookupByName(vname)
@@ -1258,7 +1254,7 @@ def vnc(request, host_id, vname):
     conn = libvirt_conn(host)
 
     if type(conn) == dict:
-        return HttpResponseRedirect('/dashboard')
+        return HttpResponseRedirect('/overview/%s/' % host_id)
     else:
         vnc_port = vnc_port()
 
@@ -1299,7 +1295,7 @@ def snapshot(request, host_id):
     conn = libvirt_conn(host)
 
     if type(conn) == dict:
-        return HttpResponseRedirect('/dashboard')
+        return HttpResponseRedirect('/overview/%s/' % host_id)
     else:
         all_vm = get_all_vm(conn)
         all_vm_snap = get_vm_snapshots()
@@ -1369,7 +1365,7 @@ def dom_snapshot(request, host_id, vname):
     conn = libvirt_conn(host)
 
     if type(conn) == dict:
-        return HttpResponseRedirect('/dashboard')
+        return HttpResponseRedirect('/overview/%s/' % host_id)
     else:
         dom = conn.lookupByName(vname)
         all_vm = get_all_vm(conn)
