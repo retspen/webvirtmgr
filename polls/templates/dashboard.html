@@ -35,12 +35,11 @@
             <td style="width: 80px;">
               {% if value.2 == 1 %}
               <div class="btn-group">
-                <button class="btn btn-success">Manage</button>
+                <button class="btn btn-success" onclick="location.href='/overview/{{ value.0 }}/'">Overview</button>
                 <button class="btn btn-success dropdown-toggle" data-toggle="dropdown">
                   <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
-                  <li><a href="/overview/{{ value.0 }}/">Overview</a></li>
                   <li><a href="/newvm/{{ value.0 }}/">Create VM</a></li>
                   <li><a href="/storage/{{ value.0 }}/">Storage Pool</a></li>
                   <li><a href="/network/{{ value.0 }}/">Network Pool</a></li>
