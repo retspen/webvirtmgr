@@ -7,7 +7,7 @@ ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 if ROOT_PATH not in sys.path:
     sys.path.append(ROOT_PATH)
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
