@@ -1112,8 +1112,25 @@ def vm(request, host_id, vname):
         if nic is None:
             nic = util.get_xml_path(xml, "/domain/devices/interface/source/@bridge")
         info.append(nic)
-        info.append(util.get_xml_path(xml, "/domain/devices/disk[1]/source/@file"))
         return info
+
+    def get_dom_hdd(storages):
+        import virtinst.util as util
+
+        xml = dom.XMLDesc(0)
+        hdd = util.get_xml_path(xml, "/domain/devices/disk[1]/source/@file")
+        img = conn.storageVolLookupByPath(hdd)
+        img_vol = img.name()
+
+        for storage in storages:
+            stg = conn.storagePoolLookupByName(storage)
+            stg.refresh(0)
+            for img in stg.listVolumes():
+                if img == img_vol:
+                    vol = img
+                    vol_stg = storage
+
+        return vol, vol_stg
 
     def vm_cpu_usage():
         import time
@@ -1152,6 +1169,7 @@ def vm(request, host_id, vname):
         mem_usage = get_mem_usage()
 
         storages = get_all_storages(conn)
+        hdd_image = get_dom_hdd(storages)
         iso_images = find_all_iso(storages)
         media = dom_media()
 
