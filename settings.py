@@ -11,7 +11,7 @@ DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    ('Anatoliy Guskov', 'anatoliy.guskov@gmail.com'),
+    ('Admin', 'root@localhost'),
 )
 
 MANAGERS = ADMINS
