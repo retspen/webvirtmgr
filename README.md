@@ -98,4 +98,9 @@ Add file webvirtmgr.conf in conf.d directory (Ubuntu: "/etc/apache2/conf.d" or R
       Allow from all
     </Directory>
 
+## 2. Update
+
+   $ cd /path to/webvirtmgr
+   $ git pull
+
 Support: support@webvirtmgr.net
