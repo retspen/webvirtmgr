@@ -100,7 +100,7 @@ Add file webvirtmgr.conf in conf.d directory (Ubuntu: "/etc/apache2/conf.d" or R
 
 ## 2. Update
 
-   $ cd /path to/webvirtmgr
-   $ git pull
+    $ cd /path to/webvirtmgr
+    $ git pull
 
 Support: support@webvirtmgr.net
