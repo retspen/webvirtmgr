@@ -40,7 +40,8 @@
             {% endif %}
             {% if dom.info.0 = 1 %}
             <a href="#rebootModal" role="button" class="btn" data-toggle="modal" style="height:40px;width:60px;"><i class="icon-off"></i><br>Reboot</a>
-            {% else %}
+            {% endif %}
+            {% if dom.info.0 = 3 %}
             <a href="#" role="button" class="btn disabled" data-toggle="modal" style="height:40px;width:60px;"><i class="icon-off"></i><br>Reboot</a>
             {% endif %}
             <a href="#deleteModal" role="button" class="btn" data-toggle="modal" style="height:40px;width:60px;"><i class="icon-remove"></i><br>Delete</a>
