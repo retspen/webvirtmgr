@@ -41,25 +41,18 @@
             {% if dom.info.0 = 1 %}
             <a href="#rebootModal" role="button" class="btn" data-toggle="modal" style="height:40px;width:60px;"><i class="icon-off"></i><br>Reboot</a>
             {% endif %}
-            {% if dom.info.0 = 3 %}
-            <a href="#" role="button" class="btn" style="height:40px;width:60px;"><i class="icon-off"></i><br>Blocked</a>
-            {% endif %}
-            {% if dom.info.0 = 3 %}
-            <a href="#" role="button" class="btn" data-toggle="modal" style="height:40px;width:60px;"><i class="icon-remove"></i><br>Delete</a>
-            {% else %}
             <a href="#deleteModal" role="button" class="btn" data-toggle="modal" style="height:40px;width:60px;"><i class="icon-remove"></i><br>Delete</a>
-            {% endif %}
             {% if dom.info.0 = 3 %}
             <button type="submit" name="resume" role="button" class="btn" style="height:50px;width:80px;"><i class="icon-play"></i><br>Resume</button>
+            <button type="submit" name="snapshot" role="button" class="btn" style="height:50px;width:80px;"><i class="icon-download-alt"></i><br>Snapshot</button>
             {% endif %}
             {% if dom.info.0 = 1 %}
             <button type="submit" name="suspend" role="button" class="btn" style="height:50px;width:80px;"><i class="icon-pause"></i><br>Suspend</button>
+            <a role="button" class="btn disabled" style="height:40px;width:60px;"><i class="icon-download-alt"></i><br>Snapshot</a>
             {% endif %}
             {% if dom.info.0 = 5 %}
             <a role="button" class="btn disabled" style="height:40px;width:60px;"><i class="icon-download-alt"></i><br>Suspend</a>
             <button type="submit" name="snapshot" role="button" class="btn" style="height:50px;width:80px;"><i class="icon-download-alt"></i><br>Snapshot</button>
-            {% else %}
-            <a role="button" class="btn disabled" style="height:40px;width:60px;"><i class="icon-download-alt"></i><br>Snapshot</a>
             {% endif %}
            </form>
           <hr>
