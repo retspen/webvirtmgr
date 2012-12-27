@@ -76,7 +76,7 @@
     </div><!--/.navbar -->      
     <div class="container-narrow">
       <form class="form-signin" method="post" action="">{% csrf_token %}
-        <h3>Sing In</h3>
+        <h3>Sign In</h3>
         <fieldset>
           {% if form.errors and not form.username.errors and not form.password.errors %}
           <div class="alert alert-error">
