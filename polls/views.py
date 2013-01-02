@@ -678,7 +678,7 @@ def storage_pool(request, host_id, pool):
                                 stg.build(0)
                             stg.create(0)
                             stg.setAutostart(1)
-                            return HttpResponseRedirect('/storage/%s/%s/' % (srv_id, pool_name))
+                            return HttpResponseRedirect('/storage/%s/%s/' % (host_id, pool_name))
                         except libvirtError as error_msg:
                             errors.append(error_msg.message)
         else:
@@ -712,7 +712,7 @@ def storage_pool(request, host_id, pool):
                         stg.undefine()
                     except libvirtError as error_msg:
                         errors.append(error_msg.message)
-                    return HttpResponseRedirect('/storage/%s/' % srv_id)
+                    return HttpResponseRedirect('/storage/%s/' % host_id)
                 if 'addimg' in request.POST:
                     name = request.POST.get('name', '')
                     size = request.POST.get('size', '')
