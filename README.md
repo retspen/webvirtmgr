@@ -27,7 +27,7 @@ Run:
 
 Run:
 
-    $ su -c 'rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/i386/epel-release-6-7.noarch.rpm'
+    $ su -c 'rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm'
     $ su -c 'yum -y install git python-virtinst httpd mod_python mod_wsgi Django'
 
 ## 3. Setup
