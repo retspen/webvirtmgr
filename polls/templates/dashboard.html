@@ -31,7 +31,7 @@
           <tr>
             <td>{{ forloop.counter }}</td>
             <td>{{ value.1 }} (<strong>{{ key }}</strong>)</td>
-            <td>{% if value.2 == 1 %}<font color="green">connect</font>{% else %}<font color="red">not connect</font>{% endif %}</td>
+            <td>{% if value.2 == 1 %}<font color="green">connect</font>{% else %}<font color="red">not connect ({{ value.2 }})</font>{% endif %}</td>
             <td style="width: 80px;">
               {% if value.2 == 1 %}
               <div class="btn-group">

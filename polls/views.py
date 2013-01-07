@@ -130,8 +130,8 @@ def dashboard(request):
                 s.connect((host.ipaddr, 16509))
                 s.close()
                 status = 1
-            except:
-                status = 2
+            except Exception as err:
+                status = err
             all_hosts[host.hostname] = (host.id, host.ipaddr, status)
         return all_hosts
 
