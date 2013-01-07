@@ -8,6 +8,9 @@ WebVirtMgr is a libvirt-based Web interface for managing virtual machines. It al
 
 The application logic is written in Python & Django. The LIBVIRT Python bindings are used to interacting with the underlying hypervisor.
 
+### License
+
+WebVirtMgr is licensed under the Apache Licence, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0.html).
 
 ## 2. Installation
 
