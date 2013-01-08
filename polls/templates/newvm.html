@@ -83,7 +83,11 @@
                       </div>
                       <div class="modal-footer">
                         <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+                        {% if all_storages and all_networks %}
                         <input type="submit" class="btn btn-success" name="newvm" value="Submit">
+                        {% else %}
+			<a href="#" class="btn btn-success disabled">Submit</a>
+			{% endif %}
                         </form>
                       </div>
                     </div>
@@ -174,7 +178,11 @@
                 </div>
                 <div class="modal-footer">
                   <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+                  {% if all_storages and all_networks %}
                   <input type="submit" class="btn btn-success" name="newvm" value="Submit">
+                  {% else %}
+                  <a href="#" class="btn btn-success disabled">Submit</a>
+                  {% endif %}
                   </form>
                 </div>
               </div>

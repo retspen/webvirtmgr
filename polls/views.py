@@ -429,15 +429,20 @@ def newvm(request, host_id):
         return HttpResponseRedirect('/overview/%s/' % host_id)
     else:
         have_kvm = test_cpu_accel(conn)
-        if not have_kvm:
-            errors = []
-            errors.append('Your CPU doesn\'t support hardware virtualization')
+
+	errors = []
 
         all_vm = get_all_vm(conn)
         all_networks = get_all_networks(conn)
         all_storages = get_all_storages(conn)
-
         all_img = find_all_img(all_storages)
+
+	if not all_networks:
+	    errors.append('You doesn\'t have any virtual networks')
+	if not all_storages:
+	    errors.append('You doesn\'t have any storages')
+        if not have_kvm:
+            errors.append('Your CPU doesn\'t support hardware virtualization')
 
         flavors = {}
         flavors[1] = ('micro', '1', '256', '10')
