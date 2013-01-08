@@ -45,7 +45,7 @@
         <p>[{% for key, value in storages.items %} {% ifequal key pool %}<b>{{ pool }}</b>{% else %}<a href="/storage/{{ host_id }}/{{ key }}">{{ key }}</a>{% endifequal %}{% endfor %} ]</p>
         <p>{% if not info.6 %}None{% else %}{{ info.6 }}{% endif %}</p>
         <p>{% if not info.7 %}None{% else %}{{ info.7 }}{% endif %}</p>
-        <p>{{ info.4 }}%</p>
+        <p>Usage: {{ info.4 }}%</p>
         <form action="/storage/{{ host_id }}/{{ pool }}/" method="post" style="height:10px;">{% csrf_token %}
           {% ifequal info.5 0 %}
           <input type="submit" class="btn btn-primary" name="start" value="Start">
