@@ -51,11 +51,11 @@
                 <td style="width:30px;">
                   <form action="" method="post" style="height:10px;">{% csrf_token %}
                     <input type="hidden" name="name" value="{{ name }}">
-                    {% if time.1 != 3 %}
+                    {% ifnotequal time.1 3 %}
                     <button type="submit" class="btn btn-primary" name="revert" value="revert" onclick="return confirm('Are you sure?')">Revert</button>
                     {% else %}
                     <button type="button" class="btn btn-primary disabled" name="revert" value="Revert">Revert</button>
-                    {% endif %}
+                    {% endifnotequal %}
                   </form>
                 </td>
                 <td style="width:30px;">

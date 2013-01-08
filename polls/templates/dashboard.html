@@ -31,9 +31,9 @@
           <tr>
             <td>{{ forloop.counter }}</td>
             <td>{{ value.1 }} (<strong>{{ key }}</strong>)</td>
-            <td>{% if value.2 == 1 %}<font color="green">connect</font>{% else %}<font color="red">not connect ({{ value.2 }})</font>{% endif %}</td>
+            <td>{% ifequal value.2 1 %}<font color="green">connect</font>{% else %}<font color="red">not connect ({{ value.2 }})</font>{% endifequal %}</td>
             <td style="width: 80px;">
-              {% if value.2 == 1 %}
+              {% ifequal value.2 1 %}
               <div class="btn-group">
                 <button class="btn btn-success" onclick="location.href='/overview/{{ value.0 }}/'">Overview</button>
                 <button class="btn btn-success dropdown-toggle" data-toggle="dropdown">
@@ -53,7 +53,7 @@
                   <span class="caret"></span>
                 </button>
               </div>
-              {% endif %}
+              {% endifequal %}
             </td>
             <td style="width: 70px;">
               <form action="/dashboard/" method="post" style="height:10px;">{% csrf_token %}

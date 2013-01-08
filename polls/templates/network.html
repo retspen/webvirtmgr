@@ -19,7 +19,7 @@
     {% endfor %}
     {% endif %}
     <div class="row">
-      {% if pool == 'add' %}
+      {% ifequal pool 'add' %}
       <div class="span9">
         <a href="#poolModal" class="btn btn-success" data-toggle="modal">Add Pool</a>
         {% if not errors %}
@@ -28,7 +28,7 @@
         </div>
         {% endif %}
       </div>
-      {% endif %}
+      {% endifequal %}
       {% if info %}
       {% if networks %}
       <div class="span9">
@@ -41,15 +41,15 @@
         <p>State</p>
       </div>
       <div class="span4">
-        <p>[{% for key, value in networks.items %} {% if key == pool %}<b>{{ pool }}</b>{% else %}<a href="/network/{{ host_id }}/{{ key }}">{{ key }}</a>{% endif %}{% endfor %} ]</p>
+        <p>[{% for key, value in networks.items %} {% ifequal key pool %}<b>{{ pool }}</b>{% else %}<a href="/network/{{ host_id }}/{{ key }}">{{ key }}</a>{% endifequal %}{% endfor %} ]</p>
         <p>{{ info.1 }}</p>
         <form action="/network/{{ host_id }}/{{ pool }}/" method="post" style="height:10px;">{% csrf_token %}
-          {% if info.0 = 0 %}
+          {% ifequal info.0 0 %}
           <input type="submit" class="btn btn-primary" name="start" value="Start">
           <input type="submit" class="btn btn-danger" name="delete" value="Delete" onclick="return confirm('Are you sure?')">
           {% else %}
           <input type="submit" class="btn btn-primary" name="stop" value="Stop" onclick="return confirm('Are you sure?')">
-          {% endif %}
+          {% endifequal %}
         </form>
       </div>
       <div class="span2">
@@ -78,7 +78,7 @@
           {% endif %}
         </div>
         <div class="span2">
-          <p>{% if ipv4_net.0.0 == 'nat' %} NAT {% endif %} {% if ipv4_net.0.0 == 'route' %} ROUTE {% endif %} {% if not ipv4_net.0.0 %} ISOLATE {% endif %}</p>
+          <p>{% ifequal ipv4_net.0.0 'nat' %} NAT {% endifequal %} {% ifequal ipv4_net.0.0 'route' %} ROUTE {% endifequal %} {% if not ipv4_net.0.0 %} ISOLATE {% endif %}</p>
           <p>{{ ipv4_net.1 }}</p>
           <p>{% if ipv4_net.2 %}<font color="green">ON</font>{% else %}<font color="red">OFF</font>{% endif %}</p>
           {% for dhcp in ipv4_net.2 %} 
