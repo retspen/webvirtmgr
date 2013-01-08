@@ -76,7 +76,7 @@
           <hr>
           <li>Media Details</li><br>
           <div class="pagination-centered">
-            {% ifequal media None %}{% else %}<b>Connected Image:</b> {{ media }}{% endifequal %}
+            {% if not media %}{% else %}<b>Connected Image:</b> {{ media }}{% endif %}
             <form action="" method="post">{% csrf_token %}
               {% if media %}
               <br>
