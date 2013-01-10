@@ -94,8 +94,7 @@ Reload apache:
 Add file webvirtmgr.conf in conf.d directory (Ubuntu: "/etc/apache2/conf.d" or RedHat,Fedora,CentOS: "/etc/httpd/conf.d"):
 
     WSGIScriptAlias / /var/www/webvirtmgr/wsgi/django.wsgi
-    Alias /static /var/www/webvirtmgr/static/
-    Alias /media /var/www/webvirtmgr/media/
+    Alias /static /var/www/webvirtmgr/polls/static/
     <Directory /var/www/webvirtmgr/wsgi>
       Order allow,deny
       Allow from all
