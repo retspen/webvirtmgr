@@ -498,41 +498,7 @@ def newvm(request, host_id):
     return render_to_response('newvm.html', locals(), context_instance=RequestContext(request))
 
 
-def storage(request, host_id):
-    """
-
-    Storages block. Find anybody storage on host.
-
-    """
-
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect('/login')
-
-    host = Host.objects.get(id=host_id)
-    conn = libvirt_conn(host)
-
-    if type(conn) == dict:
-        return HttpResponseRedirect('/overview/%s/' % host_id)
-    else:
-        storages = {}
-        for storage in conn.listStoragePools():
-            stg = conn.storagePoolLookupByName(storage)
-            status = stg.isActive()
-            storages[storage] = status
-        for storage in conn.listDefinedStoragePools():
-            stg = conn.storagePoolLookupByName(storage)
-            status = stg.isActive()
-            storages[storage] = status
-
-        conn.close()
-
-    if len(storages) == 0:
-        return HttpResponseRedirect('/storage/%s/add/' % (host_id))
-    else:
-        return HttpResponseRedirect('/storage/%s/%s/' % (host_id, storages.keys()[0]))
-
-
-def storage_pool(request, host_id, pool):
+def storage(request, host_id, pool):
     """
 
     Storages block
@@ -640,6 +606,15 @@ def storage_pool(request, host_id, pool):
     if type(conn) == dict:
         return HttpResponseRedirect('/manage/')
     else:
+
+        storages = all_storages()
+
+        if pool == None:
+            if len(storages) == 0:
+                return HttpResponseRedirect('/storage/%s/add/' % (host_id))
+            else:
+                return HttpResponseRedirect('/storage/%s/%s/' % (host_id, storages.keys()[0]))
+
         if pool == 'add':
             if request.method == 'POST':
                 if 'addpool' in request.POST:
@@ -652,8 +627,6 @@ def storage_pool(request, host_id, pool):
                     errors = []
                     name_have_simbol = re.search('[^a-zA-Z0-9\_]+', pool_name)
                     path_have_simbol = re.search('[^a-zA-Z0-9\/]+', pool_source)
-
-                    storages = all_storages()
 
                     if name_have_simbol or path_have_simbol:
                         msg = 'The host name must not contain any characters'
@@ -692,7 +665,7 @@ def storage_pool(request, host_id, pool):
             stg = conn.storagePoolLookupByName(pool)
 
             info = stg_info()
-            storages = all_storages()
+
             # refresh storage if acitve
             if info[5] == True:
                 stg.refresh(0)
@@ -783,41 +756,7 @@ def storage_pool(request, host_id, pool):
     return render_to_response('storage.html', locals(), context_instance=RequestContext(request))
 
 
-def network(request, host_id):
-    """
-
-    Network block. Find anybody virtal network on host.
-
-    """
-
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect('/login')
-
-    host = Host.objects.get(id=host_id)
-    conn = libvirt_conn(host)
-
-    if type(conn) == dict:
-        return HttpResponseRedirect('/overview/%s/' % host_id)
-    else:
-        virtnet = {}
-        for network in conn.listNetworks():
-            net = conn.networkLookupByName(network)
-            status = net.isActive()
-            virtnet[network] = status
-        for network in conn.listDefinedNetworks():
-            net = conn.networkLookupByName(network)
-            status = net.isActive()
-            virtnet[network] = status
-
-        conn.close()
-
-    if len(virtnet) == 0:
-        return HttpResponseRedirect('/network/%s/add/' % (host_id))
-    else:
-        return HttpResponseRedirect('/network/%s/%s/' % (host_id, virtnet.keys()[0]))
-
-
-def network_pool(request, host_id, pool):
+def network(request, host_id, pool):
     """
 
     Networks block
@@ -900,6 +839,15 @@ def network_pool(request, host_id, pool):
     if type(conn) == dict:
         return HttpResponseRedirect('/overview/%s/' % host_id)
     else:
+
+        networks = all_networks()
+
+        if pool == None:
+            if len(networks) == 0:
+                return HttpResponseRedirect('/network/%s/add/' % (host_id))
+            else:
+                return HttpResponseRedirect('/network/%s/%s/' % (host_id, networks.keys()[0]))
+
         if pool == 'add':
             if request.method == 'POST':
                 if 'addpool' in request.POST:
@@ -908,8 +856,6 @@ def network_pool(request, host_id, pool):
                     net_addr = request.POST.get('net_addr', '')
                     forward = request.POST.get('forward', '')
                     dhcp.append(request.POST.get('dhcp', ''))
-
-                    networks = all_networks()
 
                     import re
                     errors = []
@@ -971,7 +917,7 @@ def network_pool(request, host_id, pool):
             net = conn.networkLookupByName(pool)
 
             info = net_info()
-            networks = all_networks()
+
             if info[0] == True:
                 ipv4_net = ipv4_net()
 
