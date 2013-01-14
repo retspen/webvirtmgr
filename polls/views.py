@@ -325,7 +325,7 @@ def newvm(request, host_id):
             </volume>""" % (name, size)
         stg.createXML(xml, 0)
 
-    def add_vm(name, ram, vcpu, image, net):
+    def add_vm(name, ram, vcpu, image, net, passwd):
         import virtinst.util as util
         import re
 
@@ -405,7 +405,7 @@ def newvm(request, host_id):
                     </interface>
                     <input type='tablet' bus='usb'/>
                     <input type='mouse' bus='ps2'/>
-                    <graphics type='vnc' port='-1' autoport='yes' keymap='en-us'/>
+                    <graphics type='vnc' port='-1' autoport='yes' keymap='en-us' passwd='%s'/>
                     <video>
                       <model type='cirrus' vram='9216' heads='1'/>
                       <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x0'/>
@@ -414,7 +414,7 @@ def newvm(request, host_id):
                       <address type='pci' domain='0x0000' bus='0x00' slot='0x05' function='0x0'/>
                     </memballoon>
                   </devices>
-                </domain>"""
+                </domain>""" % (passwd)
         conn.defineXML(xml)
         dom = conn.lookupByName(name)
         dom.setAutostart(1)
@@ -430,17 +430,17 @@ def newvm(request, host_id):
     else:
         have_kvm = test_cpu_accel(conn)
 
-	errors = []
+        errors = []
 
         all_vm = get_all_vm(conn)
         all_networks = get_all_networks(conn)
         all_storages = get_all_storages(conn)
         all_img = find_all_img(all_storages)
 
-	if not all_networks:
-	    errors.append('You doesn\'t have any virtual networks')
-	if not all_storages:
-	    errors.append('You doesn\'t have any storages')
+        if not all_networks:
+            errors.append('You doesn\'t have any virtual networks')
+        if not all_storages:
+            errors.append('You doesn\'t have any storages')
         if not have_kvm:
             errors.append('Your CPU doesn\'t support hardware virtualization')
 
@@ -489,7 +489,15 @@ def newvm(request, host_id):
                     else:
                         image = get_img_path(img, all_storages)
 
-                    add_vm(vname, ram, vcpu, image, net)
+                    from string import letters, digits
+                    from random import choice
+
+                    vnc_passwd = ''.join([choice(letters + digits) for i in range(12)])
+
+                    new_vm = Vm(host_id=host_id, vname=vname, vnc_passwd=vnc_passwd)
+                    new_vm.save()
+
+                    add_vm(vname, ram, vcpu, image, net, vnc_passwd)
 
                     return HttpResponseRedirect('/vm/%s/%s/' % (host_id, vname))
 
@@ -1170,6 +1178,8 @@ def vm(request, host_id, vname):
                     if dom.info()[0] == 1:
                         dom.destroy()
                     dom.undefine()
+                    vm = Vm.objects.get(id=host_id, vname=vname)
+                    vm.delete()
                     return HttpResponseRedirect('/overview/%s/' % host_id)
                 except libvirtError as msg_error:
                     errors.append(msg_error.message)
@@ -1216,16 +1226,26 @@ def vnc(request, host_id, vname):
         port = util.get_xml_path(xml, "/domain/devices/graphics/@port")
         return port
 
+    def get_vnc_enc(password):
+        import d3des
+        passpadd = (password + '\x00' * 8)[:8]
+        strkey = ''.join([chr(x) for x in d3des.vnckey])
+        ekey = d3des.deskey(strkey, False)
+        ctext = d3des.desfunc(passpadd, ekey)
+        return ctext.encode('hex')
+
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
     host = Host.objects.get(id=host_id)
+    vm = Vm.objects.get(id=host_id, vname=vname)
     conn = libvirt_conn(host)
 
     if type(conn) == dict:
         return HttpResponseRedirect('/overview/%s/' % host_id)
     else:
         vnc_port = vnc_port()
+        vnc_passwd = get_vnc_enc(vm.vnc_passwd)
 
         conn.close()
 

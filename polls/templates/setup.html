@@ -45,6 +45,10 @@ libvirtd_opts="-d -l"
 listen_tls = 0
 listen_tcp = 1
 </pre>
+<p>The file <code>/etc/libvirt/qemu.conf</code> uncomment the line</p>
+<pre>
+vnc_listen = "0.0.0.0"
+</pre>
 <br>
 <h4>ContOS, Fedora, RedHat</h4>
 <p>Start the daemon libvirtd</p>
