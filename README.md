@@ -1,4 +1,4 @@
-# Applince WebVirtMgr for personal use
+# Applince WebVirtMgr
 
 ## 1. Introduction
 
