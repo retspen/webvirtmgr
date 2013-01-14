@@ -121,7 +121,7 @@
       <h3 id="rebootModalLabel">Reboot Server</h3>
     </div>
     <div class="modal-body">
-      <p>Shutdown send via ACPI current shutdown system. Reboot send hard signal to hult server. Power is lost immediately.</p>
+      <p>Shutdown sends ACPI shutdown signal to guest system. Reboot sends power off and halts guest. Power is lost immediately.</p>
       <form class="form-horizontal" action="" method="post">{% csrf_token %}
         <fieldset>
           <div class="control-group"><br>
