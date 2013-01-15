@@ -480,26 +480,33 @@ def newvm(request, host_id):
                     msg = 'Enter the name of the virtual machine'
                     errors.append(msg)
                 if not errors:
-                    if hdd_size:
-                        stg = conn.storagePoolLookupByName(storage)
-                        add_vol(vname, hdd_size)
+                    stg = conn.storagePoolLookupByName(storage)
+
+                    if not hdd_size:
+                        image = get_img_path(img, all_storages)
+                    else:
+                        from libvirt import libvirtError
+                        try:
+                            add_vol(vname, hdd_size)
+                        except libvirtError as msg_error:
+                            errors.append(msg_error.message)
+
+                    if not errors:
                         vol = vname + '.img'
                         vl = stg.storageVolLookupByName(vol)
                         image = vl.path()
-                    else:
-                        image = get_img_path(img, all_storages)
 
-                    from string import letters, digits
-                    from random import choice
+                        from string import letters, digits
+                        from random import choice
 
-                    vnc_passwd = ''.join([choice(letters + digits) for i in range(12)])
+                        vnc_passwd = ''.join([choice(letters + digits) for i in range(12)])
 
-                    new_vm = Vm(host_id=host_id, vname=vname, vnc_passwd=vnc_passwd)
-                    new_vm.save()
+                        new_vm = Vm(host_id=host_id, vname=vname, vnc_passwd=vnc_passwd)
+                        new_vm.save()
 
-                    add_vm(vname, ram, vcpu, image, net, vnc_passwd)
+                        add_vm(vname, ram, vcpu, image, net, vnc_passwd)
 
-                    return HttpResponseRedirect('/vm/%s/%s/' % (host_id, vname))
+                        return HttpResponseRedirect('/vm/%s/%s/' % (host_id, vname))
 
         conn.close()
 
