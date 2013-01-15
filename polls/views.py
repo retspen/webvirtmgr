@@ -1238,7 +1238,7 @@ def vnc(request, host_id, vname):
         return HttpResponseRedirect('/login')
 
     host = Host.objects.get(id=host_id)
-    vm = Vm.objects.get(id=host_id, vname=vname)
+    vm = Vm.objects.get(host_id=host_id, vname=vname)
     conn = libvirt_conn(host)
 
     if type(conn) == dict:
