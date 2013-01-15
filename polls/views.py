@@ -1178,7 +1178,7 @@ def vm(request, host_id, vname):
                     if dom.info()[0] == 1:
                         dom.destroy()
                     dom.undefine()
-                    vm = Vm.objects.get(id=host_id, vname=vname)
+                    vm = Vm.objects.get(host_id=host_id, vname=vname)
                     vm.delete()
                     return HttpResponseRedirect('/overview/%s/' % host_id)
                 except libvirtError as msg_error:
