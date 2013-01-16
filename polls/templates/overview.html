@@ -1,52 +1,65 @@
 {% extends "base.html" %}
 {% block title %}Overview{% endblock %}
 {% block content %}
-    <ul class="nav nav-tabs">
-      <li class="active">
-        <a href="/overview/{{ host_id }}/"><i class="icon-info-sign"></i> Overview</a>
-      </li>
-      <li><a href="/newvm/{{ host_id }}/"><i class="icon-plus"></i> Create VM</a></li>
-      <li><a href="/storage/{{ host_id }}/"><i class="icon-folder-open"></i> Storage pool</a></li>
-      <li><a href="/network/{{ host_id }}/"><i class="icon-signal"></i> Network pool</a></li>
-      <li><a href="/snapshot/{{ host_id }}/"><i class="icon-download-alt"></i> Snapshots</a></li>
-    </ul>
-    {% if errors %}
-    {% for error in errors %}
-    <div class="span7 alert alert-block alert-error">
-      <a class="close" data-dismiss="alert">&times;</a>
-      <p>{{ error }}</p>
-    </div>
-    {% endfor %}
-    {% endif %}
-    <div class="row">
-        <div class="span3" style="margin-left:40px;">
-          <p>Hostname</p>
-          <p>Architecture</p>
-          <p>Processor(s)</p>
-          <p>CPU utilization</p>
-          <p>Memory ({{ mem_usage.0|filesizeformat }} / {{ mem_usage.1|filesizeformat }})</p>
-          <p>Type connection</p>
-          <p>Libvirt version</p>
-        </div>
-        <div class="span4">
-          <p><strong>{{ host_info.0 }}</strong></p>
-          <p>{{ host_info.1 }}</p>
-          <p>{{ host_info.2 }} x {{ host_info.3 }}</p>
-          <p>Usage: {{ cpu_usage }}%</p>
-          <p>Usage: {{ mem_usage.2 }}%</p>
-          <p>{{ conn_type }}</p>
-          <p>{{ lib_virt_ver }}</p>
-          <p>{{ sys_info }}</p>
-        </div>
-      <div class="span2">
-        <h4>Virtual Machines</h4>
-        {% if not all_vm %}
-        <p style="margin: 10px;"><a href="/newvm/{{ host_id }}"><i class="icon-plus"></i> Create VM</a></p>
-        {% else %}
-          {% for vm in all_vm %}
-          <p><a href="/vm/{{ host_id }}/{{ vm }}/"><h5><i class="icon-th-large"></i> {{ vm }}</h5></a></p>
-          {% endfor %}
-      {% endif %}
-      </div>
-    </div>
+      <div class="container-fluid">
+        <div class="row-fluid">
+          <div class="span3">
+            <div class="well sidebar-nav">
+              <ul class="nav nav-list">
+                <li class="nav-header">Server Settings</li>
+                <li class="active">
+                  <a href="/overview/{{ host_id }}/"><i class="icon-info-sign"></i> Overview</a>
+                </li>
+                <li><a href="/newvm/{{ host_id }}/"><i class="icon-plus"></i> Create VM</a></li>
+                <li><a href="/storage/{{ host_id }}/"><i class="icon-folder-open"></i> Storage pool</a></li>
+                <li><a href="/network/{{ host_id }}/"><i class="icon-signal"></i> Network pool</a></li>
+                <li><a href="/snapshot/{{ host_id }}/"><i class="icon-download-alt"></i> Snapshots</a></li>
+                <li class="nav-header">Virtual Machines</li>
+                {% if not all_vm %}
+                <li><a href="/newvm/{{ host_id }}"><i class="icon-plus"></i> Create VM</a></li>
+                {% else %}
+                  {% for vm in all_vm %}
+                  <li><a href="/vm/{{ host_id }}/{{ vm }}/"><i class="icon-th-large"></i> {{ vm }}</a></li>
+                  {% endfor %}
+              {% endif %}
+              </ul>
+            </div><!--/.well -->
+          </div><!--/span-->
+          <div class="span9 well">
+            <h2>Overview</h2>
+            <hr>
+            {% if errors %}
+              {% for error in errors %}
+              <div class="row-fluid">
+                <div class="span6 alert alert-block alert-error">
+                  <a class="close" data-dismiss="alert">&times;</a>
+                  <p>{{ error }}</p>
+                </div>
+              </div>
+              {% endfor %}
+            {% endif %}
+            <div class="row-fluid">
+              <div class="span5">
+                <p>Hostname</p>
+                <p>Architecture</p>
+                <p>Processor(s)</p>
+                <p>CPU utilization</p>
+                <p>Memory ({{ mem_usage.0|filesizeformat }} / {{ mem_usage.1|filesizeformat }})</p>
+                <p>Type connection</p>
+                <p>Libvirt version</p>
+              </div>
+              <div class="span6">
+                <p><strong>{{ host_info.0 }}</strong></p>
+                <p>{{ host_info.1 }}</p>
+                <p>{{ host_info.2 }} x {{ host_info.3 }}</p>
+                <p>Usage: {{ cpu_usage }}%</p>
+                <p>Usage: {{ mem_usage.2 }}%</p>
+                <p>{{ conn_type }}</p>
+                <p>{{ lib_virt_ver }}</p>
+                <p>{{ sys_info }}</p>
+              </div>
+            </div>
+          </div><!--/span-->
+        </div><!--/row-fluid-->
+      </div><!--/container-fluid-->
 {% endblock %}

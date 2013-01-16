@@ -1,166 +1,178 @@
 {% extends "base.html" %}
 {% block title %}VM's - {{ vname }}{% endblock %}
 {% block content %}
-    <ul class="nav nav-tabs">
-      <li><a href="/overview/{{ host_id }}/"><i class="icon-info-sign"></i> Overview</a></li>
-      <li><a href="/newvm/{{ host_id }}/"><i class="icon-plus"></i> Create VM</a></li>
-      <li><a href="/storage/{{ host_id }}/"><i class="icon-folder-open"></i> Storage pool</a></li>
-      <li><a href="/network/{{ host_id }}/"><i class="icon-signal"></i> Network pool</a></li>
-      <li><a href="/snapshot/{{ host_id }}/{{ vname }}/"><i class="icon-download-alt"></i> Snapshots</a></li>
-    </ul>
-    {% if messages %}
-    {% for message in messages %}
-    <div class="span6 alert alert-block alert-success">
-      <a class="close" data-dismiss="alert">&times;</a>
-      <p>{{ message }}</p>
-    </div>
-    {% endfor %}
-    {% endif %}
-    {% if errors %}
-    {% for error in errors %}
-    <div class="span6 alert alert-block alert-error">
-      <a class="close" data-dismiss="alert">&times;</a>
-      <p>{{ error }}</p>
-    </div>
-    {% endfor %}
-    {% endif %}
-
-    <div class="row">
-      <div class="span7">
-        <ul>
-          <li>Action For This Server</li><br>
-          <form action="" method="post">{% csrf_token %}
-            {% ifequal dom.info.0 5 %}
-            <a href="#console" role="button" class="btn disabled" style="height:40px;width:60px;"><i class="icon-align-justify"></i><br>Console</a>
-            {% else %}
-            <a href="#console" role="button" class="btn" data-toggle="modal" style="height:40px;width:60px;" onclick="open_vnc()"><i class="icon-align-justify"></i><br>Console</a>
-            {% endifequal %}
-            {% ifequal dom.info.0 5 %}
-            <button type="submit" class="btn" name="start" value="Start" style="height:50px;width:80px;"><i class="icon-off"></i><br>Start</button>
-            {% endifequal %}
-            {% ifequal dom.info.0 1 %}
-            <a href="#rebootModal" role="button" class="btn" data-toggle="modal" style="height:40px;width:60px;"><i class="icon-off"></i><br>Reboot</a>
-            {% endifequal %}
-            {% ifequal dom.info.0 3 %}
-            <a href="#" role="button" class="btn disabled" data-toggle="modal" style="height:40px;width:60px;"><i class="icon-off"></i><br>Reboot</a>
-            {% endifequal %}
-            <a href="#deleteModal" role="button" class="btn" data-toggle="modal" style="height:40px;width:60px;"><i class="icon-remove"></i><br>Delete</a>
-            {% ifequal dom.info.0 3 %}
-            <button type="submit" name="resume" role="button" class="btn" style="height:50px;width:80px;"><i class="icon-play"></i><br>Resume</button>
-            <button type="submit" name="snapshot" role="button" class="btn" style="height:50px;width:80px;"><i class="icon-download-alt"></i><br>Snapshot</button>
-            {% endifequal %}
-            {% ifequal dom.info.0 1 %}
-            <button type="submit" name="suspend" role="button" class="btn" style="height:50px;width:80px;"><i class="icon-pause"></i><br>Suspend</button>
-            <a role="button" class="btn disabled" style="height:40px;width:60px;"><i class="icon-download-alt"></i><br>Snapshot</a>
-            {% endifequal %}
-            {% ifequal dom.info.0 5 %}
-            <a role="button" class="btn disabled" style="height:40px;width:60px;"><i class="icon-download-alt"></i><br>Suspend</a>
-            <button type="submit" name="snapshot" role="button" class="btn" style="height:50px;width:80px;"><i class="icon-download-alt"></i><br>Snapshot</button>
-            {% endifequal %}
-           </form>
-          <hr>
-          <li>Name & Status</li><br>
-          <div class="pagination-centered">
-            <p><b>Name:</b> {{ vname }}</p>
-            <p><b>Status:</b> <font color={% ifequal dom.info.0 5 %}"red">Not Active{% endifequal %}{% ifequal dom.info.0 1 %}"green">Active{% endifequal %}{% ifequal dom.info.0 3 %}"orange">Blocked{% endifequal %}</font></p>
-            <p><b>Uptime:</b> {{ dom_uptime }} (Min)</p>
-          </div>
-          <hr>
-          <li>Technical Details</li><br>
-          <div class="pagination-centered">
-            <p><b>VCPU:</b> {{ dom_info.0 }} (Usage: {{ cpu_usage }}%)</p>
-            <p><b>RAM:</b> {{ dom_info.1 }} MB (Usage: {{ mem_usage.1 }}%)</p>
-            <p><b>MAC:</b> {{ dom_info.2 }} ({{ dom_info.3 }})</p>
-            <p><b>HDD:</b> {{ hdd_image.0 }} ({{ hdd_image.1 }})</p>
-          </div>
-          <hr>
-          <li>Media Details</li><br>
-          <div class="pagination-centered">
-            {% if not media %}{% else %}<b>Connected Image:</b> {{ media }}{% endif %}
-            <form action="" method="post">{% csrf_token %}
-              {% if media %}
-              <br>
-              <input type="hidden" name="iso_img" value="{{ media }}">
-              <input type="submit" class="btn"  name="remove_iso" value="Disconnect" onclick="return confirm('Are you sure?')">
-              {% else %}
-              <b>Images:</b> <select name="iso_img" class="input-large">
-              {% if iso_images %}
-                {% for iso in iso_images %}
-                  <option value="{{ iso }}">{{ iso }}</option>
-                {% endfor %}
-              {% else %}
-                <option value="none">None</option>
+      <div class="container-fluid">
+        <div class="row-fluid">
+          <div class="span3">
+            <div class="well sidebar-nav">
+              <ul class="nav nav-list">
+                <li class="nav-header">Server Settings</li>
+                <li><a href="/overview/{{ host_id }}/"><i class="icon-info-sign"></i> Overview</a></li>
+                <li><a href="/newvm/{{ host_id }}/"><i class="icon-plus"></i> Create VM</a></li>
+                <li><a href="/storage/{{ host_id }}/"><i class="icon-folder-open"></i> Storage pool</a></li>
+                <li><a href="/network/{{ host_id }}/"><i class="icon-signal"></i> Network pool</a></li>
+                <li><a href="/snapshot/{{ host_id }}/{{ vname }}/"><i class="icon-download-alt"></i> Snapshots</a></li>
+                <li class="nav-header">Virtual Machines</li>
+                {% if not all_vm %}
+                <li><a href="/newvm/{{ host_id }}"><i class="icon-plus"></i> Create VM</a></li>
+                {% else %}
+                  {% for vm in all_vm %}
+                  <li {% ifequal vname vm %}class="active"{% endifequal %}><a href="/vm/{{ host_id }}/{{ vm }}/"><i class="icon-th-large"></i> {{ vm }}</a></li>
+                  {% endfor %}
               {% endif %}
-              </select>
-              <br />
-              {% if iso_images %}
-              <input type="submit" class="btn" name="add_iso" value="Connect">
-              {% else %}
-              <a class="btn disabled" name="connect">Connect</a>
-              {% endif %}
-              {% endif %}
-            </form>
-          </div>
-        </ul>
-      </div> <!-- /span7 -->
-      <div class="span2">
-        <h4>Virtual Machines</h4>
-        {% if not all_vm %}
-        <p style="margin: 10px;"><a href="/newvm/{{ host_id }}"><i class="icon-plus"></i> Create VM</a></p>
-        {% else %}
-          {% for vm in all_vm %}
-          <p><a href="/vm/{{ host_id }}/{{ vm }}/"><h5><i class="icon-th-large"></i> {{ vm }}</h5></a></p>
-          {% endfor %}
-      {% endif %}
-      </div>
-    </div> <!-- /row -->
-  
-  <div id="rebootModal" class="modal hide fade">
-    <div class="modal-header">
-      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-      <h3 id="rebootModalLabel">Reboot Server</h3>
-    </div>
-    <div class="modal-body">
-      <p>Shutdown sends ACPI shutdown signal to guest system. Reboot sends power off and halts guest. Power is lost immediately.</p>
-      <form class="form-horizontal" action="" method="post">{% csrf_token %}
-        <fieldset>
-          <div class="control-group"><br>
-          <label class="control-label">Action:</label>
-            <div class="controls">
-               <label class="radio">
-                <input type="radio" name="power" value="shutdown"/>Shutdown</label>
-               <label class="radio">
-                <input type="radio" name="power" value="destroy"/>Halt</label>
-               <label class="radio">
-                <input type="radio" name="power" value="reboot"/>Reboot</label>
-            </div>
-          </div>
-        </fieldset>
-      </div>
-      <div class="modal-footer">
-        <button class="btn" data-dismiss="modal">Cancel</button>
-        <input class="btn btn-primary" type="submit" value="Send">
-        </form>
-      </div>
-  </div> <!-- /rebootModal -->
+              </ul>
+            </div><!--/.well -->
+          </div><!--/span-->
+          <div class="span9 well">
+            <h2>Virtual Machine</h2>
+            <hr>
+            {% if messages %}
+              {% for message in messages %}
+              <div class="row-fluid">
+                <div class="span7 alert alert-block alert-success">
+                  <a class="close" data-dismiss="alert">&times;</a>
+                  <p>{{ message }}</p>
+                </div>
+              </div>
+              {% endfor %}
+            {% endif %}
+            {% if errors %}
+              {% for error in errors %}
+              <div class="row-fluid">
+                <div class="span7 alert alert-block alert-error">
+                  <a class="close" data-dismiss="alert">&times;</a>
+                  <p>{{ error }}</p>
+                </div>
+              </div>
+              {% endfor %}
+            {% endif %}
+            <div class="span9">
+              <ul>
+                <li>Action For This Server</li><br>
+                <form action="" method="post">{% csrf_token %}
+                  {% ifequal dom.info.0 5 %}
+                  <a href="#console" role="button" class="btn disabled" style="height:40px;width:60px;"><i class="icon-align-justify"></i><br>Console</a>
+                  {% else %}
+                  <a href="#console" role="button" class="btn" data-toggle="modal" style="height:40px;width:60px;" onclick="open_vnc()"><i class="icon-align-justify"></i><br>Console</a>
+                  {% endifequal %}
+                  {% ifequal dom.info.0 5 %}
+                  <button type="submit" class="btn" name="start" value="Start" style="height:50px;width:80px;"><i class="icon-off"></i><br>Start</button>
+                  {% endifequal %}
+                  {% ifequal dom.info.0 1 %}
+                  <a href="#rebootModal" role="button" class="btn" data-toggle="modal" style="height:40px;width:60px;"><i class="icon-off"></i><br>Reboot</a>
+                  {% endifequal %}
+                  {% ifequal dom.info.0 3 %}
+                  <a href="#" role="button" class="btn disabled" data-toggle="modal" style="height:40px;width:60px;"><i class="icon-off"></i><br>Reboot</a>
+                  {% endifequal %}
+                  <a href="#deleteModal" role="button" class="btn" data-toggle="modal" style="height:40px;width:60px;"><i class="icon-remove"></i><br>Delete</a>
+                  {% ifequal dom.info.0 3 %}
+                  <button type="submit" name="resume" role="button" class="btn" style="height:50px;width:80px;"><i class="icon-play"></i><br>Resume</button>
+                  <button type="submit" name="snapshot" role="button" class="btn" style="height:50px;width:80px;"><i class="icon-download-alt"></i><br>Snapshot</button>
+                  {% endifequal %}
+                  {% ifequal dom.info.0 1 %}
+                  <button type="submit" name="suspend" role="button" class="btn" style="height:50px;width:80px;"><i class="icon-pause"></i><br>Suspend</button>
+                  <a role="button" class="btn disabled" style="height:40px;width:60px;"><i class="icon-download-alt"></i><br>Snapshot</a>
+                  {% endifequal %}
+                  {% ifequal dom.info.0 5 %}
+                  <a role="button" class="btn disabled" style="height:40px;width:60px;"><i class="icon-download-alt"></i><br>Suspend</a>
+                  <button type="submit" name="snapshot" role="button" class="btn" style="height:50px;width:80px;"><i class="icon-download-alt"></i><br>Snapshot</button>
+                  {% endifequal %}
+                 </form>
+                <hr>
+                <li>Name & Status</li><br>
+                <div class="pagination-centered">
+                  <p><b>Name:</b> {{ vname }}</p>
+                  <p><b>Status:</b> <font color={% ifequal dom.info.0 5 %}"red">Not Active{% endifequal %}{% ifequal dom.info.0 1 %}"green">Active{% endifequal %}{% ifequal dom.info.0 3 %}"orange">Blocked{% endifequal %}</font></p>
+                  <p><b>Uptime:</b> {{ dom_uptime }} (Min)</p>
+                </div>
+                <hr>
+                <li>Technical Details</li><br>
+                <div class="pagination-centered">
+                  <p><b>VCPU:</b> {{ dom_info.0 }} (Usage: {{ cpu_usage }}%)</p>
+                  <p><b>RAM:</b> {{ dom_info.1 }} MB (Usage: {{ mem_usage.1 }}%)</p>
+                  <p><b>MAC:</b> {{ dom_info.2 }} ({{ dom_info.3 }})</p>
+                  <p><b>HDD:</b> {{ hdd_image.0 }} ({{ hdd_image.1 }})</p>
+                </div>
+                <hr>
+                <li>Media Details</li><br>
+                <div class="pagination-centered">
+                  {% if not media %}{% else %}<b>Connected Image:</b> {{ media }}{% endif %}
+                  <form action="" method="post">{% csrf_token %}
+                    {% if media %}
+                    <br>
+                    <input type="hidden" name="iso_img" value="{{ media }}">
+                    <input type="submit" class="btn"  name="remove_iso" value="Disconnect" onclick="return confirm('Are you sure?')">
+                    {% else %}
+                    <b>Images:</b> <select name="iso_img" class="input-large">
+                    {% if iso_images %}
+                      {% for iso in iso_images %}
+                        <option value="{{ iso }}">{{ iso }}</option>
+                      {% endfor %}
+                    {% else %}
+                      <option value="none">None</option>
+                    {% endif %}
+                    </select>
+                    <br />
+                    {% if iso_images %}
+                    <input type="submit" class="btn" name="add_iso" value="Connect">
+                    {% else %}
+                    <a class="btn disabled" name="connect">Connect</a>
+                    {% endif %}
+                    {% endif %}
+                  </form>
+                </div>
+              </ul>
+            </div> <!-- /span7 -->
 
-  <div id="deleteModal" class="modal hide fade">
-    <div class="modal-header">
-      <form class="form-horizontal" action="" method="post">{% csrf_token %}
-      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-      <h3 id="deleteModalLabel"> Undefined {{ vname }}</h3>
-    </div>
-    <div class="modal-body">
-      <p>By deleting the following Virtual Machine will not delete your HDD image.</p>
-    </div>
-    <div class="modal-footer">
-        <button class="btn" data-dismiss="modal">Cancel</button>
-        <input class="btn btn-danger" type="submit" name="delete" value="Delete">
-      </form>
-    </div>
-  </div> <!-- /deleteModal -->
+            <div id="rebootModal" class="modal hide fade">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3 id="rebootModalLabel">Reboot Server</h3>
+              </div>
+              <div class="modal-body">
+                <p>Shutdown sends ACPI shutdown signal to guest system. Reboot sends power off and halts guest. Power is lost immediately.</p>
+                <form class="form-horizontal" action="" method="post">{% csrf_token %}
+                  <fieldset>
+                    <div class="control-group"><br>
+                    <label class="control-label">Action:</label>
+                      <div class="controls">
+                         <label class="radio">
+                          <input type="radio" name="power" value="shutdown"/>Shutdown</label>
+                         <label class="radio">
+                          <input type="radio" name="power" value="destroy"/>Halt</label>
+                         <label class="radio">
+                          <input type="radio" name="power" value="reboot"/>Reboot</label>
+                      </div>
+                    </div>
+                  </fieldset>
+                </div>
+                <div class="modal-footer">
+                  <button class="btn" data-dismiss="modal">Cancel</button>
+                  <input class="btn btn-primary" type="submit" value="Send">
+                  </form>
+                </div>
+            </div> <!-- /rebootModal -->
 
-  <script>
-    function open_vnc() { window.open('/vnc/{{ host_id }}/{{ vname }}','','width=968,height=552') }
-  </script>
+            <div id="deleteModal" class="modal hide fade">
+              <div class="modal-header">
+                <form class="form-horizontal" action="" method="post">{% csrf_token %}
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3 id="deleteModalLabel"> Undefined {{ vname }}</h3>
+              </div>
+              <div class="modal-body">
+                <p>By deleting the following Virtual Machine will not delete your HDD image.</p>
+              </div>
+              <div class="modal-footer">
+                  <button class="btn" data-dismiss="modal">Cancel</button>
+                  <input class="btn btn-danger" type="submit" name="delete" value="Delete">
+                </form>
+              </div>
+            </div> <!-- /deleteModal -->
+
+          </div><!--/span-->
+        </div><!--/row-fluid-->
+      </div><!--/container-fluid-->
+      <script>
+        function open_vnc() { window.open('/vnc/{{ host_id }}/{{ vname }}','','width=968,height=552') }
+      </script>
 {% endblock %}
