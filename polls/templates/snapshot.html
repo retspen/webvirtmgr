@@ -50,8 +50,9 @@
             {% endif %}
 
             {% if vname and not vm_snapshot %}
-              <div class="pagination-centered">
-                <h4>You no have snapshots for - <a href="/vm/{{ host_id }}/{{ vname }}/">{{ vname }}</a></h4>
+              <br>
+              <div class="well pagination-centered">
+                <h4>You doesn’t have any snapshots for - <a href="/vm/{{ host_id }}/{{ vname }}/">{{ vname }}</a></h4>
               </div>
             {% endif %}
 
@@ -92,8 +93,9 @@
             </table>
             {% endif %}
             {% if not vname and not all_vm_snap %}
-              <div class="pagination-centered">
-                <h4>You no have snapshots</h4>
+              <br>
+              <div class="well pagination-centered">
+                <h4>You doesn’t have any snapshots</h4>
               </div>
             {% endif %}
           </div><!--/span-->
