@@ -483,7 +483,11 @@ def newvm(request, host_id):
                     stg = conn.storagePoolLookupByName(storage)
 
                     if not hdd_size:
-                        image = get_img_path(img, all_storages)
+                        if not img:
+                            msg = 'First you need to create an image'
+                            errors.append(msg)
+                        else:
+                            image = get_img_path(img, all_storages)
                     else:
                         from libvirt import libvirtError
                         try:
