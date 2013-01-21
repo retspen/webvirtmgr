@@ -386,7 +386,7 @@ def newvm(request, host_id):
                     <disk type='file' device='cdrom'>
                       <driver name='qemu' type='raw'/>
                       <source file=''/>
-                      <target dev='sdb' bus='scsi'/>
+                      <target dev='hdc' bus='ide'/>
                       <readonly/>
                     </disk>
                     <controller type='ide' index='0'>
