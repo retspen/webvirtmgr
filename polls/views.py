@@ -381,12 +381,12 @@ def newvm(request, host_id):
         xml += """<disk type='file' device='disk'>
                       <driver name='qemu' type='qcow2'/>
                       <source file='%s'/>
-                      <target dev='hda' bus='ide'/>
+                      <target dev='sda' bus='sata'/>
                     </disk>
                     <disk type='file' device='cdrom'>
                       <driver name='qemu' type='raw'/>
                       <source file=''/>
-                      <target dev='hdc' bus='ide'/>
+                      <target dev='sdb' bus='scsi'/>
                       <readonly/>
                     </disk>
                     <controller type='ide' index='0'>
