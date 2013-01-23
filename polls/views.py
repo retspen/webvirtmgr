@@ -496,7 +496,10 @@ def newvm(request, host_id):
                             errors.append(msg_error.message)
 
                     if not errors:
-                        vol = vname + '.img'
+                        if not img:
+                            vol = vname + '.img'
+                        else:
+                            vol = img
                         vl = stg.storageVolLookupByName(vol)
                         image = vl.path()
 
