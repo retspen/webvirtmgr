@@ -406,7 +406,7 @@ def newvm(request, host_id):
                     <input type='tablet' bus='usb'/>
                     <input type='mouse' bus='ps2'/>
                     <graphics type='vnc' port='-1' autoport='yes' keymap='en-us' passwd='%s'>
-					  <listen type='address' address='%s'>
+					  <listen type='address' address='%s'/>
 					</graphics>
                     <video>
                       <model type='cirrus' vram='9216' heads='1'/>
