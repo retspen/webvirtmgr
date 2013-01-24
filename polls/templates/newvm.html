@@ -71,7 +71,7 @@
                             <div class="control-group">
                             <label class="control-label">Name</label>
                               <div class="controls">
-                                <input type="text" class="input-large" name="name" placeholder="Name">
+                                <input type="text" class="input-large" name="name" placeholder="Name" maxlength="12" required pattern="^[a-zA-Z0-9_]+$">
                                 <input type="hidden" class="input-large" name="vcpu" value="{{ value.1 }}">
                                 <input type="hidden" class="input-large" name="ram" value="{{ value.2 }}">
                                 <input type="hidden" class="input-large" name="hdd_size" value="{{ value.3 }}">
@@ -127,7 +127,7 @@
                     <div class="control-group">
                     <label class="control-label">Name</label>
                       <div class="controls">
-                        <input type="text" class="input-large" name="name" placeholder="Name">
+                        <input type="text" class="input-large" name="name" placeholder="Name" maxlength="12" required pattern="^[a-zA-Z0-9_]+$">
                       </div> 
                      </div>
                     <div class="control-group">
