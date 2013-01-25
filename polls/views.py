@@ -1192,7 +1192,7 @@ def vm(request, host_id, vname):
                     if dom.info()[0] == 1:
                         dom.destroy()
                     dom.undefine()
-                    vm = Vm.objects.get(host_id=host_id, vname=vname)
+                    vm = Vm.objects.get(host=host_id, vname=vname)
                     vm.delete()
                     return HttpResponseRedirect('/overview/%s/' % host_id)
                 except libvirtError as msg_error:
@@ -1252,7 +1252,7 @@ def vnc(request, host_id, vname):
         return HttpResponseRedirect('/login')
 
     host = Host.objects.get(id=host_id)
-    vm = Vm.objects.get(host_id=host_id, vname=vname)
+    vm = Vm.objects.get(host=host_id, vname=vname)
     conn = libvirt_conn(host)
 
     if type(conn) == dict:
