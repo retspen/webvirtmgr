@@ -833,22 +833,27 @@ def network(request, host_id, pool):
         from polls.IPy import IP
 
         ipv4 = []
-        xml_forward = net.XMLDesc(0)
-        fw = util.get_xml_path(xml_forward, "/network/forward/@mode")
-        forwardDev = util.get_xml_path(xml_forward, "/network/forward/@dev")
-        ipv4.append([fw, forwardDev])
-
         xml_net = net.XMLDesc(0)
+        fw = util.get_xml_path(xml_net, "/network/forward/@mode")
+        forwardDev = util.get_xml_path(xml_net, "/network/forward/@dev")
+        ipv4.append([fw, forwardDev])
+        
+        # Subnet block
         addrStr = util.get_xml_path(xml_net, "/network/ip/@address")
         netmaskStr = util.get_xml_path(xml_net, "/network/ip/@netmask")
-        netmask = IP(netmaskStr)
-        gateway = IP(addrStr)
-        network = IP(gateway.int() & netmask.int())
-        ipv4.append(IP(str(network) + "/" + netmaskStr))
-
-        xml_dhcp = net.XMLDesc(0)
-        dhcpstart = util.get_xml_path(xml_dhcp, "/network/ip/dhcp/range[1]/@start")
-        dhcpend = util.get_xml_path(xml_dhcp, "/network/ip/dhcp/range[1]/@end")
+        
+        if addrStr and netmaskStr:
+            netmask = IP(netmaskStr)
+            gateway = IP(addrStr)
+            network = IP(gateway.int() & netmask.int())
+            ipv4.append(IP(str(network) + "/" + netmaskStr))
+        else:
+            ipv4.append(None)
+        
+        # DHCP block
+        dhcpstart = util.get_xml_path(xml_net, "/network/ip/dhcp/range[1]/@start")
+        dhcpend = util.get_xml_path(xml_net, "/network/ip/dhcp/range[1]/@end")
+        
         if not dhcpstart or not dhcpend:
             pass
         else:
