@@ -508,7 +508,7 @@ def newvm(request, host_id):
 
                         vnc_passwd = ''.join([choice(letters + digits) for i in range(12)])
 
-                        new_vm = Vm(host=host_id, vname=vname, vnc_passwd=vnc_passwd)
+                        new_vm = Vm(host_id=host_id, vname=vname, vnc_passwd=vnc_passwd)
                         new_vm.save()
 
                         add_vm(vname, ram, vcpu, image, net, vnc_passwd)
