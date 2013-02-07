@@ -834,9 +834,14 @@ def network(request, host_id, pool):
 
         ipv4 = []
         xml_net = net.XMLDesc(0)
+        
         fw = util.get_xml_path(xml_net, "/network/forward/@mode")
         forwardDev = util.get_xml_path(xml_net, "/network/forward/@dev")
-        ipv4.append([fw, forwardDev])
+        
+        if fw and forwardDev:
+            ipv4.append([fw, forwardDev])
+        else:
+            ipv4.append(None)
         
         # Subnet block
         addrStr = util.get_xml_path(xml_net, "/network/ip/@address")
