@@ -1097,6 +1097,10 @@ def vm(request, host_id, vname):
 
         xml = dom.XMLDesc(0)
         hdd = util.get_xml_path(xml, "/domain/devices/disk[1]/source/@file")
+        
+        # If xml create custom
+        if not hdd:
+            hdd = util.get_xml_path(xml, "/domain/devices/disk[1]/source/@dev")
         img = conn.storageVolLookupByPath(hdd)
         img_vol = img.name()
 
