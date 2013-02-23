@@ -286,7 +286,7 @@ def overview(request, host_id):
     return render_to_response('overview.html', locals(), context_instance=RequestContext(request))
 
 
-def request, host_id):
+def newvm(request, host_id):
     """
 
     New VM's.
