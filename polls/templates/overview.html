@@ -61,6 +61,7 @@
             </div>
             <h2>Virtual Machines</h2>
             <hr>
+            {% if all_vm %}
             <table class="table">
               <thead>
                 <tr>
@@ -106,6 +107,11 @@
               {% endfor %}
               </tbody>
             </table>
+            {% else %}
+            <div class="well pagination-centered">
+              <h4>You doesn’t have any Virtual Machines</h4>
+            </div>
+            {% endif %}
           </div><!--/span-->
         </div><!--/row-fluid-->
       </div><!--/container-fluid-->

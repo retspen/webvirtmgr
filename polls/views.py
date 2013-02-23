@@ -1299,14 +1299,17 @@ def vnc(request, host_id, vname):
         return HttpResponseRedirect('/login')
 
     host = Host.objects.get(id=host_id)
-    vm = Vm.objects.get(host=host_id, vname=vname)
     conn = libvirt_conn(host)
 
     if type(conn) == dict:
         return HttpResponseRedirect('/overview/%s/' % host_id)
     else:
         vnc_port = vnc_port()
-        vnc_passwd = get_vnc_enc(vm.vnc_passwd)
+        try:
+            vm = Vm.objects.get(host=host_id, vname=vname)
+            vnc_passwd = get_vnc_enc(vm.vnc_passwd)
+        except:
+            vnc_passwd = None
 
         conn.close()
 
