@@ -51,12 +51,12 @@
             {% if info %}
             {% if networks %}
             <div class="row-fluid">
-              <div class="span3">
+              <div class="span5">
                 <p>Pool name</p>
                 <p>Device pool</p>
                 <p>State</p>
               </div>
-              <div class="span3">
+              <div class="span7">
                 <p>[{% for key, value in networks.items %} {% ifequal key pool %}<b>{{ pool }}</b>{% else %}<a href="/network/{{ host_id }}/{{ key }}">{{ key }}</a>{% endifequal %}{% endfor %} ]</p>
                 <p>{{ info.1 }}</p>
                 <form action="/network/{{ host_id }}/{{ pool }}/" method="post" style="height:10px;">{% csrf_token %}
@@ -72,7 +72,7 @@
             <h3>IPv4 configuration</h3>
             <hr>
             <div class="row-fluid">
-              <div class="span3">
+              <div class="span5">
                 <p>Type forwarding</p>
                 <p>Subnet pool</p>
                 <p>DHCP</p>
@@ -81,7 +81,7 @@
                 <p>End</p> 
                 {% endif %}
               </div>
-              <div class="span3">
+              <div class="span5">
                 <p>{% ifequal ipv4_net.0.0 'nat' %} NAT {% endifequal %} {% ifequal ipv4_net.0.0 'route' %} ROUTE {% endifequal %} {% if not ipv4_net.0.0 %} ISOLATE {% endif %}</p>
                 <p>{{ ipv4_net.1 }}</p>
                 <p>{% if ipv4_net.2 %}<font color="green">ON</font>{% else %}<font color="red">OFF</font>{% endif %}</p>

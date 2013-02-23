@@ -59,6 +59,53 @@
                 <p>{{ sys_info }}</p>
               </div>
             </div>
+            <h2>Virtual Machines</h2>
+            <hr>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th style="width:20px;">#</th>
+                  <th>Name</th>
+                  <th>Status</th>
+                  <th style="width:180px;">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for vm, status in all_vm.items %}
+              <tr>
+                <td>{{ forloop.counter }}</td>
+                <td><a href="/vm/{{ host_id }}/{{ vm }}/"><i class="icon-th-large"></i> {{ vm }}</a></td>
+                <td>{% ifequal status 1 %}<font color="green">power on</font>{% endifequal %}{% ifequal status 5 %}<font color="red">power off</font>{% endifequal %}{% ifequal status 3 %}<font color="orange">suspend</font>{% endifequal %}</td>
+                <td>
+                  <form action="" method="post" style="height:5px;">{% csrf_token %}
+                    <input type="hidden" name="vname" value="{{ vm }}" />
+                    {% ifequal status 5 %}
+                    <button class="btn" type="submit" name="start"><i class="icon-play"></i></button>
+                    <button class="btn disabled"><i class="icon-pause"></i></button>
+                    <button class="btn disabled"><i class="icon-off"></i></button>
+                    <button class="btn disabled"><i class="icon-eye-open"></i></button>
+                    {% endifequal %}
+                    {% ifequal status 3 %}
+                    <button class="btn" type="submit" name="resume"><i class="icon-play"></i></button>
+                    <button class="btn disabled"><i class="icon-pause"></i></button>
+                    <button class="btn disabled"><i class="icon-off"></i></button>
+                    <button class="btn disabled"><i class="icon-eye-open"></i></button>
+                    {% endifequal %}
+                    {% ifequal status 1 %}
+                    <button class="btn disabled"><i class="icon-play"></i></button>
+                    <button class="btn" type="submit" name="suspend"><i class="icon-pause"></i></button>
+                    <button class="btn" type="submit" name="shutdown"><i class="icon-off"></i></button>
+                    <button class="btn" onclick="open_vnc_{{ vm }}()"><i class="icon-eye-open"></i></button>
+                    {% endifequal %}
+                  </form>
+                  <script>
+                    function open_vnc_{{ vm }}() { window.open('/vnc/{{ host_id }}/{{ vm }}/','','width=968,height=552') }
+                  </script>
+                </td>
+              </tr>
+              {% endfor %}
+              </tbody>
+            </table>
           </div><!--/span-->
         </div><!--/row-fluid-->
       </div><!--/container-fluid-->

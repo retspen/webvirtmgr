@@ -283,6 +283,36 @@ def overview(request, host_id):
         lib_virt_ver = conn.getLibVersion()
         conn_type = conn.getURI()
 
+        if request.method == 'POST':
+            vname = request.POST.get('vname', '')
+            dom = conn.lookupByName(vname)
+            if 'start' in request.POST:
+                try:
+                    dom.create()
+                    return HttpResponseRedirect(request.get_full_path())
+                except libvirtError as msg_error:
+                    errors.append(msg_error.message)
+            if 'shutdown' in request.POST:
+                try:
+                    dom.destroy()
+                    return HttpResponseRedirect(request.get_full_path())
+                except libvirtError as msg_error:
+                    errors.append(msg_error.message)
+            if 'suspend' in request.POST:
+                try:
+                    dom.suspend()
+                    return HttpResponseRedirect(request.get_full_path())
+                except libvirtError as msg_error:
+                    errors.append(msg_error.message)
+            if 'resume' in request.POST:
+                try:
+                    dom.resume()
+                    return HttpResponseRedirect(request.get_full_path())
+                except libvirtError as msg_error:
+                    errors.append(msg_error.message)
+
+        conn.close()
+
     return render_to_response('overview.html', locals(), context_instance=RequestContext(request))
 
 
@@ -1206,8 +1236,11 @@ def vm(request, host_id, vname):
                     if dom.info()[0] == 1:
                         dom.destroy()
                     dom.undefine()
-                    vm = Vm.objects.get(host=host_id, vname=vname)
-                    vm.delete()
+                    try:
+                        vm = Vm.objects.get(host=host_id, vname=vname)
+                        vm.delete()
+                    except:
+                        pass
                     return HttpResponseRedirect('/overview/%s/' % host_id)
                 except libvirtError as msg_error:
                     errors.append(msg_error.message)

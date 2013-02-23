@@ -58,7 +58,7 @@
                 <p>Size ({{ info.1|filesizeformat }} / {{ info.2|filesizeformat }})</p>
                 <p>State</p>
               </div>
-              <div class="span5">
+              <div class="span7">
                 <p>[{% for key, value in storages.items %} {% ifequal key pool %}<b>{{ pool }}</b>{% else %}<a href="/storage/{{ host_id }}/{{ key }}">{{ key }}</a>{% endifequal %}{% endfor %} ]</p>
                 <p>{% if not info.6 %}None{% else %}{{ info.6 }}{% endif %}</p>
                 <p>{% if not info.7 %}None{% else %}{{ info.7 }}{% endif %}</p>
@@ -84,10 +84,10 @@
             <table class="table table-striped table-bordered">
               <thead>
                 <tr>
-                  <th>#</th>
+                  <th style="width:20px;">#</th>
                   <th>Name</th>
-                  <th>Size</th>
-                  <th>Format</th>
+                  <th style="width:30px;">Size</th>
+                  <th style="width:30px;">Format</th>
                   <th colspan="2">Action</th>
                 </tr>
               </thead>
