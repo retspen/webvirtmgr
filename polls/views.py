@@ -286,7 +286,7 @@ def overview(request, host_id):
     return render_to_response('overview.html', locals(), context_instance=RequestContext(request))
 
 
-def newvm(request, host_id):
+def request, host_id):
     """
 
     New VM's.
@@ -381,7 +381,7 @@ def newvm(request, host_id):
         xml += """<disk type='file' device='disk'>
                       <driver name='qemu' type='qcow2'/>
                       <source file='%s'/>
-                      <target dev='sda' bus='sata'/>
+                      <target dev='hda' bus='ide'/>
                     </disk>
                     <disk type='file' device='cdrom'>
                       <driver name='qemu' type='raw'/>
