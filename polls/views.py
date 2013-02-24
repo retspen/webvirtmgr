@@ -359,27 +359,21 @@ def newvm(request, host_id):
         import virtinst.util as util
         import re
 
-        arch = conn.getInfo()[0]
-        hostcap = conn.getCapabilities()
-        iskvm = re.search('kvm', hostcap)
         ram = int(ram) * 1024
-
-        xml_machine = conn.getCapabilities()
-        machine = util.get_xml_path(xml_machine, "/capabilities/guest/arch/machine/@canonical")
-
-        emulator = []
-        xml_emul = conn.getCapabilities()
-        arch = conn.getInfo()[0]
-        if arch == 'x86_64':
-            emulator.append(util.get_xml_path(xml_emul, "/capabilities/guest[1]/arch/emulator"))
-            emulator.append(util.get_xml_path(xml_emul, "/capabilities/guest[2]/arch/emulator"))
-        else:
-            emulator = util.get_xml_path(xml_emul, "/capabilities/guest/arch/emulator")
-
+        iskvm = re.search('kvm', conn.getCapabilities())
         if iskvm:
             dom_type = 'kvm'
         else:
             dom_type = 'qemu'
+
+        machine = util.get_xml_path(conn.getCapabilities(), "/capabilities/guest/arch/machine/@canonical")
+        if not machine:
+            machine = 'pc-1.0'
+
+        if re.findall('/usr/bin/qemu-system-x86_64', conn.getCapabilities()):
+            emulator = '/usr/bin/qemu-system-x86_64'
+        if re.findall('/usr/libexec/qemu-kvm', conn.getCapabilities()):
+            emulator = '/usr/libexec/qemu-kvm'
 
         xml = """<domain type='%s'>
                   <name>%s</name>
@@ -387,7 +381,7 @@ def newvm(request, host_id):
                   <currentMemory>%s</currentMemory>
                   <vcpu>%s</vcpu>
                   <os>
-                    <type arch='%s' machine='%s'>hvm</type>
+                    <type arch='x86_64' machine='%s'>hvm</type>
                     <boot dev='hd'/>
                     <boot dev='cdrom'/>
                     <bootmenu enable='yes'/>
@@ -401,14 +395,9 @@ def newvm(request, host_id):
                   <on_poweroff>destroy</on_poweroff>
                   <on_reboot>restart</on_reboot>
                   <on_crash>restart</on_crash>
-                  <devices>""" % (dom_type, name, ram, ram, vcpu, arch, machine)
-
-        if arch == 'x86_64':
-            xml += """<emulator>%s</emulator>""" % (emulator[1])
-        else:
-            xml += """<emulator>%s</emulator>""" % (emulator)
-
-        xml += """<disk type='file' device='disk'>
+                  <devices>
+                    <emulator>%s</emulator>
+                    <disk type='file' device='disk'>
                       <driver name='qemu' type='qcow2'/>
                       <source file='%s'/>
                       <target dev='hda' bus='ide'/>
@@ -421,8 +410,7 @@ def newvm(request, host_id):
                     </disk>
                     <controller type='ide' index='0'>
                       <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x1'/>
-                    </controller>
-                    """ % (image)
+                    </controller>""" % (dom_type, name, ram, ram, vcpu, machine, emulator, image)
 
         if re.findall("br", net):
             xml += """<interface type='bridge'>
