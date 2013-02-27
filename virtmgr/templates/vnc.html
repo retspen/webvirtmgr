@@ -23,14 +23,12 @@
   <div id="vncviewer">
     <applet archive="/static/java/vncviewer.jar" code="com.tightvnc.vncviewer.VncViewer" width="800" height="628">
     {% if vnc_passwd %}
+      <param name="Scaling factor" value="auto">
       <param name="HOST" value="{{ host.ipaddr }}">
       <param name="ENCPASSWORD" value="{{ vnc_passwd }}">
       <param name="PORT" value="{{ vnc_port }}">
     {% else %}
       <param name="SOCKETFACTORY" value="com.tightvnc.vncviewer.SshTunneledSocketFactory">
-      <param name="Show controls" value="Yes">
-      <param name="Offer relogin" value="Yes">
-      <param name="Open new window" value="No">
       <param name="Scaling factor" value="auto">
       <param name="SSHHOST" value="{{ host.ipaddr }}">
       <param name="HOST" value="localhost">
