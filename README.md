@@ -1,4 +1,8 @@
-# Applince WebVirtMgr
+# Warning
+
+This version does not support update only the new installation. Or you can upgrade an existing but it will have to delete the file <b>webvirtmgr.db</b> and recreate datebase <code>./manage.py syncdb</code>
+
+# WebVirtMgr panel - v1.0
 
 ## 1. Introduction
 
@@ -94,7 +98,7 @@ Reload apache:
 Add file webvirtmgr.conf in conf.d directory (Ubuntu: "/etc/apache2/conf.d" or RedHat,Fedora,CentOS: "/etc/httpd/conf.d"):
 
     WSGIScriptAlias / /var/www/webvirtmgr/wsgi/django.wsgi
-    Alias /static /var/www/webvirtmgr/polls/static/
+    Alias /static /var/www/webvirtmgr/virtmgr/static/
     <Directory /var/www/webvirtmgr/wsgi>
       Order allow,deny
       Allow from all

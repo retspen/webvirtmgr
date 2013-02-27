@@ -30,9 +30,9 @@ LANGUAGE_CODE = 'en-us'
 SITE_ID = 1
 USE_I18N = False
 USE_L10N = True
-MEDIA_ROOT = os.path.abspath(os.path.join(ROOT_PATH, '..', 'webvirtmgr/polls/media'))
+MEDIA_ROOT = os.path.abspath(os.path.join(ROOT_PATH, '..', 'webvirtmgr/virtmgr/media'))
 MEDIA_URL = 'media/'
-STATIC_ROOT = os.path.abspath(os.path.join(ROOT_PATH, '..', 'webvirtmgr/polls/static'))
+STATIC_ROOT = os.path.abspath(os.path.join(ROOT_PATH, '..', 'webvirtmgr/virtmgr/static'))
 STATIC_URL = 'static/'
 ADMIN_MEDIA_PREFIX = 'static/admin/'
 STATICFILES_FINDERS = (
@@ -53,7 +53,7 @@ MIDDLEWARE_CLASSES = (
 )
 ROOT_URLCONF = 'webvirtmgr.urls'
 TEMPLATE_DIRS = (
-    os.path.abspath(os.path.join(ROOT_PATH, '..', 'webvirtmgr/polls/templates')),
+    os.path.abspath(os.path.join(ROOT_PATH, '..', 'webvirtmgr/virtmgr/templates')),
 )
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -63,7 +63,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
-    'webvirtmgr.polls',
+    'webvirtmgr.virtmgr',
 )
 LOGGING = {
     'version': 1,
