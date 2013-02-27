@@ -159,7 +159,7 @@ def dashboard(request):
             passwd = request.POST.get('kvm_passwd', '')
 
             import re
-            simbol = re.search('[^a-zA-Z0-9\_]+', name)
+            simbol = re.search('[^a-zA-Z0-9\-]+', name)
             ipsimbol = re.search('[^a-z0-9\.\-]+', ipaddr)
             domain = re.search('[\.]+', ipaddr)
 
@@ -380,6 +380,19 @@ def newvm(request, host_id):
         if re.findall('/usr/libexec/qemu-kvm', conn.getCapabilities()):
             emulator = '/usr/libexec/qemu-kvm'
 
+        img = conn.storageVolLookupByPath(image)
+        vol = img.name()
+        for storage in all_storages:
+            stg = conn.storagePoolLookupByName(storage)
+            stg.refresh(0)
+            for img in stg.listVolumes():
+                if img == vol:
+                    stg_type = util.get_xml_path(stg.XMLDesc(0), "/pool/@type")
+                    if stg_type == 'dir':
+                        image_type = 'qcow2'
+                    else:
+                        image_type = 'raw'
+
         xml = """<domain type='%s'>
                   <name>%s</name>
                   <memory>%s</memory>
@@ -403,7 +416,7 @@ def newvm(request, host_id):
                   <devices>
                     <emulator>%s</emulator>
                     <disk type='file' device='disk'>
-                      <driver name='qemu' type='qcow2'/>
+                      <driver name='qemu' type='%s'/>
                       <source file='%s'/>
                       <target dev='hda' bus='ide'/>
                     </disk>
@@ -415,7 +428,7 @@ def newvm(request, host_id):
                     </disk>
                     <controller type='ide' index='0'>
                       <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x1'/>
-                    </controller>""" % (dom_type, name, ram, ram, vcpu, machine, emulator, image)
+                    </controller>""" % (dom_type, name, ram, ram, vcpu, machine, emulator, image_type, image)
 
         if re.findall("br", net):
             xml += """<interface type='bridge'>
