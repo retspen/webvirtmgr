@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}Snapshots{% endblock %}
+{% block content %}
+      <div class="container-fluid">
+        <div class="row-fluid">
+          <div class="span3">
+            <div class="well sidebar-nav">
+              <ul class="nav nav-list">
+                <li class="nav-header">Server Settings</li>
+                <li><a href="/overview/{{ host_id }}/"><i class="icon-info-sign"></i> Overview</a></li>
+                <li><a href="/newvm/{{ host_id }}/"><i class="icon-plus"></i> Create VM</a></li>
+                <li><a href="/storage/{{ host_id }}/"><i class="icon-folder-open"></i> Storage pool</a></li>
+                <li><a href="/network/{{ host_id }}/"><i class="icon-signal"></i> Network pool</a></li>
+                <li class="active">
+                  <a href="/snapshot/{{ host_id }}/"><i class="icon-download-alt"></i> Snapshots</a>
+                </li>
+                <li class="nav-header">Virtual Machines</li>
+                {% if not all_vm %}
+                <li><a href="/newvm/{{ host_id }}"><i class="icon-plus"></i> Create VM</a></li>
+                {% else %}
+                  {% for vm in all_vm %}
+                  <li><a href="/vm/{{ host_id }}/{{ vm }}/"><i class="icon-th-large"></i> {{ vm }}</a></li>
+                  {% endfor %}
+              {% endif %}
+              </ul>
+            </div><!--/.well -->
+          </div><!--/span-->
+          <div class="span9 well">
+            <h2>Snapshots</h2>
+            <hr>
+            {% if messages %}
+            {% for message in messages %}
+            <div class="row-fluid">
+              <div class="span8 alert alert-block alert-success">
+                <a class="close" data-dismiss="alert">&times;</a>
+                <p>{{ message }}</p>
+              </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% if errors %}
+            {% for error in errors %}
+            <div class="row-fluid">
+              <div class="span8 alert alert-block alert-error">
+                <a class="close" data-dismiss="alert">&times;</a>
+                <p>{{ error }}</p>
+              </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            {% if vname and not vm_snapshot %}
+              <br>
+              <div class="well pagination-centered">
+                <h4>You doesn’t have any snapshots for - <a href="/vm/{{ host_id }}/{{ vname }}/">{{ vname }}</a></h4>
+              </div>
+            {% endif %}
+
+            {% if vname and vm_snapshot %}
+            <a href="/vm/{{ host_id }}/{{ vname }}/">{{ vname }}</a><br><br>
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Date</th>
+                  <th colspan="2">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for name, time in vm_snapshot.items %}
+                <tr>
+                  <td><strong>{{ name }}<strong></td>
+                  <td>{{ time.0|date:"M d H:i:s" }}</td>
+                  <td style="width:30px;">
+                    <form action="" method="post" style="height:10px;">{% csrf_token %}
+                      <input type="hidden" name="name" value="{{ name }}">
+                      {% ifnotequal time.1 3 %}
+                      <button type="submit" class="btn btn-primary" name="revert" value="revert" onclick="return confirm('Are you sure?')">Revert</button>
+                      {% else %}
+                      <button type="button" class="btn btn-primary disabled" name="revert" value="Revert">Revert</button>
+                      {% endifnotequal %}
+                    </form>
+                  </td>
+                  <td style="width:30px;">
+                    <form action="" method="post" style="height:10px;">{% csrf_token %}
+                      <input type="hidden" name="name" value="{{ name }}">
+                      <button type="submit" class="btn btn-danger" name="delete" value="delete" onclick="return confirm('Are you sure?')">Delete</button>
+                    </form>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            {% endif %}
+            {% if not vname and not all_vm_snap %}
+              <br>
+              <div class="well pagination-centered">
+                <h4>You doesn’t have any snapshots</h4>
+              </div>
+            {% endif %}
+          </div><!--/span-->
+        </div><!--/row-fluid-->
+      </div><!--/container-fluid-->
+{% endblock %}
