@@ -323,6 +323,9 @@ def newvm(request, host_id):
 
     """
 
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login')
+
     def find_all_img(storages):
         import re
         disk = []
@@ -454,9 +457,6 @@ def newvm(request, host_id):
         conn.defineXML(xml)
         dom = conn.lookupByName(name)
         dom.setAutostart(1)
-
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect('/login')
 
     host = Host.objects.get(id=host_id)
     conn = libvirt_conn(host)
