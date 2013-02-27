@@ -333,7 +333,9 @@ def newvm(request, host_id):
             stg = conn.storagePoolLookupByName(storage)
             stg.refresh(0)
             for img in stg.listVolumes():
-                if re.findall(".img", img) or re.findall(".IMG", img):
+                if re.findall(".iso", img) or re.findall(".ISO", img):
+                    pass
+                else:
                     disk.append(img)
         return disk
 
