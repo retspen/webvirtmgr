@@ -774,7 +774,7 @@ def storage(request, host_id, pool):
 
                     import re
                     errors = []
-                    name_have_simbol = re.search('[^a-zA-Z0-9\_\-]+', name)
+                    name_have_simbol = re.search('[^a-zA-Z0-9\_\-\.]+', name)
                     if img_name in stg.listVolumes():
                         msg = 'Volume name already use'
                         errors.append(msg)
@@ -805,7 +805,7 @@ def storage(request, host_id, pool):
                     full_img_name = clone_name + '.img'
                     import re
                     errors = []
-                    name_have_simbol = re.search('[^a-zA-Z0-9\_]+', clone_name)
+                    name_have_simbol = re.search('[^a-zA-Z0-9\_\-\.]+', clone_name)
                     if full_img_name in stg.listVolumes():
                         msg = _('Volume name already use')
                         errors.append(msg)
