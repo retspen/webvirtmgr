@@ -503,7 +503,7 @@ def newvm(request, host_id):
                 errors = []
 
                 import re
-                simbol = re.search('[^a-zA-Z0-9\_\-]+', vname)
+                simbol = re.search('[^a-zA-Z0-9\_\-\.]+', vname)
 
                 if vname in all_vm:
                     msg = 'This is the name of the virtual machine already exists'

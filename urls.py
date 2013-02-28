@@ -19,9 +19,9 @@ urlpatterns = patterns('',
     url(r'^network/(\d+)/$', 'virtmgr.views.network', {'pool': None}),
     url(r'^network/(\d+)/([\w-]+)/$', 'virtmgr.views.network'),
 
-    url(r'^vm/(\d+)/([\w-]+)/$', 'virtmgr.views.vm'),
+    url(r'^vm/(\d+)/([\w\-\.]+)/$', 'virtmgr.views.vm'),
 
-    url(r'^vnc/(\d+)/([\w-]+)/$', 'virtmgr.views.vnc'),
+    url(r'^vnc/(\d+)/([\w\-\.]+)/$', 'virtmgr.views.vnc'),
 
     url(r'^snapshot/(\d+)/$', 'virtmgr.views.snapshot'),
     url(r'^snapshot/(\d+)/([\w-]+)/$', 'virtmgr.views.dom_snapshot'),
