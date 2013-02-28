@@ -159,7 +159,7 @@ def dashboard(request):
             passwd = request.POST.get('kvm_passwd', '')
 
             import re
-            simbol = re.search('[^a-zA-Z0-9\-]+', name)
+            simbol = re.search('[^a-zA-Z0-9\-\.]+', name)
             ipsimbol = re.search('[^a-z0-9\.\-]+', ipaddr)
             domain = re.search('[\.]+', ipaddr)
 
