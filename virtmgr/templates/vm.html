@@ -59,10 +59,10 @@
                   <button type="submit" class="btn" name="start" value="Start" style="height:50px;width:80px;"><i class="icon-off"></i><br>Start</button>
                   {% endifequal %}
                   {% ifequal dom.info.0 1 %}
-                  <a href="#rebootModal" role="button" class="btn" data-toggle="modal" style="height:40px;width:60px;"><i class="icon-off"></i><br>Reboot</a>
+                  <a href="#powerModal" role="button" class="btn" data-toggle="modal" style="height:40px;width:60px;"><i class="icon-off"></i><br>Power</a>
                   {% endifequal %}
                   {% ifequal dom.info.0 3 %}
-                  <a href="#" role="button" class="btn disabled" data-toggle="modal" style="height:40px;width:60px;"><i class="icon-off"></i><br>Reboot</a>
+                  <a href="#" role="button" class="btn disabled" data-toggle="modal" style="height:40px;width:60px;"><i class="icon-off"></i><br>Power</a>
                   {% endifequal %}
                   <a href="#deleteModal" role="button" class="btn" data-toggle="modal" style="height:40px;width:60px;"><i class="icon-remove"></i><br>Delete</a>
                   {% ifequal dom.info.0 3 %}
@@ -124,43 +124,48 @@
               </ul>
             </div> <!-- /span7 -->
 
-            <div id="rebootModal" class="modal hide fade">
+            <div id="powerModal" class="modal hide fade">
               <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h3 id="rebootModalLabel">Reboot Server</h3>
+                <h3 id="rebootModalLabel">Power On Server</h3>
               </div>
               <div class="modal-body">
-                <p>Shutdown sends ACPI shutdown signal to guest system. Reboot sends power off and halts guest. Power is lost immediately.</p>
+                <p>Shutdown sends ACPI shutdown signal to guest system. Force shutdown is lost immediately.</p>
                 <form class="form-horizontal" action="" method="post">{% csrf_token %}
                   <fieldset>
-                    <div class="control-group"><br>
+                    <div class="control-group">
                     <label class="control-label">Action:</label>
                       <div class="controls">
                          <label class="radio">
                           <input type="radio" name="power" value="shutdown"/>Shutdown</label>
                          <label class="radio">
-                          <input type="radio" name="power" value="destroy"/>Halt</label>
-                         <label class="radio">
-                          <input type="radio" name="power" value="reboot"/>Reboot</label>
+                          <input type="radio" name="power" value="destroy"/>Force Shutdown</label>
                       </div>
                     </div>
                   </fieldset>
                 </div>
                 <div class="modal-footer">
-                  <button class="btn" data-dismiss="modal">Cancel</button>
-                  <input class="btn btn-primary" type="submit" value="Send">
+                    <button class="btn" data-dismiss="modal">Cancel</button>
+                    <input class="btn btn-primary" type="submit" value="Send">
                   </form>
                 </div>
-            </div> <!-- /rebootModal -->
+            </div> <!-- /powerModal -->
 
             <div id="deleteModal" class="modal hide fade">
               <div class="modal-header">
-                <form class="form-horizontal" action="" method="post">{% csrf_token %}
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h3 id="deleteModalLabel"> Undefined {{ vname }}</h3>
+                <h3 id="deleteModalLabel">Undefined Server</h3>
               </div>
               <div class="modal-body">
-                <p>By deleting the following Virtual Machine will not delete your HDD image.</p>
+                <form class="form-horizontal" action="" method="post">{% csrf_token %}
+                  <fieldset>
+                    <p>Delete HDD image?</p>
+                    <div class="control-group">
+                      <label class="checkbox">
+                        <input type="checkbox" name="image" value="{{ hdd_image.0 }}"> {{ hdd_image.0 }}
+                      </label>
+                    </div>
+                  </fieldset>
               </div>
               <div class="modal-footer">
                   <button class="btn" data-dismiss="modal">Cancel</button>
@@ -176,3 +181,4 @@
         function open_vnc() { window.open('/vnc/{{ host_id }}/{{ vname }}','','width=968,height=552') }
       </script>
 {% endblock %}
+

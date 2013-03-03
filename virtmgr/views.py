@@ -1152,7 +1152,7 @@ def vm(request, host_id, vname):
 
         xml = dom.XMLDesc(0)
         hdd = util.get_xml_path(xml, "/domain/devices/disk[1]/source/@file")
-        
+
         # If xml create custom
         if not hdd:
             hdd = util.get_xml_path(xml, "/domain/devices/disk[1]/source/@dev")
@@ -1174,7 +1174,7 @@ def vm(request, host_id, vname):
         try:
             nbcore = conn.getInfo()[2]
             cpu_use_ago = dom.info()[4]
-            time.sleep(1) 
+            time.sleep(1)
             cpu_use_now = dom.info()[4]
             diff_usage = cpu_use_now - cpu_use_ago
             cpu_usage = 100 * diff_usage / (1 * nbcore * 10**9L)
@@ -1220,13 +1220,6 @@ def vm(request, host_id, vname):
                 except libvirtError as msg_error:
                     errors.append(msg_error.message)
             if 'power' in request.POST:
-                if 'reboot' == request.POST.get('power', ''):
-                    try:
-                        dom.destroy()
-                        dom.create()
-                        return HttpResponseRedirect(request.get_full_path())
-                    except libvirtError as msg_error:
-                        errors.append(msg_error.message)
                 if 'shutdown' == request.POST.get('power', ''):
                     try:
                         dom.shutdown()
@@ -1256,6 +1249,12 @@ def vm(request, host_id, vname):
                     if dom.info()[0] == 1:
                         dom.destroy()
                     dom.undefine()
+                    if request.POST.get('image', ''):
+                        import virtinst.util as util
+
+                        img = util.get_xml_path(dom.XMLDesc(0), "/domain/devices/disk[1]/source/@file")
+                        vol = conn.storageVolLookupByPath(img)
+                        vol.delete(0)
                     try:
                         vm = Vm.objects.get(host=host_id, vname=vname)
                         vm.delete()
