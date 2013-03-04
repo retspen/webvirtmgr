@@ -216,13 +216,13 @@ def overview(request, host_id):
             info.append(conn.getInfo()[2])
             info.append(util.get_xml_path(xml_inf, "/sysinfo/processor/entry[6]"))
             return info
-        except libvirtError as e:
+        except libvirtError:
             return "error"
 
     def get_mem_usage():
         try:
             allmem = conn.getInfo()[1] * 1048576
-            get_freemem = conn.getMemoryStats(-1,0)
+            get_freemem = conn.getMemoryStats(-1, 0)
             if type(get_freemem) == dict:
                 freemem = (get_freemem.values()[0] + get_freemem.values()[2] + get_freemem.values()[3]) * 1024
                 percent = (freemem * 100) / allmem
@@ -232,7 +232,7 @@ def overview(request, host_id):
                 memusage = None
                 percent = None
             return allmem, memusage, percent
-        except libvirtError as e:
+        except libvirtError:
             return "error"
 
     def get_cpu_usage():
@@ -240,17 +240,17 @@ def overview(request, host_id):
         try:
             prev_idle = 0
             prev_total = 0
-            cpu = conn.getCPUStats(-1,0)
+            cpu = conn.getCPUStats(-1, 0)
             if type(cpu) == dict:
                 for num in range(2):
-                        idle = conn.getCPUStats(-1,0).values()[1]
-                        total = sum(conn.getCPUStats(-1,0).values())
+                        idle = conn.getCPUStats(-1, 0).values()[1]
+                        total = sum(conn.getCPUStats(-1, 0).values())
                         diff_idle = idle - prev_idle
                         diff_total = total - prev_total
                         diff_usage = (1000 * (diff_total - diff_idle) / diff_total + 5) / 10
                         prev_total = total
                         prev_idle = idle
-                        if num == 0: 
+                        if num == 0:
                             time.sleep(1)
                         else:
                             if diff_usage < 0:
@@ -293,6 +293,12 @@ def overview(request, host_id):
                 except libvirtError as msg_error:
                     errors.append(msg_error.message)
             if 'shutdown' in request.POST:
+                try:
+                    dom.shutdown()
+                    return HttpResponseRedirect(request.get_full_path())
+                except libvirtError as msg_error:
+                    errors.append(msg_error.message)
+            if 'destroy' in request.POST:
                 try:
                     dom.destroy()
                     return HttpResponseRedirect(request.get_full_path())
