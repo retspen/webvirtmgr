@@ -14,17 +14,17 @@ urlpatterns = patterns('',
     url(r'^newvm/(\d+)/$', 'webvirtmgr.virtmgr.views.newvm'),
 
     url(r'^storage/(\d+)/$', 'virtmgr.views.storage', {'pool': None}),
-    url(r'^storage/(\d+)/([\w-]+)/$', 'virtmgr.views.storage'),
+    url(r'^storage/(\d+)/([\w\-]+)/$', 'virtmgr.views.storage'),
 
     url(r'^network/(\d+)/$', 'virtmgr.views.network', {'pool': None}),
-    url(r'^network/(\d+)/([\w-]+)/$', 'virtmgr.views.network'),
+    url(r'^network/(\d+)/([\w\-]+)/$', 'virtmgr.views.network'),
 
     url(r'^vm/(\d+)/([\w\-\.]+)/$', 'virtmgr.views.vm'),
 
     url(r'^vnc/(\d+)/([\w\-\.]+)/$', 'virtmgr.views.vnc'),
 
     url(r'^snapshot/(\d+)/$', 'virtmgr.views.snapshot'),
-    url(r'^snapshot/(\d+)/([\w-]+)/$', 'virtmgr.views.dom_snapshot'),
+    url(r'^snapshot/(\d+)/([\w\-]+)/$', 'virtmgr.views.dom_snapshot'),
 
     url(r'^setup/$', 'virtmgr.views.page_setup', name='page_setup'),
 

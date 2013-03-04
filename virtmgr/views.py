@@ -382,8 +382,10 @@ def newvm(request, host_id):
 
         if re.findall('/usr/bin/qemu-system-x86_64', conn.getCapabilities()):
             emulator = '/usr/bin/qemu-system-x86_64'
-        if re.findall('/usr/libexec/qemu-kvm', conn.getCapabilities()):
+        elif re.findall('/usr/libexec/qemu-kvm', conn.getCapabilities()):
             emulator = '/usr/libexec/qemu-kvm'
+        else:
+            emulator = '/usr/bin/qemu-system-x86_64'
 
         img = conn.storageVolLookupByPath(image)
         vol = img.name()
@@ -743,7 +745,7 @@ def storage(request, host_id, pool):
             info = stg_info()
 
             # refresh storage if acitve
-            if info[5] is True:
+            if info[5] == True:
                 stg.refresh(0)
                 volumes_info = stg_vol()
 
@@ -1000,7 +1002,7 @@ def network(request, host_id, pool):
 
             info = net_info()
 
-            if info[0] is True:
+            if info[0] == True:
                 ipv4_net = ipv4_net()
 
             if request.method == 'POST':
