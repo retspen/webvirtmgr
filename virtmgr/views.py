@@ -1248,13 +1248,14 @@ def vm(request, host_id, vname):
                     errors.append(msg_error.message)
             if 'delete' in request.POST:
                 try:
+                    xml = dom.XMLDesc(0)
                     if dom.info()[0] == 1:
                         dom.destroy()
                     dom.undefine()
                     if request.POST.get('image', ''):
                         import virtinst.util as util
 
-                        img = util.get_xml_path(dom.XMLDesc(0), "/domain/devices/disk[1]/source/@file")
+                        img = util.get_xml_path(xml, "/domain/devices/disk[1]/source/@file")
                         vol = conn.storageVolLookupByPath(img)
                         vol.delete(0)
                     try:
