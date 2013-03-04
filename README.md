@@ -6,7 +6,7 @@ This version of 27.02.2013 - does not support update only the new installation. 
 
 * Add support VM name with dash ("-")
 * Add support VM and Host name with dash (".")
-* Delete VM optioan HDD image.
+* Delete VM optional HDD image.
 
 ## 1. Introduction
 
