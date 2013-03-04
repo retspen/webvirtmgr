@@ -2,9 +2,11 @@
 
 This version of 27.02.2013 - does not support update only the new installation. Or you can upgrade an existing but it will have to delete the file <b>webvirtmgr.db</b> and recreate datebase <code>./manage.py syncdb</code>
 
-# WebVirtMgr panel - v1.1
+# WebVirtMgr panel - v1.2
 
 * Add support VM name with dash ("-")
+* Add support VM and Host name with dash (".")
+* Delete VM optioan HDD image.
 
 ## 1. Introduction
 
