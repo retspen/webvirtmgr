@@ -1164,18 +1164,21 @@ def vm(request, host_id, vname):
         # If xml create custom
         if not hdd:
             hdd = util.get_xml_path(xml, "/domain/devices/disk[1]/source/@dev")
-        img = conn.storageVolLookupByPath(hdd)
-        img_vol = img.name()
+        try:
+            img = conn.storageVolLookupByPath(hdd)
+            img_vol = img.name()
 
-        for storage in storages:
-            stg = conn.storagePoolLookupByName(storage)
-            stg.refresh(0)
-            for img in stg.listVolumes():
-                if img == img_vol:
-                    vol = img
-                    vol_stg = storage
+            for storage in storages:
+                stg = conn.storagePoolLookupByName(storage)
+                stg.refresh(0)
+                for img in stg.listVolumes():
+                    if img == img_vol:
+                        vol = img
+                        vol_stg = storage
 
-        return vol, vol_stg
+            return vol, vol_stg
+        except:
+            return hdd, 'Not in the pool'
 
     def vm_cpu_usage():
         import time
