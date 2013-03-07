@@ -390,6 +390,8 @@ def newvm(request, host_id):
             emulator = '/usr/bin/qemu-system-x86_64'
         elif re.findall('/usr/libexec/qemu-kvm', conn.getCapabilities()):
             emulator = '/usr/libexec/qemu-kvm'
+        elif re.findall('/usr/bin/kvm', conn.getCapabilities()):
+            emulator = '/usr/bin/kvm'
         else:
             emulator = '/usr/bin/qemu-system-x86_64'
 
