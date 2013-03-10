@@ -59,10 +59,10 @@
                   <button type="submit" class="btn" name="start" value="Start" style="height:50px;width:80px;"><i class="icon-off"></i><br>Start</button>
                   {% endifequal %}
                   {% ifequal dom.info.0 1 %}
-                  <a href="#powerModal" role="button" class="btn" data-toggle="modal" style="height:40px;width:60px;"><i class="icon-off"></i><br>Power</a>
+                  <a href="#powerModal" role="button" class="btn" data-toggle="modal" style="height:40px;width:60px;"><i class="icon-off"></i><br>Shutdown</a>
                   {% endifequal %}
                   {% ifequal dom.info.0 3 %}
-                  <a href="#" role="button" class="btn disabled" data-toggle="modal" style="height:40px;width:60px;"><i class="icon-off"></i><br>Power</a>
+                  <a href="#" role="button" class="btn disabled" data-toggle="modal" style="height:40px;width:60px;"><i class="icon-off"></i><br>Shutdown</a>
                   {% endifequal %}
                   <a href="#deleteModal" role="button" class="btn" data-toggle="modal" style="height:40px;width:60px;"><i class="icon-remove"></i><br>Delete</a>
                   {% ifequal dom.info.0 3 %}
@@ -178,7 +178,7 @@
         </div><!--/row-fluid-->
       </div><!--/container-fluid-->
       <script>
-        function open_vnc() { window.open('/vnc/{{ host_id }}/{{ vname }}','','width=968,height=552') }
+        function open_vnc() { window.open('/vnc/{{ host_id }}/{{ vname }}/','','width=968,height=552') }
       </script>
 {% endblock %}
 

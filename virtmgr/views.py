@@ -390,6 +390,8 @@ def newvm(request, host_id):
             emulator = '/usr/bin/qemu-system-x86_64'
         elif re.findall('/usr/libexec/qemu-kvm', conn.getCapabilities()):
             emulator = '/usr/libexec/qemu-kvm'
+        elif re.findall('/usr/bin/kvm', conn.getCapabilities()):
+            emulator = '/usr/bin/kvm'
         else:
             emulator = '/usr/bin/qemu-system-x86_64'
 
@@ -1164,18 +1166,21 @@ def vm(request, host_id, vname):
         # If xml create custom
         if not hdd:
             hdd = util.get_xml_path(xml, "/domain/devices/disk[1]/source/@dev")
-        img = conn.storageVolLookupByPath(hdd)
-        img_vol = img.name()
+        try:
+            img = conn.storageVolLookupByPath(hdd)
+            img_vol = img.name()
 
-        for storage in storages:
-            stg = conn.storagePoolLookupByName(storage)
-            stg.refresh(0)
-            for img in stg.listVolumes():
-                if img == img_vol:
-                    vol = img
-                    vol_stg = storage
+            for storage in storages:
+                stg = conn.storagePoolLookupByName(storage)
+                stg.refresh(0)
+                for img in stg.listVolumes():
+                    if img == img_vol:
+                        vol = img
+                        vol_stg = storage
 
-        return vol, vol_stg
+            return vol, vol_stg
+        except:
+            return hdd, 'Not in the pool'
 
     def vm_cpu_usage():
         import time
@@ -1308,23 +1313,15 @@ def vnc(request, host_id, vname):
 
     """
 
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login')
+
     def vnc_port():
         import virtinst.util as util
         dom = conn.lookupByName(vname)
         xml = dom.XMLDesc(0)
         port = util.get_xml_path(xml, "/domain/devices/graphics/@port")
         return port
-
-    def get_vnc_enc(password):
-        import d3des
-        passpadd = (password + '\x00' * 8)[:8]
-        strkey = ''.join([chr(x) for x in d3des.vnckey])
-        ekey = d3des.deskey(strkey, False)
-        ctext = d3des.desfunc(passpadd, ekey)
-        return ctext.encode('hex')
-
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect('/login')
 
     host = Host.objects.get(id=host_id)
     conn = libvirt_conn(host)
@@ -1335,9 +1332,13 @@ def vnc(request, host_id, vname):
         vnc_port = vnc_port()
         try:
             vm = Vm.objects.get(host=host_id, vname=vname)
-            vnc_passwd = get_vnc_enc(vm.vnc_passwd)
+
+            import os
+            # Kill only owner proccess
+            os.system("kill -9 $(ps aux | grep websockify | grep -v grep | awk '{ print $2 }')")
+            os.system('websockify 6080 %s:%s -D' % (host.ipaddr, vnc_port))
         except:
-            vnc_passwd = None
+            vm = None
 
         conn.close()
 

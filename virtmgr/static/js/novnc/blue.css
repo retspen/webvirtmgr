@@ -1,0 +1,33 @@
+/*
+ * noVNC blue CSS
+ * Copyright (C) 2012 Joel Martin
+ * noVNC is licensed under the MPL 2.0 (see LICENSE.txt)
+ * This file is licensed under the 2-Clause BSD license (see LICENSE.txt).
+ */
+
+#noVNC-control-bar {
+  background-color:#04073d;
+  background-image: -webkit-gradient(
+    linear,
+    left bottom,
+    left top,
+    color-stop(0.54, rgb(10,15,79)),
+    color-stop(0.5, rgb(4,7,61))
+  );
+  background-image: -moz-linear-gradient(
+    center bottom,
+    rgb(10,15,79) 54%,
+    rgb(4,7,61) 50%
+  );
+}
+
+.triangle-right {
+  border:2px solid #fff;
+  background:#04073d;
+  color:#fff;
+}
+
+#keyboardinput {
+  background-color:#04073d;
+}
+
