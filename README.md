@@ -109,7 +109,30 @@ Add file webvirtmgr.conf in conf.d directory (Ubuntu: "/etc/apache2/conf.d" or R
       Allow from all
     </Directory>
 
-## 5. Update
+## 5. Gunicorn and Runit (Only for geeks)
+
+WSGI for gunicorn:
+    
+    webvirtmgr/wsgi.py
+
+Runit script for webvirtmgr (/etc/service/webvirtmgr/run):
+
+    #!/bin/bash
+
+    GUNICORN=/usr/local/bin/gunicorn
+    ROOT=/var/www/webvirtmgr
+    PID=/var/run/gunicorn.pid
+
+    APP=wsgi:application
+
+    if [ -f $PID ]; then
+       rm $PID
+    fi
+
+    cd $ROOT
+    exec $GUNICORN -c $ROOT/gunicorn.conf.py --pid $PID $APP
+
+## 6. Update
 
     $ cd /path to/webvirtmgr
     $ git pull
