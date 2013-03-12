@@ -122,7 +122,7 @@ Add line <code>'gunicorn',</code> in file settings.py:
     'gunicorn',
     )
 
-Runit script for webvirtmgr (/etc/service/webvirtmgr/run):
+Runit script for webvirtmgr (/etc/sv/webvirtmgr/run):
 
     #!/bin/bash
 
