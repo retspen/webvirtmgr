@@ -114,6 +114,13 @@ Add file webvirtmgr.conf in conf.d directory (Ubuntu: "/etc/apache2/conf.d" or R
 WSGI for gunicorn:
     
     webvirtmgr/wsgi.py
+    
+Add line <code>'gunicorn',</code> in file settings.py:
+
+    INSTALLED_APPS = (
+    ...
+    'gunicorn',
+    )
 
 Runit script for webvirtmgr (/etc/service/webvirtmgr/run):
 
