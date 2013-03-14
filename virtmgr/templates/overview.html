@@ -101,7 +101,8 @@
                     <button class="btn disabled"><i class="icon-play" title="Start"></i></button>
                     <button class="btn" type="submit" name="suspend" title="Pause"><i class="icon-pause"></i></button>
                     <button class="btn" type="submit" name="shutdown" title="Shutdown"><i class="icon-off"></i></button>
-                    <button class="btn" onclick="open_vnc_{{ vm }}()" title="VNC" onclick="return confirm('Are you sure?')"><i class="icon-eye-open"></i></button>
+                    <button class="btn" type="submit" name="destroy" title="Force Shutdown" onclick="return confirm('Are you sure?')"><i class="icon-stop"></i></button>
+                    <button class="btn" onclick="open_vnc_{{ vm }}()" title="VNC"><i class="icon-eye-open"></i></button>
                     {% endifequal %}
                   </form>
                   <script>
