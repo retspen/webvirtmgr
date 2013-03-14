@@ -1259,7 +1259,7 @@ def vm(request, host_id, vname):
             diff_usage = cpu_use_now - cpu_use_ago
             cpu_usage = 100 * diff_usage / (1 * nbcore * 10**9L)
             return cpu_usage
-        except libvirt.libvirtError as e:
+        except libvirtError as e:
             return e.message
 
     def get_mem_usage():
@@ -1268,7 +1268,23 @@ def vm(request, host_id, vname):
             dom_mem = dom.info()[1] * 1024
             percent = (dom_mem * 100) / allmem
             return allmem, percent
-        except libvirt.libvirtError as e:
+        except libvirtError as e:
+            return e.message
+
+    def set_vnc_passwd():
+        from string import letters, digits
+        from random import choice
+
+        passwd = ''.join([choice(letters + digits) for i in range(12)])
+
+        try:
+            xml = dom.XMLDesc(0)
+            newxml = "<graphics type='vnc' port='-1' autoport='yes' keymap='en-us' passwd='%s'/>" % passwd
+            xmldom = xml.replace("<graphics type='vnc' port='-1' autoport='yes' keymap='en-us'/>", newxml)
+            conn.defineXML(xmldom)
+            vnc_pass = Vm(host_id=host_id, vname=vname, vnc_passwd=passwd)
+            vnc_pass.save()
+        except libvirtError as e:
             return e.message
 
     host = Host.objects.get(id=host_id)
@@ -1279,6 +1295,11 @@ def vm(request, host_id, vname):
     else:
         all_vm = get_all_vm(conn)
         dom = conn.lookupByName(vname)
+
+        try:
+            vm = Vm.objects.get(vname=vname)
+        except:
+            vm = None
 
         dom_info = get_dom_info()
         dom_uptime = dom_uptime()
@@ -1366,6 +1387,9 @@ def vm(request, host_id, vname):
             if 'add_iso' in request.POST:
                 image = request.POST.get('iso_img', '')
                 add_iso(image, storages)
+                return HttpResponseRedirect(request.get_full_path())
+            if 'vnc_pass' in request.POST:
+                set_vnc_passwd()
                 return HttpResponseRedirect(request.get_full_path())
 
         conn.close()

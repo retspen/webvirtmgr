@@ -77,6 +77,10 @@
                   <a role="button" class="btn disabled" style="height:40px;width:60px;"><i class="icon-download-alt"></i><br>Suspend</a>
                   <button type="submit" name="snapshot" role="button" class="btn" style="height:50px;width:80px;"><i class="icon-download-alt"></i><br>Snapshot</button>
                   {% endifequal %}
+                  {% if not vm.vnc_passwd %}
+                    <br><br>
+                    <button class="btn" type="submit" name="vnc_pass">Enable noVNC</button>
+                  {% endif %}
                  </form>
                 <hr>
                 <li>Name & Status</li><br>
