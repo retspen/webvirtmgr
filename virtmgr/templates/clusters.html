@@ -27,19 +27,21 @@
             <td>{{ host.4|filesizeformat }}</td>
             <td>{{ host.5 }}%</td>
           </tr>
-            {% for vm, info in vms.items %}
-            <tr>
-              <td></td>
-              <td>{{ forloop.counter }} &emsp; <a href="/vm/{{ host.0 }}/{{ vm }}/">{{ vm }}</a></td>
-              <td>{% ifequal info.0 1 %}<font color="green">Running</font>{% endifequal %}
-                  {% ifequal info.0 3 %}<font color="orange">Suspend</font>{% endifequal %}
-                  {% ifequal info.0 5 %}<font color="red">Shutoff</font>{% endifequal %}
-              </td>
-              <td>{{ info.1 }}</td>
-              <td>{{ info.2|filesizeformat }}</td>
-              <td>{{ info.3 }}%</td>
-            </tr>
-            {% endfor %}
+            {% if vms %}
+              {% for vm, info in vms.items %}
+              <tr>
+                <td></td>
+                <td>{{ forloop.counter }} &emsp; <a href="/vm/{{ host.0 }}/{{ vm }}/">{{ vm }}</a></td>
+                <td>{% ifequal info.0 1 %}<font color="green">Running</font>{% endifequal %}
+                    {% ifequal info.0 3 %}<font color="orange">Suspend</font>{% endifequal %}
+                    {% ifequal info.0 5 %}<font color="red">Shutoff</font>{% endifequal %}
+                </td>
+                <td>{{ info.1 }}</td>
+                <td>{{ info.2|filesizeformat }}</td>
+                <td>{{ info.3 }}%</td>
+              </tr>
+              {% endfor %}
+            {% endif %}
           {% endfor %}
         </tbody>
       </table>
