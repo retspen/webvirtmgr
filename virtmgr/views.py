@@ -307,13 +307,14 @@ def clusters(request):
             status = 1
         except Exception as err:
             status = 2
+
         if status == 1:
             conn = libvirt_conn(host)
             host_info = get_host_info(conn)
             host_mem = get_mem_usage(conn)
             hosts_vms[host.id, host.hostname, status, host_info[2], host_mem[0], host_mem[2]] = vms_on_host()
         else:
-            hosts_vms[host.id, host.hostname, 'Not Active', None, None, None] = None
+            hosts_vms[host.id, host.hostname, status, None, None, None] = None
 
     return render_to_response('clusters.html', locals(), context_instance=RequestContext(request))
 
