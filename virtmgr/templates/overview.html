@@ -76,7 +76,10 @@
               <tr>
                 <td>{{ forloop.counter }}</td>
                 <td><a href="/vm/{{ host_id }}/{{ vm }}/"><i class="icon-th-large"></i> {{ vm }}</a></td>
-                <td>{% ifequal status 1 %}<font color="green">power on</font>{% endifequal %}{% ifequal status 5 %}<font color="red">power off</font>{% endifequal %}{% ifequal status 3 %}<font color="orange">suspend</font>{% endifequal %}</td>
+                <td>{% ifequal status 1 %}<font color="green">Running</font>{% endifequal %}
+                    {% ifequal status 5 %}<font color="red">Shutoff</font>{% endifequal %}
+                    {% ifequal status 3 %}<font color="orange">Suspend</font>{% endifequal %}
+                </td>
                 <td>
                   <form action="" method="post" style="height:5px;">{% csrf_token %}
                     <input type="hidden" name="vname" value="{{ vm }}" />

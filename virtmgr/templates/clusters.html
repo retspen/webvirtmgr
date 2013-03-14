@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>Infrastrusture</h2>
+    <hr>
+    {% if hosts_vms %}
+    <div class="span8">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th style="width: 10px;">#</th>
+            <th>Hostname</th>
+            <th>Status</th>
+            <th style="width:50px;">VCPU</th>
+            <th style="width:80px;">Memory</th>
+            <th style="width:50px;">Usage</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for host, vms in hosts_vms.items %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td><a href="/overview/{{ host.0 }}">{{ host.1 }}</a></td>
+            <td>{% ifequal host.2 1 %}<font color="green">Active</font>{% endifequal %}
+                {% ifequal host.2 2 %}<font color="red">Not Active</font>{% endifequal %}
+            </td>
+            <td>{{ host.3 }}</td>
+            <td>{{ host.4|filesizeformat }}</td>
+            <td>{{ host.5 }}%</td>
+          </tr>
+            {% for vm, info in vms.items %}
+            <tr>
+              <td></td>
+              <td>{{ forloop.counter }} &emsp; <a href="/vm/{{ host.0 }}/{{ vm }}/">{{ vm }}</a></td>
+              <td>{% ifequal info.0 1 %}<font color="green">Running</font>{% endifequal %}
+                  {% ifequal info.0 3 %}<font color="orange">Suspend</font>{% endifequal %}
+                  {% ifequal info.0 5 %}<font color="red">Shutoff</font>{% endifequal %}
+              </td>
+              <td>{{ info.1 }}</td>
+              <td>{{ info.2|filesizeformat }}</td>
+              <td>{{ info.3 }}%</td>
+            </tr>
+            {% endfor %}
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+        <h4>You have no connection</h4>
+        <br>
+      {% endif %}
+        </div>
+      </div>
+{% endblock %}

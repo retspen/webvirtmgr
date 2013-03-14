@@ -97,6 +97,67 @@ def get_all_storages(conn):
     return storages
 
 
+def get_host_info(conn):
+    from libvirt import libvirtError
+    import virtinst.util as util
+    try:
+        info = []
+        xml_inf = conn.getSysinfo(0)
+        info.append(conn.getHostname())
+        info.append(conn.getInfo()[0])
+        info.append(conn.getInfo()[2])
+        info.append(util.get_xml_path(xml_inf, "/sysinfo/processor/entry[6]"))
+        return info
+    except libvirtError:
+        return "error"
+
+
+def get_mem_usage(conn):
+    from libvirt import libvirtError
+    try:
+        allmem = conn.getInfo()[1] * 1048576
+        get_freemem = conn.getMemoryStats(-1, 0)
+        if type(get_freemem) == dict:
+            freemem = (get_freemem.values()[0] + get_freemem.values()[2] + get_freemem.values()[3]) * 1024
+            percent = (freemem * 100) / allmem
+            percent = 100 - percent
+            memusage = (allmem - freemem)
+        else:
+            memusage = None
+            percent = None
+        return allmem, memusage, percent
+    except libvirtError:
+        return "error"
+
+
+def get_cpu_usage(conn):
+    import time
+    from libvirt import libvirtError
+    try:
+        prev_idle = 0
+        prev_total = 0
+        cpu = conn.getCPUStats(-1, 0)
+        if type(cpu) == dict:
+            for num in range(2):
+                    idle = conn.getCPUStats(-1, 0).values()[1]
+                    total = sum(conn.getCPUStats(-1, 0).values())
+                    diff_idle = idle - prev_idle
+                    diff_total = total - prev_total
+                    diff_usage = (1000 * (diff_total - diff_idle) / diff_total + 5) / 10
+                    prev_total = total
+                    prev_idle = idle
+                    if num == 0:
+                        time.sleep(1)
+                    else:
+                        if diff_usage < 0:
+                            diff_usage = 0
+        else:
+            diff_usage = None
+        return diff_usage
+    except libvirtError as e:
+        return e.message
+
+
 def index(request):
     """
 
@@ -197,6 +258,66 @@ def dashboard(request):
     return render_to_response('dashboard.html', locals(), context_instance=RequestContext(request))
 
 
+def clusters(request):
+    """
+
+    Infrastructure page.
+
+    """
+
+    def vms_on_host():
+        import virtinst.util as util
+        import libvirt
+        host_mem = conn.getInfo()[1] * 1048576
+        try:
+            vname = {}
+            for id in conn.listDomainsID():
+                id = int(id)
+                dom = conn.lookupByID(id)
+                mem = util.get_xml_path(dom.XMLDesc(0), "/domain/memory")
+                mem = int(mem) * 1024
+                mem_usage = (mem * 100) / host_mem
+                vcpu = util.get_xml_path(dom.XMLDesc(0), "/domain/vcpu")
+                vname[dom.name()] = (dom.info()[0], vcpu, mem, mem_usage)
+            for id in conn.listDefinedDomains():
+                dom = conn.lookupByName(id)
+                mem = util.get_xml_path(dom.XMLDesc(0), "/domain/memory")
+                mem = int(mem) * 1024
+                mem_usage = (mem * 100) / host_mem
+                vcpu = util.get_xml_path(dom.XMLDesc(0), "/domain/vcpu")
+                vname[dom.name()] = (dom.info()[0], vcpu, mem, mem_usage)
+            return vname
+        except libvirt.libvirtError as e:
+            add_error(e, 'libvirt')
+            return "error"
+
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login')
+
+    hosts = Host.objects.filter().order_by('id')
+    hosts_vms = {}
+
+    for host in hosts:
+        try:
+            import socket
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.settimeout(1)
+            s.connect((host.ipaddr, 16509))
+            s.close()
+            status = 1
+        except Exception as err:
+            status = 2
+        if status == 1:
+            conn = libvirt_conn(host)
+            host_info = get_host_info(conn)
+            host_mem = get_mem_usage(conn)
+            hosts_vms[host.id, host.hostname, status, host_info[2], host_mem[0], host_mem[2]] = vms_on_host()
+        else:
+            hosts_vms[host.id, host.hostname, 'Not Active', None, None, None] = None
+
+    return render_to_response('clusters.html', locals(), context_instance=RequestContext(request))
+
+
 def overview(request, host_id):
     """
 
@@ -205,61 +326,6 @@ def overview(request, host_id):
     """
 
     from libvirt import libvirtError
-
-    def get_host_info():
-        import virtinst.util as util
-        try:
-            info = []
-            xml_inf = conn.getSysinfo(0)
-            info.append(conn.getHostname())
-            info.append(conn.getInfo()[0])
-            info.append(conn.getInfo()[2])
-            info.append(util.get_xml_path(xml_inf, "/sysinfo/processor/entry[6]"))
-            return info
-        except libvirtError:
-            return "error"
-
-    def get_mem_usage():
-        try:
-            allmem = conn.getInfo()[1] * 1048576
-            get_freemem = conn.getMemoryStats(-1, 0)
-            if type(get_freemem) == dict:
-                freemem = (get_freemem.values()[0] + get_freemem.values()[2] + get_freemem.values()[3]) * 1024
-                percent = (freemem * 100) / allmem
-                percent = 100 - percent
-                memusage = (allmem - freemem)
-            else:
-                memusage = None
-                percent = None
-            return allmem, memusage, percent
-        except libvirtError:
-            return "error"
-
-    def get_cpu_usage():
-        import time
-        try:
-            prev_idle = 0
-            prev_total = 0
-            cpu = conn.getCPUStats(-1, 0)
-            if type(cpu) == dict:
-                for num in range(2):
-                        idle = conn.getCPUStats(-1, 0).values()[1]
-                        total = sum(conn.getCPUStats(-1, 0).values())
-                        diff_idle = idle - prev_idle
-                        diff_total = total - prev_total
-                        diff_usage = (1000 * (diff_total - diff_idle) / diff_total + 5) / 10
-                        prev_total = total
-                        prev_idle = idle
-                        if num == 0:
-                            time.sleep(1)
-                        else:
-                            if diff_usage < 0:
-                                diff_usage = 0
-            else:
-                diff_usage = None
-            return diff_usage
-        except libvirtError as e:
-            return e.message
 
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
@@ -277,9 +343,9 @@ def overview(request, host_id):
             errors.append('Your CPU doesn\'t support hardware virtualization')
 
         all_vm = get_all_vm(conn)
-        host_info = get_host_info()
-        mem_usage = get_mem_usage()
-        cpu_usage = get_cpu_usage()
+        host_info = get_host_info(conn)
+        mem_usage = get_mem_usage(conn)
+        cpu_usage = get_cpu_usage(conn)
         lib_virt_ver = conn.getLibVersion()
         conn_type = conn.getURI()
 

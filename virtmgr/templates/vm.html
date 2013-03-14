@@ -82,7 +82,7 @@
                 <li>Name & Status</li><br>
                 <div class="pagination-centered">
                   <p><b>Name:</b> {{ vname }}</p>
-                  <p><b>Status:</b> <font color={% ifequal dom.info.0 5 %}"red">Not Active{% endifequal %}{% ifequal dom.info.0 1 %}"green">Active{% endifequal %}{% ifequal dom.info.0 3 %}"orange">Suspend{% endifequal %}</font></p>
+                  <p><b>Status:</b> <font color={% ifequal dom.info.0 5 %}"red">Shuttoff{% endifequal %}{% ifequal dom.info.0 1 %}"green">Running{% endifequal %}{% ifequal dom.info.0 3 %}"orange">Suspend{% endifequal %}</font></p>
                   <p><b>Uptime:</b> {{ dom_uptime }} (Min)</p>
                 </div>
                 <hr>

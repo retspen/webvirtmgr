@@ -9,6 +9,8 @@ urlpatterns = patterns('',
 
     url(r'^dashboard/$', 'webvirtmgr.virtmgr.views.dashboard'),
 
+    url(r'^clusters/$', 'webvirtmgr.virtmgr.views.clusters'),
+
     url(r'^overview/(\d+)/$', 'webvirtmgr.virtmgr.views.overview'),
 
     url(r'^newvm/(\d+)/$', 'webvirtmgr.virtmgr.views.newvm'),
