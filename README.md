@@ -2,13 +2,14 @@
 
 This version of 27.02.2013 - does not support update only the new installation. Or you can upgrade an existing but it will have to delete the file <b>webvirtmgr.db</b> and recreate datebase <code>./manage.py syncdb</code>
 
-# WebVirtMgr panel - v1.4
+# WebVirtMgr panel - v1.5
 
 * Add support VM name with dash ("-")
 * Add support VM and Host name with dash (".")
 * Delete VM optional HDD image.
 * Add Support NoVNC (need install - CentOS/RedHat/Fedora: python-websockify, Ubuntu: novnc)
 * Add page infrastructure (View all Hosts and VMs)
+* Add button "Enable noVNC" on VM page (Set VNC password for noNVC)
 
 ## 1. Introduction
 
