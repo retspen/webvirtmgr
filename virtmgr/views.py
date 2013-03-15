@@ -545,6 +545,11 @@ def newvm(request, host_id):
     else:
         have_kvm = test_cpu_accel(conn)
 
+        try:
+            flavors = Flavor.objects.filter().order_by('id')
+        except:
+            flavors = 'error'
+
         errors = []
 
         all_vm = get_all_vm(conn)
@@ -559,15 +564,44 @@ def newvm(request, host_id):
         if not have_kvm:
             errors.append('Your CPU doesn\'t support hardware virtualization')
 
-        flavors = {}
-        flavors[1] = ('micro', '1', '256', '10')
-        flavors[2] = ('mini', '1', '512', '20')
-        flavors[3] = ('small', '2', '1024', '40')
-        flavors[4] = ('medium', '2', '2048', '80')
-        flavors[5] = ('large', '4', '4096', '160')
-        flavors[6] = ('xlarge', '6', '8192', '320')
+        digits = [a for a in range(1, 601)]
+
+        if not flavors and flavors != 'error':
+            add_flavor = Flavor(name='micro', vcpu='1', ram='256', hdd='10')
+            add_flavor.save()
+            add_flavor = Flavor(name='mini', vcpu='1', ram='512', hdd='20')
+            add_flavor.save()
+            add_flavor = Flavor(name='small', vcpu='2', ram='1024', hdd='40')
+            add_flavor.save()
+            add_flavor = Flavor(name='medium', vcpu='2', ram='2048', hdd='80')
+            add_flavor.save()
+            add_flavor = Flavor(name='large', vcpu='4', ram='4096', hdd='160')
+            add_flavor.save()
+            add_flavor = Flavor(name='xlarge', vcpu='6', ram='8192', hdd='320')
+            add_flavor.save()
+            return HttpResponseRedirect(request.get_full_path())
 
         if request.method == 'POST':
+            if 'add_flavor' in request.POST:
+                name = request.POST.get('name', '')
+                vcpu = request.POST.get('vcpu', '')
+                ram = request.POST.get('ram', '')
+                hdd = request.POST.get('hdd', '')
+
+                for flavor in flavors:
+                    if name == flavor.name:
+                        errors.append('Name already use')
+                if not errors:
+                    flavor_add = Flavor(name=name, vcpu=vcpu, ram=ram, hdd=hdd)
+                    flavor_add.save()
+                    return HttpResponseRedirect(request.get_full_path())
+
+            if 'del_flavor' in request.POST:
+                flavor_id = request.POST.get('flavor', '')
+                flavor_del = Flavor.objects.get(id=flavor_id)
+                flavor_del.delete()
+                return HttpResponseRedirect(request.get_full_path())
+
             if 'newvm' in request.POST:
                 net = request.POST.get('network', '')
                 storage = request.POST.get('storage', '')

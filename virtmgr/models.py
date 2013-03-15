@@ -11,6 +11,16 @@ class Host(models.Model):
         return self.hostname
 
 
+class Flavor(models.Model):
+    name = models.CharField(max_length=12)
+    vcpu = models.IntegerField()
+    ram = models.IntegerField()
+    hdd = models.IntegerField()
+
+    def __unicode__(self):
+        return self.name
+
+
 class Vm(models.Model):
     host = models.ForeignKey(Host)
     vname = models.CharField(max_length=12)

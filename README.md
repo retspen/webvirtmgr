@@ -2,7 +2,7 @@
 
 This version of 27.02.2013 - does not support update only the new installation. Or you can upgrade an existing but it will have to delete the file <b>webvirtmgr.db</b> and recreate datebase <code>./manage.py syncdb</code>
 
-# WebVirtMgr panel - v1.5
+# WebVirtMgr panel - v1.6
 
 * Add support VM name with dash ("-")
 * Add support VM and Host name with dash (".")
@@ -10,7 +10,8 @@ This version of 27.02.2013 - does not support update only the new installation. 
 * Add Support NoVNC (need install - CentOS/RedHat/Fedora: python-websockify, Ubuntu: novnc)
 * Add page infrastructure (View all Hosts and VMs)
 * Add button "Enable noVNC" on VM page (Set VNC password for noNVC)
-
+* Add button "New Flavor" - create custom flavor (after update need - ./manage.py syncdb)
+ 
 ## 1. Introduction
 
 WebVirtMgr is a libvirt-based Web interface for managing virtual machines. It allows you to create and configure new domains, and adjust a domain's resource allocation. A VNC viewer over a SSH tunnel presents a full graphical console to the guest domain. KVM is currently the only hypervisor supported.

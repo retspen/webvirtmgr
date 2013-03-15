@@ -39,6 +39,7 @@
               {% endfor %}
             {% endif %}
             <a data-toggle="modal" href="#addModalCustom" class="btn btn-success">Custom</a>
+            <a data-toggle="modal" href="#addModalFlavor" class="btn btn-success">New Flavor</a>
             <br><br>
             <table class="table table-striped table-bordered">
               <thead>
@@ -52,13 +53,13 @@
                 </tr>
               </thead>
               <tbody>
-                {% for key, value in flavors.items %}
+                {% for flavor in flavors %}
                 <tr>
                   <td>{{ forloop.counter }}</td>
-                  <td>{{ value.0 }}</td>
-                  <td>{{ value.1 }} </td>
-                  <td>{{ value.2 }} MB</td>
-                  <td>{{ value.3 }} GB</td>
+                  <td>{{ flavor.name }}</td>
+                  <td>{{ flavor.vcpu }}</td>
+                  <td>{{ flavor.ram }} MB</td>
+                  <td>{{ flavor.hdd }} GB</td>
                   <td>
                      <div id="addModal{{ forloop.counter }}" class="modal hide fade">
                       <div class="modal-header">
@@ -72,9 +73,9 @@
                             <label class="control-label">Name</label>
                               <div class="controls">
                                 <input type="text" class="input-large" name="name" placeholder="Name">
-                                <input type="hidden" class="input-large" name="vcpu" value="{{ value.1 }}">
-                                <input type="hidden" class="input-large" name="ram" value="{{ value.2 }}">
-                                <input type="hidden" class="input-large" name="hdd_size" value="{{ value.3 }}">
+                                <input type="hidden" class="input-large" name="vcpu" value="{{ flavor.vcpu }}">
+                                <input type="hidden" class="input-large" name="ram" value="{{ flavor.ram }}">
+                                <input type="hidden" class="input-large" name="hdd_size" value="{{ flavor.hdd }}">
                               </div> 
                              </div>
                             <div class="control-group">
@@ -112,6 +113,12 @@
                         </div>
                       <a data-toggle="modal" href="#addModal{{ forloop.counter }}" class="btn btn-success">Create</a>
                     </td>
+                    <td style="width:5px;">
+                      <form class="form-horizontal" action="/newvm/{{ host_id }}/" method="post" style="height:10px;">{% csrf_token %}
+                        <input type="hidden" name="flavor" value="{{ flavor.id }}">
+                        <input type="submit" class="btn btn-danger" name="del_flavor" value="Delete" onclick="return confirm('Are you sure?')">
+                      </form>
+                    </td>
                   </tr>
                 {% endfor %}
               </tbody>
@@ -136,8 +143,11 @@
                         <select name="vcpu">
                           <option value="1">1</option>
                           <option value="2">2</option>
+                          <option value="3">3</option>
                           <option value="4">4</option>
+                          <option value="5">5</option>
                           <option value="6">6</option>
+                          <option value="7">7</option>
                           <option value="8">8</option>
                         </select>
                       </div> 
@@ -146,6 +156,7 @@
                       <label class="control-label">RAM</label>
                       <div class="controls">
                         <select name="ram">
+                          <option value="128">128 MB</option>
                           <option value="256">256 MB</option>
                           <option value="512">512 MB</option>
                           <option value="768">768 MB</option>
@@ -203,7 +214,70 @@
                   {% endif %}
                   </form>
                   </div>
-                </div>
+              </div> <!-- Custom -->
+            <div id="addModalFlavor" class="modal hide fade">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3 id="poolModalLabel">Add New Flavor</h3>
+              </div>
+              <div class="modal-body">
+                <form class="form-horizontal" action="/newvm/{{ host_id }}/" method="post">{% csrf_token %}
+                  <fieldset><br>
+                    <div class="control-group">
+                    <label class="control-label">Name</label>
+                      <div class="controls">
+                        <input type="text" class="input-large" name="name" placeholder="Name">
+                      </div> 
+                     </div>
+                    <div class="control-group">
+                      <label class="control-label">VCPU</label>
+                      <div class="controls">
+                        <select name="vcpu">
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
+                          <option value="5">5</option>
+                          <option value="6">6</option>
+                          <option value="7">7</option>
+                          <option value="8">8</option>
+                        </select>
+                      </div> 
+                    </div>
+                    <div class="control-group">
+                      <label class="control-label">RAM</label>
+                      <div class="controls">
+                        <select name="ram">
+                          <option value="128">128 MB</option>
+                          <option value="256">256 MB</option>
+                          <option value="512">512 MB</option>
+                          <option value="768">768 MB</option>
+                          <option value="1024">1 GB</option>
+                          <option value="2048">2 GB</option>
+                          <option value="4096">4 GB</option>
+                          <option value="8192">8 GB</option>
+                          <option value="16384">16 GB</option>
+                        </select>
+                      </div> 
+                    </div>
+                    <div class="control-group">
+                      <label class="control-label">HDD</label>
+                      <div class="controls">
+                        <select name="hdd">
+                          {% for d in digits %}
+                          <option value="{{ d }}">{{ d }} GB</option>
+                          {% endfor %}
+                        </select>
+                      </div> 
+                    </div>
+                  </fieldset>
+                  </div>
+                  <div class="modal-footer">
+                    <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+                    <input type="submit" class="btn btn-success" name="add_flavor" value="Submit">
+                  </form>
+                  </div>
+              </div><!-- Flavor -->
           </div><!--/span-->
         </div><!--/row-fluid-->
       </div><!--/container-fluid-->
