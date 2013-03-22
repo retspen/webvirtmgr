@@ -1,6 +1,5 @@
 webvirtmgr.db
+virtmgr_env/*
 *.pyc
 .DS_Store
 ._*
-develop.py
-settings_dev.py
