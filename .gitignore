@@ -3,3 +3,4 @@ virtmgr_env/*
 *.pyc
 .DS_Store
 ._*
+Vagrantfile
