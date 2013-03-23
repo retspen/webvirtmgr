@@ -1,6 +1,5 @@
 webvirtmgr.db
-virtmgr_env/*
+env/*
 *.pyc
 .DS_Store
 ._*
-Vagrantfile
