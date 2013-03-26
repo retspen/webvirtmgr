@@ -38,7 +38,7 @@ Run:
 
     $ sudo apt-get install git python-django virtinst apache2 libapache2-mod-python libapache2-mod-wsgi novnc
     $ sudo service novnc stop
-    $ sudo update-rc.d novnc remove
+    $ sudo update-rc.d -f novnc remove
 
 ### CentOS 6.2, RedHat 6.2 and above
 
