@@ -11,6 +11,7 @@ This version of 27.02.2013 - does not support update only the new installation. 
 * Add page infrastructure (View all Hosts and VMs)
 * Add button "Enable noVNC" on VM page (Set VNC password for noNVC)
 * Add button "New Flavor" - create custom flavor (after update need - ./manage.py syncdb)
+* Add RPM for CentOS, RHEL, Fedora, Oracle Linux 6 (Big thanks: <a href="https://github.com/euforia">euforia</a>)
  
 ## 1. Introduction
 
@@ -32,6 +33,13 @@ Run:
 
     $ su -c 'yum -y install git Django python-virtinst httpd mod_python mod_wsgi python-websockify python-setuptools'
 
+### CentOS 6.2, RedHat 6.2 and above
+
+Run:
+
+    $ su -c 'rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm'
+    $ su -c 'yum -y install git python-virtinst httpd mod_python mod_wsgi Django python-websockify python-setuptools'
+
 ### Ubuntu 12.04 and above
 
 Run:
@@ -40,13 +48,6 @@ Run:
     $ sudo service novnc stop
     $ sudo update-rc.d -f novnc remove
 
-### CentOS 6.2, RedHat 6.2 and above
-
-Run:
-
-    $ su -c 'rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm'
-    $ su -c 'yum -y install git python-virtinst httpd mod_python mod_wsgi Django python-websockify python-setuptools'
-
 ## 3. Setup
 
 Run: 
@@ -54,6 +55,8 @@ Run:
     $ git clone git://github.com/retspen/webvirtmgr.git
     $ cd webvirtmgr
     $ ./manage.py syncdb
+    
+Or install <a href="https://github.com/euforia/webvirtmgr">RPM</a> (CentOS, RHEL, Fedora, Oracle Linux 6)  
 
 Enter the user information:
 
