@@ -423,19 +423,22 @@ def newvm(request, host_id):
     def add_vol(name, size):
         import virtinst.util as util
 
+        size = int(size) * 1073741824
         stg_type = util.get_xml_path(stg.XMLDesc(0), "/pool/@type")
         if stg_type == 'dir':
             name = name + '.img'
-        size = int(size) * 1073741824
+            alloc = 0
+        else:
+            alloc = size
         xml = """
             <volume>
                 <name>%s</name>
                 <capacity>%s</capacity>
-                <allocation>0</allocation>
+                <allocation>%s</allocation>
                 <target>
                     <format type='qcow2'/>
                 </target>
-            </volume>""" % (name, size)
+            </volume>""" % (name, size, alloc)
         stg.createXML(xml, 0)
 
     def add_vm(name, ram, vcpu, image, net, passwd):
@@ -713,19 +716,22 @@ def storage(request, host_id, pool):
     def add_vol(name, size):
         import virtinst.util as util
 
+        size = int(size) * 1073741824
         stg_type = util.get_xml_path(stg.XMLDesc(0), "/pool/@type")
         if stg_type == 'dir':
             name = name + '.img'
-        size = int(size) * 1073741824
+            alloc = 0
+        else:
+            alloc = size
         xml = """
             <volume>
                 <name>%s</name>
                 <capacity>%s</capacity>
-                <allocation>0</allocation>
+                <allocation>%s</allocation>
                 <target>
                     <format type='qcow2'/>
                 </target>
-            </volume>""" % (name, size)
+            </volume>""" % (name, size, alloc)
         stg.createXML(xml, 0)
 
     def clone_vol(img, new_img):
