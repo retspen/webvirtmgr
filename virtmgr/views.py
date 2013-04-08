@@ -236,6 +236,9 @@ def dashboard(request):
             if not ipaddr:
                 msg = 'No IP address has been entered'
                 errors.append(msg)
+            elif ipaddr == '127.0.0.1':
+                msg = 'Are you sure? This IP is not serious'
+                errors.append(msg)
             elif ipsimbol or not domain:
                 msg = 'Hostname must contain only numbers, or the domain name separated by "."'
                 errors.append(msg)

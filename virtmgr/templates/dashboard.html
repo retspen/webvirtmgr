@@ -13,20 +13,22 @@
         </div>
       {% endfor %}
     {% endif %}
-    <a data-toggle="modal" href="#myModal" class="btn btn-success">Add Connection</a>
-    {% if host_info %}
-    <a href="/clusters/" class="btn btn-success">Infrastrusture</a>
-    {% else %}
-    <a href="/clusters/" class="btn btn-success disabled">Infrastrusture</a>
-    {% endif %}
-    <br><br>
+    <div class="span8">
+      <a data-toggle="modal" href="#myModal" class="btn btn-success">Add Connection</a>
+      {% if host_info %}
+      <a href="/clusters/" class="btn btn-success">Infrastrusture</a>
+      {% else %}
+      <a href="/clusters/" class="btn btn-success disabled">Infrastrusture</a>
+      {% endif %}
+      <br><br>
+    </div>
     {% if host_info %}
     <div class="span8">
       <table class="table table-hover">
         <thead>
           <tr>
             <th>#</th>
-            <th>Hostname</th>
+            <th>Server</th>
             <th>Status</th>
             <th>Action</th>
           </tr>
@@ -35,7 +37,7 @@
           {% for key, value in host_info.items %}
           <tr>
             <td>{{ forloop.counter }}</td>
-            <td>{{ value.1 }} (<strong>{{ key }}</strong>)</td>
+            <td><strong>{{ key }}</strong> [<a href="ssh://{{ value.1 }}">{{ value.1 }}]</a></td>
             <td>{% ifequal value.2 1 %}<font color="green">connected</font>{% else %}<font color="red">not connected ({{ value.2 }})</font>{% endifequal %}</td>
             <td style="width: 80px;">
               {% ifequal value.2 1 %}
@@ -89,9 +91,9 @@
                 </div>
                </div>
               <div class="control-group">
-              <label class="control-label">Hostname</label>
+              <label class="control-label">IP / Domain</label>
                 <div class="controls">
-                  <input type="text" name="ipaddr" class="input-large" placeholder="IP or Domain">
+                  <input type="text" name="ipaddr" class="input-large" placeholder="x.x.x.x">
                 </div>
               </div>
               <div class="control-group">
