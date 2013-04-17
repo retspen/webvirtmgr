@@ -1351,7 +1351,7 @@ def vm(request, host_id, vname):
 
         storages = get_all_storages(conn)
         hdd_image = get_dom_hdd(storages)
-        iso_images = find_all_iso(storages)
+        iso_images = sorted(find_all_iso(storages))
         media = dom_media()
 
         errors = []
