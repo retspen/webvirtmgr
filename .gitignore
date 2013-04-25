@@ -1,3 +1,4 @@
+Vagrantfile
 webvirtmgr.db
 env/*
 *.pyc
