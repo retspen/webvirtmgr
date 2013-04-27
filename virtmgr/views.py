@@ -220,8 +220,8 @@ def dashboard(request):
             passwd = request.POST.get('kvm_passwd', '')
 
             import re
-            simbol = re.search('[^a-zA-Z0-9\-\.]+', name)
-            ipsimbol = re.search('[^a-z0-9\.\-]+', ipaddr)
+            symbol = re.search('[^a-zA-Z0-9\-\.]+', name)
+            ipsymbol = re.search('[^a-z0-9\.\-]+', ipaddr)
             domain = re.search('[\.]+', ipaddr)
 
             if not name:
@@ -230,8 +230,8 @@ def dashboard(request):
             elif len(name) > 20:
                 msg = 'The host name must not exceed 20 characters'
                 errors.append(msg)
-            elif simbol:
-                msg = 'The host name must not contain any characters'
+            elif symbol:
+                msg = 'The host name must not contain any special characters'
                 errors.append(msg)
             if not ipaddr:
                 msg = 'No IP address has been entered'
@@ -239,7 +239,7 @@ def dashboard(request):
             elif ipaddr == '127.0.0.1':
                 msg = 'Are you sure? This IP is not serious'
                 errors.append(msg)
-            elif ipsimbol or not domain:
+            elif ipsymbol or not domain:
                 msg = 'Hostname must contain only numbers, or the domain name separated by "."'
                 errors.append(msg)
             else:
@@ -564,9 +564,9 @@ def newvm(request, host_id):
         all_img = find_all_img(all_storages)
 
         if not all_networks:
-            errors.append('You doesn\'t have any virtual networks')
+            errors.append('You haven\'t defined any virtual networks')
         if not all_storages:
-            errors.append('You doesn\'t have any storages')
+            errors.append('You haven\'t defined have any storage pools')
         if not have_kvm:
             errors.append('Your CPU doesn\'t support hardware virtualization')
 
@@ -620,16 +620,16 @@ def newvm(request, host_id):
                 errors = []
 
                 import re
-                simbol = re.search('[^a-zA-Z0-9\_\-\.]+', vname)
+                symbol = re.search('[^a-zA-Z0-9\_\-\.]+', vname)
 
                 if vname in all_vm:
-                    msg = 'This is the name of the virtual machine already exists'
+                    msg = 'A virtual machine with this name already exists'
                     errors.append(msg)
                 if len(vname) > 12:
                     msg = 'The name of the virtual machine must not exceed 12 characters'
                     errors.append(msg)
-                if simbol:
-                    msg = 'The name of the virtual machine must not contain any characters'
+                if symbol:
+                    msg = 'The name of the virtual machine must not contain any special characters'
                     errors.append(msg)
                 if not vname:
                     msg = 'Enter the name of the virtual machine'
@@ -821,11 +821,11 @@ def storage(request, host_id, pool):
 
                     import re
                     errors = []
-                    name_have_simbol = re.search('[^a-zA-Z0-9\_\-]+', pool_name)
-                    path_have_simbol = re.search('[^a-zA-Z0-9\/]+', pool_source)
+                    name_have_symbol = re.search('[^a-zA-Z0-9\_\-]+', pool_name)
+                    path_have_symbol = re.search('[^a-zA-Z0-9\/]+', pool_source)
 
-                    if name_have_simbol or path_have_simbol:
-                        msg = 'The host name must not contain any characters'
+                    if name_have_symbol or path_have_symbol:
+                        msg = 'The host name must not contain any special characters'
                         errors.append(msg)
                     if not pool_name:
                         msg = 'No pool name has been entered'
@@ -894,7 +894,7 @@ def storage(request, host_id, pool):
 
                     import re
                     errors = []
-                    name_have_simbol = re.search('[^a-zA-Z0-9\_\-\.]+', name)
+                    name_have_symbol = re.search('[^a-zA-Z0-9\_\-\.]+', name)
                     if img_name in stg.listVolumes():
                         msg = 'Volume name already use'
                         errors.append(msg)
@@ -905,8 +905,8 @@ def storage(request, host_id, pool):
                         msg = 'The host name must not exceed 20'
                         errors.append(msg)
                     else:
-                        if name_have_simbol:
-                            msg = 'The host name must not contain any characters'
+                        if name_have_symbol:
+                            msg = 'The host name must not contain any special characters'
                             errors.append(msg)
                     if not errors:
                         add_vol(name, size)
@@ -925,7 +925,7 @@ def storage(request, host_id, pool):
                     full_img_name = clone_name + '.img'
                     import re
                     errors = []
-                    name_have_simbol = re.search('[^a-zA-Z0-9\_\-\.]+', clone_name)
+                    name_have_symbol = re.search('[^a-zA-Z0-9\_\-\.]+', clone_name)
                     if full_img_name in stg.listVolumes():
                         msg = _('Volume name already use')
                         errors.append(msg)
@@ -936,8 +936,8 @@ def storage(request, host_id, pool):
                         msg = _('The host name must not exceed 20 characters')
                         errors.append(msg)
                     else:
-                        if name_have_simbol:
-                            msg = _('The host name must not contain any characters')
+                        if name_have_symbol:
+                            msg = _('The host name must not contain any special characters')
                             errors.append(msg)
                     if not errors:
                         clone_vol(img, clone_name)
@@ -1061,27 +1061,27 @@ def network(request, host_id, pool):
 
                     import re
                     errors = []
-                    name_have_simbol = re.search('[^a-zA-Z0-9\_\-]+', pool_name)
-                    ip_have_simbol = re.search('[^0-9\.\/]+', net_addr)
+                    name_have_symbol = re.search('[^a-zA-Z0-9\_\-]+', pool_name)
+                    ip_have_symbol = re.search('[^0-9\.\/]+', net_addr)
 
                     if not pool_name:
                         msg = 'No pool name has been entered'
                         errors.append(msg)
                     elif len(pool_name) > 12:
-                        msg = 'The host name must not exceed 20 characters'
+                        msg = 'The pool name must not exceed 20 characters'
                         errors.append(msg)
                     else:
-                        if name_have_simbol:
-                            msg = 'The pool name must not contain any characters'
+                        if name_have_symbol:
+                            msg = 'The pool name must not contain any special characters'
                             errors.append(msg)
                     if not net_addr:
                         msg = 'No subnet has been entered'
                         errors.append(msg)
-                    elif ip_have_simbol:
-                        msg = 'The pool name must not contain any characters'
+                    elif ip_have_symbol:
+                        msg = 'The pool name must not contain any special characters'
                         errors.append(msg)
                     if pool_name in networks.keys():
-                        msg = 'Pool name already use'
+                        msg = 'Pool name already in use'
                         errors.append(msg)
                     try:
                         from virtmgr.IPy import IP

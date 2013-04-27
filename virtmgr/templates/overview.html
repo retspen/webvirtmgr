@@ -44,7 +44,7 @@
                 <p>Architecture</p>
                 <p>Processor(s)</p>
                 <p>CPU utilization</p>
-                <p>Memory ({{ mem_usage.0|filesizeformat }} / {{ mem_usage.1|filesizeformat }})</p>
+                <p>Memory ({{ mem_usage.1|filesizeformat }} / {{ mem_usage.0|filesizeformat }})</p>
                 <p>Type connection</p>
                 <p>Libvirt version</p>
               </div>
@@ -52,8 +52,8 @@
                 <p><strong>{{ host_info.0 }}</strong></p>
                 <p>{{ host_info.1 }}</p>
                 <p>{{ host_info.2 }} x {{ host_info.3 }}</p>
-                <p>Usage: {{ cpu_usage }}%</p>
-                <p>Usage: {{ mem_usage.2 }}%</p>
+                <p>{{ cpu_usage }}%</p>
+                <p>{{ mem_usage.2 }}%</p>
                 <p>{{ conn_type }}</p>
                 <p>{{ lib_virt_ver }}</p>
                 <p>{{ sys_info }}</p>
