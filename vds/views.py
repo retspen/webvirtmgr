@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from dashboard.models import Host
-from libvirt_func import libvirt_conn, vds_get_node
+from libvirt_func import libvirt_conn, vds_get_node, storages_get_node
 
 
 def vds(request, host_id, vname):
@@ -209,7 +209,7 @@ def vds(request, host_id, vname):
         cpu_usage = vm_cpu_usage()
         mem_usage = get_mem_usage()
 
-        storages = get_all_storages(conn)
+        storages = storages_get_node(conn)
         hdd_image = get_dom_hdd(storages)
         iso_images = sorted(find_all_iso(storages))
         media = dom_media()

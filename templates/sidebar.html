@@ -25,7 +25,7 @@
                 </li>
                 {% else %}
                   {% for vm in all_vm %}
-                  <li>
+                  <li {% ifequal vm vname %}class="active"{% endifequal %}>
                     <a href="/vds/{{ host_id }}/{{ vm }}/"><i class="icon-th-large"></i> {{ vm }}</a>
                   </li>
                   {% endfor %}
