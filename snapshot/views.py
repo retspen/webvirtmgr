@@ -59,12 +59,12 @@ def dom_snapshot(request, host_id, vname):
 
         if request.method == 'POST':
             if 'delete' in request.POST:
-                name = request.POST.get('name', '')
-                snapshot_delete(name)
+                snap_name = request.POST.get('name', '')
+                snapshot_delete(vname, snap_name)
                 return HttpResponseRedirect('/snapshot/%s/%s/' % (host_id, vname))
             if 'revert' in request.POST:
-                name = request.POST.get('name', '')
-                snapshot_revert(name)
+                snap_name = request.POST.get('name', '')
+                snapshot_revert(vname, snap_name)
                 message = _("Successful revert snapshot: ")
                 message = message + name
 
