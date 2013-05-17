@@ -375,7 +375,7 @@ def new_network_pool(conn, name, forward, gw, netmask, dhcp):
     conn.networkDefineXML(xml)
 
 
-def network_get_info():
+def network_get_info(network):
     """
 
     Function return network info.
@@ -383,12 +383,12 @@ def network_get_info():
     """
 
     info = []
-    info.append(net.isActive())
-    info.append(net.bridgeName())
+    info.append(network.isActive())
+    info.append(network.bridgeName())
     return info
 
 
-def ipv4_net(network):
+def network_get_subnet(network):
     """
 
     Function return virtual network info: ip, netmask, dhcp, type forward.
@@ -427,3 +427,72 @@ def ipv4_net(network):
     else:
         ipv4.append([IP(dhcpstart), IP(dhcpend)])
     return ipv4
+
+
+def snapshots_get_node(conn):
+    """
+
+    Function return all snaphots on node.
+
+    """
+
+    try:
+        vname = {}
+        for vm_id in conn.listDomainsID():
+            vm_id = int(vm_id)
+            dom = conn.lookupByID(vm_id)
+            if dom.snapshotNum(0) != 0:
+                vname[dom.name()] = dom.info()[0]
+        for vm in conn.listDefinedDomains():
+            dom = conn.lookupByName(vm)
+            if dom.snapshotNum(0) != 0:
+                vname[dom.name()] = dom.info()[0]
+        return vname
+    except libvirtError as e:
+        return e.message
+
+
+def snapshots_get_vds(vname):
+    """
+
+    Function return all vds snaphots.
+
+    """
+
+    from datetime import datetime
+    try:
+        snapshots = {}
+        all_snapshot = vname.snapshotListNames(0)
+        for snapshot in all_snapshot:
+            snapshots[snapshot] = (datetime.fromtimestamp(int(snapshot)), vname.info()[0])
+        return snapshots
+    except libvirtError as e:
+        return e.message
+
+
+def snapshot_delete(name_snap):
+    """
+
+    Function delete vds snaphots.
+
+    """
+
+    try:
+        snap = dom.snapshotLookupByName(name_snap, 0)
+        snap.delete(0)
+    except libvirtError as e:
+        return e.message
+
+
+def snapshot_revert(name_snap):
+    """
+
+    Function rever vds snaphots.
+
+    """
+
+    try:
+        snap = dom.snapshotLookupByName(name_snap, 0)
+        dom.revertToSnapshot(snap, 0)
+    except libvirtError as e:
+        return e.message

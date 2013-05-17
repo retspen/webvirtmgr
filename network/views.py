@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from dashboard.models import Host
-from libvirt_func import libvirt_conn, vds_get_node,
+from libvirt_func import libvirt_conn, vds_get_node, new_network_pool, network_get_info, network_get_subnet
 
 
 def network(request, host_id, pool):
@@ -102,10 +102,10 @@ def network(request, host_id, pool):
             all_vm = get_all_vm(conn)
             net = conn.networkLookupByName(pool)
 
-            info = network_get_info()
+            info = network_get_info(net)
 
             if info[0] == True:
-                ipv4_net = ipv4_net()
+                ipv4_net = network_get_subnet(net)
 
             if request.method == 'POST':
                 if 'start' in request.POST:
