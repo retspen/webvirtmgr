@@ -6,7 +6,6 @@ class Host(models.Model):
     ipaddr = models.IPAddressField()
     login = models.CharField(max_length=12)
     passwd = models.CharField(max_length=14, blank=True, null=True)
-    is_deleted = models.BooleanField(default=False)
     conn_type = models.CharField(max_length=3)
     ssh_port = models.IntegerField(default='22')
 

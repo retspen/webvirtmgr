@@ -6,10 +6,8 @@ urlpatterns = patterns('',
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'template_name': 'logout.html'}, name='logout'),
     url(r'^dashboard/$', 'dashboard.views.dashboard', name='dashboard'),
     url(r'^setup/$', 'dashboard.views.page_setup', name='page_setup'),
-
-    # url(r'^clusters/$', 'webvirtmgr.virtmgr.views.clusters'),
-
-    # url(r'^overview/(\d+)/$', 'webvirtmgr.virtmgr.views.overview'),
+    url(r'^clusters/$', 'dashboard.views.clusters', name='clusters'),
+    url(r'^overview/(\d+)/$', 'overview.views.overview', name='overview'),
 
     # url(r'^newvm/(\d+)/$', 'webvirtmgr.virtmgr.views.newvm'),
 

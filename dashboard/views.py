@@ -4,7 +4,8 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
-from dashboard.models import *
+from dashboard.models import Host
+from libvirt_func import libvirt_conn
 
 
 def index(request):
@@ -41,7 +42,10 @@ def dashboard(request):
                 import socket
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 s.settimeout(1)
-                s.connect((host.ipaddr, 16509))
+                if host.conn_type == 'ssh':
+                    s.connect((host.ipaddr, host.ssh_port))
+                else:
+                    s.connect((host.ipaddr, 16509))
                 s.close()
                 status = 1
             except Exception as err:
@@ -49,26 +53,15 @@ def dashboard(request):
             all_hosts[host.hostname] = (host.id, host.ipaddr, status)
         return all_hosts
 
-    def del_host(host_id):
-        hosts = Host.objects.get(id=host_id)
-        hosts.delete()
-
-    def add_host(host, ipaddr, login, passwd):
-        hosts = Host(hostname=host, ipaddr=ipaddr, login=login, passwd=passwd)
-        hosts.save()
-
     hosts = Host.objects.filter()
     host_info = get_hosts_status(hosts)
     errors = []
 
     if request.method == 'POST':
         if 'delhost' in request.POST:
-            del_host = Host.objects.get(id=request.POST.get('srv_id', ''))
+            del_host = Host.objects.get(id=request.POST.get('host_id', ''))
             hostname = del_host.hostname
-            del_host.is_deleted = True
-            del_host.save()
-            msg = _('Delete host: %s') % hostname
-            add_log(msg, request.user.id)
+            del_host.delete()
             return HttpResponseRedirect(request.get_full_path())
         if 'addhost' in request.POST:
             hostname = request.POST.get('hostname', '')
@@ -98,8 +91,8 @@ def dashboard(request):
                     msg = _('The host name must not contain any special characters')
                     errors.append(msg)
                 else:
-                    have_host = Host.objects.filter(hostname=hostname, is_deleted=0)
-                    have_ip = Host.objects.filter(ipaddr=ipaddr, is_deleted=0)
+                    have_host = Host.objects.filter(hostname=hostname)
+                    have_ip = Host.objects.filter(ipaddr=ipaddr)
                     if have_host or have_ip:
                         msg = _('This host is already connected')
                         errors.append(msg)
@@ -137,64 +130,73 @@ def dashboard(request):
 
             if not errors:
                 if con_type == 'tcp':
-                    add_host = Host(hostname=hostname, ipaddr=ipaddr, conn_type=con_type, 
+                    add_host = Host(hostname=hostname, ipaddr=ipaddr, conn_type=con_type,
                                     login=kvm_login, passwd=kvm_passwd1)
                 if con_type == 'ssh':
                     add_host = Host(hostname=hostname, ipaddr=ipaddr, conn_type=con_type,
                                     login=ssh_login, ssh_port=ssh_port)
                 add_host.save()
-                msg = _('Add host: %s') % hostname
-                add_log(msg, request.user.id)
-                return HttpResponseRedirect(request.get_full_path())
-
-    if request.method == 'POST':
-        if 'del_host' in request.POST:
-            host_id = request.POST.get('host_id', '')
-            del_host(host_id)
-            return HttpResponseRedirect(request.get_full_path())
-        if request.POST.get('add_host', ''):
-            name = request.POST.get('hostname', '')
-            ipaddr = request.POST.get('ipaddr', '')
-            login = request.POST.get('kvm_login', '')
-            passwd = request.POST.get('kvm_passwd', '')
-
-            import re
-            symbol = re.search('[^a-zA-Z0-9\-\.]+', name)
-            ipsymbol = re.search('[^a-z0-9\.\-]+', ipaddr)
-            domain = re.search('[\.]+', ipaddr)
-
-            if not name:
-                msg = 'No hostname has been entered'
-                errors.append(msg)
-            elif len(name) > 20:
-                msg = 'The host name must not exceed 20 characters'
-                errors.append(msg)
-            elif symbol:
-                msg = 'The host name must not contain any special characters'
-                errors.append(msg)
-            if not ipaddr:
-                msg = 'No IP address has been entered'
-                errors.append(msg)
-            elif ipaddr == '127.0.0.1':
-                msg = 'Are you sure? This IP is not serious'
-                errors.append(msg)
-            elif ipsymbol or not domain:
-                msg = 'Hostname must contain only numbers, or the domain name separated by "."'
-                errors.append(msg)
-            else:
-                have_host = Host.objects.filter(hostname=name)
-                have_ip = Host.objects.filter(ipaddr=ipaddr)
-                if have_host or have_ip:
-                    msg = 'This host is already connected'
-                    errors.append(msg)
-            if not login:
-                msg = 'No KVM login was been entered'
-                errors.append(msg)
-            if not passwd:
-                msg = 'No KVM password was been entered'
-                errors.append(msg)
-            if not errors:
-                add_host(name, ipaddr, login, passwd)
                 return HttpResponseRedirect(request.get_full_path())
 
     return render_to_response('dashboard.html', locals(), context_instance=RequestContext(request))
+
+
+def clusters(request):
+    """
+
+    Infrastructure page.
+
+    """
+
+    def vms_on_host():
+        import virtinst.util as util
+        import libvirt
+        host_mem = conn.getInfo()[1] * 1048576
+        try:
+            vname = {}
+            for id in conn.listDomainsID():
+                id = int(id)
+                dom = conn.lookupByID(id)
+                mem = util.get_xml_path(dom.XMLDesc(0), "/domain/memory")
+                mem = int(mem) * 1024
+                mem_usage = (mem * 100) / host_mem
+                vcpu = util.get_xml_path(dom.XMLDesc(0), "/domain/vcpu")
+                vname[dom.name()] = (dom.info()[0], vcpu, mem, mem_usage)
+            for id in conn.listDefinedDomains():
+                dom = conn.lookupByName(id)
+                mem = util.get_xml_path(dom.XMLDesc(0), "/domain/memory")
+                mem = int(mem) * 1024
+                mem_usage = (mem * 100) / host_mem
+                vcpu = util.get_xml_path(dom.XMLDesc(0), "/domain/vcpu")
+                vname[dom.name()] = (dom.info()[0], vcpu, mem, mem_usage)
+            return vname
+        except libvirt.libvirtError as e:
+            add_error(e, 'libvirt')
+            return "error"
+
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login')
+
+    hosts = Host.objects.filter().order_by('id')
+    hosts_vms = {}
+
+    for host in hosts:
+        try:
+            import socket
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.settimeout(1)
+            s.connect((host.ipaddr, 16509))
+            s.close()
+            status = 1
+        except Exception as err:
+            status = 2
+
+        if status == 1:
+            conn = libvirt_conn(host)
+            host_info = get_host_info(conn)
+            host_mem = get_mem_usage(conn)
+            hosts_vms[host.id, host.hostname, status, host_info[2], host_mem[0], host_mem[2]] = vms_on_host()
+        else:
+            hosts_vms[host.id, host.hostname, status, None, None, None] = None
+
+    return render_to_response('clusters.html', locals(), context_instance=RequestContext(request))

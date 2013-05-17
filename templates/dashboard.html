@@ -66,7 +66,7 @@
             <td style="width: 70px;">
               <form action="/dashboard/" method="post" style="height:10px;">{% csrf_token %}
                 <input type="hidden" name="host_id" value="{{ value.0 }}">
-                <button type="submit" class="btn btn-danger" name="del_host" title="Delete" onclick="return confirm('Are you sure?')">Delete</button>
+                <button type="submit" class="btn btn-danger" name="delhost" title="Delete" onclick="return confirm('Are you sure?')">Delete</button>
               </form>
             </td>
           </tr>
