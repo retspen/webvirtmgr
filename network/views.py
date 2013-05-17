@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from dashboard.models import Host
-from libvirt_func import libvirt_conn, vds_get_node, new_network_pool, network_get_info, network_get_subnet
+from libvirt_func import libvirt_conn, vds_get_node, networks_get_node, new_network_pool, network_get_info, network_get_subnet
 
 
 def network(request, host_id, pool):
@@ -99,7 +99,7 @@ def network(request, host_id, pool):
                         except libvirtError as error_msg:
                             errors.append(error_msg.message)
         else:
-            all_vm = get_all_vm(conn)
+            all_vm = vds_get_node(conn)
             net = conn.networkLookupByName(pool)
 
             info = network_get_info(net)

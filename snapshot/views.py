@@ -55,7 +55,7 @@ def dom_snapshot(request, host_id, vname):
         dom = conn.lookupByName(vname)
         all_vm = vds_get_node(conn)
         all_vm_snap = snapshots_get_node(conn)
-        vm_snapshot = snapshots_get_vds(vname)
+        vm_snapshot = snapshots_get_vds(dom)
 
         if request.method == 'POST':
             if 'delete' in request.POST:

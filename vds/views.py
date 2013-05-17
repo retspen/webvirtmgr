@@ -196,7 +196,7 @@ def vds(request, host_id, vname):
     if type(conn) == dict:
         return HttpResponseRedirect('/overview/%s/' % host_id)
     else:
-        all_vm = get_all_vm(conn)
+        all_vm = vds_get_node(conn)
         dom = conn.lookupByName(vname)
 
         try:

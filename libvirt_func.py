@@ -452,7 +452,7 @@ def snapshots_get_node(conn):
         return e.message
 
 
-def snapshots_get_vds(vname):
+def snapshots_get_vds(dom):
     """
 
     Function return all vds snaphots.
@@ -462,9 +462,9 @@ def snapshots_get_vds(vname):
     from datetime import datetime
     try:
         snapshots = {}
-        all_snapshot = vname.snapshotListNames(0)
+        all_snapshot = dom.snapshotListNames(0)
         for snapshot in all_snapshot:
-            snapshots[snapshot] = (datetime.fromtimestamp(int(snapshot)), vname.info()[0])
+            snapshots[snapshot] = (datetime.fromtimestamp(int(snapshot)), dom.info()[0])
         return snapshots
     except libvirtError as e:
         return e.message
