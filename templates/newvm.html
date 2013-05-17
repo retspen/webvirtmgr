@@ -3,28 +3,7 @@
 {% block content %}
       <div class="container-fluid">
         <div class="row-fluid">
-          <div class="span3">
-            <div class="well sidebar-nav">
-              <ul class="nav nav-list">
-                <li class="nav-header">Server Settings</li>
-                <li><a href="/overview/{{ host_id }}/"><i class="icon-info-sign"></i> Overview</a></li>
-                <li class="active">
-                  <a href="/newvm/{{ host_id }}/"><i class="icon-plus"></i> Create VM</a>
-                </li>
-                <li><a href="/storage/{{ host_id }}/"><i class="icon-folder-open"></i> Storage pool</a></li>
-                <li><a href="/network/{{ host_id }}/"><i class="icon-signal"></i> Network pool</a></li>
-                <li><a href="/snapshot/{{ host_id }}/"><i class="icon-download-alt"></i> Snapshots</a></li>
-                <li class="nav-header">Virtual Machines</li>
-                {% if not all_vm %}
-                <li><a href="/newvm/{{ host_id }}"><i class="icon-plus"></i> Create VM</a></li>
-                {% else %}
-                  {% for vm in all_vm %}
-                  <li><a href="/vm/{{ host_id }}/{{ vm }}/"><i class="icon-th-large"></i> {{ vm }}</a></li>
-                  {% endfor %}
-              {% endif %}
-              </ul>
-            </div><!--/.well -->
-          </div><!--/span-->
+          {% include 'sidebar.html' %}
           <div class="span9 well">
             <h2>Create Virtual Machine</h2>
             <hr>
@@ -67,7 +46,7 @@
                         <h3 id="poolModalLabel">Add New Virtual Machine - {{ value.0 }}</h3>
                       </div>
                       <div class="modal-body">
-                        <form class="form-horizontal" action="/newvm/{{ host_id }}/" method="post">{% csrf_token %}
+                        <form class="form-horizontal" action="{% url newvm host_id %}" method="post">{% csrf_token %}
                           <fieldset><br>
                             <div class="control-group">
                             <label class="control-label">Name</label>
@@ -129,7 +108,7 @@
                 <h3 id="poolModalLabel">Add New Virtual Machine</h3>
               </div>
               <div class="modal-body">
-                <form class="form-horizontal" action="/newvm/{{ host_id }}/" method="post">{% csrf_token %}
+                <form class="form-horizontal" action="{% url newvm host_id %}" method="post">{% csrf_token %}
                   <fieldset><br>
                     <div class="control-group">
                     <label class="control-label">Name</label>
@@ -160,11 +139,11 @@
                           <option value="256">256 MB</option>
                           <option value="512">512 MB</option>
                           <option value="768">768 MB</option>
-                          <option value="1024">1 GB</option>
-                          <option value="2048">2 GB</option>
-                          <option value="4096">4 GB</option>
-                          <option value="8192">8 GB</option>
-                          <option value="16384">16 GB</option>
+                          <option value="1024">1024 MB</option>
+                          <option value="2048">2048 MB</option>
+                          <option value="4096">4096 MB</option>
+                          <option value="8192">8192 MB</option>
+                          <option value="16384">16384 MB</option>
                         </select>
                       </div> 
                     </div>
@@ -221,7 +200,7 @@
                 <h3 id="poolModalLabel">Add New Flavor</h3>
               </div>
               <div class="modal-body">
-                <form class="form-horizontal" action="/newvm/{{ host_id }}/" method="post">{% csrf_token %}
+                <form class="form-horizontal" action="{% url newvm host_id %}" method="post">{% csrf_token %}
                   <fieldset><br>
                     <div class="control-group">
                     <label class="control-label">Name</label>
@@ -252,11 +231,11 @@
                           <option value="256">256 MB</option>
                           <option value="512">512 MB</option>
                           <option value="768">768 MB</option>
-                          <option value="1024">1 GB</option>
-                          <option value="2048">2 GB</option>
-                          <option value="4096">4 GB</option>
-                          <option value="8192">8 GB</option>
-                          <option value="16384">16 GB</option>
+                          <option value="1024">1024 GB</option>
+                          <option value="2048">2048 GB</option>
+                          <option value="4096">4096 GB</option>
+                          <option value="8192">8192 GB</option>
+                          <option value="16384">16384 GB</option>
                         </select>
                       </div> 
                     </div>

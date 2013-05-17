@@ -55,7 +55,7 @@ def hard_accel_node(conn):
         return False
 
 
-def vm_get_node(conn):
+def vms_get_node(conn):
     """
 
     Get all VM in host server
@@ -139,6 +139,12 @@ def node_get_info(conn):
 
 
 def memory_get_usage(conn):
+    """
+
+    Function return memory usage on node.
+
+    """
+
     from libvirt import libvirtError
     try:
         allmem = conn.getInfo()[1] * 1048576
@@ -157,6 +163,12 @@ def memory_get_usage(conn):
 
 
 def cpu_get_usage(conn):
+    """
+
+    Function return cpu usage on node.
+
+    """
+
     import time
     from libvirt import libvirtError
     try:
@@ -182,3 +194,65 @@ def cpu_get_usage(conn):
         return diff_usage
     except libvirtError as e:
         return e.message
+
+
+def new_volume(storage, name, size):
+    """
+
+    Add new volume in storage
+
+    """
+    import virtinst.util as util
+
+    size = int(size) * 1073741824
+    stg_type = util.get_xml_path(storage.XMLDesc(0), "/pool/@type")
+    if stg_type == 'dir':
+        name = name + '.img'
+        alloc = 0
+    else:
+        alloc = size
+    xml = """
+        <volume>
+            <name>%s</name>
+            <capacity>%s</capacity>
+            <allocation>%s</allocation>
+            <target>
+                <format type='qcow2'/>
+            </target>
+        </volume>""" % (name, size, alloc)
+    storage.createXML(xml, 0)
+
+
+def images_get_storages(conn, storages):
+    """
+
+    Function return all images on all storages
+
+    """
+
+    import re
+    disk = []
+    for storage in storages:
+        stg = conn.storagePoolLookupByName(storage)
+        stg.refresh(0)
+        for img in stg.listVolumes():
+            if re.findall(".iso", img) or re.findall(".ISO", img):
+                pass
+            else:
+                disk.append(img)
+    return disk
+
+
+def image_get_path(conn, vol, storages):
+    """
+
+    Function return volume path.
+
+    """
+
+    for storage in storages:
+        stg = conn.storagePoolLookupByName(storage)
+        for img in stg.listVolumes():
+            if vol == img:
+                vl = stg.storageVolLookupByName(vol)
+                return vl.path()

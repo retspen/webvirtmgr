@@ -3,28 +3,7 @@
 {% block content %}
       <div class="container-fluid">
         <div class="row-fluid">
-          <div class="span3">
-            <div class="well sidebar-nav">
-              <ul class="nav nav-list">
-                <li class="nav-header">Server Settings</li>
-                <li><a href="/overview/{{ host_id }}/"><i class="icon-info-sign"></i> Overview</a></li>
-                <li><a href="/newvm/{{ host_id }}/"><i class="icon-plus"></i> Create VM</a></li>
-                <li class="active">
-                  <a href="/storage/{{ host_id }}/"><i class="icon-folder-open"></i> Storage pool</a>
-                </li>
-                <li><a href="/network/{{ host_id }}/"><i class="icon-signal"></i> Network pool</a></li>
-                <li><a href="/snapshot/{{ host_id }}/"><i class="icon-download-alt"></i> Snapshots</a></li>
-                <li class="nav-header">Virtual Machines</li>
-                {% if not all_vm %}
-                <li><a href="/newvm/{{ host_id }}"><i class="icon-plus"></i> Create VM</a></li>
-                {% else %}
-                  {% for vm in all_vm %}
-                  <li><a href="/vm/{{ host_id }}/{{ vm }}/"><i class="icon-th-large"></i> {{ vm }}</a></li>
-                  {% endfor %}
-              {% endif %}
-              </ul>
-            </div><!--/.well -->
-          </div><!--/span-->
+          {% include 'sidebar.html' %}
           <div class="span9 well">
             <h2>Storage Pool</h2>
             <hr>

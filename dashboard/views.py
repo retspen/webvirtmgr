@@ -21,10 +21,6 @@ def index(request):
         return HttpResponseRedirect('/dashboard')
 
 
-def page_setup(request):
-    return render_to_response('setup.html', locals(), context_instance=RequestContext(request))
-
-
 def dashboard(request):
     """
 
@@ -200,3 +196,7 @@ def clusters(request):
             hosts_vms[host.id, host.hostname, status, None, None, None] = None
 
     return render_to_response('clusters.html', locals(), context_instance=RequestContext(request))
+
+
+def page_setup(request):
+    return render_to_response('setup.html', locals(), context_instance=RequestContext(request))

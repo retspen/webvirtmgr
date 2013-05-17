@@ -8,16 +8,14 @@ urlpatterns = patterns('',
     url(r'^setup/$', 'dashboard.views.page_setup', name='page_setup'),
     url(r'^clusters/$', 'dashboard.views.clusters', name='clusters'),
     url(r'^overview/(\d+)/$', 'overview.views.overview', name='overview'),
-
-    # url(r'^newvm/(\d+)/$', 'webvirtmgr.virtmgr.views.newvm'),
-
-    # url(r'^storage/(\d+)/$', 'virtmgr.views.storage', {'pool': None}),
-    # url(r'^storage/(\d+)/([\w\-]+)/$', 'virtmgr.views.storage'),
+    url(r'^newvm/(\d+)/$', 'newvm.views.newvm', name='newvm'),
+    url(r'^storage/(\d+)/$', 'storage.views.storage', {'pool': None}, name='storage'),
+    url(r'^storage/(\d+)/([\w\-]+)/$', 'storage.views.storage', name='storage'),
 
     # url(r'^network/(\d+)/$', 'virtmgr.views.network', {'pool': None}),
     # url(r'^network/(\d+)/([\w\-]+)/$', 'virtmgr.views.network'),
 
-    # url(r'^vm/(\d+)/([\w\-\.]+)/$', 'virtmgr.views.vm'),
+    # url(r'^vds/(\d+)/([\w\-\.]+)/$', 'virtmgr.views.vds'),
 
     # url(r'^vnc/(\d+)/([\w\-\.]+)/$', 'virtmgr.views.vnc'),
 

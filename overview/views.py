@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from dashboard.models import Host
-from libvirt_func import libvirt_conn, hard_accel_node, node_get_info, vm_get_node, cpu_get_usage, memory_get_usage
+from libvirt_func import libvirt_conn, hard_accel_node, node_get_info, vms_get_node, cpu_get_usage, memory_get_usage
 
 
 def overview(request, host_id):
@@ -33,7 +33,7 @@ def overview(request, host_id):
             msg = _('Your CPU doesn\'t support hardware virtualization')
             errors.append(msg)
 
-        all_vm = vm_get_node(conn)
+        all_vm = vms_get_node(conn)
         host_info = node_get_info(conn)
         mem_usage = memory_get_usage(conn)
         cpu_usage = cpu_get_usage(conn)
