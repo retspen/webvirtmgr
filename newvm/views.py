@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from dashboard.models import Host, Flavor, Vm
-from libvirt_func import libvirt_conn, hard_accel_node, vms_get_node, networks_get_node, storages_get_node, images_get_storages, image_get_path, new_volume
+from libvirt_func import libvirt_conn, hard_accel_node, vds_get_node, networks_get_node, storages_get_node, images_get_storages, image_get_path, new_volume
 
 
 def newvm(request, host_id):
@@ -132,7 +132,7 @@ def newvm(request, host_id):
 
         errors = []
 
-        all_vm = vms_get_node(conn)
+        all_vm = vds_get_node(conn)
         all_networks = networks_get_node(conn)
         all_storages = storages_get_node(conn)
         all_img = images_get_storages(conn, all_storages)

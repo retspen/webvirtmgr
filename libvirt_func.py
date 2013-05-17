@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 
+import libvirt
+from libvirt import libvirtError
+import virtinst.util as util
+
 
 def libvirt_conn(host):
     """
@@ -8,8 +12,6 @@ def libvirt_conn(host):
     Create exceptions and return if not connnected.
 
     """
-
-    import libvirt
 
     if host.conn_type == 'tcp':
         def creds(credentials, user_data):
@@ -46,6 +48,7 @@ def hard_accel_node(conn):
     Check hardware acceleration.
 
     """
+
     import re
     xml = conn.getCapabilities()
     kvm = re.search('kvm', xml)
@@ -55,14 +58,12 @@ def hard_accel_node(conn):
         return False
 
 
-def vms_get_node(conn):
+def vds_get_node(conn):
     """
 
     Get all VM in host server
 
     """
-
-    import libvirt
 
     try:
         vname = {}
@@ -74,7 +75,7 @@ def vms_get_node(conn):
             dom = conn.lookupByName(id)
             vname[dom.name()] = dom.info()[0]
         return vname
-    except libvirt.libvirtError as e:
+    except libvirtError as e:
         add_error(e, 'libvirt')
         return "error"
 
@@ -124,8 +125,6 @@ def node_get_info(conn):
 
     """
 
-    from libvirt import libvirtError
-    import virtinst.util as util
     try:
         info = []
         xml_inf = conn.getSysinfo(0)
@@ -145,7 +144,6 @@ def memory_get_usage(conn):
 
     """
 
-    from libvirt import libvirtError
     try:
         allmem = conn.getInfo()[1] * 1048576
         get_freemem = conn.getMemoryStats(-1, 0)
@@ -170,7 +168,7 @@ def cpu_get_usage(conn):
     """
 
     import time
-    from libvirt import libvirtError
+
     try:
         prev_idle = 0
         prev_total = 0
@@ -202,7 +200,6 @@ def new_volume(storage, name, size):
     Add new volume in storage
 
     """
-    import virtinst.util as util
 
     size = int(size) * 1073741824
     stg_type = util.get_xml_path(storage.XMLDesc(0), "/pool/@type")
@@ -221,6 +218,29 @@ def new_volume(storage, name, size):
             </target>
         </volume>""" % (name, size, alloc)
     storage.createXML(xml, 0)
+
+
+def clone_volume(storage, img, new_img):
+    """
+
+    Function clone volume
+
+    """
+
+    stg_type = util.get_xml_path(storage.XMLDesc(0), "/pool/@type")
+    if stg_type == 'dir':
+        new_img = new_img + '.img'
+    vol = storage.storageVolLookupByName(img)
+    xml = """
+        <volume>
+            <name>%s</name>
+            <capacity>0</capacity>
+            <allocation>0</allocation>
+            <target>
+                <format type='qcow2'/>
+            </target>
+        </volume>""" % (new_img)
+    storage.createXMLFrom(xml, vol, 0)
 
 
 def images_get_storages(conn, storages):
@@ -256,3 +276,72 @@ def image_get_path(conn, vol, storages):
             if vol == img:
                 vl = stg.storageVolLookupByName(vol)
                 return vl.path()
+
+
+def storage_get_info(storage):
+    """
+
+    Function return storage info.
+
+    """
+
+    if storage.info()[3] == 0:
+        percent = 0
+    else:
+        percent = (storage.info()[2] * 100) / storage.info()[1]
+    info = storage.info()
+    info.append(int(percent))
+    info.append(storage.isActive())
+    xml = storage.XMLDesc(0)
+    info.append(util.get_xml_path(xml, "/pool/@type"))
+    info.append(util.get_xml_path(xml, "/pool/target/path"))
+    info.append(util.get_xml_path(xml, "/pool/source/device/@path"))
+    info.append(util.get_xml_path(xml, "/pool/source/format/@type"))
+    return info
+
+
+def new_storage_pool(conn, type_pool, name, source, target):
+    """
+
+    Function create storage pool.
+
+    """
+
+    xml = """
+            <pool type='%s'>
+            <name>%s</name>""" % (type_pool, name)
+
+    if type_pool == 'logical':
+        xml += """
+              <source>
+                <device path='%s'/>
+                <name>%s</name>
+                <format type='lvm2'/>
+              </source>""" % (source, name)
+
+    if type_pool == 'logical':
+        target = '/dev/' + name
+
+    xml += """
+              <target>
+                   <path>%s</path>
+              </target>
+            </pool>""" % (target)
+    conn.storagePoolDefineXML(xml, 0)
+
+
+def volume_get_info(storage):
+    """
+
+    Function return volume info.
+
+    """
+
+    volinfo = {}
+    for name in storage.listVolumes():
+        vol = storage.storageVolLookupByName(name)
+        xml = vol.XMLDesc(0)
+        size = vol.info()[1]
+        format = util.get_xml_path(xml, "/volume/target/format/@type")
+        volinfo[name] = size, format
+    return volinfo

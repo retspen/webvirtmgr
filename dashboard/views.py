@@ -144,7 +144,7 @@ def clusters(request):
 
     """
 
-    def vms_on_host():
+    def vds_on_host():
         import virtinst.util as util
         import libvirt
         host_mem = conn.getInfo()[1] * 1048576
@@ -191,7 +191,7 @@ def clusters(request):
             conn = libvirt_conn(host)
             host_info = get_host_info(conn)
             host_mem = get_mem_usage(conn)
-            hosts_vms[host.id, host.hostname, status, host_info[2], host_mem[0], host_mem[2]] = vms_on_host()
+            hosts_vms[host.id, host.hostname, status, host_info[2], host_mem[0], host_mem[2]] = vds_on_host()
         else:
             hosts_vms[host.id, host.hostname, status, None, None, None] = None
 
