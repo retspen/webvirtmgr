@@ -11,14 +11,10 @@ urlpatterns = patterns('',
     url(r'^newvm/(\d+)/$', 'newvm.views.newvm', name='newvm'),
     url(r'^storage/(\d+)/$', 'storage.views.storage', {'pool': None}, name='storage'),
     url(r'^storage/(\d+)/([\w\-]+)/$', 'storage.views.storage', name='storage'),
-
-    # url(r'^network/(\d+)/$', 'virtmgr.views.network', {'pool': None}),
-    # url(r'^network/(\d+)/([\w\-]+)/$', 'virtmgr.views.network'),
-
+    url(r'^network/(\d+)/$', 'network.views.network', {'pool': None}, name='network'),
+    url(r'^network/(\d+)/([\w\-]+)/$', 'virtmgr.views.network', name='network'),
     # url(r'^vds/(\d+)/([\w\-\.]+)/$', 'virtmgr.views.vds'),
-
     # url(r'^vnc/(\d+)/([\w\-\.]+)/$', 'virtmgr.views.vnc'),
-
     # url(r'^snapshot/(\d+)/$', 'virtmgr.views.snapshot'),
     # url(r'^snapshot/(\d+)/([\w\-]+)/$', 'virtmgr.views.dom_snapshot'),    
 )
