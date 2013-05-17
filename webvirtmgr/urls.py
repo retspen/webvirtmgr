@@ -16,5 +16,5 @@ urlpatterns = patterns('',
     # url(r'^vds/(\d+)/([\w\-\.]+)/$', 'virtmgr.views.vds'),
     # url(r'^vnc/(\d+)/([\w\-\.]+)/$', 'virtmgr.views.vnc'),
     # url(r'^snapshot/(\d+)/$', 'virtmgr.views.snapshot'),
-    # url(r'^snapshot/(\d+)/([\w\-]+)/$', 'virtmgr.views.dom_snapshot'),    
+    # url(r'^snapshot/(\d+)/([\w\-]+)/$', 'virtmgr.views.dom_snapshot'),
 )

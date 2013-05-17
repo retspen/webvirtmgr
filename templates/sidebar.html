@@ -13,7 +13,7 @@
                   <a href="{% url storage host_id %}"><i class="icon-folder-open"></i> {% trans "Storage pool" %}</a>
                 </li>
                 <li {% ifequal request.path '/network/1/' %}class="active"{% endifequal %}>
-                  <a href="/network/{{ host_id }}/"><i class="icon-signal"></i> {% trans "Network pool" %}</a>
+                  <a href="{% url network host_id %}"><i class="icon-signal"></i> {% trans "Network pool" %}</a>
                 </li>
                 <li {% ifequal request.path '/snapshot/1/' %}class="active"{% endifequal %}>
                   <a href="/snapshot/{{ host_id }}/"><i class="icon-download-alt"></i> {% trans "Snapshots" %}</a>

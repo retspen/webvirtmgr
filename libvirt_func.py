@@ -3,6 +3,7 @@
 import libvirt
 from libvirt import libvirtError
 import virtinst.util as util
+from network.IPy import IP
 
 
 def libvirt_conn(host):
@@ -345,3 +346,84 @@ def volume_get_info(storage):
         format = util.get_xml_path(xml, "/volume/target/format/@type")
         volinfo[name] = size, format
     return volinfo
+
+
+def new_network_pool(conn, name, forward, gw, netmask, dhcp):
+    """
+
+    Function create network pool.
+
+    """
+
+    xml = """
+        <network>
+            <name>%s</name>""" % (name)
+
+    if forward == "nat" or "route":
+        xml += """<forward mode='%s'/>""" % (forward)
+
+    xml += """<bridge stp='on' delay='0' />
+                <ip address='%s' netmask='%s'>""" % (gw, netmask)
+
+    if dhcp[0] == '1':
+        xml += """<dhcp>
+                    <range start='%s' end='%s' />
+                </dhcp>""" % (dhcp[1], dhcp[2])
+
+    xml += """</ip>
+        </network>"""
+    conn.networkDefineXML(xml)
+
+
+def network_get_info():
+    """
+
+    Function return network info.
+
+    """
+
+    info = []
+    info.append(net.isActive())
+    info.append(net.bridgeName())
+    return info
+
+
+def ipv4_net(network):
+    """
+
+    Function return virtual network info: ip, netmask, dhcp, type forward.
+
+    """
+
+    ipv4 = []
+    xml_net = network.XMLDesc(0)
+
+    fw = util.get_xml_path(xml_net, "/network/forward/@mode")
+    forwardDev = util.get_xml_path(xml_net, "/network/forward/@dev")
+
+    if fw and forwardDev:
+        ipv4.append([fw, forwardDev])
+    else:
+        ipv4.append(None)
+
+    # Subnet block
+    addrStr = util.get_xml_path(xml_net, "/network/ip/@address")
+    netmaskStr = util.get_xml_path(xml_net, "/network/ip/@netmask")
+
+    if addrStr and netmaskStr:
+        netmask = IP(netmaskStr)
+        gateway = IP(addrStr)
+        network = IP(gateway.int() & netmask.int())
+        ipv4.append(IP(str(network) + "/" + netmaskStr))
+    else:
+        ipv4.append(None)
+
+    # DHCP block
+    dhcpstart = util.get_xml_path(xml_net, "/network/ip/dhcp/range[1]/@start")
+    dhcpend = util.get_xml_path(xml_net, "/network/ip/dhcp/range[1]/@end")
+
+    if not dhcpstart or not dhcpend:
+        pass
+    else:
+        ipv4.append([IP(dhcpstart), IP(dhcpend)])
+    return ipv4
