@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from dashboard.models import Host
-from libvirt_func import libvirt_conn, vds_get_node, storages_get_node, storage_get_info, new_storage_pool, new_volume, clone_volume
+from libvirt_func import libvirt_conn, vds_get_node, storages_get_node, storage_get_info, new_storage_pool, new_volume, clone_volume, volume_get_info
 
 
 def storage(request, host_id, pool):
@@ -89,7 +89,7 @@ def storage(request, host_id, pool):
             # refresh storage if acitve
             if info[5] == True:
                 stg.refresh(0)
-                volumes_info = stg_vol()
+                volumes_info = volume_get_info(stg)
 
             if request.method == 'POST':
                 if 'start' in request.POST:
