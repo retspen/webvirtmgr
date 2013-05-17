@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% block content %}
     <div class="pull-right">
       <a href="/setup">Host Server Setup</a>
@@ -14,7 +15,7 @@
       {% endfor %}
     {% endif %}
     <div class="span8">
-      <a data-toggle="modal" href="#myModal" class="btn btn-success">Add Connection</a>
+      <a data-toggle="modal" href="#addModal" class="btn btn-success">Add Connection</a>
       {% if host_info %}
       <a href="/clusters/" class="btn btn-success">Infrastrusture</a>
       {% else %}
@@ -73,48 +74,105 @@
         </tbody>
       </table>
       {% else %}
-        <h4>You have no connection</h4>
-        <br>
-      {% endif %}
-      <div id="myModal" class="modal hide fade">
-          <div class="modal-header">
-            <button class="close" data-dismiss="modal">&times;</button>
-              <h3>Add new host server</h3>
-          </div>
-       <div class="modal-body">
-          <form class="form-horizontal" action="{% url dashboard %}" method="post">{% csrf_token %}
-            <fieldset>
-              <div class="control-group">
-              <label class="control-label">Name</label>
-                <div class="controls">
-                  <input type="text" name="hostname" class="input-large focused" placeholder="Name" maxlength="20" required pattern="^[a-zA-Z0-9_]+$">
-                </div>
-               </div>
-              <div class="control-group">
-              <label class="control-label">IP / Domain</label>
-                <div class="controls">
-                  <input type="text" name="ipaddr" class="input-large" placeholder="IP or domain" required pattern="^[a-z0-9\.\-_]+$">
-                </div>
-              </div>
-              <div class="control-group">
-              <label class="control-label">KVM login</label>
-                <div class="controls">
-                  <input type="text" name="kvm_login" class="input-large" placeholder="login" required>
-                </div>
-              </div>
-              <div class="control-group">
-              <label class="control-label">KVM password</label>
-                <div class="controls">
-                  <input type="password" name="kvm_passwd" class="input-large" placeholder="******" required>
-                </div>
-              </div>
-              </fieldset>
-          </div>
-          <div class="modal-footer">
-            <a href="#" class="btn" data-dismiss="modal">Cancel</a>
-              <input type="submit" class="btn btn-success" name="add_host" value="Add">
-           </form>
-          </div>
+        <div class="span8">
+          <h4>You have no connection</h4>
         </div>
+      {% endif %}
+        <div id="addModal" class="modal hide fade">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3 id="addModalLabel">{% trans "Add Host Server" %}</h3>
+          </div>
+          <div class="tabbable">
+            <ul class="nav nav-tabs">
+              <li class="active">
+                <a href="#1" data-toggle="tab">TCP</a>
+              </li>
+              <li><a href="#2" data-toggle="tab">SSH</a></li>
+            </ul>
+          </div>
+          <div class="tab-content">
+            <div class="tab-pane active" id="1">
+              <div class="modal-body">
+              <form class="form-horizontal" action="{% url dashboard %}" method="post">{% csrf_token %}
+                <fieldset><br>
+                  <div class="control-group">
+                    <label class="control-label">{% trans "Hostname" %}</label>
+                    <div class="controls">
+                      <input type="text" name="hostname" class="input-large focused" placeholder="Name" maxlength="20" required pattern="^[a-zA-Z0-9_]+$">
+                      <input type="hidden" name="con_type" value="tcp">
+                    </div>
+                   </div>
+                  <div class="control-group">
+                    <label class="control-label">{% trans "IP / Domain" %}</label>
+                    <div class="controls">
+                      <input type="text" name="ipaddr" class="input-large" placeholder="{% trans "IP or domain" %}" required pattern="^[a-z0-9\.\-_]+$">
+                    </div>
+                   </div>
+                  <div class="control-group">
+                    <label class="control-label">{% trans "KVM Login" %}</label>
+                    <div class="controls">
+                      <input type="text" name="kvm_login" class="input-large focused" placeholder="{% trans "Name" %}">
+                    </div>
+                   </div>
+                  <div class="control-group">
+                    <label class="control-label">{% trans "KVM Password" %}</label>
+                    <div class="controls">
+                      <input type="password" name="kvm_passwd1" class="input-large focused" placeholder="{% trans "********" %}">
+                    </div>
+                   </div>
+                  <div class="control-group">
+                    <label class="control-label">{% trans "KVM Confirm" %}</label>
+                    <div class="controls">
+                      <input type="password" name="kvm_passwd2" class="input-large focused" placeholder="{% trans "********" %}">
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+              <div class="modal-footer">
+                <button class="btn" data-dismiss="modal">{% trans "Cancel" %}</button>
+                <input class="btn btn-success" name="addhost" type="submit" value="{% trans "Submit" %}">
+                </form>
+              </div>
+            </div><!--/TAB1 -->
+            <div class="tab-pane" id="2">
+              <div class="modal-body">
+              <form class="form-horizontal" action="{% url dashboard %}" method="post">{% csrf_token %}
+                <fieldset><br>
+                  <div class="control-group">
+                    <label class="control-label">{% trans "Hostname" %}</label>
+                    <div class="controls">
+                      <input type="text" name="hostname" class="input-large focused" placeholder="Name" maxlength="20" required pattern="^[a-zA-Z0-9_]+$">
+                      <input type="hidden" name="con_type" value="ssh">
+                    </div>
+                   </div>
+                  <div class="control-group">
+                    <label class="control-label">{% trans "IP / Domain" %}</label>
+                    <div class="controls">
+                      <input type="text" name="ipaddr" class="input-large" placeholder="{% trans "IP or domain" %}" required pattern="^[a-z0-9\.\-_]+$">
+                    </div>
+                   </div>
+                  <div class="control-group">
+                    <label class="control-label">{% trans "SSH Login" %}</label>
+                    <div class="controls">
+                      <input type="text" name="ssh_login" class="input-large focused" placeholder="{% trans "Name" %}">
+                    </div>
+                   </div>
+                  <div class="control-group">
+                    <label class="control-label">{% trans "SSH Port" %}</label>
+                    <div class="controls">
+                      <input type="text" name="ssh_port" class="input-large focused" value="22">
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+              <div class="modal-footer">
+                <button class="btn" data-dismiss="modal">{% trans "Cancel" %}</button>
+                <input class="btn btn-success" name="addhost" type="submit" value="{% trans "Submit" %}">
+                </form>
+              </div>
+            </div><!--/TAB2 -->            
+          </div>
+        </div> <!-- /addModal -->
       </div>
 {% endblock %}

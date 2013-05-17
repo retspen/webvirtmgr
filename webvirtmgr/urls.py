@@ -4,7 +4,8 @@ urlpatterns = patterns('',
     url(r'^$', 'dashboard.views.index', name='index'),
     url(r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}, name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'template_name': 'logout.html'}, name='logout'),
-    url(r'^dashboard/$', 'dashboard.views.index', name='dashboard'),
+    url(r'^dashboard/$', 'dashboard.views.dashboard', name='dashboard'),
+    url(r'^setup/$', 'dashboard.views.page_setup', name='page_setup'),
 
     # url(r'^clusters/$', 'webvirtmgr.virtmgr.views.clusters'),
 
@@ -23,7 +24,5 @@ urlpatterns = patterns('',
     # url(r'^vnc/(\d+)/([\w\-\.]+)/$', 'virtmgr.views.vnc'),
 
     # url(r'^snapshot/(\d+)/$', 'virtmgr.views.snapshot'),
-    # url(r'^snapshot/(\d+)/([\w\-]+)/$', 'virtmgr.views.dom_snapshot'),
-
-    # url(r'^setup/$', 'virtmgr.views.page_setup', name='page_setup'),
+    # url(r'^snapshot/(\d+)/([\w\-]+)/$', 'virtmgr.views.dom_snapshot'),    
 )

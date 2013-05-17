@@ -1,13 +1,13 @@
 <html>
 <head>
 {% if vm.vnc_passwd %}
-  <link rel="shortcut icon" href="/{{ STATIC_URL }}img/favicon.ico">
-  <link rel="stylesheet" href="/{{ STATIC_URL }}js/novnc/base.css" title="plain">
+  <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.ico">
+  <link rel="stylesheet" href="{{ STATIC_URL }}js/novnc/base.css" title="plain">
   <!--
   <script type='text/javascript' 
       src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>
   -->
-  <script src="/{{ STATIC_URL }}js/novnc/util.js"></script>
+  <script src="{{ STATIC_URL }}js/novnc/util.js"></script>
 </head>
 
 <body style="margin: 0px;">
@@ -136,7 +136,7 @@
 </head>
 <body>
   <div id="vncviewer">
-    <applet archive="/static/java/vncviewer.jar" code="com.tightvnc.vncviewer.VncViewer" width="800" height="628">
+    <applet archive="{{ STATIC_URL }}java/vncviewer.jar" code="com.tightvnc.vncviewer.VncViewer" width="800" height="628">
       <param name="SOCKETFACTORY" value="com.tightvnc.vncviewer.SshTunneledSocketFactory">
       <param name="Scaling factor" value="auto">
       <param name="SSHHOST" value="{{ host.ipaddr }}">
