@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from dashboard.models import Host
-from libvirt_func import libvirt_conn, hard_accel_node, node_get_info, vds_get_node, cpu_get_usage, memory_get_usage
+import libvirt_func
 
 
 def overview(request, host_id):
@@ -21,22 +21,22 @@ def overview(request, host_id):
         return HttpResponseRedirect('/login')
 
     host = Host.objects.get(id=host_id)
-    conn = libvirt_conn(host)
+    conn = libvirt_func.libvirt_conn(host)
 
     if type(conn) == dict:
         errors = []
         errors.append(conn.values()[0])
     else:
-        have_kvm = hard_accel_node(conn)
+        have_kvm = libvirt_func.hard_accel_node(conn)
         if not have_kvm:
             errors = []
             msg = _('Your CPU doesn\'t support hardware virtualization')
             errors.append(msg)
 
-        all_vm = vds_get_node(conn)
-        host_info = node_get_info(conn)
-        mem_usage = memory_get_usage(conn)
-        cpu_usage = cpu_get_usage(conn)
+        all_vm = libvirt_func.vds_get_node(conn)
+        host_info = libvirt_func.node_get_info(conn)
+        mem_usage = libvirt_func.memory_get_usage(conn)
+        cpu_usage = libvirt_func.cpu_get_usage(conn)
         lib_virt_ver = conn.getLibVersion()
         conn_type = conn.getURI()
 
