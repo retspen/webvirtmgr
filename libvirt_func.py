@@ -670,6 +670,22 @@ def vds_get_media(conn, dom):
         return None
 
 
+def vds_set_vnc_passwd(conn, dom, passwd):
+    """
+
+    Function set vnc password to vds.
+
+    """
+
+    try:
+        xml = dom.XMLDesc(0)
+        newxml = "<graphics type='vnc' port='-1' autoport='yes' keymap='en-us' passwd='%s'/>" % passwd
+        xmldom = xml.replace("<graphics type='vnc' port='-1' autoport='yes' keymap='en-us'/>", newxml)
+        conn.defineXML(xmldom)
+    except libvirtError as e:
+        return e.message
+
+
 def vds_get_uptime(dom):
     """
 
@@ -684,3 +700,50 @@ def vds_get_uptime(dom):
         return minutes
     else:
         return 'None'
+
+
+def get_all_media(conn, storages):
+    """
+
+    Function return all media.
+
+    """
+
+    iso = []
+    for storage in storages:
+        stg = conn.storagePoolLookupByName(storage)
+        stg.refresh(0)
+        for img in stg.listVolumes():
+            if re.findall(".iso", img):
+                img = re.sub('.iso', '', img)
+                iso.append(img)
+    return iso
+
+
+def vds_remove_hdd(conn, dom):
+    """
+
+    Function delete vds hdd.
+
+    """
+
+    img = util.get_xml_path(dom.XMLDesc(0), "/domain/devices/disk[1]/source/@file")
+    vol = conn.storageVolLookupByPath(img)
+    vol.delete(0)
+
+
+def vds_create_snapshot(dom):
+    """
+
+    Function create vds snapshot.
+
+    """
+
+    xml = """<domainsnapshot>\n
+                 <name>%d</name>\n
+                 <state>shutoff</state>\n
+                 <creationTime>%d</creationTime>\n""" % (time.time(), time.time())
+    xml += dom.XMLDesc(0)
+    xml += """<active>0</active>\n
+              </domainsnapshot>"""
+    dom.snapshotCreateXML(xml, 0)

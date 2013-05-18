@@ -20,47 +20,6 @@ def vds(request, host_id, vname):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
-    def find_all_iso(storages):
-        import re
-        iso = []
-        for storage in storages:
-            stg = conn.storagePoolLookupByName(storage)
-            stg.refresh(0)
-            for img in stg.listVolumes():
-                if re.findall(".iso", img):
-                    img = re.sub('.iso', '', img)
-                    iso.append(img)
-        return iso
-
-
-    def find_iso(image, storages):
-        image = image + '.iso'
-        for storage in storages:
-            stg = conn.storagePoolLookupByName(storage)
-            stg.refresh(0)
-            try:
-                vol = stg.storageVolLookupByName(image)
-            except:
-                vol = None
-        return vol.name()
-
-
-    def set_vnc_passwd():
-        from string import letters, digits
-        from random import choice
-
-        passwd = ''.join([choice(letters + digits) for i in range(12)])
-
-        try:
-            xml = dom.XMLDesc(0)
-            newxml = "<graphics type='vnc' port='-1' autoport='yes' keymap='en-us' passwd='%s'/>" % passwd
-            xmldom = xml.replace("<graphics type='vnc' port='-1' autoport='yes' keymap='en-us'/>", newxml)
-            conn.defineXML(xmldom)
-            vnc_pass = Vm(host_id=host_id, vname=vname, vnc_passwd=passwd)
-            vnc_pass.save()
-        except libvirtError as e:
-            return e.message
-
     host = Host.objects.get(id=host_id)
     conn = libvirt_func.libvirt_conn(host)
 
@@ -82,7 +41,7 @@ def vds(request, host_id, vname):
 
         storages = libvirt_func.storages_get_node(conn)
         hdd_image = libvirt_func.vds_get_hdd(conn, dom, storages)
-        iso_images = sorted(find_all_iso(storages))
+        iso_images = sorted(libvirt_func.find_all_iso(conn, storages))
         media = libvirt_func.vds_get_media(conn, dom)
 
         errors = []
@@ -121,16 +80,11 @@ def vds(request, host_id, vname):
                     errors.append(msg_error.message)
             if 'delete' in request.POST:
                 try:
-                    xml = dom.XMLDesc(0)
                     if dom.info()[0] == 1:
                         dom.destroy()
                     dom.undefine()
                     if request.POST.get('image', ''):
-                        import virtinst.util as util
-
-                        img = util.get_xml_path(xml, "/domain/devices/disk[1]/source/@file")
-                        vol = conn.storageVolLookupByPath(img)
-                        vol.delete(0)
+                        libvirt_func.vds_remove_hdd(conn, dom)
                     try:
                         vm = Vm.objects.get(host=host_id, vname=vname)
                         vm.delete()
@@ -141,17 +95,10 @@ def vds(request, host_id, vname):
                     errors.append(msg_error.message)
             if 'snapshot' in request.POST:
                 try:
-                    import time
-                    xml = """<domainsnapshot>\n
-                                 <name>%d</name>\n
-                                 <state>shutoff</state>\n
-                                 <creationTime>%d</creationTime>\n""" % (time.time(), time.time())
-                    xml += dom.XMLDesc(0)
-                    xml += """<active>0</active>\n
-                              </domainsnapshot>"""
-                    dom.snapshotCreateXML(xml, 0)
+                    libvirt_func.vds_create_snapshot(dom)
                     messages = []
-                    messages.append('Create snapshot for instance successful')
+                    msg = _("Create snapshot for instance successful")
+                    messages.append(msg)
                 except libvirtError as msg_error:
                     errors.append(msg_error.message)
             if 'remove_iso' in request.POST:
@@ -163,7 +110,16 @@ def vds(request, host_id, vname):
                 libvirt_func.vds_mount_iso(conn, dom, image, storages)
                 return HttpResponseRedirect(request.get_full_path())
             if 'vnc_pass' in request.POST:
-                set_vnc_passwd()
+                from string import letters, digits
+                from random import choice
+
+                passwd = ''.join([choice(letters + digits) for i in range(12)])
+                try:
+                    libvirt_func.vds_set_vnc_passwd(conn, dom, passwd)
+                    vnc_pass = Vm(host_id=host_id, vname=vname, vnc_passwd=passwd)
+                    vnc_pass.save()
+                except libvirtError as msg_error:
+                    errors.append(msg_error.message)
                 return HttpResponseRedirect(request.get_full_path())
 
         conn.close()
