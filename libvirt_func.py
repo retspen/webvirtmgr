@@ -5,6 +5,8 @@ from libvirt import libvirtError
 import virtinst.util as util
 from network.IPy import IP
 import re
+import time
+from datetime import datetime
 
 
 def libvirt_conn(host):
@@ -51,7 +53,6 @@ def hard_accel_node(conn):
 
     """
 
-    import re
     xml = conn.getCapabilities()
     kvm = re.search('kvm', xml)
     if kvm:
@@ -169,8 +170,6 @@ def cpu_get_usage(conn):
 
     """
 
-    import time
-
     try:
         prev_idle = 0
         prev_total = 0
@@ -252,7 +251,6 @@ def images_get_storages(conn, storages):
 
     """
 
-    import re
     disk = []
     for storage in storages:
         stg = conn.storagePoolLookupByName(storage)
@@ -460,7 +458,6 @@ def snapshots_get_vds(dom):
 
     """
 
-    from datetime import datetime
     try:
         snapshots = {}
         all_snapshot = dom.snapshotListNames(0)
@@ -577,7 +574,6 @@ def vds_cpu_usage(conn, dom):
 
     """
 
-    import time
     try:
         nbcore = conn.getInfo()[2]
         cpu_use_ago = dom.info()[4]
