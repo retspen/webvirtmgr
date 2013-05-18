@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from dashboard.models import Host
-from libvirt_func import libvirt_conn
+import libvirt_func
 
 
 def index(request):
@@ -146,20 +146,19 @@ def clusters(request):
 
     def vds_on_host():
         import virtinst.util as util
-        import libvirt
         host_mem = conn.getInfo()[1] * 1048576
         try:
             vname = {}
-            for id in conn.listDomainsID():
-                id = int(id)
+            for vm_id in conn.listDomainsID():
+                vm_id = int(vm_id)
                 dom = conn.lookupByID(id)
                 mem = util.get_xml_path(dom.XMLDesc(0), "/domain/memory")
                 mem = int(mem) * 1024
                 mem_usage = (mem * 100) / host_mem
                 vcpu = util.get_xml_path(dom.XMLDesc(0), "/domain/vcpu")
                 vname[dom.name()] = (dom.info()[0], vcpu, mem, mem_usage)
-            for id in conn.listDefinedDomains():
-                dom = conn.lookupByName(id)
+            for vm in conn.listDefinedDomains():
+                dom = conn.lookupByName(vn)
                 mem = util.get_xml_path(dom.XMLDesc(0), "/domain/memory")
                 mem = int(mem) * 1024
                 mem_usage = (mem * 100) / host_mem
@@ -188,7 +187,7 @@ def clusters(request):
             status = 2
 
         if status == 1:
-            conn = libvirt_conn(host)
+            conn = libvirt_func.libvirt_conn(host)
             host_info = get_host_info(conn)
             host_mem = get_mem_usage(conn)
             hosts_vms[host.id, host.hostname, status, host_info[2], host_mem[0], host_mem[2]] = vds_on_host()

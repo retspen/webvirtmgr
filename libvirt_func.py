@@ -4,6 +4,7 @@ import libvirt
 from libvirt import libvirtError
 import virtinst.util as util
 from network.IPy import IP
+import re
 
 
 def libvirt_conn(host):
@@ -331,7 +332,7 @@ def new_storage_pool(conn, type_pool, name, source, target):
     conn.storagePoolDefineXML(xml, 0)
 
 
-def volume_get_info(storage):
+def volumes_get_info(storage):
     """
 
     Function return volume info.
@@ -508,3 +509,182 @@ def vnc_get_port(conn, vname):
     dom = conn.lookupByName(vname)
     port = util.get_xml_path(dom.XMLDesc(0), "/domain/devices/graphics/@port")
     return port
+
+
+def vds_mount_iso(conn, dom, image, storages):
+    """
+
+    Function mount iso image on vds. Changes on XML config.
+
+    """
+
+    image = image + '.iso'
+    for storage in storages:
+        stg = conn.storagePoolLookupByName(storage)
+        for img in stg.listVolumes():
+            if image == img:
+                if dom.info()[0] == 1:
+                    vol = stg.storageVolLookupByName(image)
+                    xml = """<disk type='file' device='cdrom'>
+                                <driver name='qemu' type='raw'/>
+                                <target dev='hdc' bus='ide'/>
+                                <source file='%s'/>
+                                <readonly/>
+                             </disk>""" % vol.path()
+                    dom.attachDevice(xml)
+                    xmldom = dom.XMLDesc(0)
+                    conn.defineXML(xmldom)
+                if dom.info()[0] == 5:
+                    vol = stg.storageVolLookupByName(image)
+                    xml = dom.XMLDesc(0)
+                    newxml = "<disk type='file' device='cdrom'>\n      <driver name='qemu' type='raw'/>\n      <source file='%s'/>" % vol.path()
+                    xmldom = xml.replace("<disk type='file' device='cdrom'>\n      <driver name='qemu' type='raw'/>", newxml)
+                    conn.defineXML(xmldom)
+
+
+def vds_umount_iso(conn, dom, image, storages):
+    """
+
+    Function umount iso image on vds. Changes on XML config.
+
+    """
+
+    image = image + '.iso'
+    if dom.info()[0] == 1:
+        xml = """<disk type='file' device='cdrom'>
+                     <driver name="qemu" type='raw'/>
+                     <target dev='hdc' bus='ide'/>
+                     <readonly/>
+                  </disk>"""
+        dom.attachDevice(xml)
+        xmldom = dom.XMLDesc(0)
+        conn.defineXML(xmldom)
+    if dom.info()[0] == 5:
+        for storage in storages:
+            stg = conn.storagePoolLookupByName(storage)
+            for img in stg.listVolumes():
+                if image == img:
+                    vol = stg.storageVolLookupByName(image)
+                    xml = dom.XMLDesc(0)
+                    xmldom = xml.replace("<source file='%s'/>\n" % vol.path(), '')
+                    conn.defineXML(xmldom)
+
+
+def vds_cpu_usage(conn, dom):
+    """
+
+    Function return vds cpu usage.
+
+    """
+
+    import time
+    try:
+        nbcore = conn.getInfo()[2]
+        cpu_use_ago = dom.info()[4]
+        time.sleep(1)
+        cpu_use_now = dom.info()[4]
+        diff_usage = cpu_use_now - cpu_use_ago
+        cpu_usage = 100 * diff_usage / (1 * nbcore * 10**9L)
+        return cpu_usage
+    except libvirtError as e:
+        return e.message
+
+
+def vds_memory_usage(conn, dom):
+    """
+
+    Function return vds memory usage.
+
+    """
+
+    try:
+        allmem = conn.getInfo()[1] * 1048576
+        dom_mem = dom.info()[1] * 1024
+        percent = (dom_mem * 100) / allmem
+        return allmem, percent
+    except libvirtError as e:
+        return e.message
+
+
+def vds_get_info(dom):
+    """
+
+    Function return vds info.
+
+    """
+
+    info = []
+    xml = dom.XMLDesc(0)
+    info.append(util.get_xml_path(xml, "/domain/vcpu"))
+    mem = util.get_xml_path(xml, "/domain/memory")
+    mem = int(mem) / 1024
+    info.append(int(mem))
+    info.append(util.get_xml_path(xml, "/domain/devices/interface/mac/@address"))
+    nic = util.get_xml_path(xml, "/domain/devices/interface/source/@network")
+    if nic is None:
+        nic = util.get_xml_path(xml, "/domain/devices/interface/source/@bridge")
+    info.append(nic)
+    return info
+
+
+def vds_get_hdd(conn, dom, storages):
+    """
+
+    Function return vds hdd info.
+
+    """
+
+    xml = dom.XMLDesc(0)
+    hdd = util.get_xml_path(xml, "/domain/devices/disk[1]/source/@file")
+
+    # If xml create custom
+    if not hdd:
+        hdd = util.get_xml_path(xml, "/domain/devices/disk[1]/source/@dev")
+    try:
+        img = conn.storageVolLookupByPath(hdd)
+        img_vol = img.name()
+
+        for storage in storages:
+            stg = conn.storagePoolLookupByName(storage)
+            stg.refresh(0)
+            for img in stg.listVolumes():
+                if img == img_vol:
+                    vol = img
+                    vol_stg = storage
+
+        return vol, vol_stg
+    except:
+        return hdd, 'Not in the pool'
+
+
+def vds_get_media(conn, dom):
+    """
+
+    Function return vds media info.
+
+    """
+
+    xml = dom.XMLDesc(0)
+    media = util.get_xml_path(xml, "/domain/devices/disk[2]/source/@file")
+    if media:
+        vol = conn.storageVolLookupByPath(media)
+        img = re.sub('.iso', '', vol.name())
+        return img
+    else:
+        return None
+
+
+def vds_get_uptime(dom):
+    """
+
+    Function return vds uptime info.
+
+    """
+
+    if dom.info()[0] == 1:
+        nanosec = dom.info()[4]
+        minutes = nanosec * 1.66666666666667E-11
+        minutes = round(minutes, 0)
+        return minutes
+    else:
+        return 'None'

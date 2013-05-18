@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from dashboard.models import Host
-from libvirt_func import libvirt_conn, vds_get_node, snapshots_get_node, snapshots_get_vds, snapshot_delete, snapshot_revert
+import libvirt_func
 
 
 def snapshot(request, host_id):
@@ -15,18 +15,17 @@ def snapshot(request, host_id):
 
     """
 
-
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
     host = Host.objects.get(id=host_id)
-    conn = libvirt_conn(host)
+    conn = libvirt_func.libvirt_conn(host)
 
     if type(conn) == dict:
         return HttpResponseRedirect('/overview/%s/' % host_id)
     else:
-        all_vm = vds_get_node(conn)
-        all_vm_snap = snapshots_get_node(conn)
+        all_vm = libvirt_func.vds_get_node(conn)
+        all_vm_snap = libvirt_func.snapshots_get_node(conn)
 
         conn.close()
 
@@ -47,24 +46,24 @@ def dom_snapshot(request, host_id, vname):
         return HttpResponseRedirect('/login')
 
     host = Host.objects.get(id=host_id)
-    conn = libvirt_conn(host)
+    conn = libvirt_func.libvirt_conn(host)
 
     if type(conn) == dict:
         return HttpResponseRedirect('/overview/%s/' % host_id)
     else:
         dom = conn.lookupByName(vname)
-        all_vm = vds_get_node(conn)
-        all_vm_snap = snapshots_get_node(conn)
-        vm_snapshot = snapshots_get_vds(dom)
+        all_vm = libvirt_func.vds_get_node(conn)
+        all_vm_snap = libvirt_func.snapshots_get_node(conn)
+        vm_snapshot = libvirt_func.snapshots_get_vds(dom)
 
         if request.method == 'POST':
             if 'delete' in request.POST:
                 snap_name = request.POST.get('name', '')
-                snapshot_delete(vname, snap_name)
+                libvirt_func.snapshot_delete(vname, snap_name)
                 return HttpResponseRedirect('/snapshot/%s/%s/' % (host_id, vname))
             if 'revert' in request.POST:
                 snap_name = request.POST.get('name', '')
-                snapshot_revert(vname, snap_name)
+                libvirt_func.snapshot_revert(vname, snap_name)
                 message = _("Successful revert snapshot: ")
                 message = message + name
 

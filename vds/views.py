@@ -4,14 +4,14 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
-from dashboard.models import Host
-from libvirt_func import libvirt_conn, vds_get_node, storages_get_node
+from dashboard.models import Host, Vm
+import libvirt_func
 
 
 def vds(request, host_id, vname):
     """
 
-    VM's block
+    VDS block
 
     """
 
@@ -32,50 +32,6 @@ def vds(request, host_id, vname):
                     iso.append(img)
         return iso
 
-    def add_iso(image, storages):
-        image = image + '.iso'
-        for storage in storages:
-            stg = conn.storagePoolLookupByName(storage)
-            for img in stg.listVolumes():
-                if image == img:
-                    if dom.info()[0] == 1:
-                        vol = stg.storageVolLookupByName(image)
-                        xml = """<disk type='file' device='cdrom'>
-                                    <driver name='qemu' type='raw'/>
-                                    <target dev='hdc' bus='ide'/>
-                                    <source file='%s'/>
-                                    <readonly/>
-                                 </disk>""" % vol.path()
-                        dom.attachDevice(xml)
-                        xmldom = dom.XMLDesc(0)
-                        conn.defineXML(xmldom)
-                    if dom.info()[0] == 5:
-                        vol = stg.storageVolLookupByName(image)
-                        xml = dom.XMLDesc(0)
-                        newxml = "<disk type='file' device='cdrom'>\n      <driver name='qemu' type='raw'/>\n      <source file='%s'/>" % vol.path()
-                        xmldom = xml.replace("<disk type='file' device='cdrom'>\n      <driver name='qemu' type='raw'/>", newxml)
-                        conn.defineXML(xmldom)
-
-    def remove_iso(image, storages):
-        image = image + '.iso'
-        if dom.info()[0] == 1:
-            xml = """<disk type='file' device='cdrom'>
-                         <driver name="qemu" type='raw'/>
-                         <target dev='hdc' bus='ide'/>
-                         <readonly/>
-                      </disk>"""
-            dom.attachDevice(xml)
-            xmldom = dom.XMLDesc(0)
-            conn.defineXML(xmldom)
-        if dom.info()[0] == 5:
-            for storage in storages:
-                stg = conn.storagePoolLookupByName(storage)
-                for img in stg.listVolumes():
-                    if image == img:
-                        vol = stg.storageVolLookupByName(image)
-                        xml = dom.XMLDesc(0)
-                        xmldom = xml.replace("<source file='%s'/>\n" % vol.path(), '')
-                        conn.defineXML(xmldom)
 
     def find_iso(image, storages):
         image = image + '.iso'
@@ -88,91 +44,6 @@ def vds(request, host_id, vname):
                 vol = None
         return vol.name()
 
-    def dom_media():
-        import virtinst.util as util
-        import re
-
-        xml = dom.XMLDesc(0)
-        media = util.get_xml_path(xml, "/domain/devices/disk[2]/source/@file")
-        if media:
-            vol = conn.storageVolLookupByPath(media)
-            img = re.sub('.iso', '', vol.name())
-            return img
-        else:
-            return None
-
-    def dom_uptime():
-        if dom.info()[0] == 1:
-            nanosec = dom.info()[4]
-            minutes = nanosec * 1.66666666666667E-11
-            minutes = round(minutes, 0)
-            return minutes
-        else:
-            return 'None'
-
-    def get_dom_info():
-        import virtinst.util as util
-
-        info = []
-
-        xml = dom.XMLDesc(0)
-        info.append(util.get_xml_path(xml, "/domain/vcpu"))
-        mem = util.get_xml_path(xml, "/domain/memory")
-        mem = int(mem) / 1024
-        info.append(int(mem))
-        info.append(util.get_xml_path(xml, "/domain/devices/interface/mac/@address"))
-        nic = util.get_xml_path(xml, "/domain/devices/interface/source/@network")
-        if nic is None:
-            nic = util.get_xml_path(xml, "/domain/devices/interface/source/@bridge")
-        info.append(nic)
-        return info
-
-    def get_dom_hdd(storages):
-        import virtinst.util as util
-
-        xml = dom.XMLDesc(0)
-        hdd = util.get_xml_path(xml, "/domain/devices/disk[1]/source/@file")
-
-        # If xml create custom
-        if not hdd:
-            hdd = util.get_xml_path(xml, "/domain/devices/disk[1]/source/@dev")
-        try:
-            img = conn.storageVolLookupByPath(hdd)
-            img_vol = img.name()
-
-            for storage in storages:
-                stg = conn.storagePoolLookupByName(storage)
-                stg.refresh(0)
-                for img in stg.listVolumes():
-                    if img == img_vol:
-                        vol = img
-                        vol_stg = storage
-
-            return vol, vol_stg
-        except:
-            return hdd, 'Not in the pool'
-
-    def vm_cpu_usage():
-        import time
-        try:
-            nbcore = conn.getInfo()[2]
-            cpu_use_ago = dom.info()[4]
-            time.sleep(1)
-            cpu_use_now = dom.info()[4]
-            diff_usage = cpu_use_now - cpu_use_ago
-            cpu_usage = 100 * diff_usage / (1 * nbcore * 10**9L)
-            return cpu_usage
-        except libvirtError as e:
-            return e.message
-
-    def get_mem_usage():
-        try:
-            allmem = conn.getInfo()[1] * 1048576
-            dom_mem = dom.info()[1] * 1024
-            percent = (dom_mem * 100) / allmem
-            return allmem, percent
-        except libvirtError as e:
-            return e.message
 
     def set_vnc_passwd():
         from string import letters, digits
@@ -191,12 +62,12 @@ def vds(request, host_id, vname):
             return e.message
 
     host = Host.objects.get(id=host_id)
-    conn = libvirt_conn(host)
+    conn = libvirt_func.libvirt_conn(host)
 
     if type(conn) == dict:
         return HttpResponseRedirect('/overview/%s/' % host_id)
     else:
-        all_vm = vds_get_node(conn)
+        all_vm = libvirt_func.vds_get_node(conn)
         dom = conn.lookupByName(vname)
 
         try:
@@ -204,15 +75,15 @@ def vds(request, host_id, vname):
         except:
             vm = None
 
-        dom_info = get_dom_info()
-        dom_uptime = dom_uptime()
-        cpu_usage = vm_cpu_usage()
-        mem_usage = get_mem_usage()
+        dom_info = libvirt_func.vds_get_info(dom)
+        dom_uptime = libvirt_func.vds_get_uptime(dom)
+        cpu_usage = libvirt_func.vds_cpu_usage(conn, dom)
+        mem_usage = libvirt_func.vds_memory_usage(conn, dom)
 
-        storages = storages_get_node(conn)
-        hdd_image = get_dom_hdd(storages)
+        storages = libvirt_func.storages_get_node(conn)
+        hdd_image = libvirt_func.vds_get_hdd(conn, dom, storages)
         iso_images = sorted(find_all_iso(storages))
-        media = dom_media()
+        media = libvirt_func.vds_get_media(conn, dom)
 
         errors = []
 
@@ -285,11 +156,11 @@ def vds(request, host_id, vname):
                     errors.append(msg_error.message)
             if 'remove_iso' in request.POST:
                 image = request.POST.get('iso_img', '')
-                remove_iso(image, storages)
+                libvirt_func.vds_umount_iso(conn, dom, image, storages)
                 return HttpResponseRedirect(request.get_full_path())
             if 'add_iso' in request.POST:
                 image = request.POST.get('iso_img', '')
-                add_iso(image, storages)
+                libvirt_func.vds_mount_iso(conn, dom, image, storages)
                 return HttpResponseRedirect(request.get_full_path())
             if 'vnc_pass' in request.POST:
                 set_vnc_passwd()

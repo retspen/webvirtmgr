@@ -3,9 +3,8 @@
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
-from django.utils.translation import ugettext_lazy as _
 from dashboard.models import Host, Vm
-from libvirt_func import libvirt_conn
+from libvirt_func import libvirt_conn, vnc_get_port
 
 
 def vnc(request, host_id, vname):

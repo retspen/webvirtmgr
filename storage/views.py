@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from dashboard.models import Host
-from libvirt_func import libvirt_conn, vds_get_node, storages_get_node, storage_get_info, new_storage_pool, new_volume, clone_volume, volume_get_info
+import libvirt_func
 
 
 def storage(request, host_id, pool):
@@ -21,13 +21,13 @@ def storage(request, host_id, pool):
         return HttpResponseRedirect('/login')
 
     host = Host.objects.get(id=host_id)
-    conn = libvirt_conn(host)
+    conn = libvirt_func.libvirt_conn(host)
 
     if type(conn) == dict:
         return HttpResponseRedirect('/manage/')
     else:
 
-        storages = storages_get_node(conn)
+        storages = libvirt_func.storages_get_node(conn)
 
         if pool is None:
             if len(storages) == 0:
@@ -70,7 +70,7 @@ def storage(request, host_id, pool):
                         errors.append(msg)
                     if not errors:
                         try:
-                            new_storage_pool(conn, pool_type, pool_name, pool_source, pool_target)
+                            libvirt_func.new_storage_pool(conn, pool_type, pool_name, pool_source, pool_target)
                             stg = conn.storagePoolLookupByName(pool_name)
                             if pool_type == 'logical':
                                 stg.build(0)
@@ -80,16 +80,16 @@ def storage(request, host_id, pool):
                         except libvirtError as error_msg:
                             errors.append(error_msg.message)
         else:
-            all_vm = vds_get_node(conn)
+            all_vm = libvirt_func.vds_get_node(conn)
             form_hdd_size = [10, 20, 40, 80, 160, 320, 640]
             stg = conn.storagePoolLookupByName(pool)
 
-            info = storage_get_info(stg)
+            info = libvirt_func.storage_get_info(stg)
 
             # refresh storage if acitve
             if info[5] == True:
                 stg.refresh(0)
-                volumes_info = volume_get_info(stg)
+                volumes_info = libvirt_func.volumes_get_info(stg)
 
             if request.method == 'POST':
                 if 'start' in request.POST:
@@ -133,7 +133,7 @@ def storage(request, host_id, pool):
                             msg = _("The host name must not contain any special characters")
                             errors.append(msg)
                     if not errors:
-                        new_volume(stg, name, size)
+                        libvirt_func.new_volume(stg, name, size)
                         return HttpResponseRedirect('/storage/%s/%s' % (host_id, pool))
                 if 'delimg' in request.POST:
                     img = request.POST.get('img', '')
@@ -164,7 +164,7 @@ def storage(request, host_id, pool):
                             msg = _("The host name must not contain any special characters")
                             errors.append(msg)
                     if not errors:
-                        clone_volume(stg, img, clone_name)
+                        libvirt_func.clone_volume(stg, img, clone_name)
                         return HttpResponseRedirect('/storage/%s/%s' % (host_id, pool))
 
         conn.close()

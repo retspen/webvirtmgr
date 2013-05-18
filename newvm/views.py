@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from dashboard.models import Host, Flavor, Vm
-from libvirt_func import libvirt_conn, hard_accel_node, vds_get_node, networks_get_node, storages_get_node, images_get_storages, image_get_path, new_volume
+import libvirt_func
 
 
 def newvm(request, host_id):
@@ -118,12 +118,12 @@ def newvm(request, host_id):
         dom.setAutostart(1)
 
     host = Host.objects.get(id=host_id)
-    conn = libvirt_conn(host)
+    conn = libvirt_func.libvirt_conn(host)
 
     if type(conn) == dict:
         return HttpResponseRedirect('/overview/%s/' % host_id)
     else:
-        have_kvm = hard_accel_node(conn)
+        have_kvm = libvirt_func.hard_accel_node(conn)
 
         try:
             flavors = Flavor.objects.filter().order_by('id')
@@ -132,10 +132,10 @@ def newvm(request, host_id):
 
         errors = []
 
-        all_vm = vds_get_node(conn)
-        all_networks = networks_get_node(conn)
-        all_storages = storages_get_node(conn)
-        all_img = images_get_storages(conn, all_storages)
+        all_vm = libvirt_func.vds_get_node(conn)
+        all_networks = libvirt_func.networks_get_node(conn)
+        all_storages = libvirt_func.storages_get_node(conn)
+        all_img = libvirt_func.images_get_storages(conn, all_storages)
 
         if not all_networks:
             msg = _("You haven't defined any virtual networks")
@@ -220,11 +220,11 @@ def newvm(request, host_id):
                             msg = _("First you need to create an image")
                             errors.append(msg)
                         else:
-                            image = image_get_path(conn, img, all_storages)
+                            image = libvirt_func.image_get_path(conn, img, all_storages)
                     else:
                         from libvirt import libvirtError
                         try:
-                            new_volume(stg, vname, hdd_size)
+                            libvirt_func.new_volume(stg, vname, hdd_size)
                         except libvirtError as msg_error:
                             errors.append(msg_error.message)
 

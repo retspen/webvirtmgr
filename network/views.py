@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from dashboard.models import Host
-from libvirt_func import libvirt_conn, vds_get_node, networks_get_node, new_network_pool, network_get_info, network_get_subnet
+import libvirt_func
 
 
 def network(request, host_id, pool):
@@ -21,13 +21,13 @@ def network(request, host_id, pool):
         return HttpResponseRedirect('/login')
 
     host = Host.objects.get(id=host_id)
-    conn = libvirt_conn(host)
+    conn = libvirt_func.libvirt_conn(host)
 
     if type(conn) == dict:
         return HttpResponseRedirect('/overview/%s/' % host_id)
     else:
 
-        networks = networks_get_node(conn)
+        networks = libvirt_func.networks_get_node(conn)
 
         if pool is None:
             if len(networks) == 0:
@@ -91,7 +91,7 @@ def network(request, host_id, pool):
                         errors.append(msg)
                     if not errors:
                         try:
-                            new_network_pool(conn, pool_name, forward, gw, netmask, dhcp)
+                            libvirt_func.new_network_pool(conn, pool_name, forward, gw, netmask, dhcp)
                             net = conn.networkLookupByName(pool_name)
                             net.create()
                             net.setAutostart(1)
@@ -99,13 +99,13 @@ def network(request, host_id, pool):
                         except libvirtError as error_msg:
                             errors.append(error_msg.message)
         else:
-            all_vm = vds_get_node(conn)
+            all_vm = libvirt_func.vds_get_node(conn)
             net = conn.networkLookupByName(pool)
 
-            info = network_get_info(net)
+            info = libvirt_func.network_get_info(net)
 
             if info[0] == True:
-                ipv4_net = network_get_subnet(net)
+                ipv4_net = libvirt_func.network_get_subnet(net)
 
             if request.method == 'POST':
                 if 'start' in request.POST:
