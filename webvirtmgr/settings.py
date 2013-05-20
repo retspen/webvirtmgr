@@ -4,12 +4,12 @@ import os
 import sys
 
 ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.path.join(ROOT_PATH, 'webvirtmgr.db')
+DB_PATH = os.path.join(ROOT_PATH, '..', 'webvirtmgr.db')
 
 if ROOT_PATH not in sys.path:
     sys.path.append(ROOT_PATH)
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (

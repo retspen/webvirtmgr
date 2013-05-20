@@ -92,7 +92,7 @@ Add file webvirtmgr.conf in conf.d directory (Ubuntu: "/etc/apache2/conf.d" or R
 Copy the folder and change owner (Ubuntu: "www-data:www-data", Fedora, Redhat, CentOS: "apache:apache"):
 
     $ sudo cp -r webvirtmgr /var/www/
-    $ sudo chown -R www-data:www-data /var/www/webvirtmgr/
+    $ sudo chown www-data:www-data /var/www/webvirtmgr/webvirtmgr.db
 
 Reload apache:
     
