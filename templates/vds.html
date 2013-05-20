@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}VM's - {{ vname }}{% endblock %}
+{% block title %}{% trans "VM's" %} - {{ vname }}{% endblock %}
 {% block content %}
       <div class="container-fluid">
         <div class="row-fluid">
           {% include 'sidebar.html' %}
           <div class="span9 well">
-            <h2>Virtual Machine</h2>
+            <h2>{% trans "Virtual Machine" %}</h2>
             <hr>
             {% if messages %}
               {% for message in messages %}
@@ -30,79 +30,79 @@
             {% endif %}
             <div class="span9">
               <ul>
-                <li>Action For This Server</li><br>
+                <li>{% trans "Action For This Server" %}</li><br>
                 <form action="" method="post">{% csrf_token %}
                   {% ifequal dom.info.0 5 %}
-                  <a href="#console" role="button" class="btn disabled" style="height:40px;width:60px;"><i class="icon-align-justify"></i><br>Console</a>
+                  <a href="#console" role="button" class="btn disabled" style="height:40px;width:60px;"><i class="icon-align-justify"></i><br>{% trans "Console" %}</a>
                   {% else %}
-                  <a href="#console" role="button" class="btn" data-toggle="modal" style="height:40px;width:60px;" onclick="open_vnc()"><i class="icon-align-justify"></i><br>Console</a>
+                  <a href="#console" role="button" class="btn" data-toggle="modal" style="height:40px;width:60px;" onclick="open_vnc()"><i class="icon-align-justify"></i><br>{% trans "Console" %}</a>
                   {% endifequal %}
                   {% ifequal dom.info.0 5 %}
-                  <button type="submit" class="btn" name="start" value="Start" style="height:50px;width:80px;"><i class="icon-off"></i><br>Start</button>
+                  <button type="submit" class="btn" name="start" value="Start" style="height:50px;width:80px;"><i class="icon-off"></i><br>{% trans "Start" %}</button>
                   {% endifequal %}
                   {% ifequal dom.info.0 1 %}
-                  <a href="#powerModal" role="button" class="btn" data-toggle="modal" style="height:40px;width:60px;"><i class="icon-off"></i><br>Shutdown</a>
+                  <a href="#powerModal" role="button" class="btn" data-toggle="modal" style="height:40px;width:60px;"><i class="icon-off"></i><br>{% trans "Shutdown" %}</a>
                   {% endifequal %}
                   {% ifequal dom.info.0 3 %}
-                  <a href="#" role="button" class="btn disabled" data-toggle="modal" style="height:40px;width:60px;"><i class="icon-off"></i><br>Shutdown</a>
+                  <a href="#" role="button" class="btn disabled" data-toggle="modal" style="height:40px;width:60px;"><i class="icon-off"></i><br>{% trans "Shutdown" %}</a>
                   {% endifequal %}
-                  <a href="#deleteModal" role="button" class="btn" data-toggle="modal" style="height:40px;width:60px;"><i class="icon-remove"></i><br>Delete</a>
+                  <a href="#deleteModal" role="button" class="btn" data-toggle="modal" style="height:40px;width:60px;"><i class="icon-remove"></i><br>{% trans "Delete" %}</a>
                   {% ifequal dom.info.0 3 %}
-                  <button type="submit" name="resume" role="button" class="btn" style="height:50px;width:80px;"><i class="icon-play"></i><br>Resume</button>
-                  <button type="submit" name="snapshot" role="button" class="btn" style="height:50px;width:80px;"><i class="icon-download-alt"></i><br>Snapshot</button>
+                  <button type="submit" name="resume" role="button" class="btn" style="height:50px;width:80px;"><i class="icon-play"></i><br>{% trans "Resume" %}</button>
+                  <button type="submit" name="snapshot" role="button" class="btn" style="height:50px;width:80px;"><i class="icon-download-alt"></i><br>{% trans "Snapshot" %}</button>
                   {% endifequal %}
                   {% ifequal dom.info.0 1 %}
-                  <button type="submit" name="suspend" role="button" class="btn" style="height:50px;width:80px;"><i class="icon-pause"></i><br>Suspend</button>
-                  <a role="button" class="btn disabled" style="height:40px;width:60px;"><i class="icon-download-alt"></i><br>Snapshot</a>
+                  <button type="submit" name="suspend" role="button" class="btn" style="height:50px;width:80px;"><i class="icon-pause"></i><br>{% trans "Suspend" %}</button>
+                  <a role="button" class="btn disabled" style="height:40px;width:60px;"><i class="icon-download-alt"></i><br>{% trans "Snapshot" %}</a>
                   {% endifequal %}
                   {% ifequal dom.info.0 5 %}
-                  <a role="button" class="btn disabled" style="height:40px;width:60px;"><i class="icon-download-alt"></i><br>Suspend</a>
-                  <button type="submit" name="snapshot" role="button" class="btn" style="height:50px;width:80px;"><i class="icon-download-alt"></i><br>Snapshot</button>
+                  <a role="button" class="btn disabled" style="height:40px;width:60px;"><i class="icon-download-alt"></i><br>{% trans "Suspend" %}</a>
+                  <button type="submit" name="snapshot" role="button" class="btn" style="height:50px;width:80px;"><i class="icon-download-alt"></i><br>{% trans "Snapshot" %}</button>
                   {% endifequal %}
                   {% if not vm.vnc_passwd and dom.info.0 == 5 %}
                     <br><br>
-                    <button class="btn" type="submit" name="vnc_pass">Enable noVNC</button>
+                    <button class="btn" type="submit" name="vnc_pass">{% trans "Enable noVNC" %}</button>
                   {% endif %}
                  </form>
                 <hr>
-                <li>Name & Status</li><br>
+                <li>{% trans "Name & Status" %}</li><br>
                 <div class="pagination-centered">
-                  <p><b>Name:</b> {{ vname }}</p>
-                  <p><b>Status:</b> <font color={% ifequal dom.info.0 5 %}"red">Shuttoff{% endifequal %}{% ifequal dom.info.0 1 %}"green">Running{% endifequal %}{% ifequal dom.info.0 3 %}"orange">Suspend{% endifequal %}</font></p>
-                  <p><b>Uptime:</b> {{ dom_uptime }} (Min)</p>
+                  <p><b>{% trans "Name" %}:</b> {{ vname }}</p>
+                  <p><b>{% trans "Status" %}:</b> <font color={% ifequal dom.info.0 5 %}"red">{% trans "Shuttoff" %}{% endifequal %}{% ifequal dom.info.0 1 %}"green">{% trans "Running" %}{% endifequal %}{% ifequal dom.info.0 3 %}"orange">{% trans "Suspend" %}{% endifequal %}</font></p>
+                  <p><b>{% trans "Uptime" %}:</b> {{ dom_uptime }} (Min)</p>
                 </div>
                 <hr>
-                <li>Technical Details</li><br>
+                <li>{% trans "Technical Details" %}</li><br>
                 <div class="pagination-centered">
-                  <p><b>VCPU:</b> {{ dom_info.0 }} (Usage: {{ cpu_usage }}%)</p>
-                  <p><b>RAM:</b> {{ dom_info.1 }} MB (Usage: {{ mem_usage.1 }}%)</p>
-                  <p><b>MAC:</b> {{ dom_info.2 }} ({{ dom_info.3 }})</p>
-                  <p><b>HDD:</b> {{ hdd_image.0 }} ({{ hdd_image.1 }})</p>
+                  <p><b>{% trans "VCPU" %}:</b> {{ dom_info.0 }} ({% trans "Usage" %}: {{ cpu_usage }}%)</p>
+                  <p><b>{% trans "RAM" %}:</b> {{ dom_info.1 }} {% trans "MB" %} ({% trans "Usage" %}: {{ mem_usage.1 }}%)</p>
+                  <p><b>{% trans "MAC" %}:</b> {{ dom_info.2 }} ({{ dom_info.3 }})</p>
+                  <p><b>{% trans "HDD" %}:</b> {{ hdd_image.0 }} ({{ hdd_image.1 }})</p>
                 </div>
                 <hr>
-                <li>Media Details</li><br>
+                <li>{% trans "Media Details" %}</li><br>
                 <div class="pagination-centered">
-                  {% if not media %}{% else %}<b>Connected Image:</b> {{ media }}{% endif %}
+                  {% if not media %}{% else %}<b>{% trans "Connected Image" %}:</b> {{ media }}{% endif %}
                   <form action="" method="post">{% csrf_token %}
                     {% if media %}
                     <br>
                     <input type="hidden" name="iso_img" value="{{ media }}">
-                    <input type="submit" class="btn"  name="remove_iso" value="Disconnect" onclick="return confirm('Are you sure?')">
+                    <input type="submit" class="btn"  name="remove_iso" value="{% trans "Disconnect" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
                     {% else %}
-                    <b>Images:</b> <select name="iso_img" class="input-large">
+                    <b>{% trans "Images" %}:</b> <select name="iso_img" class="input-large">
                     {% if iso_images %}
                       {% for iso in iso_images %}
                         <option value="{{ iso }}">{{ iso }}</option>
                       {% endfor %}
                     {% else %}
-                      <option value="none">None</option>
+                      <option value="none">{% trans "None" %}</option>
                     {% endif %}
                     </select>
                     <br />
                     {% if iso_images %}
-                    <input type="submit" class="btn" name="add_iso" value="Connect">
+                    <input type="submit" class="btn" name="add_iso" value="{% trans "Connect" %}">
                     {% else %}
-                    <a class="btn disabled" name="connect">Connect</a>
+                    <a class="btn disabled" name="connect">{% trans "Connect" %}</a>
                     {% endif %}
                     {% endif %}
                   </form>
@@ -113,26 +113,26 @@
             <div id="powerModal" class="modal hide fade">
               <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h3 id="rebootModalLabel">Power On Server</h3>
+                <h3 id="rebootModalLabel">{% trans "Power On Server" %}</h3>
               </div>
               <div class="modal-body">
-                <p>Shutdown sends ACPI shutdown signal to guest system. Force shutdown is lost immediately.</p>
+                <p>{% trans "Shutdown sends ACPI shutdown signal to guest system. Force shutdown is lost immediately." %}</p>
                 <form class="form-horizontal" action="" method="post">{% csrf_token %}
                   <fieldset>
                     <div class="control-group">
-                    <label class="control-label">Action:</label>
+                    <label class="control-label">{% trans "Action" %}:</label>
                       <div class="controls">
                          <label class="radio">
-                          <input type="radio" name="power" value="shutdown"/>Shutdown</label>
+                          <input type="radio" name="power" value="shutdown"/>{% trans "Shutdown" %}</label>
                          <label class="radio">
-                          <input type="radio" name="power" value="destroy"/>Force Shutdown</label>
+                          <input type="radio" name="power" value="destroy"/>{% trans "Force Shutdown" %}</label>
                       </div>
                     </div>
                   </fieldset>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn" data-dismiss="modal">Cancel</button>
-                    <input class="btn btn-primary" type="submit" value="Send">
+                    <button class="btn" data-dismiss="modal">{% trans "Cancel" %}</button>
+                    <input class="btn btn-primary" type="submit" value="{% trans "Send" %}">
                   </form>
                 </div>
             </div> <!-- /powerModal -->
@@ -140,12 +140,12 @@
             <div id="deleteModal" class="modal hide fade">
               <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h3 id="deleteModalLabel">Undefined Server</h3>
+                <h3 id="deleteModalLabel">{% trans "Undefined Server" %}</h3>
               </div>
               <div class="modal-body">
                 <form class="form-horizontal" action="" method="post">{% csrf_token %}
                   <fieldset>
-                    <p>Delete HDD image?</p>
+                    <p>{% trans "Delete HDD image?" %}</p>
                     <div class="control-group">
                       <label class="checkbox">
                         <input type="checkbox" name="image" value="{{ hdd_image.0 }}"> {{ hdd_image.0 }}
@@ -154,8 +154,8 @@
                   </fieldset>
               </div>
               <div class="modal-footer">
-                  <button class="btn" data-dismiss="modal">Cancel</button>
-                  <input class="btn btn-danger" type="submit" name="delete" value="Delete">
+                  <button class="btn" data-dismiss="modal">{% trans "Cancel" %}</button>
+                  <input class="btn btn-danger" type="submit" name="delete" value="{% trans "Delete" %}">
                 </form>
               </div>
             </div> <!-- /deleteModal -->

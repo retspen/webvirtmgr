@@ -1,3 +1,4 @@
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -38,11 +39,11 @@
           <ul class="nav pull-right">
             {% if request.user.is_authenticated or user.is_authenticated %}
             <li class="">
-              <a href="/logout"><b>Sign out</b></a>
+              <a href="/logout"><b>{% trans "Sign out" %}</b></a>
             </li>
             {% else %}
             <li class="">
-              <a href="/login"><b>Sign in</b></a>
+              <a href="/login"><b>{% trans "Sign in" %}</b></a>
             </li>
             {% endif %}
           </ul>

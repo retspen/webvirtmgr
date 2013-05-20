@@ -1,8 +1,9 @@
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Sign in</title>
+    <title>{% trans "Sign in" %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
 
@@ -78,11 +79,11 @@
           <ul class="nav pull-right">
             {% if request.user.is_authenticated or user.is_authenticated %}
             <li class="">
-              <a href="/logout"><b>Sign out</b></a>
+              <a href="/logout"><b>{% trans "Sign out" %}</b></a>
             </li>
             {% else %}
             <li class="">
-              <a href="/login"><b>Sign in</b></a>
+              <a href="/login"><b>{% trans "Sign in" %}</b></a>
             </li>
             {% endif %}
           </ul>
@@ -100,7 +101,7 @@
           </div>
           {% endif %}
           <div class="control-group">
-            <label class="control-label" for="username">Username</label>
+            <label class="control-label" for="username">{% trans "Username" %}</label>
             <div class="controls">
               <input class="input-xlarge" id="id_username" type="text" name="username" maxlength="30" tabindex="1">
             </div>
@@ -112,7 +113,7 @@
             {% endif %}
           </div>
           <div class="control-group">
-            <label class="control-label" for="password">Password</label>
+            <label class="control-label" for="password">{% trans "Password" %}</label>
             <div class="controls">
               <input class="input-xlarge" type="password" name="password" id="id_password" tabindex="2">
               <input name="next" id="next" type="hidden" value="/dashboard/">
@@ -126,7 +127,7 @@
           </div>
         </fieldset>
         <div>
-          <button type="submit" class="btn btn-success btn-large">Sign In</button>
+          <button type="submit" class="btn btn-success btn-large">{% trans "Sign In" %}</button>
         </div>
       </form>
     </div> <!-- /container-narrow -->

@@ -17,7 +17,7 @@
       <table border=0 width="100%">
         <tr>
           <td>
-            <div id="noVNC_status">Loading</div>
+            <div id="noVNC_status">{% trans "Loading..." %}</div>
           </td>
           <td width="1%">
             <div id="noVNC_buttons">
@@ -28,7 +28,7 @@
       </table>
         </div>
         <canvas id="noVNC_canvas" width="640px" height="20px">
-          Canvas not supported.
+          {% trans "Canvas not supported." %}
         </canvas>
     </div>
 
@@ -143,7 +143,7 @@
       <param name="SSHHOST" value="{{ host.ipaddr }}">
       <param name="HOST" value="localhost">
       <param name="PORT" value="{{ vnc_port }}">
-      Sorry, the VNC Applet could not be started. Please make sure that Java 1.4.2 (or later) is installed and active in your browser (<a href="http://java.sun.com/getjava">Click here to install Java now</a>)
+      {% trans "Sorry, the VNC Applet could not be started. Please make sure that Java 1.4.2 (or later) is installed and active in your browser (<a href='http://java.sun.com/getjava'>Click here to install Java now</a>)" %}
     </applet>
   </div>
 {% endif %}

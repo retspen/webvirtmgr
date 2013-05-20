@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}Overview{% endblock %}
+{% block title %}{% trans "Overview" %}{% endblock %}
 {% block content %}
       <div class="container-fluid">
         <div class="row-fluid">
           {% include 'sidebar.html' %}
           <div class="span9 well">
-            <h2>Overview</h2>
+            <h2>{% trans "Overview" %]</h2>
             <hr>
             {% if errors %}
               {% for error in errors %}
@@ -20,13 +20,13 @@
             {% endif %}
             <div class="row-fluid">
               <div class="span5">
-                <p>Hostname</p>
-                <p>Architecture</p>
-                <p>Processor(s)</p>
-                <p>CPU utilization</p>
-                <p>Memory ({{ mem_usage.1|filesizeformat }} / {{ mem_usage.0|filesizeformat }})</p>
-                <p>Type connection</p>
-                <p>Libvirt version</p>
+                <p>{% trans "Hostname" %}</p>
+                <p>{% trans "Architecture" %}</p>
+                <p>{% trans "Processor(s)" %}</p>
+                <p>{% trans "CPU utilization" %}</p>
+                <p>{% trans "Memory" %} ({{ mem_usage.1|filesizeformat }} / {{ mem_usage.0|filesizeformat }})</p>
+                <p>{% trans "Type connection" %}</p>
+                <p>{% trans "Libvirt version" %}</p>
               </div>
               <div class="span6">
                 <p><strong>{{ host_info.0 }}</strong></p>
@@ -39,16 +39,16 @@
                 <p>{{ sys_info }}</p>
               </div>
             </div>
-            <h2>Virtual Machines</h2>
+            <h2>{% trans "Virtual Machines" %}</h2>
             <hr>
             {% if all_vm %}
             <table class="table">
               <thead>
                 <tr>
                   <th style="width:20px;">#</th>
-                  <th>Name</th>
-                  <th>Status</th>
-                  <th style="width:220px;">Action</th>
+                  <th>{% trans "Name" %}</th>
+                  <th>{% trans "Status" %}</th>
+                  <th style="width:220px;">{% trans "Action" %}</th>
                 </tr>
               </thead>
               <tbody>
@@ -56,33 +56,33 @@
               <tr>
                 <td>{{ forloop.counter }}</td>
                 <td><a href="/vds/{{ host_id }}/{{ vm }}/"><i class="icon-th-large"></i> {{ vm }}</a></td>
-                <td>{% ifequal status 1 %}<font color="green">Running</font>{% endifequal %}
-                    {% ifequal status 5 %}<font color="red">Shutoff</font>{% endifequal %}
-                    {% ifequal status 3 %}<font color="orange">Suspend</font>{% endifequal %}
+                <td>{% ifequal status 1 %}<font color="green">{% trans "Running" %}</font>{% endifequal %}
+                    {% ifequal status 5 %}<font color="red">{% trans "Shutoff" %}</font>{% endifequal %}
+                    {% ifequal status 3 %}<font color="orange">{% trans "Suspend" %}</font>{% endifequal %}
                 </td>
                 <td>
                   <form action="" method="post" style="height:5px;">{% csrf_token %}
                     <input type="hidden" name="vname" value="{{ vm }}" />
                     {% ifequal status 5 %}
                     <button class="btn" type="submit" name="start" title="Start"><i class="icon-play"></i></button>
-                    <button class="btn disabled" title="Pause"><i class="icon-pause"></i></button>
-                    <button class="btn disabled" title="Shutdown"><i class="icon-off"></i></button>
-                    <button class="btn disabled" title="Force Shutdown"><i class="icon-stop"></i></button>
-                    <button class="btn disabled" title="VNC"><i class="icon-eye-open"></i></button>
+                    <button class="btn disabled" title="{% trans "Pause" %}"><i class="icon-pause"></i></button>
+                    <button class="btn disabled" title="{% trans "Shutdown" %}"><i class="icon-off"></i></button>
+                    <button class="btn disabled" title="{% trans "Force Shutdown" %}"><i class="icon-stop"></i></button>
+                    <button class="btn disabled" title="{% trans "VNC" %}"><i class="icon-eye-open"></i></button>
                     {% endifequal %}
                     {% ifequal status 3 %}
-                    <button class="btn" type="submit" name="resume" title="Resume"><i class="icon-play"></i></button>
-                    <button class="btn disabled" title="Pause"><i class="icon-pause"></i></button>
-                    <button class="btn disabled" title="Shutdown"><i class="icon-off"></i></button>
-                    <button class="btn disabled" title="Force Shutdown"><i class="icon-stop"></i></button>
-                    <button class="btn disabled" title="VNC"><i class="icon-eye-open"></i></button>
+                    <button class="btn" type="submit" name="resume" title="{% trans "Resume" %}"><i class="icon-play"></i></button>
+                    <button class="btn disabled" title="{% trans "Pause" %}"><i class="icon-pause"></i></button>
+                    <button class="btn disabled" title="{% trans "Shutdown" %}"><i class="icon-off"></i></button>
+                    <button class="btn disabled" title="{% trans "Force Shutdown" %}"><i class="icon-stop"></i></button>
+                    <button class="btn disabled" title="{% trans "VNC" %}"><i class="icon-eye-open"></i></button>
                     {% endifequal %}
                     {% ifequal status 1 %}
-                    <button class="btn disabled"><i class="icon-play" title="Start"></i></button>
-                    <button class="btn" type="submit" name="suspend" title="Pause"><i class="icon-pause"></i></button>
-                    <button class="btn" type="submit" name="shutdown" title="Shutdown"><i class="icon-off"></i></button>
-                    <button class="btn" type="submit" name="destroy" title="Force Shutdown" onclick="return confirm('Are you sure?')"><i class="icon-stop"></i></button>
-                    <button class="btn" onclick="open_vnc_{{ vm }}()" title="VNC"><i class="icon-eye-open"></i></button>
+                    <button class="btn disabled"><i class="icon-play" title="{% trans "Start" %}"></i></button>
+                    <button class="btn" type="submit" name="suspend" title="{% trans "Pause" %}"><i class="icon-pause"></i></button>
+                    <button class="btn" type="submit" name="shutdown" title="{% trans "Shutdown" %}"><i class="icon-off"></i></button>
+                    <button class="btn" type="submit" name="destroy" title="{% trans "Force Shutdown" %}" onclick="return confirm('Are you sure?')"><i class="icon-stop"></i></button>
+                    <button class="btn" onclick="open_vnc_{{ vm }}()" title="{% trans "VNC" %}"><i class="icon-eye-open"></i></button>
                     {% endifequal %}
                   </form>
                   <script>
@@ -95,7 +95,7 @@
             </table>
             {% else %}
             <div class="well pagination-centered">
-              <h4>You doesn’t have any Virtual Machines</h4>
+              <h4>{% trans "You doesn’t have any Virtual Machines" %}</h4>
             </div>
             {% endif %}
           </div><!--/span-->

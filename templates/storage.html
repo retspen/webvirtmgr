@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}Storage Pool{% endblock title %}
+{% block title %}{% trans "Storage Pool" %}{% endblock title %}
 {% block content %}
       <div class="container-fluid">
         <div class="row-fluid">
           {% include 'sidebar.html' %}
           <div class="span9 well">
-            <h2>Storage Pool</h2>
+            <h2>{% trans "Storage Pool" %}</h2>
             <hr>
             <div class="row-fluid">
-              <a href="#poolModal" class="btn btn-success" data-toggle="modal">Add Pool</a><br><br>
+              <a href="#poolModal" class="btn btn-success" data-toggle="modal">{% trans "Add Pool" %}</a><br><br>
             </div>
             {% if errors %}
               {% for error in errors %}
@@ -24,7 +24,7 @@
             {% ifequal pool 'add' %}
               {% if not errors %}
               <div class="well pagination-centered">
-                <h4>You doesn’t have any storages</h4>
+                <h4>{% trans "You doesn’t have any storages" %}</h4>
               </div>
               {% endif %}
             {% endifequal %}
@@ -32,43 +32,43 @@
             {% if info %}
             <div class="row-fluid">
               <div class="span5">
-                <p>Pool name</p>
-                <p>Pool type</p>
-                <p>Pool path</p>
-                <p>Size ({{ info.1|filesizeformat }} / {{ info.2|filesizeformat }})</p>
-                <p>State</p>
+                <p>{% trans "Pool name" %}</p>
+                <p>{% trans "Pool type" %}</p>
+                <p>{% trans "Pool path" %}</p>
+                <p>{% trans "Size" %} ({{ info.1|filesizeformat }} / {{ info.2|filesizeformat }})</p>
+                <p>{% trans "State" %}</p>
               </div>
               <div class="span7">
                 <p>[{% for key, value in storages.items %} {% ifequal key pool %}<b>{{ pool }}</b>{% else %}<a href="/storage/{{ host_id }}/{{ key }}">{{ key }}</a>{% endifequal %}{% endfor %} ]</p>
-                <p>{% if not info.6 %}None{% else %}{{ info.6 }}{% endif %}</p>
-                <p>{% if not info.7 %}None{% else %}{{ info.7 }}{% endif %}</p>
-                <p>Usage: {{ info.4 }}%</p>
+                <p>{% if not info.6 %}{% trans "None" %}{% else %}{{ info.6 }}{% endif %}</p>
+                <p>{% if not info.7 %}{% trans "None" %}{% else %}{{ info.7 }}{% endif %}</p>
+                <p>{% trans "Usage" %}: {{ info.4 }}%</p>
                 <form action="/storage/{{ host_id }}/{{ pool }}/" method="post" style="height:10px;">{% csrf_token %}
                   {% ifequal info.5 0 %}
-                  <input type="submit" class="btn btn-primary" name="start" value="Start">
-                  <input type="submit" class="btn btn-danger" name="delete" value="Delete" onclick="return confirm('Are you sure?')">
+                  <input type="submit" class="btn btn-primary" name="start" value="{% trans "Start" %}">
+                  <input type="submit" class="btn btn-danger" name="delete" value="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
                   {% else %}
-                  <input type="submit" class="btn btn-primary" name="stop" value="Stop" onclick="return confirm('Are you sure?')">
+                  <input type="submit" class="btn btn-primary" name="stop" value="{% trans "Stop" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
                   {% endifequal %}
                 </form>
               </div>
             </div>
             {% endif %}            
             {% if info %}
-            <h3>Volumes</h3>
+            <h3>{% trans "Volumes" %}</h3>
             <hr>
             {% ifnotequal info.5 0 %}
-            <a href="#imgModal" class="btn btn-success" data-toggle="modal">Add Image</a><br><br>
+            <a href="#imgModal" class="btn btn-success" data-toggle="modal">{% trans "Add Image" %}</a><br><br>
             {% endifnotequal %}
             {% if volumes_info %}
             <table class="table table-striped table-bordered">
               <thead>
                 <tr>
                   <th style="width:20px;">#</th>
-                  <th>Name</th>
-                  <th style="width:30px;">Size</th>
-                  <th style="width:30px;">Format</th>
-                  <th colspan="2">Action</th>
+                  <th>{% trans "Name" %}</th>
+                  <th style="width:30px;">{% trans "Size" %}</th>
+                  <th style="width:30px;">{% trans "Format" %}</th>
+                  <th colspan="2">{% trans "Action" %}</th>
                 </tr>
               </thead>
               <tbody>
@@ -82,36 +82,36 @@
                 <div id="cloneModal{{ forloop.counter }}" class="modal hide fade">
                   <div class="modal-header">
                     <button class="close" data-dismiss="modal">&times;</button>
-                    <h3>Clone image <font color="red">{{ key }}</font></h3>
+                    <h3>{% trans "Clone image" %} <font color="red">{{ key }}</font></h3>
                   </div>
                   <div class="modal-body">
                     <form class="form-horizontal" action="/storage/{{ host_id }}/{{ pool }}/" method="post">{% csrf_token %}
                       <fieldset><br />
                         <div class="control-group">
-                        <label class="control-label">Name</label>
+                        <label class="control-label">{% trans "Name" %}</label>
                           <div class="controls">
-                            <input type="text" class="input-large" name="new_img" placeholder="Name">
+                            <input type="text" class="input-large" name="new_img" placeholder="{% trans "Name" %}">
                             <input type="hidden" class="input-large" name="img" value="{{ key }}">.img
                           </div> 
                          </div> 
                       </fieldset>
                       </div>
                       <div class="modal-footer">
-                        <a href="#" class="btn" data-dismiss="modal">Cancel</a>
-                        <input type="submit" class="btn btn-primary" name="clone" value="Clone">
+                        <a href="#" class="btn" data-dismiss="modal">{% trans "Cancel" %}</a>
+                        <input type="submit" class="btn btn-primary" name="clone" value="{% trans "Clone" %}">
                         </form>
                       </div>
                     </div>
                     {% ifnotequal value.1 "iso" %}
-                    <a data-toggle="modal" href="#cloneModal{{ forloop.counter }}" class="btn btn-primary">Clone</a>
+                    <a data-toggle="modal" href="#cloneModal{{ forloop.counter }}" class="btn btn-primary">{% trans "Clone" %}</a>
                     {% else %}
-                    <a class="btn btn-primary disabled">Clone</a>
+                    <a class="btn btn-primary disabled">{% trans "Clone" %}</a>
                     {% endifnotequal %}
                 </td> 
                 <td style="width:30px;">
                   <form action="/storage/{{ host_id }}/{{ pool }}/" method="post" style="height:10px;">{% csrf_token %}
                     <input type="hidden" name="img" value="{{ key }}">
-                    <input type="submit" class="btn btn-danger" name="delimg" value="Delete" onclick="return confirm('Are you sure?')">
+                    <input type="submit" class="btn btn-danger" name="delimg" value="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
                   </form>
                 </td>
               </tr>
@@ -120,7 +120,7 @@
             </table>
             {% else %}
             <div class="well pagination-centered">
-              <h4>You doesn’t have any volumes or storage pool not active</h4>
+              <h4>{% trans "You doesn’t have any volumes or storage pool not active" %}</h4>
             </div>
             {% endif %}
           {% endif %}
@@ -131,14 +131,14 @@
     <div id="poolModal" class="modal hide fade">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h3 id="poolModalLabel">Add New Storage Pool</h3>
+        <h3 id="poolModalLabel">{% trans "Add New Storage Pool" %}</h3>
       </div>
       <div class="tabbable">
         <ul class="nav nav-tabs">
           <li class="active">
-            <a href="#1" data-toggle="tab">dir</a>
+            <a href="#1" data-toggle="tab">{% trans "dir" %}</a>
           </li>
-          <li><a href="#2" data-toggle="tab">lvm</a></li>
+          <li><a href="#2" data-toggle="tab">{% trans "lvm" %}</a></li>
         </ul>
       </div>
         <div class="tab-content">
@@ -147,20 +147,20 @@
               <form class="form-horizontal" action="/storage/{{ host_id }}/add/" method="post">{% csrf_token %}
                 <fieldset><br />
                   <div class="control-group">
-                    <label class="control-label">Type</label>
+                    <label class="control-label">{% trans "Type" %}</label>
                     <div class="controls">
                       <input type="text" name="type" value="dir" disabled>
                       <input type="hidden" name="type" value="dir">
                     </div>
                    </div>
                   <div class="control-group">
-                    <label class="control-label">Name</label>
+                    <label class="control-label">{% trans "Name" %}</label>
                     <div class="controls">
                       <input type="text" class="input-large focused" name="name" placeholder="default" maxlength="20" required pattern="^[a-zA-Z0-9_]+$">
                     </div>
                    </div>
                   <div class="control-group">
-                    <label class="control-label">Path</label>
+                    <label class="control-label">{% trans "Path" %}</label>
                     <div class="controls">
                       <input type="text" name="target" class="input-large focused" value="/var/lib/libvirt/images">
                     </div>
@@ -168,8 +168,8 @@
               </div>
             </fieldset>
             <div class="modal-footer">
-              <button class="btn" data-dismiss="modal">Cancel</button>
-              <input class="btn btn-success" name="addpool" type="submit" value="Submit">
+              <button class="btn" data-dismiss="modal">{% trans "Cancel" %}</button>
+              <input class="btn btn-success" name="addpool" type="submit" value="{% trans "Submit" %}">
               </form>
             </div>
           </div>
@@ -178,20 +178,20 @@
               <form class="form-horizontal" action="/storage/{{ host_id }}/add/" method="post">{% csrf_token %}
                 <fieldset><br />
                   <div class="control-group">
-                    <label class="control-label">Type</label>
+                    <label class="control-label">{% trans "Type" %}</label>
                     <div class="controls">
                       <input type="text" name="type" value="logical" disabled>
                       <input type="hidden" name="type" value="logical">
                     </div>
                    </div>
                   <div class="control-group">
-                    <label class="control-label">Name</label>
+                    <label class="control-label">{% trans "Name" %}</label>
                     <div class="controls">
                       <input type="text" name="name" class="input-large focused" placeholder="guest_images_lvm">
                     </div>
                    </div>
                   <div class="control-group">
-                    <label class="control-label">Device</label>
+                    <label class="control-label">{% trans "Device" %}</label>
                     <div class="controls">
                       <input type="text" name="source" class="input-large focused" value="/dev/sdb">
                     </div>
@@ -199,8 +199,8 @@
                 </div>
               </fieldset>
               <div class="modal-footer">
-                <button class="btn" data-dismiss="modal">Cancel</button>
-                <input class="btn btn-success" name="addpool" type="submit" value="Submit">
+                <button class="btn" data-dismiss="modal">{% trans "Cancel" %}</button>
+                <input class="btn btn-success" name="addpool" type="submit" value="{% trans "Submit" %}">
                 </form>
               </div>
             </div>
@@ -211,23 +211,23 @@
       <div id="imgModal" class="modal hide fade">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-          <h3 id="imgModalLabel">Add New Image</h3>
+          <h3 id="imgModalLabel">{% trans "Add New Image" %}</h3>
         </div>
         <div class="modal-body">
         <form class="form-horizontal" action="/storage/{{ host_id }}/{{ pool }}/" method="post">{% csrf_token %}
           <fieldset><br>
             <div class="control-group">
-              <label class="control-label">Name</label>
+              <label class="control-label">{% trans "Name" %}</label>
               <div class="controls">
-                <input type="text" name="name" class="input-large focused" placeholder="Name">
+                <input type="text" name="name" class="input-large focused" placeholder="{% trans "Name" %}">
               </div>
              </div>
             <div class="control-group">
-              <label class="control-label">Size</label>
+              <label class="control-label">{% trans "Size" %}</label>
               <div class="controls">
                 <select name="size">
                   {% for num in form_hdd_size %}
-                  <option value="{{ num }}">{{ num }} Gb</option>
+                  <option value="{{ num }}">{{ num }} {% trans "GB" %}</option>
                   {% endfor %}
                 </select>
               </div>
@@ -235,8 +235,8 @@
           </fieldset>
         </div>
         <div class="modal-footer">
-          <button class="btn" data-dismiss="modal">Cancel</button>
-          <input class="btn btn-success" name="addimg" type="submit" value="Submit">
+          <button class="btn" data-dismiss="modal">{% trans "Cancel" %}</button>
+          <input class="btn btn-success" name="addimg" type="submit" value="{% trans "Submit" %}">
           </form>
         </div>
       </div> <!-- /imgModal -->

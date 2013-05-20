@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}Dashboard{% endblock %}
+{% block title %}{% trans "Dashboard" %}{% endblock %}
 {% block content %}
     <div class="pull-right">
-      <a href="/setup">Host Server Setup</a>
+      <a href="/setup">{% trans "Host Server Setup" %}</a>
     </div>
-    <h2>Dashboard</h2>
+    <h2>{% trans "Dashboard" %}</h2>
     <hr>
     {% if errors %}
       {% for error in errors %}
@@ -16,11 +16,11 @@
       {% endfor %}
     {% endif %}
     <div class="span8">
-      <a data-toggle="modal" href="#addModal" class="btn btn-success">Add Connection</a>
+      <a data-toggle="modal" href="#addModal" class="btn btn-success">{% trans "Add Connection" %}</a>
       {% if host_info %}
-      <a href="/clusters/" class="btn btn-success">Infrastrusture</a>
+      <a href="/clusters/" class="btn btn-success">{% trans "Infrastrusture" %}</a>
       {% else %}
-      <a href="/clusters/" class="btn btn-success disabled">Infrastrusture</a>
+      <a href="/clusters/" class="btn btn-success disabled">{% trans "Infrastrusture" %}</a>
       {% endif %}
       <br><br>
     </div>
@@ -30,9 +30,9 @@
         <thead>
           <tr>
             <th>#</th>
-            <th>Server</th>
-            <th>Status</th>
-            <th>Action</th>
+            <th>{% trans "Server" %}</th>
+            <th>{% trans "Status" %}</th>
+            <th>{% trans "Action" %}</th>
           </tr>
         </thead>
         <tbody>
@@ -40,24 +40,24 @@
           <tr>
             <td>{{ forloop.counter }}</td>
             <td><strong>{{ key }}</strong> [<a href="ssh://{{ value.1 }}">{{ value.1 }}]</a></td>
-            <td>{% ifequal value.2 1 %}<font color="green">connected</font>{% else %}<font color="red">not connected ({{ value.2 }})</font>{% endifequal %}</td>
+            <td>{% ifequal value.2 1 %}<font color="green">{% trans "connected" %}</font>{% else %}<font color="red">{% trans "not connected" %} ({{ value.2 }})</font>{% endifequal %}</td>
             <td style="width: 80px;">
               {% ifequal value.2 1 %}
               <div class="btn-group">
-                <button class="btn btn-success" onclick="location.href='/overview/{{ value.0 }}/'">Overview</button>
+                <button class="btn btn-success" onclick="location.href='/overview/{{ value.0 }}/'">{% trans "Overview" %}</button>
                 <button class="btn btn-success dropdown-toggle" data-toggle="dropdown">
                   <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
-                  <li><a href="/newvm/{{ value.0 }}/">Create VM</a></li>
-                  <li><a href="/storage/{{ value.0 }}/">Storage Pool</a></li>
-                  <li><a href="/network/{{ value.0 }}/">Network Pool</a></li>
-                  <li><a href="/snapshot/{{ value.0 }}/">Snapshots</a></li>
+                  <li><a href="/newvm/{{ value.0 }}/">{% trans "Create VM" %}</a></li>
+                  <li><a href="/storage/{{ value.0 }}/">{% trans "Storage Pool" %}</a></li>
+                  <li><a href="/network/{{ value.0 }}/">{% trans "Network Pool" %}</a></li>
+                  <li><a href="/snapshot/{{ value.0 }}/">{% trans "Snapshots" %}</a></li>
                 </ul>
               </div>
               {% else %}
               <div class="btn-group">
-                <button class="btn btn-success disabled">Overview</button>
+                <button class="btn btn-success disabled">{% trans "Overview" %}</button>
                 <button class="btn btn-success dropdown-toggle disabled" data-toggle="dropdown">
                   <span class="caret"></span>
                 </button>
@@ -67,7 +67,7 @@
             <td style="width: 70px;">
               <form action="/dashboard/" method="post" style="height:10px;">{% csrf_token %}
                 <input type="hidden" name="host_id" value="{{ value.0 }}">
-                <button type="submit" class="btn btn-danger" name="delhost" title="Delete" onclick="return confirm('Are you sure?')">Delete</button>
+                <button type="submit" class="btn btn-danger" name="delhost" title="Delete" onclick="return confirm('{% trans "Are you sure?"%}')">{% trans "Delete"</button>
               </form>
             </td>
           </tr>
@@ -76,7 +76,7 @@
       </table>
       {% else %}
         <div class="span8">
-          <h4>You have no connection</h4>
+          <h4>{% trans "You have no connection" %}</h4>
         </div>
       {% endif %}
         <div id="addModal" class="modal hide fade">

@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}Snapshots{% endblock %}
+{% block title %}{% trans "Snapshots" %}{% endblock %}
 {% block content %}
       <div class="container-fluid">
         <div class="row-fluid">
           {% include 'sidebar.html' %}
           <div class="span9 well">
-            <h2>Snapshots</h2>
+            <h2>{% trans "Snapshots" %}</h2>
             <hr>
             {% if messages %}
             {% for message in messages %}
@@ -32,7 +32,7 @@
             {% if vname and not vm_snapshot %}
               <br>
               <div class="well pagination-centered">
-                <h4>You doesn’t have any snapshots for - <a href="/vm/{{ host_id }}/{{ vname }}/">{{ vname }}</a></h4>
+                <h4>{% trans "You doesn’t have any snapshots for" %} - <a href="/vm/{{ host_id }}/{{ vname }}/">{{ vname }}</a></h4>
               </div>
             {% endif %}
 
@@ -41,9 +41,9 @@
             <table class="table table-bordered">
               <thead>
                 <tr>
-                  <th>Name</th>
-                  <th>Date</th>
-                  <th colspan="2">Action</th>
+                  <th>{% trans "Name" %}</th>
+                  <th>{% trans "Date" %}</th>
+                  <th colspan="2">{% trans "Action" %}</th>
                 </tr>
               </thead>
               <tbody>
@@ -55,16 +55,16 @@
                     <form action="" method="post" style="height:10px;">{% csrf_token %}
                       <input type="hidden" name="name" value="{{ name }}">
                       {% ifnotequal time.1 3 %}
-                      <button type="submit" class="btn btn-primary" name="revert" value="revert" onclick="return confirm('Are you sure?')">Revert</button>
+                      <button type="submit" class="btn btn-primary" name="revert" value="revert" onclick="return confirm('Are you sure?')">{% trans "Revert" %}</button>
                       {% else %}
-                      <button type="button" class="btn btn-primary disabled" name="revert" value="Revert">Revert</button>
+                      <button type="button" class="btn btn-primary disabled" name="revert" value="Revert">{% trans "Revert" %}</button>
                       {% endifnotequal %}
                     </form>
                   </td>
                   <td style="width:30px;">
                     <form action="" method="post" style="height:10px;">{% csrf_token %}
                       <input type="hidden" name="name" value="{{ name }}">
-                      <button type="submit" class="btn btn-danger" name="delete" value="delete" onclick="return confirm('Are you sure?')">Delete</button>
+                      <button type="submit" class="btn btn-danger" name="delete" value="delete" onclick="return confirm('{% trans "Are you sure?" %}')">{% trans "Delete" %}</button>
                     </form>
                   </td>
                 </tr>
@@ -75,7 +75,7 @@
             {% if not vname and not all_vm_snap %}
               <br>
               <div class="well pagination-centered">
-                <h4>You doesn’t have any snapshots</h4>
+                <h4>{% trans "You doesn’t have any snapshots" %}</h4>
               </div>
             {% endif %}
           </div><!--/span-->

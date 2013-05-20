@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}Infrastrusture{% endblock %}
+{% block title %}{% trans "Infrastrusture" %}{% endblock %}
 {% block content %}
-    <h2>Infrastrusture</h2>
+    <h2>{% trans "Infrastrusture" %}</h2>
     <hr>
     {% if hosts_vms %}
     <div class="span8">
@@ -10,11 +10,11 @@
         <thead>
           <tr>
             <th style="width: 10px;">#</th>
-            <th>Hostname</th>
-            <th>Status</th>
-            <th style="width:50px;">VCPUs</th>
-            <th style="width:80px;">Memory</th>
-            <th style="width:50px;">Usage</th>
+            <th>{% trans "Hostname" %}</th>
+            <th>{% trans "Status" %}</th>
+            <th style="width:50px;">{% trans "VCPU's" %}</th>
+            <th style="width:80px;">{% trans "Memory" %}</th>
+            <th style="width:50px;">{% trans "Usage" %}</th>
           </tr>
         </thead>
         <tbody>
@@ -22,8 +22,8 @@
           <tr>
             <td>{{ forloop.counter }}</td>
             <td><a href="/overview/{{ host.0 }}">{{ host.1 }}</a></td>
-            <td>{% ifequal host.2 1 %}<font color="green">Active</font>{% endifequal %}
-                {% ifequal host.2 2 %}<font color="red">Not Active</font>{% endifequal %}
+            <td>{% ifequal host.2 1 %}<font color="green">{% trans "Active" %}</font>{% endifequal %}
+                {% ifequal host.2 2 %}<font color="red">{% trans "Not Active" %}</font>{% endifequal %}
             </td>
             <td>{{ host.3 }}</td>
             <td>{{ host.4|filesizeformat }}</td>
@@ -34,9 +34,9 @@
               <tr>
                 <td></td>
                 <td>{{ forloop.counter }} &emsp; <a href="/vm/{{ host.0 }}/{{ vm }}/">{{ vm }}</a></td>
-                <td>{% ifequal info.0 1 %}<font color="green">Running</font>{% endifequal %}
-                    {% ifequal info.0 3 %}<font color="orange">Suspend</font>{% endifequal %}
-                    {% ifequal info.0 5 %}<font color="red">Shutoff</font>{% endifequal %}
+                <td>{% ifequal info.0 1 %}<font color="green">{% trans "Running" %}</font>{% endifequal %}
+                    {% ifequal info.0 3 %}<font color="orange">{% trans "Suspend" %}</font>{% endifequal %}
+                    {% ifequal info.0 5 %}<font color="red">{% trans "Shutoff" %}</font>{% endifequal %}
                 </td>
                 <td>{{ info.1 }}</td>
                 <td>{{ info.2|filesizeformat }}</td>
@@ -48,7 +48,7 @@
         </tbody>
       </table>
       {% else %}
-        <h4>You have no connection</h4>
+        <h4>{% trans "You have no connection" %}</h4>
         <br>
       {% endif %}
         </div>

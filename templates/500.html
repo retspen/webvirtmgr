@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Error 500</title>
+    <title>{% trans "Error 500" %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
 
@@ -38,11 +38,11 @@
           <ul class="nav pull-right">
             {% if request.user.is_authenticated or user.is_authenticated %}
             <li class="">
-              <a href="/logout"><b>Sign out</b></a>
+              <a href="/logout"><b>{% trans "Sign out" %}</b></a>
             </li>
             {% else %}
             <li class="">
-              <a href="/login"><b>Sign in</b></a>
+              <a href="/login"><b>{% trans "Sign in" %}</b></a>
             </li>
             {% endif %}
           </ul>
