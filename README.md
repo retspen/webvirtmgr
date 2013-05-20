@@ -87,7 +87,7 @@ Add file webvirtmgr.conf in conf.d directory (Ubuntu: "/etc/apache2/conf.d" or R
         SetEnv DJANGO_SETTINGS_MODULE webvirtmgr.settings
         PythonOption django.root /webvirtmgr
         PythonDebug On
-        PythonPath "['/var/www'] + sys.path"
+        PythonPath "['/var/www/webvirtmgr'] + sys.path"
         
         ErrorLog ${APACHE_LOG_DIR}/webvirtmgr-error_log
         CustomLog ${APACHE_LOG_DIR}/webvirtmgr-access_log common
