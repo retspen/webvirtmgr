@@ -1,5 +1,5 @@
 {% load i18n %}
-{% load tags %}
+{% load tags_active %}
 <div class="span3">
             <div class="well sidebar-nav">
               <ul class="nav nav-list">
@@ -27,7 +27,7 @@
                 {% else %}
                   {% for vm in all_vm %}
                   <li {% ifequal vm vname %}class="active"{% endifequal %}>
-                    <a href="{% url vds host_id vm %}/{{ vm }}/"><i class="icon-th-large"></i> {{ vm }}</a>
+                    <a href="{% url vds host_id vm %}"><i class="icon-th-large"></i> {{ vm }}</a>
                   </li>
                   {% endfor %}
               {% endif %}
