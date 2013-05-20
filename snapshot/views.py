@@ -56,8 +56,6 @@ def dom_snapshot(request, host_id, vname):
         all_vm_snap = libvirt_func.snapshots_get_node(conn)
         vm_snapshot = libvirt_func.snapshots_get_vds(dom)
 
-        print vm_snapshot
-
         if request.method == 'POST':
             if 'delete' in request.POST:
                 snap_name = request.POST.get('name', '')

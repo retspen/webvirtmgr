@@ -1,21 +1,22 @@
 {% load i18n %}
+{% load tags %}
 <div class="span3">
             <div class="well sidebar-nav">
               <ul class="nav nav-list">
                 <li class="nav-header">{% trans "Server Settings" %}</li>
-                <li {% ifequal request.path '/overview/1/'  %}class="active"{% endifequal %}>
+                <li {% active request "^/overview" %}>
                   <a href="{% url overview host_id %}"><i class="icon-info-sign"></i> {% trans "Overview" %}</a>
                 </li>
-                <li {% ifequal request.path '/newvm/1/' %}class="active"{% endifequal %}>
+                <li {% active request "^/newvm" %}>
                   <a href="{% url newvm host_id %}"><i class="icon-plus"></i> {% trans "Create VM" %}</a>
                 </li>
-                <li {% ifequal request.path '/storage/1/' %}class="active"{% endifequal %}>
+                <li {% active request "^/storage" %}>
                   <a href="{% url storage host_id %}"><i class="icon-folder-open"></i> {% trans "Storage pool" %}</a>
                 </li>
-                <li {% ifequal request.path '/network/1/' %}class="active"{% endifequal %}>
+                <li {% active request "^/network" %}>
                   <a href="{% url network host_id %}"><i class="icon-signal"></i> {% trans "Network pool" %}</a>
                 </li>
-                <li {% ifequal request.path '/snapshot/1/' %}class="active"{% endifequal %}>
+                <li {% active request "^/snapshot" %}>
                   <a href="{% url snapshot host_id %}"><i class="icon-download-alt"></i> {% trans "Snapshots" %}</a>
                 </li>
                 <li class="nav-header">{% trans "Virtual Machines" %}</li>
@@ -26,7 +27,7 @@
                 {% else %}
                   {% for vm in all_vm %}
                   <li {% ifequal vm vname %}class="active"{% endifequal %}>
-                    <a href="/vds/{{ host_id }}/{{ vm }}/"><i class="icon-th-large"></i> {{ vm }}</a>
+                    <a href="{% url vds host_id vm %}/{{ vm }}/"><i class="icon-th-large"></i> {{ vm }}</a>
                   </li>
                   {% endfor %}
               {% endif %}
