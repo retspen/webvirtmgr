@@ -32,12 +32,12 @@
             {% if vname and not vm_snapshot %}
               <br>
               <div class="well pagination-centered">
-                <h4>{% trans "You doesn’t have any snapshots for" %} - <a href="/vm/{{ host_id }}/{{ vname }}/">{{ vname }}</a></h4>
+                <h4>{% trans "You doesn’t have any snapshots for" %} - <a href="{% url vds host_id vname %}">{{ vname }}</a></h4>
               </div>
             {% endif %}
 
             {% if vname and vm_snapshot %}
-            <a href="/vm/{{ host_id }}/{{ vname }}/">{{ vname }}</a><br><br>
+            <a href="{% url vds host_id vname %}">{{ vname }}</a><br><br>
             <table class="table table-bordered">
               <thead>
                 <tr>

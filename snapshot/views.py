@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+  # -*- coding: utf-8 -*-
 
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
@@ -45,6 +45,7 @@ def dom_snapshot(request, host_id, vname):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
+    snapshot_page = True
     host = Host.objects.get(id=host_id)
     conn = libvirt_func.libvirt_conn(host)
 

@@ -25,11 +25,19 @@
                   <a href="{% url newvm host_id %}"><i class="icon-plus"></i> {% trans "Create VM" %}</a>
                 </li>
                 {% else %}
-                  {% for vm in all_vm %}
-                  <li {% ifequal vm vname %}class="active"{% endifequal %}>
-                    <a href="{% url vds host_id vm %}"><i class="icon-th-large"></i> {{ vm }}</a>
-                  </li>
-                  {% endfor %}
+                  {% if not snapshot_page %}
+                    {% for vm in all_vm %}
+                    <li {% ifequal vm vname %}class="active"{% endifequal %}>
+                      <a href="{% url vds host_id vm %}"><i class="icon-th-large"></i> {{ vm }}</a>
+                    </li>
+                    {% endfor %}
+                  {% else %}
+                    {% for vm in all_vm %}
+                    <li {% ifequal vm vname %}class="active"{% endifequal %}>
+                      <a href="{% url dom_snapshot host_id vm %}"><i class="icon-th-large"></i> {{ vm }}</a>
+                    </li>
+                    {% endfor %}
+                  {% endif %}
               {% endif %}
               </ul>
             </div><!--/.well -->
