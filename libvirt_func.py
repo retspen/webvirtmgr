@@ -468,7 +468,7 @@ def snapshots_get_vds(dom):
         return e.message
 
 
-def snapshot_delete(vname, name_snap):
+def snapshot_delete(dom, name_snap):
     """
 
     Function delete vds snaphots.
@@ -476,13 +476,13 @@ def snapshot_delete(vname, name_snap):
     """
 
     try:
-        snap = vname.snapshotLookupByName(name_snap, 0)
+        snap = dom.snapshotLookupByName(name_snap, 0)
         snap.delete(0)
     except libvirtError as e:
         return e.message
 
 
-def snapshot_revert(vname, name_snap):
+def snapshot_revert(dom, name_snap):
     """
 
     Function revert vds snaphots.
@@ -490,8 +490,8 @@ def snapshot_revert(vname, name_snap):
     """
 
     try:
-        snap = vname.snapshotLookupByName(name_snap, 0)
-        vname.revertToSnapshot(snap, 0)
+        snap = dom.snapshotLookupByName(name_snap, 0)
+        dom.revertToSnapshot(snap, 0)
     except libvirtError as e:
         return e.message
 
