@@ -21,11 +21,11 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': DB_PATH,                     
-        'USER': '',                     
-        'PASSWORD': '',                  
-        'HOST': '',                      
-        'PORT': '',                      
+        'NAME': DB_PATH,
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',
+        'PORT': '',
     }
 }
 

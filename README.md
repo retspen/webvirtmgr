@@ -61,13 +61,17 @@ Enter the user information:
     Password (again): xxxxxx (Put: confirm password)
     Superuser created successfully.
 
-Run app for test:
+Change in file 'settings.py' DEBUG=False to DEBUG=True then run app for test:
 
     $ ./manage.py runserver x.x.x.x:8000 (x.x.x.x - your IP address server)
     
 Enter in your browser:
     
     http://x.x.x.x:8000 (x.x.x.x - your IP address server)
+
+If test SUCCESSFUL:
+    
+    $ git checkout settings.py
 
 ## 4. Setup Web (Choose only one method: Virtual Host or WSGI)
 
