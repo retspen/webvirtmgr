@@ -41,7 +41,7 @@ def vds(request, host_id, vname):
 
         storages = libvirt_func.storages_get_node(conn)
         hdd_image = libvirt_func.vds_get_hdd(conn, dom, storages)
-        iso_images = sorted(libvirt_func.find_all_iso(conn, storages))
+        iso_images = sorted(libvirt_func.get_all_media(conn, storages))
         media = libvirt_func.vds_get_media(conn, dom)
 
         errors = []

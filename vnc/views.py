@@ -5,6 +5,8 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from dashboard.models import Host, Vm
 from libvirt_func import libvirt_conn, vnc_get_port
+import os
+import re
 
 
 def vnc(request, host_id, vname):
@@ -27,7 +29,10 @@ def vnc(request, host_id, vname):
         try:
             vm = Vm.objects.get(host=host_id, vname=vname)
 
-            import os
+            vnc_host = request.META['HTTP_HOST']
+            if ':' in vnc_host:
+                vnc_host = re.sub('\:[0-9]+', '', vnc_host)
+
             # Kill only owner proccess
             os.system("kill -9 $(ps aux | grep websockify | grep -v grep | awk '{ print $2 }')")
             os.system('websockify 6080 %s:%s -D' % (host.ipaddr, vnc_port))
