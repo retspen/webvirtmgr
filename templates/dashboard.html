@@ -3,7 +3,7 @@
 {% block title %}{% trans "Dashboard" %}{% endblock %}
 {% block content %}
     <div class="pull-right">
-      <a href="/setup">{% trans "Host Server Setup" %}</a>
+      <a href="{% url page_setup %}">{% trans "Host Server Setup" %}</a>
     </div>
     <h2>{% trans "Dashboard" %}</h2>
     <hr>
@@ -18,9 +18,9 @@
     <div class="span8">
       <a data-toggle="modal" href="#addModal" class="btn btn-success">{% trans "Add Connection" %}</a>
       {% if host_info %}
-      <a href="/clusters/" class="btn btn-success">{% trans "Infrastrusture" %}</a>
+      <a href="{% url clusters %}" class="btn btn-success">{% trans "Infrastrusture" %}</a>
       {% else %}
-      <a href="/clusters/" class="btn btn-success disabled">{% trans "Infrastrusture" %}</a>
+      <a href="#" class="btn btn-success disabled">{% trans "Infrastrusture" %}</a>
       {% endif %}
       <br><br>
     </div>
@@ -65,7 +65,7 @@
               {% endifequal %}
             </td>
             <td style="width: 70px;">
-              <form action="/dashboard/" method="post" style="height:10px;">{% csrf_token %}
+              <form action="{% url dashboard %}" method="post" style="height:10px;">{% csrf_token %}
                 <input type="hidden" name="host_id" value="{{ value.0 }}">
                 <button type="submit" class="btn btn-danger" name="delhost" title="Delete" onclick="return confirm('{% trans "Are you sure?"%}')">{% trans "Delete" %}</button>
               </form>
