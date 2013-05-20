@@ -64,17 +64,13 @@ Enter the user information:
     Password (again): xxxxxx (Put: confirm password)
     Superuser created successfully.
 
-Change in file 'settings.py' DEBUG=False to DEBUG=True then run app for test:
+Run app for test:
 
     $ ./manage.py runserver x.x.x.x:8000 (x.x.x.x - your IP address server)
     
 Enter in your browser:
     
     http://x.x.x.x:8000 (x.x.x.x - your IP address server)
-
-If test SUCCESSFUL:
-    
-    $ git checkout settings.py
 
 ## 4. Setup Web (Choose only one method: Virtual Host or WSGI)
 
@@ -100,7 +96,7 @@ Add file webvirtmgr.conf in conf.d directory (Ubuntu: "/etc/apache2/conf.d" or R
 Copy the folder and change owner (Ubuntu: "www-data:www-data", Fedora, Redhat, CentOS: "apache:apache"):
 
     $ sudo cp -r webvirtmgr /var/www/
-    $ sudo chown www-data:www-data /var/www/webvirtmgr/webvirtmgr.db
+    $ sudo chown -R www-data:www-data /var/www/webvirtmgr
 
 Reload apache:
     
