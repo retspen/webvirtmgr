@@ -124,4 +124,4 @@ def vds(request, host_id, vname):
 
         conn.close()
 
-    return render_to_response('vm.html', locals(), context_instance=RequestContext(request))
+    return render_to_response('vds.html', locals(), context_instance=RequestContext(request))

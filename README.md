@@ -1,14 +1,7 @@
-# WebVirtMgr panel - v1.6.1
+# WebVirtMgr panel - v2.0.0
 
-* Add support VM name with dash ("-")
-* Add support VM and Host name with dash (".")
-* Delete VM optional HDD image.
-* Add Support NoVNC (need install - CentOS/RedHat/Fedora: python-websockify, Ubuntu: novnc)
-* Add page infrastructure (View all Hosts and VMs)
-* Add button "Enable noVNC" on VM page (Set VNC password for noNVC)
-* Add button "New Flavor" - create custom flavor (after update need - ./manage.py syncdb)
-* Add RPM for CentOS, RHEL, Fedora, Oracle Linux 6 (Big thanks: <a href="https://github.com/euforia">euforia</a>)
-* Corrected typo's, added client-side validation, fixed few bugs (Thanks: <a href="https://github.com/SjonHortensius">SjonHortensius</a>)
+* Move to Django-1.4.x
+* Add support SSH
 
 ## 1. Introduction
 
@@ -28,22 +21,24 @@ WebVirtMgr is licensed under the Apache Licence, Version 2.0 (http://www.apache.
 
 Run:
 
-    $ su -c 'yum -y install git Django python-virtinst httpd mod_python mod_wsgi python-websockify python-setuptools'
+    $ su -c 'yum -y install git python-pip python-virtinst httpd mod_python mod_wsgi python-websockify'
 
 ### CentOS 6.2, RedHat 6.2 and above
 
 Run:
 
     $ su -c 'rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm'
-    $ su -c 'yum -y install git python-virtinst httpd mod_python mod_wsgi Django14 python-websockify python-setuptools'
+    $ su -c 'yum -y install git python-pip python-virtinst httpd mod_python mod_wsgi python-websockify'
+    $ su -c 'python-pip install Django==1.4.5'
 
 ### Ubuntu 12.04 and above
 
 Run:
 
-    $ sudo apt-get install git python-django virtinst apache2 libapache2-mod-python libapache2-mod-wsgi novnc
+    $ sudo apt-get install git python-pip virtinst apache2 libapache2-mod-python libapache2-mod-wsgi novnc
     $ sudo service novnc stop
     $ sudo update-rc.d -f novnc remove
+    $ sudo pip install Django==1.4.5
 
 ## 3. Setup
 
@@ -107,11 +102,17 @@ Reload apache:
 
 Add file webvirtmgr.conf in conf.d directory (Ubuntu: "/etc/apache2/conf.d" or RedHat,Fedora,CentOS: "/etc/httpd/conf.d"):
 
-    WSGIScriptAlias / /var/www/webvirtmgr/wsgi/django.wsgi
-    Alias /static /var/www/webvirtmgr/virtmgr/static/
-    <Directory /var/www/webvirtmgr/wsgi>
-      Order allow,deny
-      Allow from all
+    WSGIScriptAlias / /var/www/webvirtmgr/webvirtmgr/wsgi.py
+    WSGIPythonPath /var/www/webvirtmgr/
+
+    Alias /static /var/www/webvirtmgr/static/
+    Alias /media /var/www/webvirtmgr/media/
+
+    <Directory /var/www/webvirtmgr/webvirtmgr>
+        <Files wsgi.py>
+            Order deny,allow
+            Allow from all
+        </Files>
     </Directory>
 
 ## 5. Gunicorn and Runit (Only for geeks)
@@ -135,7 +136,7 @@ Runit script for webvirtmgr (/etc/sv/webvirtmgr/run):
     ROOT=/var/www/webvirtmgr
     PID=/var/run/gunicorn.pid
 
-    APP=wsgi:application
+    APP=webvirtmgr.wsgi:application
 
     if [ -f $PID ]; then
        rm $PID
