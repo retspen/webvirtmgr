@@ -104,7 +104,7 @@ Copy the folder and change owner (Ubuntu: "www-data:www-data", Fedora, Redhat, C
 
 Reload apache:
     
-    # service apache2 reload
+    $ sudo service apache2 reload
     
 ###2. WSGI
 
@@ -122,6 +122,10 @@ Add file webvirtmgr.conf in conf.d directory (Ubuntu: "/etc/apache2/conf.d" or R
             Allow from all
         </Files>
     </Directory>
+
+Reload apache:
+    
+    $ sudo service apache2 reload
 
 ## 5. Gunicorn and Runit (Only for geeks)
 
