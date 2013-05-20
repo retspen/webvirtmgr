@@ -29,13 +29,15 @@ def vnc(request, host_id, vname):
         try:
             vm = Vm.objects.get(host=host_id, vname=vname)
 
-            vnc_host = request.META['HTTP_HOST']
-            if ':' in vnc_host:
-                vnc_host = re.sub('\:[0-9]+', '', vnc_host)
+            socket_host = request.META['HTTP_HOST']
+            if ':' in socket_host:
+                socket_host = re.sub('\:[0-9]+', '', socket_host)
+
+            socket_port = 6080 + int(vnc_port[3:])
 
             # Kill only owner proccess
-            os.system("kill -9 $(ps aux | grep websockify | grep -v grep | awk '{ print $2 }')")
-            os.system('websockify 6080 %s:%s -D' % (host.ipaddr, vnc_port))
+            os.system("kill -9 $(ps aux | grep 'websockify %s' | grep -v grep | awk '{ print $2 }')" % socket_port)
+            os.system('websockify %s %s:%s -D' % (socket_port, host.ipaddr, vnc_port))
         except:
             vm = None
 

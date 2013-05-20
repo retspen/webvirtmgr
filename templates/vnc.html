@@ -93,8 +93,8 @@
         WebUtil.init_logging(WebUtil.getQueryVar('logging', 'warn'));
         document.title = unescape(WebUtil.getQueryVar('title', 'noVNC'));
         // By default, use the host and port of server that served this file
-        host = '{{ vnc_host }}';
-        port = '6080'
+        host = '{{ socket_host }}';
+        port = '{{ socket_port }}'
         password = '{{ vm.vnc_passwd }}';
 
         if ((!host) || (!port)) {
