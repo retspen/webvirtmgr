@@ -29,20 +29,20 @@ DATABASES = {
     }
 }
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 TIME_ZONE = 'Europe/Zaporozhye'
 LANGUAGE_CODE = 'en-us'
 SITE_ID = 1
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
-MEDIA_ROOT = os.path.abspath(os.path.join(ROOT_PATH, '', 'media'))
+MEDIA_ROOT = os.path.abspath(os.path.join(ROOT_PATH, '..', 'media'))
 MEDIA_URL = '/media/'
-STATIC_ROOT = os.path.abspath(os.path.join(ROOT_PATH, '', 'static'))
+STATIC_ROOT = os.path.abspath(os.path.join(ROOT_PATH, '..', 'static'))
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
-    os.path.abspath(os.path.join(ROOT_PATH, '..', 'static')),
+    os.path.abspath(os.path.join(ROOT_PATH, '', 'static')),
 )
 
 STATICFILES_FINDERS = (

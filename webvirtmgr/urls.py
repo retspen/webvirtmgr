@@ -18,4 +18,5 @@ urlpatterns = patterns('',
     url(r'^snapshot/(\d+)/([\w\-]+)/$', 'snapshot.views.dom_snapshot', name='dom_snapshot'),
     url(r'^vds/(\d+)/([\w\-\.]+)/$', 'vds.views.vds', name='vds'),
     url(r'^vnc/(\d+)/([\w\-\.]+)/$', 'vnc.views.vnc', name='vnc'),
+    url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT, 'show_indexes': False}),
 )
