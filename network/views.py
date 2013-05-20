@@ -4,7 +4,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
-from dashboard.models import Host
+from vds.models import Host
 import libvirt_func
 
 

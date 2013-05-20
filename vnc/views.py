@@ -3,7 +3,7 @@
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
-from dashboard.models import Host, Vm
+from vds.models import Host, Vm
 from libvirt_func import libvirt_conn, vnc_get_port
 import os
 import re

@@ -36,13 +36,13 @@ SITE_ID = 1
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
-MEDIA_ROOT = os.path.abspath(os.path.join(ROOT_PATH, '', 'media/'))
+MEDIA_ROOT = os.path.abspath(os.path.join(ROOT_PATH, '', 'media'))
 MEDIA_URL = '/media/'
-STATIC_ROOT = os.path.abspath(os.path.join(ROOT_PATH, '', 'static/'))
+STATIC_ROOT = os.path.abspath(os.path.join(ROOT_PATH, '', 'static'))
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
-    os.path.abspath(os.path.join(ROOT_PATH, '..', 'static/')),
+    os.path.abspath(os.path.join(ROOT_PATH, '..', 'static')),
 )
 
 STATICFILES_FINDERS = (
@@ -87,7 +87,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
-    'dashboard',
+    'vds',
 )
 
 LOGGING = {
