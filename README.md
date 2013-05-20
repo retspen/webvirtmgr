@@ -1,5 +1,7 @@
 # WebVirtMgr panel - v2.0.0
 
+# Warning: update v1.6.1 to 2 not supported. (Django-1.4 change all logic)
+
 * Move to Django-1.4.x
 * Add support SSH connection to host server (Beta)
 * Fix noVNC connection if panel running other server
