@@ -148,6 +148,8 @@ Runit script for webvirtmgr (/etc/sv/webvirtmgr/run):
 
 ## 6. Update
 
+### Read this README.md check settings and then:
+
     $ cd /path to/webvirtmgr
     $ git pull
 
