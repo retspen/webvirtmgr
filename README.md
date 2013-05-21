@@ -162,4 +162,4 @@ Runit script for webvirtmgr (/etc/sv/webvirtmgr/run):
     $ cd /path to/webvirtmgr
     $ git pull
 
-Support: support@webvirtmgr.net
+Support: support@webvirtmgr.net or <a href="https://github.com/retspen/webvirtmgr/issues">GitHub Issues</a>
