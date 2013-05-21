@@ -21,7 +21,7 @@
           {% for host, vms in hosts_vms.items %}
           <tr>
             <td>{{ forloop.counter }}</td>
-            <td><a href="/overview/{{ host.0 }}">{{ host.1 }}</a></td>
+            <td><a href="{% url overview host.0 %}">{{ host.1 }}</a></td>
             <td>{% ifequal host.2 1 %}<font color="green">{% trans "Active" %}</font>{% endifequal %}
                 {% ifequal host.2 2 %}<font color="red">{% trans "Not Active" %}</font>{% endifequal %}
             </td>
@@ -33,7 +33,7 @@
               {% for vm, info in vms.items %}
               <tr>
                 <td></td>
-                <td>{{ forloop.counter }} &emsp; <a href="/vm/{{ host.0 }}/{{ vm }}/">{{ vm }}</a></td>
+                <td>{{ forloop.counter }} &emsp; <a href="{% url vds host.0 vm %}">{{ vm }}</a></td>
                 <td>{% ifequal info.0 1 %}<font color="green">{% trans "Running" %}</font>{% endifequal %}
                     {% ifequal info.0 3 %}<font color="orange">{% trans "Suspend" %}</font>{% endifequal %}
                     {% ifequal info.0 5 %}<font color="red">{% trans "Shutoff" %}</font>{% endifequal %}

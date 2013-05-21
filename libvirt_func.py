@@ -680,7 +680,8 @@ def vds_set_vnc_passwd(conn, dom, passwd):
     try:
         xml = dom.XMLDesc(0)
         newxml = "<graphics type='vnc' port='-1' autoport='yes' keymap='en-us' passwd='%s'/>" % passwd
-        xmldom = xml.replace("<graphics type='vnc' port='-1' autoport='yes' keymap='en-us'/>", newxml)
+        xmldom = re.sub('\<graphics.*\>', newxml, xml)
+        #xmldom = xml.replace("<graphics type='vnc' port='-1' autoport='yes' keymap='en-us'/>", newxml)
         conn.defineXML(xmldom)
     except libvirtError as e:
         return e.message

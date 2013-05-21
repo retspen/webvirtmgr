@@ -6,6 +6,8 @@ from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from vds.models import Host
 import libvirt_func
+from libvirt import libvirtError
+import re
 
 
 def index(request):
@@ -68,9 +70,6 @@ def dashboard(request):
             ssh_port = request.POST.get('ssh_port', '')
             kvm_passwd1 = request.POST.get('kvm_passwd1', '')
             kvm_passwd2 = request.POST.get('kvm_passwd2', '')
-
-            import re
-            errors = []
             have_simbol = re.search('[^a-zA-Z0-9\_\-\.]+', hostname)
             ip_have_simbol = re.search('[^a-z0-9\.\-]+', ipaddr)
             domain = re.search('[\.]+', ipaddr)
@@ -151,23 +150,22 @@ def clusters(request):
             vname = {}
             for vm_id in conn.listDomainsID():
                 vm_id = int(vm_id)
-                dom = conn.lookupByID(id)
+                dom = conn.lookupByID(vm_id)
                 mem = util.get_xml_path(dom.XMLDesc(0), "/domain/memory")
                 mem = int(mem) * 1024
                 mem_usage = (mem * 100) / host_mem
                 vcpu = util.get_xml_path(dom.XMLDesc(0), "/domain/vcpu")
                 vname[dom.name()] = (dom.info()[0], vcpu, mem, mem_usage)
             for vm in conn.listDefinedDomains():
-                dom = conn.lookupByName(vn)
+                dom = conn.lookupByName(vm)
                 mem = util.get_xml_path(dom.XMLDesc(0), "/domain/memory")
                 mem = int(mem) * 1024
                 mem_usage = (mem * 100) / host_mem
                 vcpu = util.get_xml_path(dom.XMLDesc(0), "/domain/vcpu")
                 vname[dom.name()] = (dom.info()[0], vcpu, mem, mem_usage)
             return vname
-        except libvirt.libvirtError as e:
-            add_error(e, 'libvirt')
-            return "error"
+        except libvirtError as e:
+            return e.message
 
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
@@ -180,7 +178,10 @@ def clusters(request):
             import socket
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.settimeout(1)
-            s.connect((host.ipaddr, 16509))
+            if host.conn_type == 'ssh':
+                s.connect((host.ipaddr, host.ssh_port))
+            else:
+                s.connect((host.ipaddr, 16509))
             s.close()
             status = 1
         except Exception as err:
@@ -188,8 +189,8 @@ def clusters(request):
 
         if status == 1:
             conn = libvirt_func.libvirt_conn(host)
-            host_info = get_host_info(conn)
-            host_mem = get_mem_usage(conn)
+            host_info = libvirt_func.node_get_info(conn)
+            host_mem = libvirt_func.memory_get_usage(conn)
             hosts_vms[host.id, host.hostname, status, host_info[2], host_mem[0], host_mem[2]] = vds_on_host()
         else:
             hosts_vms[host.id, host.hostname, status, None, None, None] = None

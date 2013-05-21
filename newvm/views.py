@@ -6,6 +6,11 @@ from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from vds.models import Host, Flavor, Vm
 import libvirt_func
+import virtinst.util as util
+from libvirt import libvirtError
+import re
+from string import letters, digits
+from random import choice
 
 
 def newvm(request, host_id):
@@ -19,9 +24,6 @@ def newvm(request, host_id):
         return HttpResponseRedirect('/login')
 
     def add_vm(name, ram, vcpu, image, net, passwd):
-        import virtinst.util as util
-        import re
-
         ram = int(ram) * 1024
         iskvm = re.search('kvm', conn.getCapabilities())
         if iskvm:
@@ -197,7 +199,6 @@ def newvm(request, host_id):
 
                 errors = []
 
-                import re
                 symbol = re.search('[^a-zA-Z0-9\_\-\.]+', vname)
 
                 if vname in all_vm:
@@ -222,7 +223,6 @@ def newvm(request, host_id):
                         else:
                             image = libvirt_func.image_get_path(conn, img, all_storages)
                     else:
-                        from libvirt import libvirtError
                         try:
                             libvirt_func.new_volume(stg, vname, hdd_size)
                         except libvirtError as msg_error:
@@ -230,8 +230,6 @@ def newvm(request, host_id):
 
                     if not errors:
                         if not img:
-                            import virtinst.util as util
-
                             stg_type = util.get_xml_path(stg.XMLDesc(0), "/pool/@type")
                             if stg_type == 'dir':
                                 vol = vname + '.img'
@@ -241,9 +239,6 @@ def newvm(request, host_id):
                             vol = img
                         vl = stg.storageVolLookupByName(vol)
                         image = vl.path()
-
-                        from string import letters, digits
-                        from random import choice
 
                         vnc_passwd = ''.join([choice(letters + digits) for i in range(12)])
 
