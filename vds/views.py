@@ -6,6 +6,8 @@ from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from vds.models import Host, Vm
 import libvirt_func
+from libvirt import libvirtError
+import re
 
 
 def vds(request, host_id, vname):
@@ -14,8 +16,6 @@ def vds(request, host_id, vname):
     VDS block
 
     """
-
-    from libvirt import libvirtError
 
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')

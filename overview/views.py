@@ -6,6 +6,7 @@ from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from vds.models import Host
 import libvirt_func
+from libvirt import libvirtError
 
 
 def overview(request, host_id):
@@ -14,8 +15,6 @@ def overview(request, host_id):
     Overview page.
 
     """
-
-    from libvirt import libvirtError
 
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')

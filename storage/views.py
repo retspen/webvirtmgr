@@ -6,6 +6,8 @@ from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from vds.models import Host
 import libvirt_func
+from libvirt import libvirtError
+import re
 
 
 def storage(request, host_id, pool):
@@ -14,8 +16,6 @@ def storage(request, host_id, pool):
     Storage pool block
 
     """
-
-    from libvirt import libvirtError
 
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
@@ -43,7 +43,6 @@ def storage(request, host_id, pool):
                     pool_target = request.POST.get('target', '')
                     pool_source = request.POST.get('source', '')
 
-                    import re
                     errors = []
                     name_have_symbol = re.search('[^a-zA-Z0-9\_\-]+', pool_name)
                     path_have_symbol = re.search('[^a-zA-Z0-9\/]+', pool_source)
@@ -92,6 +91,8 @@ def storage(request, host_id, pool):
                 volumes_info = libvirt_func.volumes_get_info(stg)
 
             if request.method == 'POST':
+                errors = []
+
                 if 'start' in request.POST:
                     try:
                         stg.create(0)
@@ -115,9 +116,6 @@ def storage(request, host_id, pool):
                     name = request.POST.get('name', '')
                     size = request.POST.get('size', '')
                     img_name = name + '.img'
-
-                    import re
-                    errors = []
                     name_have_symbol = re.search('[^a-zA-Z0-9\_\-\.]+', name)
                     if img_name in stg.listVolumes():
                         msg = _("Volume name already use")
@@ -147,8 +145,6 @@ def storage(request, host_id, pool):
                     img = request.POST.get('img', '')
                     clone_name = request.POST.get('new_img', '')
                     full_img_name = clone_name + '.img'
-                    import re
-                    errors = []
                     name_have_symbol = re.search('[^a-zA-Z0-9\_\-\.]+', clone_name)
                     if full_img_name in stg.listVolumes():
                         msg = _("Volume name already use")

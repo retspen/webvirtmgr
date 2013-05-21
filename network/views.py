@@ -6,6 +6,9 @@ from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from vds.models import Host
 import libvirt_func
+from network.IPy import IP
+from libvirt import libvirtError
+import re
 
 
 def network(request, host_id, pool):
@@ -14,8 +17,6 @@ def network(request, host_id, pool):
     Networks block
 
     """
-
-    from libvirt import libvirtError
 
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
@@ -44,7 +45,6 @@ def network(request, host_id, pool):
                     forward = request.POST.get('forward', '')
                     dhcp.append(request.POST.get('dhcp', ''))
 
-                    import re
                     errors = []
                     name_have_symbol = re.search('[^a-zA-Z0-9\_\-]+', pool_name)
                     ip_have_symbol = re.search('[^0-9\.\/]+', net_addr)
@@ -69,8 +69,6 @@ def network(request, host_id, pool):
                         msg = _("Pool name already in use")
                         errors.append(msg)
                     try:
-                        from virtmgr.IPy import IP
-
                         netmask = IP(net_addr).strNetmask()
                         ipaddr = IP(net_addr)
                         gateway = ipaddr[0].strNormal()[-1]
