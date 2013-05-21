@@ -240,7 +240,7 @@ def newvm(request, host_id):
                         vl = stg.storageVolLookupByName(vol)
                         image = vl.path()
 
-                        vnc_passwd = ''.join([choice(letters + digits) for i in range(12)])
+                        vnc_passwd = ''.join([str(choice(letters + digits)) for i in range(12)])
 
                         new_vm = Vm(host_id=host_id, vname=vname, vnc_passwd=vnc_passwd)
                         new_vm.save()
