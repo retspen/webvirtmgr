@@ -400,7 +400,7 @@ def network_get_subnet(network):
     fw = util.get_xml_path(xml_net, "/network/forward/@mode")
     forwardDev = util.get_xml_path(xml_net, "/network/forward/@dev")
 
-    if fw and forwardDev:
+    if fw:
         ipv4.append([fw, forwardDev])
     else:
         ipv4.append(None)
