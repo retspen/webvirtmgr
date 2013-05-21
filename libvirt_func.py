@@ -696,9 +696,9 @@ def vds_get_uptime(dom):
 
     if dom.info()[0] == 1:
         nanosec = dom.info()[4]
-        minutes = nanosec * 1.66666666666667E-11
-        minutes = round(minutes, 0)
-        return minutes
+        hour = nanosec * 1.66666666666667E-11
+        hour = round(hour, 0)
+        return hour
     else:
         return 'None'
 
