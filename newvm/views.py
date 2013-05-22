@@ -214,8 +214,6 @@ def newvm(request, host_id):
                     msg = _("Enter the name of the virtual machine")
                     errors.append(msg)
                 if not errors:
-                    stg = conn.storagePoolLookupByName(storage)
-
                     if not hdd_size:
                         if not img:
                             msg = _("First you need to create an image")
@@ -224,10 +222,10 @@ def newvm(request, host_id):
                             image = libvirt_func.image_get_path(conn, img, all_storages)
                     else:
                         try:
+                            stg = conn.storagePoolLookupByName(storage)
                             libvirt_func.new_volume(stg, vname, hdd_size)
                         except libvirtError as msg_error:
                             errors.append(msg_error.message)
-
                     if not errors:
                         if not img:
                             stg_type = util.get_xml_path(stg.XMLDesc(0), "/pool/@type")
@@ -235,9 +233,11 @@ def newvm(request, host_id):
                                 vol = vname + '.img'
                             else:
                                 vol = vname
+                            vl = stg.storageVolLookupByName(vol)
                         else:
                             vol = img
-                        vl = stg.storageVolLookupByName(vol)
+                            vl = conn.storageVolLookupByPath(image)
+
                         image = vl.path()
 
                         vnc_passwd = ''.join([choice(letters + digits) for i in range(12)])
