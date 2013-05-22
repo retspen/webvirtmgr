@@ -82,7 +82,6 @@ def vds(request, host_id, vname):
                 try:
                     if dom.info()[0] == 1:
                         dom.destroy()
-                    dom.undefine()
                     if request.POST.get('image', ''):
                         libvirt_func.vds_remove_hdd(conn, dom)
                     try:
@@ -90,6 +89,7 @@ def vds(request, host_id, vname):
                         vm.delete()
                     except:
                         pass
+                    dom.undefine()
                     return HttpResponseRedirect('/overview/%s/' % host_id)
                 except libvirtError as msg_error:
                     errors.append(msg_error.message)

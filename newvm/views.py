@@ -149,7 +149,7 @@ def newvm(request, host_id):
             msg = _("Your CPU doesn't support hardware virtualization")
             errors.append(msg)
 
-        digits = [a for a in range(1, 601)]
+        hdd_digits_size = [a for a in range(1, 601)]
 
         if not flavors and flavors != 'error':
             add_flavor = Flavor(name='micro', vcpu='1', ram='256', hdd='10')
@@ -240,7 +240,7 @@ def newvm(request, host_id):
                         vl = stg.storageVolLookupByName(vol)
                         image = vl.path()
 
-                        vnc_passwd = ''.join([str(choice(letters + digits)) for i in range(12)])
+                        vnc_passwd = ''.join([choice(letters + digits) for i in range(12)])
 
                         new_vm = Vm(host_id=host_id, vname=vname, vnc_passwd=vnc_passwd)
                         new_vm.save()

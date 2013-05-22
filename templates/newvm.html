@@ -94,9 +94,9 @@
                       <a data-toggle="modal" href="#addModal{{ forloop.counter }}" class="btn btn-success">{% trans "Create" %}</a>
                     </td>
                     <td style="width:5px;">
-                      <form class="form-horizontal" action="/newvm/{{ host_id }}/" method="post" style="height:10px;">{% csrf_token %}
+                      <form class="form-horizontal" action="{% url newvm host_id %}" method="post" style="height:10px;">{% csrf_token %}
                         <input type="hidden" name="flavor" value="{{ flavor.id }}">
-                        <input type="submit" class="btn btn-danger" name="del_flavor" value="Delete" onclick="return confirm('Are you sure?')">
+                        <input type="submit" class="btn btn-danger" name="del_flavor" value="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
                       </form>
                     </td>
                   </tr>
@@ -244,8 +244,8 @@
                       <label class="control-label">{% trans "HDD" %}</label>
                       <div class="controls">
                         <select name="hdd">
-                          {% for d in digits %}
-                          <option value="{{ d }}">{{ d }} {% trans "GB" %}</option>
+                          {% for hdd_size in hdd_digits_size %}
+                          <option value="{{ hdd_size }}">{{ hdd_size }} {% trans "GB" %}</option>
                           {% endfor %}
                         </select>
                       </div> 
