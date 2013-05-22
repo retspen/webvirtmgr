@@ -127,10 +127,10 @@ Reload apache:
 
 ## 5. Gunicorn and Runit (Only for geeks)
 
-WSGI for gunicorn:
-    
-    webvirtmgr/wsgi.py
-    
+Install gunicorn:
+
+    $ sudo pip install gunicorn
+
 Add line <code>'gunicorn',</code> in file settings.py:
 
     INSTALLED_APPS = (
@@ -154,6 +154,8 @@ Runit script for webvirtmgr (/etc/sv/webvirtmgr/run):
 
     cd $ROOT
     exec $GUNICORN -c $ROOT/gunicorn.conf.py --pid $PID $APP
+    
+And then install and setup nginx.
 
 ## 6. Update
 
