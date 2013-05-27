@@ -4,7 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>{% trans "Error 500" %}</title>
+    <title>{% trans "Internal Server Error" %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
 
@@ -20,6 +20,25 @@
       .container-narrow {
         margin: 0 auto;
         max-width: 990px;
+      }
+      /* Main marketing message and sign up button */
+      .jumbotron {
+        margin: 80px 0;
+        text-align: center;
+      }
+      .jumbotron h1 {
+        font-size: 100px;
+        line-height: 1;
+      }
+      .jumbotron .lead {
+        margin-top: 30px;
+        font-size: 24px;
+        line-height: 1.25;
+      }
+      .jumbotron .btn {
+        margin-top: 10px;
+        font-size: 21px;
+        padding: 14px 24px;
       }
     </style>
     <link href="{% static "css/bootstrap-responsive.css" %}" rel="stylesheet">
@@ -52,9 +71,11 @@
       </div><!--/.navbar-inner -->
     </div><!--/.navbar -->      
     <div class="container-narrow">
-      <div class="pagination-centered">
-        <br><br>
-        <h1 class="text-error">500</h2>
+      <div class="jumbotron">
+        <h1>Oops!</h1>
+        <p class="lead">{% trans "500 Internal Server Error" %}</p>
+        <p>{% trans "The server encountered an internal error or misconfiguration and was unable to complete you request." %}</p>
+        <a class="btn btn-medium btn-success" href="javascript:history.back()">&lt Back</a>
       </div>
     </div> <!-- /container-narrow -->
 
