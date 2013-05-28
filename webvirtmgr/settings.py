@@ -29,6 +29,7 @@ DATABASES = {
     }
 }
 
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 ALLOWED_HOSTS = ['*']
 TIME_ZONE = 'Europe/Zaporozhye'
 LANGUAGE_CODE = 'en-us'
