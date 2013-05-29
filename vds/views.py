@@ -35,7 +35,6 @@ def vds(request, host_id, vname):
             vm = None
 
         dom_info = libvirt_func.vds_get_info(dom)
-        dom_uptime = libvirt_func.vds_get_uptime(dom)
         cpu_usage = libvirt_func.vds_cpu_usage(conn, dom)
         mem_usage = libvirt_func.vds_memory_usage(conn, dom)
 
