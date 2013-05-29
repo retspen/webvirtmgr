@@ -687,22 +687,6 @@ def vds_set_vnc_passwd(conn, dom, passwd):
         return e.message
 
 
-def vds_get_uptime(dom):
-    """
-
-    Function return vds uptime info.
-
-    """
-
-    if dom.info()[0] == 1:
-        nanosec = dom.info()[4]
-        hour = nanosec * 1.66666666666667E-11
-        hour = round(hour, 0)
-        return hour
-    else:
-        return 'None'
-
-
 def get_all_media(conn, storages):
     """
 

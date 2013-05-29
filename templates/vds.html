@@ -69,7 +69,6 @@
                 <div class="pagination-centered">
                   <p><b>{% trans "Name" %}:</b> {{ vname }}</p>
                   <p><b>{% trans "Status" %}:</b> <font color={% ifequal dom.info.0 5 %}"red">{% trans "Shuttoff" %}{% endifequal %}{% ifequal dom.info.0 1 %}"green">{% trans "Running" %}{% endifequal %}{% ifequal dom.info.0 3 %}"orange">{% trans "Suspend" %}{% endifequal %}</font></p>
-                  <p><b>{% trans "Uptime" %}:</b> {{ dom_uptime }} (Hour)</p>
                 </div>
                 <hr>
                 <li>{% trans "Technical Details" %}</li><br>
