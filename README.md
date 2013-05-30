@@ -1,4 +1,4 @@
-# WebVirtMgr panel - v2.0.0
+# WebVirtMgr panel - v2.1.0
 
 # Warning: update v1.6.1 to 2 not supported. (Django-1.4 change all logic)
 
@@ -7,6 +7,9 @@
 * Fix noVNC connection if panel running other server
 * noVNC support open many connection
 * Add support translatation
+* Fix bug when create VM and storege pool not active
+* Fix bug when not have QEMU binary '/usr/bin/qemu-system-x86_64' and others
+* Add support VirtIO when create VM
 
 ## 1. Introduction
 
