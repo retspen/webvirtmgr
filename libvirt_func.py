@@ -254,12 +254,13 @@ def images_get_storages(conn, storages):
     disk = []
     for storage in storages:
         stg = conn.storagePoolLookupByName(storage)
-        stg.refresh(0)
-        for img in stg.listVolumes():
-            if re.findall(".iso", img) or re.findall(".ISO", img):
-                pass
-            else:
-                disk.append(img)
+        if stg.info()[0] != 0:
+            stg.refresh(0)
+            for img in stg.listVolumes():
+                if re.findall(".iso", img) or re.findall(".ISO", img):
+                    pass
+                else:
+                    disk.append(img)
     return disk
 
 
@@ -639,15 +640,14 @@ def vds_get_hdd(conn, dom, storages):
     try:
         img = conn.storageVolLookupByPath(hdd)
         img_vol = img.name()
-
         for storage in storages:
             stg = conn.storagePoolLookupByName(storage)
-            stg.refresh(0)
-            for img in stg.listVolumes():
-                if img == img_vol:
-                    vol = img
-                    vol_stg = storage
-
+            if stg.info()[0] != 0:
+                stg.refresh(0)
+                for img in stg.listVolumes():
+                    if img == img_vol:
+                        vol = img
+                        vol_stg = storage
         return vol, vol_stg
     except:
         return hdd, 'Not in the pool'
@@ -697,11 +697,12 @@ def get_all_media(conn, storages):
     iso = []
     for storage in storages:
         stg = conn.storagePoolLookupByName(storage)
-        stg.refresh(0)
-        for img in stg.listVolumes():
-            if re.findall(".iso", img):
-                img = re.sub('.iso', '', img)
-                iso.append(img)
+        if stg.info()[0] != 0:
+            stg.refresh(0)
+            for img in stg.listVolumes():
+                if re.findall(".iso", img):
+                    img = re.sub('.iso', '', img)
+                    iso.append(img)
     return iso
 
 

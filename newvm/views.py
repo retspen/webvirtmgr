@@ -23,7 +23,7 @@ def newvm(request, host_id):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
-    def add_vm(name, ram, vcpu, image, net, passwd):
+    def add_vm(name, ram, vcpu, image, net, virtio, passwd):
         ram = int(ram) * 1024
         iskvm = re.search('kvm', conn.getCapabilities())
         if iskvm:
@@ -48,14 +48,15 @@ def newvm(request, host_id):
         vol = img.name()
         for storage in all_storages:
             stg = conn.storagePoolLookupByName(storage)
-            stg.refresh(0)
-            for img in stg.listVolumes():
-                if img == vol:
-                    stg_type = util.get_xml_path(stg.XMLDesc(0), "/pool/@type")
-                    if stg_type == 'dir':
-                        image_type = 'qcow2'
-                    else:
-                        image_type = 'raw'
+            if stg.info()[0] != 0:
+                stg.refresh(0)
+                for img in stg.listVolumes():
+                    if img == vol:
+                        stg_type = util.get_xml_path(stg.XMLDesc(0), "/pool/@type")
+                        if stg_type == 'dir':
+                            image_type = 'qcow2'
+                        else:
+                            image_type = 'raw'
 
         xml = """<domain type='%s'>
                   <name>%s</name>
@@ -81,18 +82,20 @@ def newvm(request, host_id):
                     <emulator>%s</emulator>
                     <disk type='file' device='disk'>
                       <driver name='qemu' type='%s'/>
-                      <source file='%s'/>
-                      <target dev='hda' bus='ide'/>
-                    </disk>
+                      <source file='%s'/>""" % (dom_type, name, ram, ram, vcpu, machine, emulator, image_type, image)
+
+        if virtio:
+            xml += """<target dev='vda' bus='virtio'/>"""
+        else:
+            xml += """<target dev='hda' bus='ide'/>"""
+
+        xml += """</disk>
                     <disk type='file' device='cdrom'>
                       <driver name='qemu' type='raw'/>
                       <source file=''/>
                       <target dev='hdc' bus='ide'/>
                       <readonly/>
-                    </disk>
-                    <controller type='ide' index='0'>
-                      <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x1'/>
-                    </controller>""" % (dom_type, name, ram, ram, vcpu, machine, emulator, image_type, image)
+                    </disk>"""
 
         if re.findall("br", net):
             xml += """<interface type='bridge'>
@@ -100,18 +103,17 @@ def newvm(request, host_id):
         else:
             xml += """<interface type='network'>
                     <source network='%s'/>""" % (net)
+        if virtio:
+            xml += """<model type='virtio' />"""
 
-        xml += """<address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x0'/>
-                    </interface>
+        xml += """</interface>
                     <input type='tablet' bus='usb'/>
                     <input type='mouse' bus='ps2'/>
                     <graphics type='vnc' port='-1' autoport='yes' keymap='en-us' passwd='%s'/>
                     <video>
                       <model type='cirrus' vram='9216' heads='1'/>
-                      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x0'/>
                     </video>
                     <memballoon model='virtio'>
-                      <address type='pci' domain='0x0000' bus='0x00' slot='0x05' function='0x0'/>
                     </memballoon>
                   </devices>
                 </domain>""" % (passwd)
@@ -196,6 +198,7 @@ def newvm(request, host_id):
                 img = request.POST.get('img', '')
                 ram = request.POST.get('ram', '')
                 vcpu = request.POST.get('vcpu', '')
+                virtio = request.POST.get('virtio', '')
 
                 errors = []
 
@@ -242,10 +245,10 @@ def newvm(request, host_id):
 
                         vnc_passwd = ''.join([choice(letters + digits) for i in range(12)])
 
+                        add_vm(vname, ram, vcpu, image, net, virtio, vnc_passwd)
+
                         new_vm = Vm(host_id=host_id, vname=vname, vnc_passwd=vnc_passwd)
                         new_vm.save()
-
-                        add_vm(vname, ram, vcpu, image, net, vnc_passwd)
 
                         return HttpResponseRedirect('/vds/%s/%s/' % (host_id, vname))
 
