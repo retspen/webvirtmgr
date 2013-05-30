@@ -35,9 +35,7 @@ def newvm(request, host_id):
         if not machine:
             machine = 'pc-1.0'
 
-        if re.findall('/usr/bin/qemu-system-x86_64', conn.getCapabilities()):
-            emulator = '/usr/bin/qemu-system-x86_64'
-        elif re.findall('/usr/libexec/qemu-kvm', conn.getCapabilities()):
+        if re.findall('/usr/libexec/qemu-kvm', conn.getCapabilities()):
             emulator = '/usr/libexec/qemu-kvm'
         elif re.findall('/usr/bin/kvm', conn.getCapabilities()):
             emulator = '/usr/bin/kvm'
@@ -242,15 +240,17 @@ def newvm(request, host_id):
                             vl = conn.storageVolLookupByPath(image)
 
                         image = vl.path()
-
                         vnc_passwd = ''.join([choice(letters + digits) for i in range(12)])
 
-                        add_vm(vname, ram, vcpu, image, net, virtio, vnc_passwd)
+                        try:
+                            add_vm(vname, ram, vcpu, image, net, virtio, vnc_passwd)
+                        except libvirtError as msg_error:
+                            errors.append(msg_error.message)
 
-                        new_vm = Vm(host_id=host_id, vname=vname, vnc_passwd=vnc_passwd)
-                        new_vm.save()
-
-                        return HttpResponseRedirect('/vds/%s/%s/' % (host_id, vname))
+                        if not errors:
+                            new_vm = Vm(host_id=host_id, vname=vname, vnc_passwd=vnc_passwd)
+                            new_vm.save()
+                            return HttpResponseRedirect('/vds/%s/%s/' % (host_id, vname))
 
         conn.close()
 
