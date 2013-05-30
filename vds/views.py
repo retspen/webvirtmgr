@@ -7,7 +7,6 @@ from django.utils.translation import ugettext_lazy as _
 from vds.models import Host, Vm
 import libvirt_func
 from libvirt import libvirtError
-import re
 
 
 def vds(request, host_id, vname):

@@ -245,6 +245,8 @@ def newvm(request, host_id):
                         try:
                             add_vm(vname, ram, vcpu, image, net, virtio, vnc_passwd)
                         except libvirtError as msg_error:
+                            if hdd_size:
+                                vl.delete(0)
                             errors.append(msg_error.message)
 
                         if not errors:
