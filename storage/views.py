@@ -43,9 +43,10 @@ def storage(request, host_id, pool):
                     pool_target = request.POST.get('target', '')
                     pool_source = request.POST.get('source', '')
 
-                    errors = []
                     name_have_symbol = re.search('[^a-zA-Z0-9\_\-]+', pool_name)
                     path_have_symbol = re.search('[^a-zA-Z0-9\/]+', pool_source)
+
+                    errors = []
 
                     if name_have_symbol or path_have_symbol:
                         msg = _("The host name must not contain any special characters")
