@@ -53,6 +53,7 @@ def dashboard(request):
 
     hosts = Host.objects.filter()
     host_info = get_hosts_status(hosts)
+
     errors = []
 
     if request.method == 'POST':

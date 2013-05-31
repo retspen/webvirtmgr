@@ -66,6 +66,6 @@ def dom_snapshot(request, host_id, vname):
                 snap_name = request.POST.get('name', '')
                 libvirt_func.snapshot_revert(dom, snap_name)
                 message = _("Successful revert snapshot: ")
-                message = message + name
+                message = message + snap_name
 
     return render_to_response('snapshot.html', locals(), context_instance=RequestContext(request))

@@ -22,13 +22,13 @@ def overview(request, host_id):
     host = Host.objects.get(id=host_id)
     conn = libvirt_func.libvirt_conn(host)
 
+    errors = []
+
     if type(conn) == dict:
-        errors = []
         errors.append(conn.values()[0])
     else:
         have_kvm = libvirt_func.hard_accel_node(conn)
         if not have_kvm:
-            errors = []
             msg = _('Your CPU doesn\'t support hardware virtualization')
             errors.append(msg)
 

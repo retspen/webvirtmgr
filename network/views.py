@@ -45,9 +45,10 @@ def network(request, host_id, pool):
                     forward = request.POST.get('forward', '')
                     dhcp.append(request.POST.get('dhcp', ''))
 
-                    errors = []
                     name_have_symbol = re.search('[^a-zA-Z0-9\_\-]+', pool_name)
                     ip_have_symbol = re.search('[^0-9\.\/]+', net_addr)
+
+                    errors = []
 
                     if not pool_name:
                         msg = _("No pool name has been entered")
