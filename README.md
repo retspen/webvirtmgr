@@ -69,6 +69,10 @@ Enter the user information:
     Password (again): xxxxxx (Put: confirm password)
     Superuser created successfully.
 
+Add pre-installed flavors:
+    
+    $ ./manage.py loaddata flavor.json
+
 Run app for test:
 
     $ ./manage.py runserver x.x.x.x:8000 (x.x.x.x - your IP address server)

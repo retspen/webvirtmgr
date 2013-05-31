@@ -151,21 +151,6 @@ def newvm(request, host_id):
 
         hdd_digits_size = [a for a in range(1, 601)]
 
-        if not flavors and flavors != 'error':
-            add_flavor = Flavor(name='micro', vcpu='1', ram='256', hdd='10')
-            add_flavor.save()
-            add_flavor = Flavor(name='mini', vcpu='1', ram='512', hdd='20')
-            add_flavor.save()
-            add_flavor = Flavor(name='small', vcpu='2', ram='1024', hdd='40')
-            add_flavor.save()
-            add_flavor = Flavor(name='medium', vcpu='2', ram='2048', hdd='80')
-            add_flavor.save()
-            add_flavor = Flavor(name='large', vcpu='4', ram='4096', hdd='160')
-            add_flavor.save()
-            add_flavor = Flavor(name='xlarge', vcpu='6', ram='8192', hdd='320')
-            add_flavor.save()
-            return HttpResponseRedirect(request.get_full_path())
-
         if request.method == 'POST':
             if 'add_flavor' in request.POST:
                 name = request.POST.get('name', '')
@@ -197,8 +182,6 @@ def newvm(request, host_id):
                 ram = request.POST.get('ram', '')
                 vcpu = request.POST.get('vcpu', '')
                 virtio = request.POST.get('virtio', '')
-
-                errors = []
 
                 symbol = re.search('[^a-zA-Z0-9\_\-\.]+', vname)
 
