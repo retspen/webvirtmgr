@@ -130,11 +130,13 @@ def node_get_info(conn):
 
     try:
         info = []
-        xml_inf = conn.getSysinfo(0)
         info.append(conn.getHostname())
         info.append(conn.getInfo()[0])
         info.append(conn.getInfo()[2])
-        info.append(util.get_xml_path(xml_inf, "/sysinfo/processor/entry[6]"))
+        try:
+            info.append(util.get_xml_path(conn.getSysinfo(0), "/sysinfo/processor/entry[6]"))
+        except:
+            info.append('Unknown')
         return info
     except libvirtError:
         return "error"
