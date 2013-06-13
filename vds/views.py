@@ -101,12 +101,18 @@ def vds(request, host_id, vname):
                     errors.append(msg_error.message)
             if 'remove_iso' in request.POST:
                 image = request.POST.get('iso_img', '')
-                libvirt_func.vds_umount_iso(conn, dom, image, storages)
-                return HttpResponseRedirect(request.get_full_path())
+                try:
+                    libvirt_func.vds_umount_iso(conn, dom, image, storages)
+                    return HttpResponseRedirect(request.get_full_path())
+                except libvirtError as msg_error:
+                    errors.append(msg_error.message)
             if 'add_iso' in request.POST:
                 image = request.POST.get('iso_img', '')
-                libvirt_func.vds_mount_iso(conn, dom, image, storages)
-                return HttpResponseRedirect(request.get_full_path())
+                try:
+                    libvirt_func.vds_mount_iso(conn, dom, image, storages)
+                    return HttpResponseRedirect(request.get_full_path())
+                except libvirtError as msg_error:
+                    errors.append(msg_error.message)
             if 'vnc_pass' in request.POST:
                 from string import letters, digits
                 from random import choice
