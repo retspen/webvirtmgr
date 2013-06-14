@@ -66,25 +66,60 @@
                  </form>
                 <hr>
                 <li>{% trans "Name & Status" %}</li><br>
-                <div class="pagination-centered">
-                  <p><b>{% trans "Name" %}:</b> {{ vname }}</p>
-                  <p><b>{% trans "Status" %}:</b> <font color={% ifequal dom.info.0 5 %}"red">{% trans "Shuttoff" %}{% endifequal %}{% ifequal dom.info.0 1 %}"green">{% trans "Running" %}{% endifequal %}{% ifequal dom.info.0 3 %}"orange">{% trans "Suspend" %}{% endifequal %}</font></p>
+                <div class="row offset2">
+                  <div class="span3">
+                    <p><b>{% trans "Name" %}:</b></p>
+                    <p><b>{% trans "Status" %}:</b></p>
+                  </div>
+                  <div class="span5">
+                    <p>{{ vname }}</p>
+                    <p><font color={% ifequal dom.info.0 5 %}"red">{% trans "Shuttoff" %}{% endifequal %}{% ifequal dom.info.0 1 %}"green">{% trans "Running" %}{% endifequal %}{% ifequal dom.info.0 3 %}"orange">{% trans "Suspend" %}{% endifequal %}</font></p>
+                  </div>
                 </div>
                 <hr>
                 <li>{% trans "Technical Details" %}</li><br>
-                <div class="pagination-centered">
-                  <p><b>{% trans "VCPU" %}:</b> {{ dom_info.0 }} ({% trans "Usage" %}: {{ cpu_usage }}%)</p>
-                  <p><b>{% trans "RAM" %}:</b> {{ dom_info.1 }} {% trans "MB" %} ({% trans "Usage" %}: {{ mem_usage.1 }}%)</p>
-                  <p><b>{% trans "MAC" %}:</b> {{ dom_info.2 }} ({{ dom_info.3 }})</p>
-                  <p><b>{% trans "HDD" %}:</b> {{ hdd_image.0 }} ({{ hdd_image.1 }})</p>
+                <div class="row offset2">
+                  <div class="span3">
+                    <p><b>{% trans "Processor" %}:</b></p>
+                    <p><b>{% trans "Memory" %}:</b></p>
+                    <p><b>{% trans "Network" %}:</b></p>
+                  </div>
+                  <div class="span5">
+                    <p>VCPU {{ dom_info.0 }} ({% trans "Usage" %}: {{ cpu_usage }}%)</p>
+                    <p>{{ dom_info.1 }} {% trans "MB" %} ({% trans "Usage" %}: {{ mem_usage.1 }}%)</p>
+                    <p>{{ dom_info.2 }} ({{ dom_info.3 }})</p>
+                  </div>
                 </div>
                 <hr>
-                <li>{% trans "Media Details" %}</li><br>
+                <li>{% trans "Storage Details" %}</li><br>
+                <div class="row offset2">
+                  <div class="span3">
+                    {% for dev_bus, hdd_dev in hdd_image.items reversed %}
+                    <p><b>{% trans "Disk" %} {{ dev_bus }}:</b></p>
+                    {% endfor %}
+                  </div>
+                  <div class="span5">
+                    {% for dev_bus, hdd_dev in hdd_image.items reversed %}
+                    <p> {{ hdd_dev.0 }} ({{ hdd_dev.1 }})</p>
+                    {% endfor %}
+                  </div>
+                </div>
+                <hr>
+                <li>{% trans "Media Details" %}</li>
+                <br />
+                {% if media %}
+                <div class="row offset2">
+                  <div class="span3">
+                    <p><b>{% trans "Connected" %}:</b></p>
+                  </div>
+                  <div class="span5">
+                    <p>{{ media }}</p>
+                  </div>
+                </div>
+                {% endif %}
                 <div class="pagination-centered">
-                  {% if not media %}{% else %}<b>{% trans "Connected Image" %}:</b> {{ media }}{% endif %}
                   <form action="" method="post">{% csrf_token %}
                     {% if media %}
-                    <br>
                     <input type="hidden" name="iso_img" value="{{ media }}">
                     <input type="submit" class="btn"  name="remove_iso" value="{% trans "Disconnect" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
                     {% else %}
