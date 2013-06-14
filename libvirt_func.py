@@ -633,26 +633,33 @@ def vds_get_hdd(conn, dom, storages):
 
     """
 
+    all_hdd_dev = {}
     xml = dom.XMLDesc(0)
-    hdd = util.get_xml_path(xml, "/domain/devices/disk[1]/source/@file")
 
-    # If xml create custom
-    if not hdd:
-        hdd = util.get_xml_path(xml, "/domain/devices/disk[1]/source/@dev")
-    try:
-        img = conn.storageVolLookupByPath(hdd)
-        img_vol = img.name()
-        for storage in storages:
-            stg = conn.storagePoolLookupByName(storage)
-            if stg.info()[0] != 0:
-                stg.refresh(0)
-                for img in stg.listVolumes():
-                    if img == img_vol:
-                        vol = img
-                        vol_stg = storage
-        return vol, vol_stg
-    except:
-        return hdd, 'Not in the pool'
+    for num in range(1, 5):
+        hdd_dev = util.get_xml_path(xml, "/domain/devices/disk[%s]/@device" % (num))
+        if hdd_dev == 'disk':
+            dev_bus = util.get_xml_path(xml, "/domain/devices/disk[%s]/target/@dev" % (num))
+            hdd = util.get_xml_path(xml, "/domain/devices/disk[%s]/source/@file" % (num))
+            # If xml create custom
+            if not hdd:
+                hdd = util.get_xml_path(xml, "/domain/devices/disk[%s]/source/@dev" % (num))
+            try:
+                img = conn.storageVolLookupByPath(hdd)
+                img_vol = img.name()
+                for storage in storages:
+                    stg = conn.storagePoolLookupByName(storage)
+                    if stg.info()[0] != 0:
+                        stg.refresh(0)
+                        for img in stg.listVolumes():
+                            if img == img_vol:
+                                vol = img
+                                vol_stg = storage
+                all_hdd_dev[dev_bus] = vol, vol_stg
+            except:
+                all_hdd_dev[dev_bus] = hdd, 'Not in the pool'
+
+    return all_hdd_dev
 
 
 def vds_get_media(conn, dom):
@@ -663,13 +670,16 @@ def vds_get_media(conn, dom):
     """
 
     xml = dom.XMLDesc(0)
-    media = util.get_xml_path(xml, "/domain/devices/disk[2]/source/@file")
-    if media:
-        vol = conn.storageVolLookupByPath(media)
-        img = re.sub('.iso', '', vol.name())
-        return img
-    else:
-        return None
+    for num in range(1, 5):
+        hdd_dev = util.get_xml_path(xml, "/domain/devices/disk[%s]/@device" % (num))
+        if hdd_dev == 'cdrom':
+            media = util.get_xml_path(xml, "/domain/devices/disk[%s]/source/@file" % (num))
+            if media:
+                vol = conn.storageVolLookupByPath(media)
+                img = re.sub('.iso', '', vol.name())
+                return img
+            else:
+                return None
 
 
 def vds_set_vnc_passwd(conn, dom, passwd):
