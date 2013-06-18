@@ -3,3 +3,4 @@ venv
 *.pyc
 .DS_Store
 ._*
+.idea

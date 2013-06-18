@@ -184,6 +184,7 @@ def newvm(request, host_id):
                 ram = request.POST.get('ram', '')
                 vcpu = request.POST.get('vcpu', '')
                 virtio = request.POST.get('virtio', '')
+                vnc_passwd = request.POST.get('passwd', '')
 
                 symbol = re.search('[^a-zA-Z0-9\_\-\.]+', vname)
 
@@ -225,7 +226,7 @@ def newvm(request, host_id):
                             vl = conn.storageVolLookupByPath(image)
 
                         image = vl.path()
-                        vnc_passwd = ''.join([choice(letters + digits) for i in range(12)])
+                        #vnc_passwd = ''.join([choice(letters + digits) for i in range(12)])
 
                         try:
                             add_vm(vname, ram, vcpu, image, net, virtio, vnc_passwd)
