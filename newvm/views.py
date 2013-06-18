@@ -87,7 +87,7 @@ def newvm(request, host_id):
         if virtio:
             xml += """<target dev='vda' bus='virtio'/>"""
         else:
-            xml += """<target dev='hda' bus='ide'/>"""
+            xml += """<target dev='sda' bus='scsi'/>"""
 
         xml += """</disk>
                     <disk type='file' device='cdrom'>
@@ -105,6 +105,8 @@ def newvm(request, host_id):
                     <source network='%s'/>""" % (net)
         if virtio:
             xml += """<model type='virtio' />"""
+        else:
+            xml += """<model type='e1000' />"""
 
         xml += """</interface>
                     <input type='tablet' bus='usb'/>
