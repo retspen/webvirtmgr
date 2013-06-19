@@ -60,8 +60,13 @@
                   <button type="submit" name="snapshot" role="button" class="btn" style="height:50px;width:80px;"><i class="icon-download-alt"></i><br>{% trans "Snapshot" %}</button>
                   {% endifequal %}
                   {% if not vm.vnc_passwd and dom.info.0 == 5 %}
-                    <br><br>
-                    <button class="btn" type="submit" name="vnc_pass">{% trans "Enable noVNC" %}</button>
+                  <div class="control-group">
+                     <label class="control-label">{%  trans "Set VNC Password" %}</label>
+                     <div class="controls">
+                        <input type="text" class="input-large" name="passwd" placeholder="{% trans "Password" %}" maxlength="12" required pattern="^[a-zA-Z0-9_]+$">
+                     </div>
+                  </div>
+
                   {% endif %}
                  </form>
                 <hr>

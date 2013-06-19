@@ -114,10 +114,7 @@ def vds(request, host_id, vname):
                 except libvirtError as msg_error:
                     errors.append(msg_error.message)
             if 'vnc_pass' in request.POST:
-                from string import letters, digits
-                from random import choice
-
-                passwd = ''.join([choice(letters + digits) for i in range(12)])
+                passwd = request.POST.get('passwd', '')
                 try:
                     libvirt_func.vds_set_vnc_passwd(conn, dom, passwd)
                     vnc_pass = Vm(host_id=host_id, vname=vname, vnc_passwd=passwd)

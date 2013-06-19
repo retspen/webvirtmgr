@@ -217,9 +217,9 @@ def new_volume(storage, name, size):
             <capacity>%s</capacity>
             <allocation>%s</allocation>
             <target>
-                <format type='qcow2'/>
+                <format type='raw'/>
             </target>
-        </volume>""" % (name, size, alloc)
+        </volume>""" % (name, size, size)
     storage.createXML(xml, 0)
 
 
@@ -240,7 +240,7 @@ def clone_volume(storage, img, new_img):
             <capacity>0</capacity>
             <allocation>0</allocation>
             <target>
-                <format type='qcow2'/>
+                <format type='raw'/>
             </target>
         </volume>""" % (new_img)
     storage.createXMLFrom(xml, vol, 0)

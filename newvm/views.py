@@ -46,17 +46,8 @@ def newvm(request, host_id):
 
         img = conn.storageVolLookupByPath(image)
         vol = img.name()
-        for storage in all_storages:
-            stg = conn.storagePoolLookupByName(storage)
-            if stg.info()[0] != 0:
-                stg.refresh(0)
-                for img in stg.listVolumes():
-                    if img == vol:
-                        stg_type = util.get_xml_path(stg.XMLDesc(0), "/pool/@type")
-                        if stg_type == 'dir':
-                            image_type = 'qcow2'
-                        else:
-                            image_type = 'raw'
+
+        image_type = 'raw'
 
         xml = """<domain type='%s'>
                   <name>%s</name>
@@ -80,14 +71,14 @@ def newvm(request, host_id):
                   <on_crash>restart</on_crash>
                   <devices>
                     <emulator>%s</emulator>
-                    <disk type='file' device='disk'>
-                      <driver name='qemu' type='%s'/>
-                      <source file='%s'/>""" % (dom_type, name, ram, ram, vcpu, machine, emulator, image_type, image)
+                    <disk type='block' device='disk'>
+                      <driver name='qemu' type='raw'/>
+                      <source file='%s'/>""" % (dom_type, name, ram, ram, vcpu, machine, emulator, image)
 
         if virtio:
             xml += """<target dev='vda' bus='virtio'/>"""
         else:
-            xml += """<target dev='hda' bus='ide'/>"""
+            xml += """<target dev='sda' bus='scsi'/>"""
 
         xml += """</disk>
                     <disk type='file' device='cdrom'>
@@ -105,6 +96,8 @@ def newvm(request, host_id):
                     <source network='%s'/>""" % (net)
         if virtio:
             xml += """<model type='virtio' />"""
+        else:
+            xml += """<model type='e1000' />"""
 
         xml += """</interface>
                     <input type='tablet' bus='usb'/>
@@ -184,6 +177,7 @@ def newvm(request, host_id):
                 ram = request.POST.get('ram', '')
                 vcpu = request.POST.get('vcpu', '')
                 virtio = request.POST.get('virtio', '')
+                vnc_passwd = request.POST.get('passwd', '')
 
                 symbol = re.search('[^a-zA-Z0-9\_\-\.]+', vname)
 
@@ -225,7 +219,7 @@ def newvm(request, host_id):
                             vl = conn.storageVolLookupByPath(image)
 
                         image = vl.path()
-                        vnc_passwd = ''.join([choice(letters + digits) for i in range(12)])
+                        #vnc_passwd = ''.join([choice(letters + digits) for i in range(12)])
 
                         try:
                             add_vm(vname, ram, vcpu, image, net, virtio, vnc_passwd)
