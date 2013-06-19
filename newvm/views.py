@@ -46,17 +46,8 @@ def newvm(request, host_id):
 
         img = conn.storageVolLookupByPath(image)
         vol = img.name()
-        for storage in all_storages:
-            stg = conn.storagePoolLookupByName(storage)
-            if stg.info()[0] != 0:
-                stg.refresh(0)
-                for img in stg.listVolumes():
-                    if img == vol:
-                        stg_type = util.get_xml_path(stg.XMLDesc(0), "/pool/@type")
-                        if stg_type == 'dir':
-                            image_type = 'qcow2'
-                        else:
-                            image_type = 'raw'
+
+        image_type = 'raw'
 
         xml = """<domain type='%s'>
                   <name>%s</name>
