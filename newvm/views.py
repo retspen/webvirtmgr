@@ -71,9 +71,9 @@ def newvm(request, host_id):
                   <on_crash>restart</on_crash>
                   <devices>
                     <emulator>%s</emulator>
-                    <disk type='file' device='disk'>
-                      <driver name='qemu' type='%s'/>
-                      <source file='%s'/>""" % (dom_type, name, ram, ram, vcpu, machine, emulator, image_type, image)
+                    <disk type='block' device='disk'>
+                      <driver name='qemu' type='raw'/>
+                      <source file='%s'/>""" % (dom_type, name, ram, ram, vcpu, machine, emulator, image)
 
         if virtio:
             xml += """<target dev='vda' bus='virtio'/>"""
