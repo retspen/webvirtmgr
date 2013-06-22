@@ -1,7 +1,7 @@
 # WebVirtMgr panel - v2.2.1
 
 * Created WebVirtMgr noVNC server (support open many vnc connection - item 6)
-* Package novnc not need - $ apt-get novnc autoremove novnc (Ubuntu)
+* Package novnc not need - $ apt-get autoremove novnc (Ubuntu)
 
 ## 1. Introduction
 
