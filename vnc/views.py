@@ -36,4 +36,6 @@ def vnc(request, host_id, vname):
 
         conn.close()
 
-    return render_to_response('vnc.html', locals(), context_instance=RequestContext(request))
+    response = render_to_response('vnc.html', locals(), context_instance=RequestContext(request))
+    response.set_cookie('token', vname)
+    return response

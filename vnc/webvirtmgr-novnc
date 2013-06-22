@@ -42,7 +42,7 @@ class NovaWebSocketProxy(wsproxy.WebSocketProxy):
         from libvirt_func import libvirt_conn, vnc_get_port
 
         try:
-            vm = Vm.objects.get(id=token)
+            vm = Vm.objects.get(vname=token)
             host = Host.objects.get(id=vm.host.id)
             conn = libvirt_conn(host)
 
