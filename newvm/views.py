@@ -72,8 +72,10 @@ def newvm(request, host_id):
                   <features>
                     <acpi/>
                     <apic/>
-                    <pae/>
                   </features>
+                  <cpu mode='host-model'>
+                    <model fallback='allow'/>
+                  </cpu>
                   <clock offset='utc'/>
                   <on_poweroff>destroy</on_poweroff>
                   <on_reboot>restart</on_reboot>
@@ -82,7 +84,8 @@ def newvm(request, host_id):
                     <emulator>%s</emulator>
                     <disk type='file' device='disk'>
                       <driver name='qemu' type='%s'/>
-                      <source file='%s'/>""" % (dom_type, name, ram, ram, vcpu, machine, emulator, image_type, image)
+                      <source file='%s'/>""" % (dom_type, name, ram, ram, vcpu, 
+                                                machine, emulator, image_type, image)
 
         if virtio:
             xml += """<target dev='vda' bus='virtio'/>"""
@@ -127,28 +130,23 @@ def newvm(request, host_id):
     if type(conn) == dict:
         return HttpResponseRedirect('/overview/%s/' % host_id)
     else:
-        have_kvm = libvirt_func.hard_accel_node(conn)
-
         try:
             flavors = Flavor.objects.filter().order_by('id')
         except:
             flavors = 'error'
-
-        errors = []
 
         all_vm = libvirt_func.vds_get_node(conn)
         all_networks = libvirt_func.networks_get_node(conn)
         all_storages = libvirt_func.storages_get_node(conn)
         all_img = libvirt_func.images_get_storages(conn, all_storages)
 
+        errors = []
+
         if not all_networks:
             msg = _("You haven't defined any virtual networks")
             errors.append(msg)
         if not all_storages:
             msg = _("You haven't defined have any storage pools")
-            errors.append(msg)
-        if not have_kvm:
-            msg = _("Your CPU doesn't support hardware virtualization")
             errors.append(msg)
 
         hdd_digits_size = [a for a in range(1, 601)]
@@ -199,6 +197,7 @@ def newvm(request, host_id):
                 if not vname:
                     msg = _("Enter the name of the virtual machine")
                     errors.append(msg)
+
                 if not errors:
                     if not hdd_size:
                         if not img:

@@ -1,14 +1,12 @@
 {% load i18n %}
 {% load staticfiles %}
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
     <meta charset="utf-8">
     <title>{% block title %}{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
-
-    <!-- Le styles -->
     <link href="{% static "css/bootstrap.css" %}" rel="stylesheet">
     <style type="text/css">
       body {
@@ -69,7 +67,6 @@
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
-    <!-- Fav and touch icons -->
     <link rel="shortcut icon" href="{% static "img/favicon.ico" %}">
   </head>
   <body>
@@ -92,16 +89,9 @@
       </div><!--/.navbar-inner -->
     </div><!--/.navbar -->      
     <div class="container-narrow">
- 
     {% block content %}{% endblock %}
-
     </div> <!-- /container-narrow -->
-
-    <!-- Le javascript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
     <script src="{% static "js/jquery.js" %}"></script>
     <script src="{% static "js/bootstrap.js" %}"></script>
-
   </body>
 </html>
