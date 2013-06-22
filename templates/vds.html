@@ -71,7 +71,7 @@
                     <p><b>{% trans "Name" %}:</b></p>
                     <p><b>{% trans "Status" %}:</b></p>
                   </div>
-                  <div class="span5">
+                  <div class="span6">
                     <p>{{ vname }}</p>
                     <p><font color={% ifequal dom.info.0 5 %}"red">{% trans "Shuttoff" %}{% endifequal %}{% ifequal dom.info.0 1 %}"green">{% trans "Running" %}{% endifequal %}{% ifequal dom.info.0 3 %}"orange">{% trans "Suspend" %}{% endifequal %}</font></p>
                   </div>
@@ -84,7 +84,7 @@
                     <p><b>{% trans "Memory" %}:</b></p>
                     <p><b>{% trans "Network" %}:</b></p>
                   </div>
-                  <div class="span5">
+                  <div class="span6">
                     <p>VCPU {{ dom_info.0 }} ({% trans "Usage" %}: {{ cpu_usage }}%)</p>
                     <p>{{ dom_info.1 }} {% trans "MB" %} ({% trans "Usage" %}: {{ mem_usage.1 }}%)</p>
                     <p>{{ dom_info.2 }} ({{ dom_info.3 }})</p>
@@ -198,7 +198,7 @@
         </div><!--/row-fluid-->
       </div><!--/container-fluid-->
       <script>
-        function open_vnc() { window.open('{% url vnc host_id vname %}','','width=968,height=552') }
+        function open_vnc() { window.open('{% url vnc host_id vname %}?token={{ vm.id }}','','width=968,height=552') }
       </script>
 {% endblock %}
 

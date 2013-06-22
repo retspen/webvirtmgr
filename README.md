@@ -1,15 +1,7 @@
-# WebVirtMgr panel - v2.1.0
+# WebVirtMgr panel - v2.2.1
 
-# Warning: update v1.6.1 to 2 not supported. (Django-1.4 change all logic)
-
-* Move to Django-1.4.x
-* Add support SSH connection to host server (Beta)
-* Fix noVNC connection if panel running other server
-* noVNC support open many connection
-* Add support translatation
-* Fix bug when create VM and storege pool not active
-* Fix bug when not have QEMU binary '/usr/bin/qemu-system-x86_64' and others
-* Add support VirtIO when create VM
+* Created WebVirtMgr noVNC server (support open many vnc connection - item 6)
+* Package novnc not need - $ apt-get novnc autoremove novnc (Ubuntu)
 
 ## 1. Introduction
 
@@ -44,9 +36,7 @@ Run:
 
 Run:
 
-    $ sudo apt-get install git python-pip virtinst apache2 libapache2-mod-python libapache2-mod-wsgi novnc
-    $ sudo service novnc stop
-    $ sudo update-rc.d -f novnc remove
+    $ sudo apt-get install git python-pip virtinst apache2 libapache2-mod-python libapache2-mod-wsgi python-novnc python-numpy
     $ sudo pip install Django==1.4.5
 
 ## 3. Setup
@@ -71,15 +61,15 @@ Enter the user information:
 
 Add pre-installed flavors:
     
-    $ ./manage.py loaddata flavor.json
+    $ ./manage.py loaddata conf/flavor.json
 
 Run app for test:
 
-    $ ./manage.py runserver x.x.x.x:8000 (x.x.x.x - your IP address server)
+    $ ./manage.py runserver 0:8000
     
 Enter in your browser:
     
-    http://x.x.x.x:8000 (x.x.x.x - your IP address server)
+    http://x.x.x.x:8000 (x.x.x.x - your server IP address )
 
 ## 4. Setup Web (Choose only one method: Virtual Host or WSGI)
 
@@ -132,7 +122,23 @@ Reload apache:
     
     $ sudo service apache2 reload
 
-## 5. Gunicorn and Runit (Only for geeks)
+## 5. Setup Websoket proxy (noVNC)
+
+### CentOS, RedHat
+
+Run:
+
+    $ sudo cp conf/initd/webvirtmgr-novnc-redhat /etc/init.d/webvirtmgr-novnc
+    $ sudo service webvirtmgr-novnc start
+
+### Ubuntu
+
+Run: 
+
+    $ sudo cp conf/initd/webvirtmgr-novnc-ubuntu /etc/init.d/webvirtmgr-novnc
+    $ sudo service webvirtmgr-novnc start
+
+## 6. Gunicorn and Runit (Only for geeks)
 
 Install gunicorn:
 
@@ -160,11 +166,11 @@ Runit script for webvirtmgr (/etc/sv/webvirtmgr/run):
     fi
 
     cd $ROOT
-    exec $GUNICORN -c $ROOT/gunicorn.conf.py --pid $PID $APP
+    exec $GUNICORN -c $ROOT/conf/gunicorn.conf.py --pid $PID $APP
     
 And then install and setup nginx.
 
-## 6. Update
+## 7. Update
 
 ### Read this README.md check settings (maybe something has changed) and then:
 

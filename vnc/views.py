@@ -5,7 +5,6 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from vds.models import Host, Vm
 from libvirt_func import libvirt_conn, vnc_get_port
-import os
 import re
 
 
@@ -28,16 +27,10 @@ def vnc(request, host_id, vname):
         vnc_port = vnc_get_port(conn, vname)
         try:
             vm = Vm.objects.get(host=host_id, vname=vname)
-
+            socket_port = 6080
             socket_host = request.META['HTTP_HOST']
             if ':' in socket_host:
                 socket_host = re.sub('\:[0-9]+', '', socket_host)
-
-            socket_port = 6080 + int(vnc_port[3:])
-
-            # Kill only owner proccess
-            os.system("kill -9 $(ps aux | grep 'websockify %s' | grep -v grep | awk '{ print $2 }')" % socket_port)
-            os.system('websockify %s %s:%s -D' % (socket_port, host.ipaddr, vnc_port))
         except:
             vm = None
 
