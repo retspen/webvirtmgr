@@ -24,7 +24,7 @@ def storage(request, host_id, pool):
     conn = libvirt_func.libvirt_conn(host)
 
     if type(conn) == dict:
-        return HttpResponseRedirect('/manage/')
+        return HttpResponseRedirect('/overview/%s/' % host_id)
     else:
 
         storages = libvirt_func.storages_get_node(conn)
