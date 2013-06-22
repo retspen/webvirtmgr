@@ -86,7 +86,7 @@
                     {% endifequal %}
                   </form>
                   <script>
-                    function open_vnc_{{ vm }}() { window.open('{% url vnc host_id vm %}','','width=968,height=552') }
+                    function open_vnc_{{ vm }}() { window.open('{% url vnc host_id vm %}?token={{ vm }}','','width=968,height=552') }
                   </script>
                 </td>
               </tr>
