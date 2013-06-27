@@ -19,15 +19,20 @@
 prog="webvirtmgr-novnc"
 exec="/var/www/webvirtmgr/vnc/$prog"
 lockfile="/var/lock/subsys/$prog"
-pidfile="/var/run/$prog.pid"
+pidfile="/var/run/webvirtmgr/$prog.pid"
 logfile="/var/log/$prog.log"
+username="apache"
 
+if [ ! -d /var/run/webvirtmgr ]; then
+        mkdir /var/run/webvirtmgr
+        chown $username /var/run/webvirtmgr
+fi
 
 start() {
     [ -x $exec ] || exit 5
 
     echo -n $"Starting $prog: "
-    daemon --user root --pidfile $pidfile "$exec &>/dev/null & echo \$! > $pidfile"
+    daemon --user $username --pidfile $pidfile "$exec &>/dev/null & echo \$! > $pidfile"
     retval=$?
     echo
     [ $retval -eq 0 ] && touch $lockfile
@@ -36,7 +41,7 @@ start() {
 
 stop() {
     echo -n $"Stopping $prog: "
-    killproc -p $pidfile $prog
+    killproc -p $pidfile $exec
     retval=$?
     echo
     [ $retval -eq 0 ] && rm -f $lockfile
