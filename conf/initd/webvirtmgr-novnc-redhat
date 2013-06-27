@@ -16,18 +16,18 @@
 
 . /etc/rc.d/init.d/functions
 
-prog=webvirtmgr-novnc
+prog="webvirtmgr-novnc"
 exec="/var/www/webvirtmgr/vnc/$prog"
-pidfile="/var/run/webvirtmgr/$prog.pid"
-logfile="/var/log/nova/$prog.log"
+lockfile="/var/lock/subsys/$prog"
+pidfile="/var/run/$prog.pid"
+logfile="/var/log/$prog.log"
 
-lockfile=/var/lock/subsys/$prog
 
 start() {
     [ -x $exec ] || exit 5
-    [ -f $config ] || exit 6
+
     echo -n $"Starting $prog: "
-    daemon --user apache --pidfile $pidfile "$exec &>/dev/null & echo \$! > $pidfile"
+    daemon --user root --pidfile $pidfile "$exec &>/dev/null & echo \$! > $pidfile"
     retval=$?
     echo
     [ $retval -eq 0 ] && touch $lockfile
