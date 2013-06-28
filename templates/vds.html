@@ -98,7 +98,7 @@
                     <p><b>{% trans "Disk" %} {{ dev_bus }}:</b></p>
                     {% endfor %}
                   </div>
-                  <div class="span5">
+                  <div class="span6">
                     {% for dev_bus, hdd_dev in hdd_image.items reversed %}
                     <p> {{ hdd_dev.0 }} ({{ hdd_dev.1 }})</p>
                     {% endfor %}
