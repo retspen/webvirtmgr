@@ -24,7 +24,11 @@ def newvm(request, host_id):
         return HttpResponseRedirect('/login')
 
     def add_vm(name, ram, vcpu, image, net, virtio, passwd):
-        ram = int(ram) * 1024
+        """
+        Create VM function
+
+        """
+
         iskvm = re.search('kvm', conn.getCapabilities())
         if iskvm:
             dom_type = 'kvm'
@@ -40,7 +44,7 @@ def newvm(request, host_id):
         elif re.findall('/usr/bin/kvm', conn.getCapabilities()):
             emulator = '/usr/bin/kvm'
         elif re.findall('/usr/bin/qemu-kvm', conn.getCapabilities()):
-            emulator = '/usr/bin/qemu-kvm'            
+            emulator = '/usr/bin/qemu-kvm'      
         else:
             emulator = '/usr/bin/qemu-system-x86_64'
 
@@ -60,8 +64,7 @@ def newvm(request, host_id):
 
         xml = """<domain type='%s'>
                   <name>%s</name>
-                  <memory>%s</memory>
-                  <currentMemory>%s</currentMemory>
+                  <memory unit='MiB'>%s</memory>
                   <vcpu>%s</vcpu>
                   <os>
                     <type arch='x86_64' machine='%s'>hvm</type>
@@ -72,10 +75,8 @@ def newvm(request, host_id):
                   <features>
                     <acpi/>
                     <apic/>
+                    <pae/>
                   </features>
-                  <cpu mode='host-model'>
-                    <model fallback='allow'/>
-                  </cpu>
                   <clock offset='utc'/>
                   <on_poweroff>destroy</on_poweroff>
                   <on_reboot>restart</on_reboot>
@@ -84,8 +85,8 @@ def newvm(request, host_id):
                     <emulator>%s</emulator>
                     <disk type='file' device='disk'>
                       <driver name='qemu' type='%s'/>
-                      <source file='%s'/>""" % (dom_type, name, ram, ram, vcpu, 
-                                                machine, emulator, image_type, image)
+                      <source file='%s'/>""" % (dom_type, name, ram, vcpu, machine,
+                                                emulator, image_type, image)
 
         if virtio:
             xml += """<target dev='vda' bus='virtio'/>"""
@@ -107,17 +108,13 @@ def newvm(request, host_id):
             xml += """<interface type='network'>
                     <source network='%s'/>""" % (net)
         if virtio:
-            xml += """<model type='virtio' />"""
+            xml += """<model type='virtio'/>"""
 
         xml += """</interface>
                     <input type='tablet' bus='usb'/>
                     <input type='mouse' bus='ps2'/>
-                    <graphics type='vnc' port='-1' autoport='yes' keymap='en-us' passwd='%s'/>
-                    <video>
-                      <model type='cirrus' vram='9216' heads='1'/>
-                    </video>
-                    <memballoon model='virtio'>
-                    </memballoon>
+                    <graphics type='vnc' passwd='%s'/>
+                    <memballoon model='virtio'/>
                   </devices>
                 </domain>""" % (passwd)
         conn.defineXML(xml)
