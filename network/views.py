@@ -21,13 +21,17 @@ def network(request, host_id, pool):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
+    errors = []
     host = Host.objects.get(id=host_id)
-    conn = ConnServer(host)
 
-    if type(conn) == dict:
-        return HttpResponseRedirect('/overview/%s/' % host_id)
+    try:
+        conn = ConnServer(host)
+    except libvirtError as e:
+        conn = None
+
+    if not conn:
+        errors.append(e.message)
     else:
-
         networks = conn.networks_get_node()
 
         if pool is None:
@@ -47,8 +51,6 @@ def network(request, host_id, pool):
 
                     name_have_symbol = re.search('[^a-zA-Z0-9\_\-]+', pool_name)
                     ip_have_symbol = re.search('[^0-9\.\/]+', net_addr)
-
-                    errors = []
 
                     if not pool_name:
                         msg = _("No pool name has been entered")

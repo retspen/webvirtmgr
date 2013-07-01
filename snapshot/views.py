@@ -6,6 +6,7 @@ from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from vds.models import Host
 from webvirtmgr.server import ConnServer
+from libvirt import libvirtError
 
 
 def snapshot(request, host_id):
@@ -18,19 +19,23 @@ def snapshot(request, host_id):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
+    errors = []
     host = Host.objects.get(id=host_id)
-    conn = ConnServer(host)
 
-    if type(conn) == dict:
-        return HttpResponseRedirect('/overview/%s/' % host_id)
+    try:
+        conn = ConnServer(host)
+    except libvirtError as e:
+        conn = None
+
+    if not conn:
+        errors.append(e.message)
     else:
         all_vm = conn.vds_get_node()
         all_vm_snap = conn.snapshots_get_node()
-
         conn.close()
-
-    if all_vm_snap:
-        return HttpResponseRedirect('/snapshot/%s/%s/' % (host_id, all_vm_snap.keys()[0]))
+        
+        if all_vm_snap:
+            return HttpResponseRedirect('/snapshot/%s/%s/' % (host_id, all_vm_snap.keys()[0]))
 
     return render_to_response('snapshot.html', locals(), context_instance=RequestContext(request))
 
@@ -45,12 +50,17 @@ def dom_snapshot(request, host_id, vname):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
+    errors = []
     snapshot_page = True
     host = Host.objects.get(id=host_id)
-    conn = ConnServer(host)
 
-    if type(conn) == dict:
-        return HttpResponseRedirect('/overview/%s/' % host_id)
+    try:
+        conn = ConnServer(host)
+    except libvirtError as e:
+        conn = None
+
+    if not conn:
+        errors.append(e.message)
     else:
         all_vm = conn.vds_get_node()
         all_vm_snap = conn.snapshots_get_node()

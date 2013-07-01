@@ -19,11 +19,16 @@ def vds(request, host_id, vname):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
+    errors = []
     host = Host.objects.get(id=host_id)
-    conn = ConnServer(host)
 
-    if type(conn) == dict:
-        return HttpResponseRedirect('/overview/%s/' % host_id)
+    try:
+        conn = ConnServer(host)
+    except libvirtError as e:
+        conn = None
+
+    if not conn:
+        errors.append(e.message)
     else:
         all_vm = conn.vds_get_node()
         dom_info = conn.vds_get_info(vname)
@@ -38,8 +43,6 @@ def vds(request, host_id, vname):
             vm = Vm.objects.get(vname=vname)
         except:
             vm = None
-
-        errors = []
 
         if request.method == 'POST':
             if 'start' in request.POST:

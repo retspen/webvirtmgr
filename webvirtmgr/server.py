@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import libvirt
-from libvirt import libvirtError
 import virtinst.util as util
 from network.IPy import IP
 import re
@@ -10,7 +9,6 @@ from datetime import datetime
 
 
 class ConnServer(object):
-
     def __init__(self, host):
         """
 
@@ -906,6 +904,27 @@ class ConnServer(object):
         xml += """<active>0</active>\n
                   </domainsnapshot>"""
         dom.snapshotCreateXML(xml, 0)
+
+
+    def vds_on_cluster(self):
+        vname = {}
+        host_mem = self.conn.getInfo()[1] * 1048576
+        for vm_id in self.conn.listDomainsID():
+            vm_id = int(vm_id)
+            dom = self.conn.lookupByID(vm_id)
+            mem = util.get_xml_path(dom.XMLDesc(0), "/domain/memory")
+            mem = int(mem) * 1024
+            mem_usage = (mem * 100) / host_mem
+            vcpu = util.get_xml_path(dom.XMLDesc(0), "/domain/vcpu")
+            vname[dom.name()] = (dom.info()[0], vcpu, mem, mem_usage)
+        for vm in self.conn.listDefinedDomains():
+            dom = self.conn.lookupByName(vm)
+            mem = util.get_xml_path(dom.XMLDesc(0), "/domain/memory")
+            mem = int(mem) * 1024
+            mem_usage = (mem * 100) / host_mem
+            vcpu = util.get_xml_path(dom.XMLDesc(0), "/domain/vcpu")
+            vname[dom.name()] = (dom.info()[0], vcpu, mem, mem_usage)
+        return vname
 
 
     def close(self):

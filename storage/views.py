@@ -20,11 +20,16 @@ def storage(request, host_id, pool):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
+    errors = []
     host = Host.objects.get(id=host_id)
-    conn = ConnServer(host)
 
-    if type(conn) == dict:
-        return HttpResponseRedirect('/overview/%s/' % host_id)
+    try:
+        conn = ConnServer(host)
+    except libvirtError as e:
+        conn = None
+
+    if not conn:
+        errors.append(e.message)
     else:
 
         storages = conn.storages_get_node()
@@ -45,8 +50,6 @@ def storage(request, host_id, pool):
 
                     name_have_symbol = re.search('[^a-zA-Z0-9\_\-]+', pool_name)
                     path_have_symbol = re.search('[^a-zA-Z0-9\/]+', pool_source)
-
-                    errors = []
 
                     if name_have_symbol or path_have_symbol:
                         msg = _("The host name must not contain any special characters")
@@ -86,7 +89,6 @@ def storage(request, host_id, pool):
                 volumes_info = conn.volumes_get_info(pool)
             
             if request.method == 'POST':
-                errors = []
                 if 'start' in request.POST:
                     try:
                         stg.create(0)

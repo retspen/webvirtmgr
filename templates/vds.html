@@ -73,7 +73,7 @@
                   </div>
                   <div class="span6">
                     <p>{{ vname }}</p>
-                    <p><font color={% ifequal dom.info.0 5 %}"red">{% trans "Shuttoff" %}{% endifequal %}{% ifequal dom.info.0 1 %}"green">{% trans "Running" %}{% endifequal %}{% ifequal dom.info.0 3 %}"orange">{% trans "Suspend" %}{% endifequal %}</font></p>
+                    <p><font color={% ifequal dom.info.0 5 %}"red"{% trans "Shuttoff" %}{% endifequal %}{% ifequal dom.info.0 1 %}"green"{% trans "Running" %}{% endifequal %}{% ifequal dom.info.0 3 %}"orange"{% trans "Suspend" %}{% endifequal %}></font></p>
                   </div>
                 </div>
                 <hr>
@@ -200,4 +200,3 @@
         function open_vnc() { window.open('{% url vnc host_id vname %}?token={{ vm.vname }}','','width=968,height=552') }
       </script>
 {% endblock %}
-

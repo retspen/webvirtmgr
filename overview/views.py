@@ -19,13 +19,16 @@ def overview(request, host_id):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
-    host = Host.objects.get(id=host_id)
-    conn = ConnServer(host)
-
     errors = []
+    host = Host.objects.get(id=host_id)
+    
+    try:
+        conn = ConnServer(host)
+    except libvirtError as e:
+        conn = None
 
-    if type(conn) == dict:
-        errors.append(conn.values()[0])
+    if not conn:
+        errors.append(e.message)
     else:
         have_kvm = conn.hard_accel_node()
         if not have_kvm:

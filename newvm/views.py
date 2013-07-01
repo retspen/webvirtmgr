@@ -22,13 +22,16 @@ def newvm(request, host_id):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
-
-
+    errors = []
     host = Host.objects.get(id=host_id)
-    conn = ConnServer(host)
 
-    if type(conn) == dict:
-        return HttpResponseRedirect('/overview/%s/' % host_id)
+    try:
+        conn = ConnServer(host)
+    except libvirtError as e:
+        conn = None
+
+    if not conn:
+        errors.append(e.message)
     else:
         try:
             flavors = Flavor.objects.filter().order_by('id')
@@ -39,8 +42,6 @@ def newvm(request, host_id):
         all_networks = conn.networks_get_node()
         all_storages = conn.storages_get_node()
         all_img = conn.images_get_storages(all_storages)
-
-        errors = []
 
         if not all_networks:
             msg = _("You haven't defined any virtual networks")

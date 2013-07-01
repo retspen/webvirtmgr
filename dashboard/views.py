@@ -6,7 +6,6 @@ from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from vds.models import Host
 from webvirtmgr.server import ConnServer
-from libvirt import libvirtError
 import re
 
 
@@ -144,30 +143,6 @@ def clusters(request):
 
     """
 
-    def vds_on_host():
-        import virtinst.util as util
-        host_mem = conn.getInfo()[1] * 1048576
-        try:
-            vname = {}
-            for vm_id in conn.listDomainsID():
-                vm_id = int(vm_id)
-                dom = conn.lookupByID(vm_id)
-                mem = util.get_xml_path(dom.XMLDesc(0), "/domain/memory")
-                mem = int(mem) * 1024
-                mem_usage = (mem * 100) / host_mem
-                vcpu = util.get_xml_path(dom.XMLDesc(0), "/domain/vcpu")
-                vname[dom.name()] = (dom.info()[0], vcpu, mem, mem_usage)
-            for vm in conn.listDefinedDomains():
-                dom = conn.lookupByName(vm)
-                mem = util.get_xml_path(dom.XMLDesc(0), "/domain/memory")
-                mem = int(mem) * 1024
-                mem_usage = (mem * 100) / host_mem
-                vcpu = util.get_xml_path(dom.XMLDesc(0), "/domain/vcpu")
-                vname[dom.name()] = (dom.info()[0], vcpu, mem, mem_usage)
-            return vname
-        except libvirtError as e:
-            return e.message
-
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
@@ -192,7 +167,7 @@ def clusters(request):
             conn = ConnServer(host)
             host_info = conn.node_get_info()
             host_mem = conn.memory_get_usage()
-            hosts_vms[host.id, host.hostname, status, host_info[2], host_mem[0], host_mem[2]] = vds_on_host()
+            hosts_vms[host.id, host.hostname, status, host_info[2], host_mem[0], host_mem[2]] = conn.vds_on_cluster()
         else:
             hosts_vms[host.id, host.hostname, status, None, None, None] = None
 
