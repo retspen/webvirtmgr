@@ -37,7 +37,7 @@
             {% endif %}
 
             {% if vname and vm_snapshot %}
-            <a href="{% url vds host_id vname %}">{{ vname }}</a><br><br>
+            <h5>{% trans "Virtual Machine" %}:</b> <a href="{% url vds host_id vname %}">{{ vname }}</a></h5>
             <table class="table table-bordered">
               <thead>
                 <tr>

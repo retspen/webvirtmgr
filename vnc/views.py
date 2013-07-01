@@ -4,7 +4,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from vds.models import Host, Vm
-from libvirt_func import libvirt_conn, vnc_get_port
+from webvirtmgr.server import ConnServer
 import re
 
 
@@ -19,12 +19,12 @@ def vnc(request, host_id, vname):
         return HttpResponseRedirect('/login')
 
     host = Host.objects.get(id=host_id)
-    conn = libvirt_conn(host)
+    conn = ConnServer(host)
 
     if type(conn) == dict:
         return HttpResponseRedirect('/overview/%s/' % host_id)
     else:
-        vnc_port = vnc_get_port(conn, vname)
+        vnc_port = conn.vnc_get_port(vname)
         try:
             vm = Vm.objects.get(host=host_id, vname=vname)
             socket_port = 6080

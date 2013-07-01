@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from vds.models import Host
-import libvirt_func
+from webvirtmgr.server import ConnServer
 from libvirt import libvirtError
 import re
 
@@ -189,9 +189,9 @@ def clusters(request):
             status = 2
 
         if status == 1:
-            conn = libvirt_func.libvirt_conn(host)
-            host_info = libvirt_func.node_get_info(conn)
-            host_mem = libvirt_func.memory_get_usage(conn)
+            conn = ConnServer(host)
+            host_info = conn.node_get_info()
+            host_mem = conn.memory_get_usage()
             hosts_vms[host.id, host.hostname, status, host_info[2], host_mem[0], host_mem[2]] = vds_on_host()
         else:
             hosts_vms[host.id, host.hostname, status, None, None, None] = None

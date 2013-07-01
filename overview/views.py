@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from vds.models import Host
-import libvirt_func
+from webvirtmgr.server import ConnServer
 from libvirt import libvirtError
 
 
@@ -20,28 +20,26 @@ def overview(request, host_id):
         return HttpResponseRedirect('/login')
 
     host = Host.objects.get(id=host_id)
-    conn = libvirt_func.libvirt_conn(host)
+    conn = ConnServer(host)
 
     errors = []
 
     if type(conn) == dict:
         errors.append(conn.values()[0])
     else:
-        have_kvm = libvirt_func.hard_accel_node(conn)
+        have_kvm = conn.hard_accel_node()
         if not have_kvm:
             msg = _('Your CPU doesn\'t support hardware virtualization')
             errors.append(msg)
 
-        all_vm = libvirt_func.vds_get_node(conn)
-        host_info = libvirt_func.node_get_info(conn)
-        mem_usage = libvirt_func.memory_get_usage(conn)
-        cpu_usage = libvirt_func.cpu_get_usage(conn)
-        lib_virt_ver = conn.getLibVersion()
-        conn_type = conn.getURI()
+        all_vm = conn.vds_get_node()
+        host_info = conn.node_get_info()
+        mem_usage = conn.memory_get_usage()
+        cpu_usage = conn.cpu_get_usage()
 
         if request.method == 'POST':
             vname = request.POST.get('vname', '')
-            dom = conn.lookupByName(vname)
+            dom = conn.lookupVM(vname)
             if 'start' in request.POST:
                 try:
                     dom.create()
