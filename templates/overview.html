@@ -81,12 +81,9 @@
                     <button class="btn" type="submit" name="suspend" title="{% trans "Pause" %}"><i class="icon-pause"></i></button>
                     <button class="btn" type="submit" name="shutdown" title="{% trans "Shutdown" %}"><i class="icon-off"></i></button>
                     <button class="btn" type="submit" name="destroy" title="{% trans "Force Shutdown" %}" onclick="return confirm('Are you sure?')"><i class="icon-stop"></i></button>
-                    <button class="btn" onclick="open_vnc_{{ vm }}()" title="{% trans "VNC" %}"><i class="icon-eye-open"></i></button>
+                    <button class="btn" onclick="window.open('{% url vnc host_id vm %}?token={{ vm }}','','width=850,height=485')" title="{% trans "VNC" %}"><i class="icon-eye-open"></i></button>
                     {% endifequal %}
                   </form>
-                  <script>
-                    function open_vnc_{{ vm }}() { window.open('{% url vnc host_id vm %}?token={{ vm }}','','width=968,height=552') }
-                  </script>
                 </td>
               </tr>
               {% endfor %}
