@@ -118,20 +118,14 @@ def newvm(request, host_id):
                             vl = conn.storageVolPath(image)
 
                         image = vl.path()
-                        vnc_passwd = ''.join([choice(letters + digits) for i in range(12)])
 
                         try:
-                            conn.add_vm(vname, ram, vcpu, image, net, virtio, vnc_passwd, all_storages)
+                            conn.add_vm(vname, ram, vcpu, image, net, virtio, all_storages)
+                            return HttpResponseRedirect('/vds/%s/%s/' % (host_id, vname))
                         except libvirtError as msg_error:
                             if hdd_size:
                                 vl.delete(0)
                             errors.append(msg_error.message)
-
-                        if not errors:
-                            new_vm = Vm(host_id=host_id, vname=vname, vnc_passwd=vnc_passwd)
-                            new_vm.save()
-                            return HttpResponseRedirect('/vds/%s/%s/' % (host_id, vname))
-
         conn.close()
 
     return render_to_response('newvm.html', locals(), context_instance=RequestContext(request))

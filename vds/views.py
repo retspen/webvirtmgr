@@ -20,6 +20,7 @@ def vds(request, host_id, vname):
         return HttpResponseRedirect('/login')
 
     errors = []
+    messages = []
     host = Host.objects.get(id=host_id)
 
     try:
@@ -94,7 +95,6 @@ def vds(request, host_id, vname):
             if 'snapshot' in request.POST:
                 try:
                     conn.vds_create_snapshot(vname)
-                    messages = []
                     msg = _("Create snapshot for instance successful")
                     messages.append(msg)
                 except libvirtError as msg_error:
@@ -114,17 +114,26 @@ def vds(request, host_id, vname):
                 except libvirtError as msg_error:
                     errors.append(msg_error.message)
             if 'vnc_pass' in request.POST:
-                from string import letters, digits
-                from random import choice
+                if request.POST.get('auto_pass', ''):
+                    from string import letters, digits
+                    from random import choice
 
-                passwd = ''.join([choice(letters + digits) for i in range(12)])
-                try:
-                    conn.vds_set_vnc_passwd(vname, passwd)
-                    vnc_pass = Vm(host_id=host_id, vname=vname, vnc_passwd=passwd)
-                    vnc_pass.save()
-                except libvirtError as msg_error:
-                    errors.append(msg_error.message)
-                return HttpResponseRedirect(request.get_full_path())
+                    passwd = ''.join([choice(letters + digits) for i in range(12)])
+                else:
+                    passwd = request.POST.get('vnc_passwd', '')
+
+                    if not passwd:
+                        msg = _("Enter the VNC password or select Generate")
+                        errors.append(msg)
+
+                if not errors:
+                    try:
+                        conn.vds_set_vnc_passwd(vname, passwd)
+                        vnc_pass = Vm(host_id=host_id, vname=vname, vnc_passwd=passwd)
+                        vnc_pass.save()
+                    except libvirtError as msg_error:
+                        errors.append(msg_error.message)
+                    return HttpResponseRedirect(request.get_full_path())
 
         conn.close()
 

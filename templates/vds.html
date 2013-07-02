@@ -59,11 +59,10 @@
                   <a role="button" class="btn disabled" style="height:40px;width:60px;"><i class="icon-download-alt"></i><br>{% trans "Suspend" %}</a>
                   <button type="submit" name="snapshot" role="button" class="btn" style="height:50px;width:80px;"><i class="icon-download-alt"></i><br>{% trans "Snapshot" %}</button>
                   {% endifequal %}
-                  {% if not vm.vnc_passwd and dom.info.0 == 5 %}
-                    <br><br>
-                    <button class="btn" type="submit" name="vnc_pass">{% trans "Enable noVNC" %}</button>
-                  {% endif %}
                  </form>
+                  {% if not vm.vnc_passwd and dom.info.0 == 5 %}
+                    <a href="#noVNCModal" role="button" class="btn" data-toggle="modal">{% trans "Enable noVNC" %}</a>
+                  {% endif %}
                 <hr>
                 <li>{% trans "Name & Status" %}</li><br>
                 <div class="row offset2">
@@ -73,7 +72,12 @@
                   </div>
                   <div class="span6">
                     <p>{{ vname }}</p>
-                    <p><font color={% ifequal dom.info.0 5 %}"red"{% trans "Shuttoff" %}{% endifequal %}{% ifequal dom.info.0 1 %}"green"{% trans "Running" %}{% endifequal %}{% ifequal dom.info.0 3 %}"orange"{% trans "Suspend" %}{% endifequal %}></font></p>
+                    <p>{% if dom.info %}
+                      <font color={% ifequal dom.info.0 5 %}"red">{% trans "Shuttoff" %}{% endifequal %}{% ifequal dom.info.0 1 %}"green">{% trans "Running" %}{% endifequal %}{% ifequal dom.info.0 3 %}"orange">{% trans "Suspend" %}{% endifequal %}</font>
+                      {% else %}
+                        {% trans "None" %}
+                      {% endif %}
+                    </p>
                   </div>
                 </div>
                 <hr>
@@ -192,6 +196,36 @@
                 </form>
               </div>
             </div> <!-- /deleteModal -->
+
+            <div id="noVNCModal" class="modal hide fade">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3 id="deleteModalLabel">{% trans "Set VNC Password" %}</h3>
+              </div>
+              <div class="modal-body">
+                <form class="form-horizontal" action="" method="post">{% csrf_token %}
+                  <fieldset>
+                    <p>{% trans "Enter the VNC password or select Generate" %}</p><br />
+                    <div class="control-group">
+                    <label class="control-label">{% trans "Password" %}</label>
+                      <div class="controls">
+                        <input type="password" class="input-large" name="vnc_passwd" placeholder="{% trans "Password" %}" maxlength="14">
+                      </div> 
+                    </div>
+                    <div class="control-group">
+                      <label class="checkbox">
+                        <div class="controls">
+                          <input type="checkbox" name="auto_pass" value="true">{% trans "Generate" %}</label>
+                        </div>
+                    </div>
+                  </fieldset>
+              </div>
+              <div class="modal-footer">
+                  <button class="btn" data-dismiss="modal">{% trans "Cancel" %}</button>
+                  <input class="btn btn-success" type="submit" name="vnc_pass" value="{% trans "Create" %}">
+                </form>
+              </div>
+            </div> <!-- /noVNCModal -->
 
           </div><!--/span-->
         </div><!--/row-fluid-->

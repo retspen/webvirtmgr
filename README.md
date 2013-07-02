@@ -1,6 +1,7 @@
 # WebVirtMgr panel - v2.3
 
 * Minor improvements (Change codebase)
+* Add support set VNC password (auto or manual) when VM created
 
 ## 1. Introduction
 

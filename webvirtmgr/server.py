@@ -119,7 +119,7 @@ class ConnServer(object):
             return False
 
 
-    def add_vm(self, name, ram, vcpu, image, net, virtio, passwd, all_storages):
+    def add_vm(self, name, ram, vcpu, image, net, virtio, storages):
         """
         Create VM function
 
@@ -146,7 +146,7 @@ class ConnServer(object):
 
         img = ConnServer.storageVolPath(self, image)
         vol = img.name()
-        for storage in all_storages:
+        for storage in storages:
             stg = self.conn.storagePoolLookupByName(storage)
             if stg.info()[0] != 0:
                 stg.refresh(0)
@@ -209,10 +209,10 @@ class ConnServer(object):
         xml += """</interface>
                     <input type='tablet' bus='usb'/>
                     <input type='mouse' bus='ps2'/>
-                    <graphics type='vnc' passwd='%s'/>
+                    <graphics type='vnc'/>
                     <memballoon model='virtio'/>
                   </devices>
-                </domain>""" % (passwd)
+                </domain>"""
         self.conn.defineXML(xml)
         dom = self.lookupVM(name)
         dom.setAutostart(1)
