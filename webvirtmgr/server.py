@@ -209,7 +209,9 @@ class ConnServer(object):
         xml += """</interface>
                     <input type='tablet' bus='usb'/>
                     <input type='mouse' bus='ps2'/>
-                    <graphics type='vnc'/>
+                    <graphics type='vnc' port='-1' autoport='yes' listen='0.0.0.0'>
+                      <listen type='address' address='0.0.0.0'/>
+                    </graphics>
                     <memballoon model='virtio'/>
                   </devices>
                 </domain>"""
