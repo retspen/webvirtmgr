@@ -686,7 +686,6 @@ class ConnServer(object):
                                     <driver name='qemu' type='raw'/>
                                     <target dev='hdc' bus='ide'/>
                                     <source file='%s'/>
-                                    <readonly/>
                                  </disk>""" % vol.path()
                         dom.attachDevice(xml)
                         xmldom = dom.XMLDesc(0)
@@ -850,7 +849,7 @@ class ConnServer(object):
 
         dom = self.lookupVM(vname)
         xml = dom.XMLDesc(0)
-        newxml = "<graphics type='vnc' port='-1' autoport='yes' passwd='%s'/>" % passwd
+        newxml = "<graphics type='vnc' passwd='%s'>" % passwd
         xmldom = re.sub('\<graphics.*\>', newxml, xml)
         self.conn.defineXML(xmldom)
 

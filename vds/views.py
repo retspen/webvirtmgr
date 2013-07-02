@@ -103,6 +103,8 @@ def vds(request, host_id, vname):
                 image = request.POST.get('iso_img', '')
                 try:
                     conn.vds_umount_iso(vname, image)
+                    if vm.vnc_passwd:
+                        conn.vds_set_vnc_passwd(vname, vm.vnc_passwd)
                     return HttpResponseRedirect(request.get_full_path())
                 except libvirtError as msg_error:
                     errors.append(msg_error.message)
@@ -110,6 +112,8 @@ def vds(request, host_id, vname):
                 image = request.POST.get('iso_img', '')
                 try:
                     conn.vds_mount_iso(vname, image)
+                    if vm.vnc_passwd:
+                        conn.vds_set_vnc_passwd(vname, vm.vnc_passwd)
                     return HttpResponseRedirect(request.get_full_path())
                 except libvirtError as msg_error:
                     errors.append(msg_error.message)
