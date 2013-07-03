@@ -19,6 +19,8 @@
         margin: 0 auto;
         max-width: 990px;
       }
+      {% block style %}
+      {% endblock %}
     </style>
     <link href="{% static "css/bootstrap-responsive.css" %}" rel="stylesheet">
 
@@ -53,5 +55,6 @@
     </div> <!-- /container-narrow -->
     <script src="{% static "js/jquery.js" %}"></script>
     <script src="{% static "js/bootstrap.js" %}"></script>
+    {% block script %}{% endblock %}
   </body>
 </html>
