@@ -42,6 +42,9 @@ def newvm(request, host_id):
         all_networks = conn.networks_get_node()
         all_storages = conn.storages_get_node()
         all_img = conn.images_get_storages(all_storages)
+        vcpu_range = [x for x in range(1, 9)]
+        hdd_digits_size = [a for a in range(1, 601)]
+        memory_range = ['128', '256', '512', '768', '1024', '2048', '4096', '8192', '16384']
 
         if not all_networks:
             msg = _("You haven't defined any virtual networks")
@@ -50,7 +53,7 @@ def newvm(request, host_id):
             msg = _("You haven't defined have any storage pools")
             errors.append(msg)
 
-        hdd_digits_size = [a for a in range(1, 601)]
+        
 
         if request.method == 'POST':
             if 'add_flavor' in request.POST:

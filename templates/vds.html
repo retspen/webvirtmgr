@@ -28,7 +28,7 @@
               </div>
               {% endfor %}
             {% endif %}
-            <div class="span9">
+            <div class="span11">
               <ul>
                 <li>{% trans "Action For This Server" %}</li><br>
                 <form action="" method="post">{% csrf_token %}
@@ -59,6 +59,11 @@
                   <a role="button" class="btn disabled" style="height:40px;width:60px;"><i class="icon-download-alt"></i><br>{% trans "Suspend" %}</a>
                   <button type="submit" name="snapshot" role="button" class="btn" style="height:50px;width:80px;"><i class="icon-download-alt"></i><br>{% trans "Snapshot" %}</button>
                   {% endifequal %}
+                  {% ifequal dom.info.0 5 %}
+                   <a href="#editModal" role="button" class="btn" data-toggle="modal" style="height:40px;width:60px;"><i class="icon-pencil"></i><br>{% trans "Edit" %}</a>
+                  {% else %}
+                  <a href="#" role="button" class="btn disabled" style="height:40px;width:60px;"><i class="icon-pencil"></i><br>{% trans "Edit" %}</a>
+                  {% endifequal %}
                  </form>
                   {% if not vm.vnc_passwd and dom.info.0 == 5 %}
                     <a href="#noVNCModal" role="button" class="btn" data-toggle="modal">{% trans "Enable noVNC" %}</a>
@@ -70,7 +75,7 @@
                     <p><b>{% trans "Name" %}:</b></p>
                     <p><b>{% trans "Status" %}:</b></p>
                   </div>
-                  <div class="span6">
+                  <div class="span7">
                     <p>{{ vname }}</p>
                     <p>{% if dom.info %}
                       <font color={% ifequal dom.info.0 5 %}"red">{% trans "Shuttoff" %}{% endifequal %}{% ifequal dom.info.0 1 %}"green">{% trans "Running" %}{% endifequal %}{% ifequal dom.info.0 3 %}"orange">{% trans "Suspend" %}{% endifequal %}</font>
@@ -88,10 +93,10 @@
                     <p><b>{% trans "Memory" %}:</b></p>
                     <p><b>{% trans "Network" %}:</b></p>
                   </div>
-                  <div class="span6">
-                    <p>VCPU {{ dom_info.0 }} ({% trans "Usage" %}: {{ cpu_usage }}%)</p>
-                    <p>{{ dom_info.1 }} {% trans "MB" %} ({% trans "Usage" %}: {{ mem_usage.1 }}%)</p>
-                    <p>{{ dom_info.2 }} ({{ dom_info.3 }})</p>
+                  <div class="span7">
+                    <p>VCPU {{ vcpu }} ({% trans "Usage" %}: {{ cpu_usage }}%)</p>
+                    <p>{{ memory }} {% trans "MB" %} ({% trans "Usage" %}: {{ memory_usage }}%)</p>
+                    <p>{{ mac }} ({{ network }})</p>
                   </div>
                 </div>
                 <hr>
@@ -102,7 +107,7 @@
                     <p><b>{% trans "Disk" %} {{ dev_bus }}:</b></p>
                     {% endfor %}
                   </div>
-                  <div class="span6">
+                  <div class="span7">
                     {% for dev_bus, hdd_dev in hdd_image.items reversed %}
                     <p> {{ hdd_dev.0 }} ({{ hdd_dev.1 }})</p>
                     {% endfor %}
@@ -148,6 +153,7 @@
               </ul>
             </div> <!-- /span7 -->
 
+
             <div id="powerModal" class="modal hide fade">
               <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -169,11 +175,11 @@
                   </fieldset>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn" data-dismiss="modal">{% trans "Cancel" %}</button>
-                    <input class="btn btn-primary" type="submit" value="{% trans "Send" %}">
+                  <button class="btn" data-dismiss="modal">{% trans "Cancel" %}</button>
+                  <input class="btn btn-primary" type="submit" value="{% trans "Send" %}">
                   </form>
                 </div>
-            </div> <!-- /powerModal -->
+              </div> <!-- /powerModal -->
 
             <div id="deleteModal" class="modal hide fade">
               <div class="modal-header">
@@ -189,13 +195,13 @@
                         <input type="checkbox" name="image" value="true">{% trans "First device" %}</label>
                     </div>
                   </fieldset>
-              </div>
-              <div class="modal-footer">
+                </div>
+                <div class="modal-footer">
                   <button class="btn" data-dismiss="modal">{% trans "Cancel" %}</button>
                   <input class="btn btn-danger" type="submit" name="delete" value="{% trans "Delete" %}">
-                </form>
-              </div>
-            </div> <!-- /deleteModal -->
+                  </form>
+                </div>
+              </div> <!-- /deleteModal -->
 
             <div id="noVNCModal" class="modal hide fade">
               <div class="modal-header">
@@ -219,13 +225,51 @@
                         </div>
                     </div>
                   </fieldset>
-              </div>
-              <div class="modal-footer">
+                </div>
+                <div class="modal-footer">
                   <button class="btn" data-dismiss="modal">{% trans "Cancel" %}</button>
                   <input class="btn btn-success" type="submit" name="vnc_pass" value="{% trans "Create" %}">
-                </form>
+                  </form>
+                </div>
+              </div> <!-- /noVNCModal -->
+
+            <div id="editModal" class="modal hide fade">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3 id="deleteModalLabel">{% trans "Edit Server" %}</h3>
               </div>
-            </div> <!-- /noVNCModal -->
+              <div class="modal-body">
+                <form class="form-horizontal" action="" method="post">{% csrf_token %}
+                  <fieldset>
+                    <p>{% trans "Change VCPU or RAM" %}</p><br />
+                    <div class="control-group">
+                      <label class="control-label">{% trans "VCPU" %}</label>
+                      <div class="controls">
+                        <select name="vcpu">
+                          {% for cpu in vcpu_range %}
+                            <option value="{{ cpu }}" {% if cpu == vcpu %}selected{% endif %}>{{ cpu }}</option>
+                          {% endfor %}
+                        </select>
+                      </div> 
+                    </div>
+                    <div class="control-group">
+                      <label class="control-label">{% trans "RAM" %}</label>
+                      <div class="controls">
+                        <select name="ram">
+                          {% for mem in memory_range %}
+                            <option value="{{ mem }}" {% if mem == memory %}selected{% endif %}>{{ mem }} {% trans "MB" %}</option>
+                          {% endfor %}
+                        </select>
+                      </div> 
+                    </div>
+                  </fieldset>
+                </div>
+                <div class="modal-footer">
+                  <button class="btn" data-dismiss="modal">{% trans "Cancel" %}</button>
+                  <input class="btn btn-success" type="submit" name="edit" value="{% trans "Change" %}">
+                  </form>
+                </div>
+              </div> <!-- /editModal -->
 
           </div><!--/span-->
         </div><!--/row-fluid-->

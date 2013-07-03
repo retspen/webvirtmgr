@@ -32,13 +32,15 @@ def vds(request, host_id, vname):
         errors.append(e.message)
     else:
         all_vm = conn.vds_get_node()
-        dom_info = conn.vds_get_info(vname)
+        vcpu, memory, mac, network = conn.vds_get_info(vname)
         cpu_usage = conn.vds_cpu_usage(vname)
-        mem_usage = conn.vds_memory_usage(vname)
+        memory_usage = conn.vds_memory_usage(vname)[1]
         hdd_image = conn.vds_get_hdd(vname)
         iso_images = sorted(conn.get_all_media())
-        media = conn.vds_get_media(vname)        
+        media = conn.vds_get_media(vname)
         dom = conn.lookupVM(vname)
+        vcpu_range = [str(x) for x in range(1, 9)]
+        memory_range = [128, 256, 512, 768, 1024, 2048, 4096, 8192, 16384]
 
         try:
             vm = Vm.objects.get(vname=vname)
@@ -103,11 +105,8 @@ def vds(request, host_id, vname):
                 image = request.POST.get('iso_img', '')
                 try:
                     conn.vds_umount_iso(vname, image)
-                    try:
-                        if vm.vnc_passwd:
-                            conn.vds_set_vnc_passwd(vname, vm.vnc_passwd)
-                    except:
-                        pass
+                    if vm:
+                        conn.vds_set_vnc_passwd(vname, vm.vnc_passwd)
                     return HttpResponseRedirect(request.get_full_path())
                 except libvirtError as msg_error:
                     errors.append(msg_error.message)
@@ -115,14 +114,21 @@ def vds(request, host_id, vname):
                 image = request.POST.get('iso_img', '')
                 try:
                     conn.vds_mount_iso(vname, image)
-                    try:
-                        if vm.vnc_passwd:
-                            conn.vds_set_vnc_passwd(vname, vm.vnc_passwd)
-                    except:
-                        pass
+                    if vm:
+                        conn.vds_set_vnc_passwd(vname, vm.vnc_passwd)
                     return HttpResponseRedirect(request.get_full_path())
                 except libvirtError as msg_error:
                     errors.append(msg_error.message)
+            if 'edit' in request.POST:
+                vcpu = request.POST.get('vcpu', '')
+                ram = request.POST.get('ram', '')
+                try:
+                    conn.vds_edit(vname, ram, vcpu)
+                    if vm:
+                        conn.vds_set_vnc_passwd(vname, vm.vnc_passwd)
+                    return HttpResponseRedirect(request.get_full_path())
+                except libvirtError as msg_error:
+                    errors.append(msg_error.message)                
             if 'vnc_pass' in request.POST:
                 if request.POST.get('auto_pass', ''):
                     from string import letters, digits

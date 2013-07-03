@@ -292,8 +292,8 @@ class ConnServer(object):
                         "/sysinfo/processor/entry[6]"))
         except:
             info.append('Unknown')
-        info.append(self.conn.getLibVersion())
         info.append(self.conn.getURI())
+        info.append(self.conn.getLibVersion())
         return info
 
 
@@ -854,6 +854,25 @@ class ConnServer(object):
         newxml = "<graphics type='vnc' passwd='%s'>" % passwd
         xmldom = re.sub('\<graphics.*\>', newxml, xml)
         self.conn.defineXML(xmldom)
+
+
+    def vds_edit(self, vname, ram, vcpu):
+        """
+
+        Function change ram and cpu on vds.
+
+        """
+
+        dom = self.lookupVM(vname)
+        xml = dom.XMLDesc(0)
+        memory = int(ram) * 1024
+        xml_memory = "<memory unit='KiB'>%s</memory>" % memory
+        xml_memory_chage = re.sub('\<memory.*memory\>', xml_memory, xml)
+        xml_curmemory = "<currentMemory unit='KiB'>%s</currentMemory>" % memory
+        xml_curmemory_chage = re.sub('\<currentMemory.*currentMemory\>', xml_curmemory, xml_memory_chage)
+        xml_vcpu = "<vcpu>%s</vcpu>" % vcpu
+        xml_vcpu_change = re.sub('\<vcpu.*vcpu\>', xml_vcpu, xml_curmemory_chage)
+        self.conn.defineXML(xml_vcpu_change)
 
 
     def get_all_media(self):
