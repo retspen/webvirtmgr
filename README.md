@@ -1,8 +1,8 @@
-# WebVirtMgr panel - v2.3.2
+# WebVirtMgr panel - v2.3.5
 
-* Minor improvements (Change codebase)
 * Add support set VNC password (auto or manual) when VM created
 * Add support edit VM (only RAM and VCPU)
+* Add upload ISO images (Work only if the panel installed on HOST SERVER)
 
 ## 1. Introduction
 

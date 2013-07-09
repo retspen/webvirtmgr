@@ -12,6 +12,15 @@ if ROOT_PATH not in sys.path:
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
+if DEBUG:
+    STATIC_PATH = ''
+    MEDIA_PATH = ''
+    STATIC_DIR = '..'
+else:
+    STATIC_PATH = '..'
+    MEDIA_PATH = '..'
+    STATIC_DIR = ''
+
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
@@ -37,13 +46,13 @@ SITE_ID = 1
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
-MEDIA_ROOT = os.path.abspath(os.path.join(ROOT_PATH, '..', 'media'))
 MEDIA_URL = '/media/'
-STATIC_ROOT = os.path.abspath(os.path.join(ROOT_PATH, '..', 'static'))
+STATIC_ROOT = os.path.abspath(os.path.join(ROOT_PATH, STATIC_PATH, 'static'))
 STATIC_URL = '/static/'
+MEDIA_ROOT = os.path.abspath(os.path.join(ROOT_PATH, MEDIA_PATH, 'media'))
 
 STATICFILES_DIRS = (
-    os.path.abspath(os.path.join(ROOT_PATH, '', 'static')),
+    os.path.abspath(os.path.join(ROOT_PATH, STATIC_DIR, 'static')),
 )
 
 STATICFILES_FINDERS = (

@@ -20,6 +20,13 @@ def storage(request, host_id, pool):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
+    def handle_uploaded_file(path, f_name):
+        target = path + '/' + str(f_name)
+        destination = open(target, 'wb+')
+        for chunk in f_name.chunks():
+            destination.write(chunk)
+        destination.close()
+
     errors = []
     host = Host.objects.get(id=host_id)
 
@@ -81,33 +88,32 @@ def storage(request, host_id, pool):
             all_vm = conn.vds_get_node()
             form_hdd_size = [10, 20, 40, 80, 160, 320, 640]
             stg = conn.storagePool(pool)
-            info = conn.storage_get_info(pool)
+            size, free, usage, percent, state, s_type, path = conn.storage_get_info(pool)
 
             # refresh storage if acitve
-            if info[5] == True:
+            if state == True:
                 stg.refresh(0)
                 volumes_info = conn.volumes_get_info(pool)
-            
+
             if request.method == 'POST':
                 if 'start' in request.POST:
                     try:
                         stg.create(0)
-                        msg = 'Start storage pool: %s' % pool
+                        return HttpResponseRedirect(request.get_full_path())
                     except libvirtError as error_msg:
                         errors.append(error_msg.message)
-                    return HttpResponseRedirect('/storage/%s/%s' % (host_id, pool))
                 if 'stop' in request.POST:
                     try:
                         stg.destroy()
+                        return HttpResponseRedirect(request.get_full_path())
                     except libvirtError as error_msg:
                         errors.append(error_msg.message)
-                    return HttpResponseRedirect('/storage/%s/%s' % (host_id, pool))
                 if 'delete' in request.POST:
                     try:
                         stg.undefine()
+                        return HttpResponseRedirect('/storage/%s/' % host_id)
                     except libvirtError as error_msg:
                         errors.append(error_msg.message)
-                    return HttpResponseRedirect('/storage/%s/' % host_id)
                 if 'addimg' in request.POST:
                     name = request.POST.get('name', '')
                     size = request.POST.get('size', '')
@@ -128,20 +134,28 @@ def storage(request, host_id, pool):
                             errors.append(msg)
                     if not errors:
                         conn.new_volume(pool, name, size)
-                        return HttpResponseRedirect('/storage/%s/%s' % (host_id, pool))
+                        return HttpResponseRedirect(request.get_full_path())
                 if 'delimg' in request.POST:
                     img = request.POST.get('img', '')
                     try:
                         vol = stg.storageVolLookupByName(img)
                         vol.delete(0)
+                        return HttpResponseRedirect(request.get_full_path())
                     except libvirtError as error_msg:
                         errors.append(error_msg.message)
-                    return HttpResponseRedirect('/storage/%s/%s' % (host_id, pool))
+                if 'upload' in request.POST:
+                    if str(request.FILES['file']) in stg.listVolumes():
+                        msg = _("ISO image already exist")
+                        errors.append(msg)
+                    else:
+                        handle_uploaded_file(path, request.FILES['file'])
+                        return HttpResponseRedirect(request.get_full_path())
                 if 'clone' in request.POST:
                     img = request.POST.get('img', '')
                     clone_name = request.POST.get('new_img', '')
                     full_img_name = clone_name + '.img'
                     name_have_symbol = re.search('[^a-zA-Z0-9\_\-\.]+', clone_name)
+
                     if full_img_name in stg.listVolumes():
                         msg = _("Volume name already use")
                         errors.append(msg)
@@ -156,9 +170,11 @@ def storage(request, host_id, pool):
                             msg = _("The host name must not contain any special characters")
                             errors.append(msg)
                     if not errors:
-                        conn.clone_volume(pool, img, clone_name)
-                        return HttpResponseRedirect('/storage/%s/%s' % (host_id, pool))
-
+                        try:
+                            conn.clone_volume(pool, img, clone_name)
+                            return HttpResponseRedirect(request.get_full_path())
+                        except libvirtError as error_msg:
+                            errors.append(error_msg.message)
         conn.close()
 
     return render_to_response('storage.html', locals(), context_instance=RequestContext(request))

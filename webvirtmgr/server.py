@@ -43,7 +43,6 @@ class ConnServer(object):
             uri = 'qemu+ssh://%s@%s:%s/system' % (self.login, self.host, self.port)
             self.conn = libvirt.open(uri)
 
-
     def lookupVM(self, vname):
         """
 
@@ -55,7 +54,6 @@ class ConnServer(object):
         dom = self.conn.lookupByName(vname)
         return dom
 
-
     def storagePool(self, storage):
         """
 
@@ -66,7 +64,6 @@ class ConnServer(object):
         stg = self.conn.storagePoolLookupByName(storage)
         return stg
 
-
     def networkPool(self, network):
         """
 
@@ -76,7 +73,6 @@ class ConnServer(object):
 
         net = self.conn.networkLookupByName(network)
         return net    
-
 
     def storageVol(self, volume, storage):
         """
@@ -92,7 +88,6 @@ class ConnServer(object):
         vl = stg.storageVolLookupByName(volume)
         return vl
 
-
     def storageVolPath(self, volume):
         """
 
@@ -102,7 +97,6 @@ class ConnServer(object):
 
         vl = self.conn.storageVolLookupByPath(volume)
         return vl
-
 
     def hard_accel_node(self):
         """
@@ -117,7 +111,6 @@ class ConnServer(object):
             return True
         else:
             return False
-
 
     def add_vm(self, name, ram, vcpu, image, net, virtio, storages):
         """
@@ -219,7 +212,6 @@ class ConnServer(object):
         dom = self.lookupVM(name)
         dom.setAutostart(1)
 
-
     def vds_get_node(self):
         """
 
@@ -236,7 +228,6 @@ class ConnServer(object):
             dom = self.conn.lookupByName(id)
             vname[dom.name()] = dom.info()[0]
         return vname
-
 
     def networks_get_node(self):
         """
@@ -256,7 +247,6 @@ class ConnServer(object):
             virtnet[network] = status
         return virtnet
 
-
     def storages_get_node(self):
         """
 
@@ -274,7 +264,6 @@ class ConnServer(object):
             status = stg.isActive()
             storages[storage] = status
         return storages
-
 
     def node_get_info(self):
         """
@@ -296,7 +285,6 @@ class ConnServer(object):
         info.append(self.conn.getLibVersion())
         return info
 
-
     def memory_get_usage(self):
         """
 
@@ -317,7 +305,6 @@ class ConnServer(object):
             memusage = None
             percent = None
         return allmem, memusage, percent
-
 
     def cpu_get_usage(self):
         """
@@ -347,7 +334,6 @@ class ConnServer(object):
             diff_usage = None
         return diff_usage
 
-
     def new_volume(self, storage, name, size):
         """
 
@@ -374,7 +360,6 @@ class ConnServer(object):
             </volume>""" % (name, size, alloc)
         stg.createXML(xml, 0)
 
-
     def clone_volume(self, storage, img, new_img):
         """
 
@@ -398,7 +383,6 @@ class ConnServer(object):
             </volume>""" % (new_img)
         stg.createXMLFrom(xml, vol, 0)
 
-
     def images_get_storages(self, storages):
         """
 
@@ -418,7 +402,6 @@ class ConnServer(object):
                         disk.append(img)
         return disk
 
-
     def image_get_path(self, vol, storages):
         """
 
@@ -433,7 +416,6 @@ class ConnServer(object):
                     vl = stg.storageVolLookupByName(vol)
                     return vl.path()
 
-
     def storage_get_info(self, storage):
         """
 
@@ -446,16 +428,13 @@ class ConnServer(object):
             percent = 0
         else:
             percent = (stg.info()[2] * 100) / stg.info()[1]
-        info = stg.info()
+        info = stg.info()[1:4]
         info.append(int(percent))
         info.append(stg.isActive())
         xml = stg.XMLDesc(0)
         info.append(util.get_xml_path(xml, "/pool/@type"))
         info.append(util.get_xml_path(xml, "/pool/target/path"))
-        info.append(util.get_xml_path(xml, "/pool/source/device/@path"))
-        info.append(util.get_xml_path(xml, "/pool/source/format/@type"))
         return info
-
 
     def new_storage_pool(self, type_pool, name, source, target):
         """
@@ -491,7 +470,6 @@ class ConnServer(object):
         stg.create(0)
         stg.setAutostart(1)
 
-
     def volumes_get_info(self, storage):
         """
 
@@ -508,7 +486,6 @@ class ConnServer(object):
             format = util.get_xml_path(xml, "/volume/target/format/@type")
             volinfo[name] = size, format
         return volinfo
-
 
     def new_network_pool(self, name, forward, gw, netmask, dhcp):
         """
@@ -539,7 +516,6 @@ class ConnServer(object):
         net.create()
         net.setAutostart(1)
 
-
     def network_get_info(self, network):
         """
 
@@ -552,7 +528,6 @@ class ConnServer(object):
         info.append(net.isActive())
         info.append(net.bridgeName())
         return info
-
 
     def network_get_subnet(self, network):
         """
@@ -595,7 +570,6 @@ class ConnServer(object):
             ipv4.append([IP(dhcpstart), IP(dhcpend)])
         return ipv4
 
-
     def snapshots_get_node(self):
         """
 
@@ -615,7 +589,6 @@ class ConnServer(object):
                 vname[dom.name()] = dom.info()[0]
         return vname
 
-
     def snapshots_get_vds(self, vname):
         """
 
@@ -630,7 +603,6 @@ class ConnServer(object):
             snapshots[snapshot] = (datetime.fromtimestamp(int(snapshot)), dom.info()[0])
         return snapshots
 
-
     def snapshot_delete(self, vname, name_snap):
         """
 
@@ -641,7 +613,6 @@ class ConnServer(object):
         dom = self.conn.lookupByName(vname)
         snap = dom.snapshotLookupByName(name_snap, 0)
         snap.delete(0)
-
 
     def snapshot_revert(self, vname, name_snap):
         """
@@ -654,7 +625,6 @@ class ConnServer(object):
         snap = dom.snapshotLookupByName(name_snap, 0)
         dom.revertToSnapshot(snap, 0)
 
-
     def vnc_get_port(self, vname):
         """
 
@@ -665,7 +635,6 @@ class ConnServer(object):
         dom = self.conn.lookupByName(vname)
         port = util.get_xml_path(dom.XMLDesc(0), "/domain/devices/graphics/@port")
         return port
-
 
     def vds_mount_iso(self, vname, image):
         """
@@ -699,7 +668,6 @@ class ConnServer(object):
                         xmldom = xml.replace("<disk type='file' device='cdrom'>\n      <driver name='qemu' type='raw'/>", newxml)
                         self.conn.defineXML(xmldom)
 
-
     def vds_umount_iso(self, vname, image):
         """
 
@@ -730,7 +698,6 @@ class ConnServer(object):
                         xmldom = xml.replace("<source file='%s'/>\n" % vol.path(), '')
                         self.conn.defineXML(xmldom)
 
-
     def vds_cpu_usage(self, vname):
         """
 
@@ -747,7 +714,6 @@ class ConnServer(object):
         cpu_usage = 100 * diff_usage / (1 * nbcore * 10**9L)
         return cpu_usage
 
-
     def vds_memory_usage(self, vname):
         """
 
@@ -760,7 +726,6 @@ class ConnServer(object):
         dom_mem = dom.info()[1] * 1024
         percent = (dom_mem * 100) / allmem
         return allmem, percent
-
 
     def vds_get_info(self, vname):
         """
@@ -782,7 +747,6 @@ class ConnServer(object):
             nic = util.get_xml_path(xml, "/domain/devices/interface/source/@bridge")
         info.append(nic)
         return info
-
 
     def vds_get_hdd(self, vname):
         """
@@ -820,7 +784,6 @@ class ConnServer(object):
                     all_hdd_dev[dev_bus] = hdd, 'Not in the pool'
         return all_hdd_dev
 
-
     def vds_get_media(self, vname):
         """
 
@@ -841,7 +804,6 @@ class ConnServer(object):
                 else:
                     return None
 
-
     def vds_set_vnc_passwd(self, vname, passwd):
         """
 
@@ -854,7 +816,6 @@ class ConnServer(object):
         newxml = "<graphics type='vnc' passwd='%s'>" % passwd
         xmldom = re.sub('\<graphics.*\>', newxml, xml)
         self.conn.defineXML(xmldom)
-
 
     def vds_edit(self, vname, ram, vcpu):
         """
@@ -873,7 +834,6 @@ class ConnServer(object):
         xml_vcpu = "<vcpu>%s</vcpu>" % vcpu
         xml_vcpu_change = re.sub('\<vcpu.*vcpu\>', xml_vcpu, xml_curmemory_chage)
         self.conn.defineXML(xml_vcpu_change)
-
 
     def get_all_media(self):
         """
@@ -894,7 +854,6 @@ class ConnServer(object):
                         iso.append(img)
         return iso
 
-
     def vds_remove_hdd(self, vname):
         """
 
@@ -906,7 +865,6 @@ class ConnServer(object):
         img = util.get_xml_path(dom.XMLDesc(0), "/domain/devices/disk[1]/source/@file")
         vol = self.storageVolPath(img)
         vol.delete(0)
-
 
     def vds_create_snapshot(self, vname):
         """
@@ -924,7 +882,6 @@ class ConnServer(object):
         xml += """<active>0</active>\n
                   </domainsnapshot>"""
         dom.snapshotCreateXML(xml, 0)
-
 
     def vds_on_cluster(self):
         vname = {}
@@ -945,7 +902,6 @@ class ConnServer(object):
             vcpu = util.get_xml_path(dom.XMLDesc(0), "/domain/vcpu")
             vname[dom.name()] = (dom.info()[0], vcpu, mem, mem_usage)
         return vname
-
 
     def close(self):
         """
