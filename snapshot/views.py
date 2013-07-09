@@ -33,7 +33,7 @@ def snapshot(request, host_id):
         all_vm = conn.vds_get_node()
         all_vm_snap = conn.snapshots_get_node()
         conn.close()
-        
+
         if all_vm_snap:
             return HttpResponseRedirect('/snapshot/%s/%s/' % (host_id, all_vm_snap.keys()[0]))
 
@@ -69,12 +69,18 @@ def dom_snapshot(request, host_id, vname):
         if request.method == 'POST':
             if 'delete' in request.POST:
                 snap_name = request.POST.get('name', '')
-                conn.snapshot_delete(vname, snap_name)
-                return HttpResponseRedirect('/snapshot/%s/%s/' % (host_id, vname))
+                try:
+                    conn.snapshot_delete(vname, snap_name)
+                    return HttpResponseRedirect('/snapshot/%s/%s/' % (host_id, vname))
+                except libvirtError as error_msg:
+                        errors.append(error_msg.message)
             if 'revert' in request.POST:
                 snap_name = request.POST.get('name', '')
-                conn.snapshot_revert(vname, snap_name)
-                message = _("Successful revert snapshot: ")
-                message = message + snap_name
+                try:
+                    conn.snapshot_revert(vname, snap_name)
+                    message = _("Successful revert snapshot: ")
+                    message = message + snap_name
+                except libvirtError as error_msg:
+                        errors.append(error_msg.message)
 
     return render_to_response('snapshot.html', locals(), context_instance=RequestContext(request))

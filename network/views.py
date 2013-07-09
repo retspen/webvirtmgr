@@ -108,22 +108,21 @@ def network(request, host_id, pool):
                 if 'start' in request.POST:
                     try:
                         net.create()
-                        return HttpResponseRedirect('/network/%s/%s' % (host_id, pool))
+                        return HttpResponseRedirect(request.get_full_path())
                     except libvirtError as error_msg:
                         errors.append(error_msg.message)
                 if 'stop' in request.POST:
                     try:
                         net.destroy()
+                        return HttpResponseRedirect(request.get_full_path())
                     except libvirtError as error_msg:
                         errors.append(error_msg.message)
-                    return HttpResponseRedirect('/network/%s/%s' % (host_id, pool))
                 if 'delete' in request.POST:
                     try:
                         net.undefine()
+                        return HttpResponseRedirect('/network/%s/' % host_id)
                     except libvirtError as error_msg:
                         errors.append(error_msg.message)
-                    return HttpResponseRedirect('/network/%s/' % host_id)
-
         conn.close()
 
     return render_to_response('network.html', locals(), context_instance=RequestContext(request))
