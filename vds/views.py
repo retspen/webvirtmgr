@@ -32,7 +32,7 @@ def vds(request, host_id, vname):
         errors.append(e.message)
     else:
         all_vm = conn.vds_get_node()
-        vcpu, memory, mac, network = conn.vds_get_info(vname)
+        vcpu, memory, mac, network,description = conn.vds_get_info(vname)
         cpu_usage = conn.vds_cpu_usage(vname)
         memory_usage = conn.vds_memory_usage(vname)[1]
         hdd_image = conn.vds_get_hdd(vname)
@@ -120,10 +120,11 @@ def vds(request, host_id, vname):
                 except libvirtError as msg_error:
                     errors.append(msg_error.message)
             if 'edit' in request.POST:
+	        description = request.POST.get('description', '')
                 vcpu = request.POST.get('vcpu', '')
                 ram = request.POST.get('ram', '')
                 try:
-                    conn.vds_edit(vname, ram, vcpu)
+                    conn.vds_edit(vname, description, ram, vcpu)
                     if vm:
                         conn.vds_set_vnc_passwd(vname, vm.vnc_passwd)
                     return HttpResponseRedirect(request.get_full_path())
