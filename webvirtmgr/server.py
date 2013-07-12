@@ -746,6 +746,8 @@ class ConnServer(object):
         if nic is None:
             nic = util.get_xml_path(xml, "/domain/devices/interface/source/@bridge")
         info.append(nic)
+        description = util.get_xml_path(xml, "/domain/description")
+        info.append(description)
         return info
 
     def vds_get_hdd(self, vname):
