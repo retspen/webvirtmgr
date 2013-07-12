@@ -73,10 +73,12 @@
                 <div class="row offset2">
                   <div class="span3">
                     <p><b>{% trans "Name" %}:</b></p>
+                    <p><b>{% trans "Description" %}:</b></p>
                     <p><b>{% trans "Status" %}:</b></p>
                   </div>
                   <div class="span7">
                     <p>{{ vname }}</p>
+                    <p>{{ description }}</p>
                     <p>{% if dom.info %}
                       <font color={% ifequal dom.info.0 5 %}"red">{% trans "Shuttoff" %}{% endifequal %}{% ifequal dom.info.0 1 %}"green">{% trans "Running" %}{% endifequal %}{% ifequal dom.info.0 3 %}"orange">{% trans "Suspend" %}{% endifequal %}</font>
                       {% else %}
@@ -241,7 +243,13 @@
               <div class="modal-body">
                 <form class="form-horizontal" action="" method="post">{% csrf_token %}
                   <fieldset>
-                    <p>{% trans "Change VCPU or RAM" %}</p><br />
+                    <p>{% trans "Change Description, VCPU or RAM" %}</p><br />
+                    <div class="control-group">
+                      <label class="control-label">{% trans "Description" %}</label>
+                      <div class="controls">
+                        <input type="text" name="description" value="{{ description }}"/>
+                      </div> 
+                    </div>
                     <div class="control-group">
                       <label class="control-label">{% trans "VCPU" %}</label>
                       <div class="controls">
