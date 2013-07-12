@@ -746,6 +746,8 @@ class ConnServer(object):
         if nic is None:
             nic = util.get_xml_path(xml, "/domain/devices/interface/source/@bridge")
         info.append(nic)
+        description = util.get_xml_path(xml, "/domain/description")
+        info.append(description)
         return info
 
     def vds_get_hdd(self, vname):
@@ -817,7 +819,7 @@ class ConnServer(object):
         xmldom = re.sub('\<graphics.*\>', newxml, xml)
         self.conn.defineXML(xmldom)
 
-    def vds_edit(self, vname, ram, vcpu):
+    def vds_edit(self, vname, description, ram, vcpu):
         """
 
         Function change ram and cpu on vds.
@@ -828,12 +830,15 @@ class ConnServer(object):
         xml = dom.XMLDesc(0)
         memory = int(ram) * 1024
         xml_memory = "<memory unit='KiB'>%s</memory>" % memory
-        xml_memory_chage = re.sub('\<memory.*memory\>', xml_memory, xml)
+        xml_memory_change = re.sub('\<memory.*memory\>', xml_memory, xml)
         xml_curmemory = "<currentMemory unit='KiB'>%s</currentMemory>" % memory
-        xml_curmemory_chage = re.sub('\<currentMemory.*currentMemory\>', xml_curmemory, xml_memory_chage)
+        xml_curmemory_change = re.sub('\<currentMemory.*currentMemory\>', xml_curmemory, xml_memory_change)
         xml_vcpu = "<vcpu>%s</vcpu>" % vcpu
-        xml_vcpu_change = re.sub('\<vcpu.*vcpu\>', xml_vcpu, xml_curmemory_chage)
-        self.conn.defineXML(xml_vcpu_change)
+        xml_vcpu_change = re.sub('\<vcpu.*vcpu\>', xml_vcpu, xml_curmemory_change)
+        xml_description = "<description>%s</description>" % description
+        xml_description_change = re.sub('\<description.*description\>', xml_description, xml_vcpu_change)
+        self.conn.defineXML(xml_description_change)
+
 
     def get_all_media(self):
         """
