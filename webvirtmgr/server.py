@@ -140,7 +140,7 @@ class ConnServer(object):
         img = self.storageVolPath(image)
         vol = img.name()
         for storage in storages:
-            stg = self.conn.storagePoolLookupByName(storage)
+            stg = self.storagePool(storage)
             if stg.info()[0] != 0:
                 stg.refresh(0)
                 for img in stg.listVolumes():
