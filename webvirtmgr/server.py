@@ -133,11 +133,11 @@ class ConnServer(object):
         elif re.findall('/usr/bin/kvm', self.conn.getCapabilities()):
             emulator = '/usr/bin/kvm'
         elif re.findall('/usr/bin/qemu-kvm', self.conn.getCapabilities()):
-            emulator = '/usr/bin/qemu-kvm'      
+            emulator = '/usr/bin/qemu-kvm'
         else:
             emulator = '/usr/bin/qemu-system-x86_64'
 
-        img = ConnServer.storageVolPath(self, image)
+        img = self.storageVolPath(image)
         vol = img.name()
         for storage in storages:
             stg = self.conn.storagePoolLookupByName(storage)
