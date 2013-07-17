@@ -72,7 +72,7 @@ class ConnServer(object):
         """
 
         net = self.conn.networkLookupByName(network)
-        return net    
+        return net
 
     def storageVol(self, volume, storage):
         """
@@ -225,7 +225,7 @@ class ConnServer(object):
             dom = self.conn.lookupByID(id)
             vname[dom.name()] = dom.info()[0]
         for id in self.conn.listDefinedDomains():
-            dom = self.conn.lookupByName(id)
+            dom = self.lookupVM(vname)
             vname[dom.name()] = dom.info()[0]
         return vname
 
@@ -242,7 +242,7 @@ class ConnServer(object):
             status = net.isActive()
             virtnet[network] = status
         for network in self.conn.listDefinedNetworks():
-            net = self.conn.networkLookupByName(network)
+            net = self.networkPool(network)
             status = net.isActive()
             virtnet[network] = status
         return virtnet
@@ -260,7 +260,7 @@ class ConnServer(object):
             status = stg.isActive()
             storages[storage] = status
         for storage in self.conn.listDefinedStoragePools():
-            stg = self.conn.storagePoolLookupByName(storage)
+            stg = self.storagePool(storage)
             status = stg.isActive()
             storages[storage] = status
         return storages
@@ -392,7 +392,7 @@ class ConnServer(object):
 
         disk = []
         for storage in storages:
-            stg = self.conn.storagePoolLookupByName(storage)
+            stg = self.storagePool(storage)
             if stg.info()[0] != 0:
                 stg.refresh(0)
                 for img in stg.listVolumes():
@@ -410,7 +410,7 @@ class ConnServer(object):
         """
 
         for storage in storages:
-            stg = self.conn.storagePoolLookupByName(storage)
+            stg = self.storagePool(storage)
             for img in stg.listVolumes():
                 if vol == img:
                     vl = stg.storageVolLookupByName(vol)
@@ -524,7 +524,7 @@ class ConnServer(object):
         """
 
         info = []
-        net = self.conn.networkLookupByName(network)
+        net = self.networkPool(network)
         info.append(net.isActive())
         info.append(net.bridgeName())
         return info
@@ -536,7 +536,7 @@ class ConnServer(object):
 
         """
 
-        net = self.conn.networkLookupByName(network)
+        net = self.networkPool(network)
         xml_net = net.XMLDesc(0)
         ipv4 = []
 
@@ -584,7 +584,7 @@ class ConnServer(object):
             if dom.snapshotNum(0) != 0:
                 vname[dom.name()] = dom.info()[0]
         for vm in self.conn.listDefinedDomains():
-            dom = self.conn.lookupByName(vm)
+            dom = self.lookupVM(vname)
             if dom.snapshotNum(0) != 0:
                 vname[dom.name()] = dom.info()[0]
         return vname
@@ -597,7 +597,7 @@ class ConnServer(object):
         """
 
         snapshots = {}
-        dom = self.conn.lookupByName(vname)
+        dom = self.lookupVM(vname)
         all_snapshot = dom.snapshotListNames(0)
         for snapshot in all_snapshot:
             snapshots[snapshot] = (datetime.fromtimestamp(int(snapshot)), dom.info()[0])
@@ -610,7 +610,7 @@ class ConnServer(object):
 
         """
 
-        dom = self.conn.lookupByName(vname)
+        dom = self.lookupVM(vname)
         snap = dom.snapshotLookupByName(name_snap, 0)
         snap.delete(0)
 
@@ -621,7 +621,7 @@ class ConnServer(object):
 
         """
 
-        dom = self.conn.lookupByName(vname)
+        dom = self.lookupVM(vname)
         snap = dom.snapshotLookupByName(name_snap, 0)
         dom.revertToSnapshot(snap, 0)
 
@@ -632,7 +632,7 @@ class ConnServer(object):
 
         """
 
-        dom = self.conn.lookupByName(vname)
+        dom = self.lookupVM(vname)
         port = util.get_xml_path(dom.XMLDesc(0), "/domain/devices/graphics/@port")
         return port
 
@@ -839,7 +839,6 @@ class ConnServer(object):
         xml_description_change = re.sub('\<description.*description\>', xml_description, xml_vcpu_change)
         self.conn.defineXML(xml_description_change)
 
-
     def get_all_media(self):
         """
 
@@ -900,7 +899,7 @@ class ConnServer(object):
             vcpu = util.get_xml_path(dom.XMLDesc(0), "/domain/vcpu")
             vname[dom.name()] = (dom.info()[0], vcpu, mem, mem_usage)
         for vm in self.conn.listDefinedDomains():
-            dom = self.conn.lookupByName(vm)
+            dom = self.lookupVM(vname)
             mem = util.get_xml_path(dom.XMLDesc(0), "/domain/memory")
             mem = int(mem) * 1024
             mem_usage = (mem * 100) / host_mem
