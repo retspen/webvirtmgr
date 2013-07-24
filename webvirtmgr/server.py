@@ -220,9 +220,9 @@ class ConnServer(object):
         """
 
         vname = {}
-        for id in self.conn.listDomainsID():
-            id = int(id)
-            dom = self.conn.lookupByID(id)
+        for vm_id in self.conn.listDomainsID():
+            vm_id = int(vm_id)
+            dom = self.conn.lookupByID(vm_id)
             vname[dom.name()] = dom.info()[0]
         for name in self.conn.listDefinedDomains():
             dom = self.lookupVM(name)
@@ -583,8 +583,8 @@ class ConnServer(object):
             dom = self.conn.lookupByID(vm_id)
             if dom.snapshotNum(0) != 0:
                 vname[dom.name()] = dom.info()[0]
-        for vm in self.conn.listDefinedDomains():
-            dom = self.lookupVM(vname)
+        for name in self.conn.listDefinedDomains():
+            dom = self.lookupVM(name)
             if dom.snapshotNum(0) != 0:
                 vname[dom.name()] = dom.info()[0]
         return vname
@@ -898,8 +898,8 @@ class ConnServer(object):
             mem_usage = (mem * 100) / host_mem
             vcpu = util.get_xml_path(dom.XMLDesc(0), "/domain/vcpu")
             vname[dom.name()] = (dom.info()[0], vcpu, mem, mem_usage)
-        for vm in self.conn.listDefinedDomains():
-            dom = self.lookupVM(vname)
+        for name in self.conn.listDefinedDomains():
+            dom = self.lookupVM(name)
             mem = util.get_xml_path(dom.XMLDesc(0), "/domain/memory")
             mem = int(mem) * 1024
             mem_usage = (mem * 100) / host_mem
