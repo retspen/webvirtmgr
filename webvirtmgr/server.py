@@ -224,8 +224,8 @@ class ConnServer(object):
             id = int(id)
             dom = self.conn.lookupByID(id)
             vname[dom.name()] = dom.info()[0]
-        for id in self.conn.listDefinedDomains():
-            dom = self.lookupVM(vname)
+        for name in self.conn.listDefinedDomains():
+            dom = self.lookupVM(name)
             vname[dom.name()] = dom.info()[0]
         return vname
 
