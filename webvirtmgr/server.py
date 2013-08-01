@@ -6,6 +6,19 @@ from network.IPy import IP
 import re
 import time
 from datetime import datetime
+from django.utils.datastructures import SortedDict
+
+
+def SortHosts(hosts):
+    """
+
+    Sorts dictionary of hosts by key
+
+    """
+    sorted = []
+    for host in sorted(hosts.iterkeys()):
+        sorted.append((host, hosts[host]))
+    return SortedDict(sorted)
 
 
 class ConnServer(object):
@@ -227,7 +240,7 @@ class ConnServer(object):
         for name in self.conn.listDefinedDomains():
             dom = self.lookupVM(name)
             vname[dom.name()] = dom.info()[0]
-        return vname
+        return SortHosts(vname)
 
     def networks_get_node(self):
         """

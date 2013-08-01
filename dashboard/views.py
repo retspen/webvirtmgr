@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from vds.models import Host
-from webvirtmgr.server import ConnServer
+from webvirtmgr.server import ConnServer, SortHosts
 import re
 
 
@@ -133,6 +133,8 @@ def dashboard(request):
                 add_host.save()
                 return HttpResponseRedirect(request.get_full_path())
 
+    host_info = SortHosts(host_info)
+
     return render_to_response('dashboard.html', locals(), context_instance=RequestContext(request))
 
 
@@ -170,6 +172,10 @@ def clusters(request):
             hosts_vms[host.id, host.hostname, status, host_info[2], host_mem[0], host_mem[2]] = conn.vds_on_cluster()
         else:
             hosts_vms[host.id, host.hostname, status, None, None, None] = None
+
+    for host in hosts_vms:
+        hosts_vms[host] = SortHosts(hosts_vms[host])
+    hosts_vms = SortHosts(hosts_vms)
 
     return render_to_response('clusters.html', locals(), context_instance=RequestContext(request))
 
