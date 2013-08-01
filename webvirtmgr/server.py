@@ -15,10 +15,12 @@ def SortHosts(hosts):
     Sorts dictionary of hosts by key
 
     """
-    sorted = []
+    if len(hosts) == 0:
+        return hosts
+    sorted_hosts = []
     for host in sorted(hosts.iterkeys()):
-        sorted.append((host, hosts[host]))
-    return SortedDict(sorted)
+        sorted_hosts.append((host, hosts[host]))
+    return SortedDict(sorted_hosts)
 
 
 class ConnServer(object):
