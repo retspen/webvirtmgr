@@ -18,6 +18,8 @@ urlpatterns = patterns('',
     url(r'^snapshot/(\d+)/([\w\-]+)/$', 'snapshot.views.dom_snapshot', name='dom_snapshot'),
     url(r'^vds/(\d+)/([\w\-\.]+)/$', 'vds.views.vds', name='vds'),
     url(r'^vnc/(\d+)/([\w\-\.]+)/$', 'vnc.views.vnc', name='vnc'),
+    url(r'^info/cpu/(\d+)/$', 'overview.views.cpuusage', name='cpuusage'),
+    url(r'^info/memory/(\d+)/$', 'overview.views.memusage', name='memusage'),
 )
 
 urlpatterns += patterns('',

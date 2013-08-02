@@ -23,8 +23,8 @@
                 <p>{% trans "Hostname" %}</p>
                 <p>{% trans "Architecture" %}</p>
                 <p>{% trans "Processor(s)" %}</p>
-                <p>{% trans "CPU utilization" %}</p>
-                <p>{% trans "Memory" %} ({{ mem_usage.1|filesizeformat }} / {{ mem_usage.0|filesizeformat }})</p>
+                <p style="height:30px">{% trans "CPU utilization" %}</p>
+                <p style="height:30px">{% trans "Memory" %} ({{ mem_usage.1|filesizeformat }} / {{ mem_usage.0|filesizeformat }})</p>
                 <p>{% trans "Type connection" %}</p>
                 <p>{% trans "Libvirt version" %}</p>
               </div>
@@ -32,8 +32,15 @@
                 <p><strong>{{ host_info.0 }}</strong></p>
                 <p>{{ host_info.1 }}</p>
                 <p>{{ host_info.2 }} x {{ host_info.3 }}</p>
-                <p>{{ cpu_usage }}%</p>
-                <p>{{ mem_usage.2 }}%</p>
+                <div class="progress" style="width:250px;">
+                        <div class="bar" id="cpu-usage-bar" style="width:0%;"></div>
+			<span id="cpu-usage" style="text-align: center;"></span>
+                </div>
+                <div class="progress" style="width:250px;">
+                        <div class="bar" id="memory-usage-bar" style="width:{{ mem_usage.2 }}%;"></div>
+			<span id="memory-usage" style="text-align: center;"></span>
+                </div>
+                <!--<p>{{ mem_usage.2 }}%</p>-->
                 <p>{{ host_info.4 }}</p>
                 <p>{{ host_info.5 }}</p>
               </div>
@@ -97,4 +104,51 @@
           </div><!--/span-->
         </div><!--/row-fluid-->
       </div><!--/container-fluid-->
+    <script type="text/javascript">
+		function cpu(){
+			$.get('/info/cpu/{{ host_id }}', function(data) {
+				$('#cpu-usage').text(data +'%').fadeIn();
+				$('#cpu-usage-bar').css({'width':data +'%'});
+			});
+		}
+
+		function memory(){
+			$.get('/info/memory/{{ host_id }}', function(data) {
+				$('#memory-usage').text(data +'%').fadeIn();
+				$('#memory-usage-bar').css({'width':data +'%'});
+			});
+		}
+
+		function refresh(){
+			cpu();
+			memory();
+		}
+
+		$(function() {
+			refresh();
+			window.setInterval('refresh()', 2000);
+		});
+    </script>	
+    <style>
+	/**
+	 * Progress bars with centered text
+	 */
+	.progress {
+	    position: relative;
+	}
+	
+	.bar {
+	    z-index: 1;
+	    position: absolute;
+	}
+	
+	.progress span {
+	    position: absolute;
+	    top: 0;
+	    z-index: 2;
+	    color: black; // You might need to change it
+	    text-align: center;
+	    width: 100%;
+	}
+    </style>
 {% endblock %}
