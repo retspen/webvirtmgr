@@ -33,7 +33,7 @@
                 <p>{{ host_info.1 }}</p>
                 <p>{{ host_info.2 }} x {{ host_info.3 }}</p>
                 <div class="progress" style="width:250px;">
-                        <div class="bar" id="cpu-usage-bar" style="width:0%;"></div>
+                        <div class="bar" id="cpu-usage-bar" style="width:{{ cpu_usage }}%;"></div>
 			<span id="cpu-usage" style="text-align: center;"></span>
                 </div>
                 <div class="progress" style="width:250px;">
@@ -107,16 +107,30 @@
     <script type="text/javascript">
 		function cpu(){
 			$.get('/info/cpu/{{ host_id }}', function(data) {
-				$('#cpu-usage').text(data +'%').fadeIn();
-				$('#cpu-usage-bar').css({'width':data +'%'});
+				setBar($('#cpu-usage-bar'),$('#cpu-usage'),data);
+				//$('#cpu-usage').text(data +'%').fadeIn();
+				//$('#cpu-usage-bar').css({'width':data +'%'});
 			});
 		}
 
 		function memory(){
 			$.get('/info/memory/{{ host_id }}', function(data) {
-				$('#memory-usage').text(data +'%').fadeIn();
-				$('#memory-usage-bar').css({'width':data +'%'});
+				setBar($('#memory-usage-bar'),$('#memory-usage'),data);
+				//$('#memory-usage').text(data +'%').fadeIn();
+				//$('#memory-usage-bar').css({'width':data +'%'});
 			});
+		}
+		
+		function setBar(bar,text,value){
+			text.text(value +'%').fadeIn();
+			bar.css({'width':value +'%'});
+			if (value < 50){
+				bar.attr('class', "bar bar-success");
+			}else if (value < 80){
+				bar.attr('class', "bar bar-warning");
+			}else if (value <= 100){
+				bar.attr('class', "bar bar-danger");
+			}
 		}
 
 		function refresh(){
