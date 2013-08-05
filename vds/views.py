@@ -1,14 +1,62 @@
 # -*- coding: utf-8 -*-
 
 from django.shortcuts import render_to_response
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from vds.models import Host, Vm
 from dashboard.views import SortHosts
 from webvirtmgr.server import ConnServer
 from libvirt import libvirtError
+from webvirtmgr.settings import TIME_JS_REFRESH
 
+def cpuusage(request, host_id, vname):
+    """
+
+    VM Cpu Usage
+
+    """
+
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login')
+
+    errors = []
+    messages = []
+    host = Host.objects.get(id=host_id)
+
+    try:
+        conn = ConnServer(host)
+    except libvirtError as e:
+        conn = None
+
+    if conn:
+        cpu_usage = conn.vds_cpu_usage(vname)
+    
+    return HttpResponse(cpu_usage)
+
+def memusage(request, host_id, vname):
+    """
+
+    VM Memory Usage
+
+    """
+
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login')
+
+    errors = []
+    messages = []
+    host = Host.objects.get(id=host_id)
+
+    try:
+        conn = ConnServer(host)
+    except libvirtError as e:
+        conn = None
+
+    if conn:
+        memory_usage = conn.vds_memory_usage(vname)[1]
+    
+    return HttpResponse(memory_usage)
 
 def vds(request, host_id, vname):
     """
@@ -21,6 +69,7 @@ def vds(request, host_id, vname):
         return HttpResponseRedirect('/login')
 
     errors = []
+    time_refresh = TIME_JS_REFRESH
     messages = []
     host = Host.objects.get(id=host_id)
 
