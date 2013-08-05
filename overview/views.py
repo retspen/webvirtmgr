@@ -1,12 +1,49 @@
 # -*- coding: utf-8 -*-
 
 from django.shortcuts import render_to_response
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from vds.models import Host
 from webvirtmgr.server import ConnServer
 from libvirt import libvirtError
+
+
+def cpuusage(request, host_id):
+    """
+	Return CPU Usage in %
+    """
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login')
+
+    errors = []
+    host = Host.objects.get(id=host_id)
+
+    try:
+        conn = ConnServer(host)
+    except libvirtError as e:
+        conn = None
+    if conn:
+        cpu_usage = conn.cpu_get_usage()
+	return HttpResponse(cpu_usage)
+
+def memusage(request, host_id):
+    """
+	Return Memory Usage in %
+    """
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login')
+
+    errors = []
+    host = Host.objects.get(id=host_id)
+
+    try:
+        conn = ConnServer(host)
+    except libvirtError as e:
+        conn = None
+    if conn:
+        mem_usage = conn.memory_get_usage()
+	return HttpResponse(mem_usage[2])
 
 
 def overview(request, host_id):
