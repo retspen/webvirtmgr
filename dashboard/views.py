@@ -3,10 +3,25 @@
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
+from django.utils.datastructures import SortedDict
 from django.utils.translation import ugettext_lazy as _
 from vds.models import Host
-from webvirtmgr.server import ConnServer, SortHosts
+from webvirtmgr.server import ConnServer
 import re
+
+
+def SortHosts(hosts):
+    """
+
+    Sorts dictionary of hosts by key
+
+    """
+    if len(hosts) == 0:
+        return hosts
+    sorted_hosts = []
+    for host in sorted(hosts.iterkeys()):
+        sorted_hosts.append((host, hosts[host]))
+    return SortedDict(sorted_hosts)
 
 
 def index(request):
