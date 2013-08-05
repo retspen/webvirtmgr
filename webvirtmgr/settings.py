@@ -9,7 +9,7 @@ DB_PATH = os.path.join(ROOT_PATH, '..', 'webvirtmgr.db')
 if ROOT_PATH not in sys.path:
     sys.path.append(ROOT_PATH)
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 if DEBUG:
@@ -38,6 +38,7 @@ DATABASES = {
     }
 }
 
+TIME_JS_REFRESH = 2000
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 ALLOWED_HOSTS = ['*']
 TIME_ZONE = 'Europe/Zaporozhye'

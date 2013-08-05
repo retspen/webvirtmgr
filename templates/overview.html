@@ -1,6 +1,26 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% block title %}{% trans "Overview" %}{% endblock %}
+{% block style %}
+      /*
+       * Progress bars with centered text
+       */
+      .progress {
+          position: relative;
+      }
+      .bar {
+          z-index: 1;
+          position: absolute;
+      }
+      .progress span {
+          position: absolute;
+          top: 0;
+          z-index: 2;
+          color: black; // You might need to change it
+          text-align: center;
+          width: 100%;
+      }
+{% endblock %}
 {% block content %}
       <div class="container-fluid">
         <div class="row-fluid">
@@ -24,25 +44,25 @@
                 <p>{% trans "Architecture" %}</p>
                 <p>{% trans "Processor(s)" %}</p>
                 <p style="height:30px">{% trans "CPU utilization" %}</p>
-                <p style="height:30px">{% trans "Memory" %} ({{ mem_usage.1|filesizeformat }} / {{ mem_usage.0|filesizeformat }})</p>
+                <p style="height:30px">{% trans "Memory" %} ({{ mem_usage|filesizeformat }} / {{ all_mem|filesizeformat }})</p>
                 <p>{% trans "Type connection" %}</p>
                 <p>{% trans "Libvirt version" %}</p>
               </div>
               <div class="span6">
-                <p><strong>{{ host_info.0 }}</strong></p>
-                <p>{{ host_info.1 }}</p>
-                <p>{{ host_info.2 }} x {{ host_info.3 }}</p>
+                <p><strong>{{ hostname }}</strong></p>
+                <p>{{ arch }}</p>
+                <p>{{ cpus }} x {{ cpu_model }}</p>
                 <div class="progress" style="width:250px;">
-                        <div class="bar" id="cpu-usage-bar" style="width:{{ cpu_usage }}%;"></div>
-			<span id="cpu-usage" style="text-align: center;"></span>
+                  <div class="bar" id="cpu-usage-bar" style="width:{{ cpu_usage }}%;"></div>
+                  <span id="cpu-usage" style="text-align: center;"></span>
                 </div>
                 <div class="progress" style="width:250px;">
-                        <div class="bar" id="memory-usage-bar" style="width:{{ mem_usage.2 }}%;"></div>
-			<span id="memory-usage" style="text-align: center;"></span>
+                  <div class="bar" id="memory-usage-bar" style="width:{{ mem_perc }}%;"></div>
+                  <span id="memory-usage" style="text-align: center;"></span>
                 </div>
                 <!--<p>{{ mem_usage.2 }}%</p>-->
-                <p>{{ host_info.4 }}</p>
-                <p>{{ host_info.5 }}</p>
+                <p>{{ type_conn }}</p>
+                <p>{{ libvirt_ver }}</p>
               </div>
             </div>
             <h2>{% trans "Virtual Machines" %}</h2>
@@ -104,65 +124,41 @@
           </div><!--/span-->
         </div><!--/row-fluid-->
       </div><!--/container-fluid-->
+{% endblock %}
+{% block script %}
     <script type="text/javascript">
-		function cpu(){
-			$.get('/info/cpu/{{ host_id }}', function(data) {
-				setBar($('#cpu-usage-bar'),$('#cpu-usage'),data);
-				//$('#cpu-usage').text(data +'%').fadeIn();
-				//$('#cpu-usage-bar').css({'width':data +'%'});
-			});
-		}
-
-		function memory(){
-			$.get('/info/memory/{{ host_id }}', function(data) {
-				setBar($('#memory-usage-bar'),$('#memory-usage'),data);
-				//$('#memory-usage').text(data +'%').fadeIn();
-				//$('#memory-usage-bar').css({'width':data +'%'});
-			});
-		}
-		
-		function setBar(bar,text,value){
-			text.text(value +'%').fadeIn();
-			bar.css({'width':value +'%'});
-			if (value < 50){
-				bar.attr('class', "bar bar-success");
-			}else if (value < 80){
-				bar.attr('class', "bar bar-warning");
-			}else if (value <= 100){
-				bar.attr('class', "bar bar-danger");
-			}
-		}
-
-		function refresh(){
-			cpu();
-			memory();
-		}
-
-		$(function() {
-			refresh();
-			window.setInterval('refresh()', 2000);
-		});
-    </script>	
-    <style>
-	/**
-	 * Progress bars with centered text
-	 */
-	.progress {
-	    position: relative;
-	}
-	
-	.bar {
-	    z-index: 1;
-	    position: absolute;
-	}
-	
-	.progress span {
-	    position: absolute;
-	    top: 0;
-	    z-index: 2;
-	    color: black; // You might need to change it
-	    text-align: center;
-	    width: 100%;
-	}
-    </style>
+      function cpu(){
+        $.get('/info/cpu/{{ host_id }}', function(data) {
+          setBar($('#cpu-usage-bar'),$('#cpu-usage'),data);
+          //$('#cpu-usage').text(data +'%').fadeIn();
+          //$('#cpu-usage-bar').css({'width':data +'%'});
+        });
+      }
+      function memory(){
+        $.get('/info/memory/{{ host_id }}', function(data) {
+          setBar($('#memory-usage-bar'),$('#memory-usage'),data);
+          //$('#memory-usage').text(data +'%').fadeIn();
+          //$('#memory-usage-bar').css({'width':data +'%'});
+        });
+      }
+      function setBar(bar,text,value){
+        text.text(value +'%').fadeIn();
+        bar.css({'width':value +'%'});
+        if (value < 50){
+          bar.attr('class', "bar bar-success");
+        }else if (value < 80){
+          bar.attr('class', "bar bar-warning");
+        }else if (value <= 100){
+          bar.attr('class', "bar bar-danger");
+        }
+      }
+      function refresh(){
+        cpu();
+        memory();
+      }
+      $(function() {
+        refresh();
+        window.setInterval('refresh()', {{ time_refresh }});
+      });
+    </script>
 {% endblock %}

@@ -227,7 +227,7 @@ class ConnServer(object):
         for name in self.conn.listDefinedDomains():
             dom = self.lookupVM(name)
             vname[dom.name()] = dom.info()[0]
-        return SortHosts(vname)
+        return vname
 
     def networks_get_node(self):
         """

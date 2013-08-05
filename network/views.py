@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from vds.models import Host
+from dashboard.views import SortHosts
 from webvirtmgr.server import ConnServer
 from network.IPy import IP
 from libvirt import libvirtError
@@ -97,7 +98,7 @@ def network(request, host_id, pool):
                         except libvirtError as error_msg:
                             errors.append(error_msg.message)
         else:
-            all_vm = conn.vds_get_node()
+            all_vm = SortHosts(conn.vds_get_node())
             info = conn.network_get_info(pool)
 
             if info[0] == True:
