@@ -36,7 +36,7 @@ Run:
 
 Run:
 
-    $ sudo apt-get install git python-pip virtinst apache2 libapache2-mod-python libapache2-mod-wsgi python-novnc
+    $ sudo apt-get install git python-pip virtinst apache2 libapache2-mod-python libapache2-mod-wsgi novnc
     $ sudo pip install Django==1.4.5
 
 ## 3. Setup
@@ -124,19 +124,23 @@ Reload apache:
 
 ## 5. Setup Websoket proxy (noVNC)
 
-### CentOS, RedHat
+### CentOS, RedHat, Fedora
 
 Run:
 
     $ sudo cp conf/initd/webvirtmgr-novnc-redhat /etc/init.d/webvirtmgr-novnc
     $ sudo service webvirtmgr-novnc start
+    $ sudo chkconfig webvirtmgr-novnc on
 
 ### Ubuntu
 
 Run: 
 
+    $ sudo service novnc stop
+    $ sudo update-rc.d -f novnc remove
     $ sudo cp conf/initd/webvirtmgr-novnc-ubuntu /etc/init.d/webvirtmgr-novnc
     $ sudo service webvirtmgr-novnc start
+    $ sudo update-rc.d webvirtmgr-novnc defaults
 
 ## 6. Gunicorn and Runit (Only for geeks)
 
