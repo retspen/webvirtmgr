@@ -20,6 +20,8 @@ urlpatterns = patterns('',
     url(r'^vnc/(\d+)/([\w\-\.]+)/$', 'vnc.views.vnc', name='vnc'),
     url(r'^info/cpu/(\d+)/$', 'overview.views.cpuusage', name='cpuusage'),
     url(r'^info/memory/(\d+)/$', 'overview.views.memusage', name='memusage'),
+    url(r'^info/vds/cpu/(\d+)/([\w\-\.]+)/$', 'vds.views.cpuusage', name='vdscpuusage'),
+    url(r'^info/vds/memory/(\d+)/([\w\-\.]+)/$', 'vds.views.memusage', name='vdsmemusage'),
 )
 
 urlpatterns += patterns('',

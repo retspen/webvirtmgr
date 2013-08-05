@@ -1,6 +1,26 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% block title %}{% trans "VM's" %} - {{ vname }}{% endblock %}
+{% block style %}
+      /*
+       * Progress bars with centered text
+       */
+      .progress {
+          position: relative;
+      }
+      .bar {
+          z-index: 1;
+          position: absolute;
+      }
+      .progress span {
+          position: absolute;
+          top: 0;
+          z-index: 2;
+          color: black; // You might need to change it
+          text-align: center;
+          width: 100%;
+      }
+{% endblock %}
 {% block content %}
       <div class="container-fluid">
         <div class="row-fluid">
@@ -92,12 +112,26 @@
                 <div class="row offset2">
                   <div class="span3">
                     <p><b>{% trans "Processor" %}:</b></p>
+                    <p style="height:30px">{% trans "Usage" %}</p>
                     <p><b>{% trans "Memory" %}:</b></p>
+                    <p style="height:30px">{% trans "Usage" %}</p>
                     <p><b>{% trans "Network" %}:</b></p>
                   </div>
                   <div class="span7">
-                    <p>VCPU {{ vcpu }} ({% trans "Usage" %}: {{ cpu_usage }}%)</p>
-                    <p>{{ memory }} {% trans "MB" %} ({% trans "Usage" %}: {{ memory_usage }}%)</p>
+                    <p>VCPU {{ vcpu }} </p>
+                    <p>
+                      <div class="progress" style="width:250px;">
+                        <div class="bar" id="cpu-usage-bar" style="width:{{ cpu_usage }}%;"></div>
+                        <span id="cpu-usage" style="text-align: center;"></span>
+                      </div>
+                    </p>
+                    <p>{{ memory }} {% trans "MB" %}</p>
+                    <p>
+                      <div class="progress" style="width:250px;">
+                        <div class="bar" id="memory-usage-bar" style="width:{{ mem_perc }}%;"></div>
+                        <span id="memory-usage" style="text-align: center;"></span>
+                      </div>
+                    </p>
                     <p>{{ mac }} ({{ network }})</p>
                   </div>
                 </div>
@@ -285,4 +319,41 @@
       <script>
         function open_vnc() { window.open('{% url vnc host_id vname %}?token={{ vm.vname }}','','width=850,height=485') }
       </script>
+{% endblock %}
+{% block script %}
+    <script type="text/javascript">
+      function cpu(){
+        $.get('/info/vds/cpu/{{ host_id }}/{{ vname }}', function(data) {
+          setBar($('#cpu-usage-bar'),$('#cpu-usage'),data);
+          //$('#cpu-usage').text(data +'%').fadeIn();
+          //$('#cpu-usage-bar').css({'width':data +'%'});
+        });
+      }
+      function memory(){
+        $.get('/info/vds/memory/{{ host_id }}/{{ vname }}', function(data) {
+          setBar($('#memory-usage-bar'),$('#memory-usage'),data);
+          //$('#memory-usage').text(data +'%').fadeIn();
+          //$('#memory-usage-bar').css({'width':data +'%'});
+        });
+      }
+      function setBar(bar,text,value){
+        text.text(value +'%').fadeIn();
+        bar.css({'width':value +'%'});
+        if (value < 50){
+          bar.attr('class', "bar bar-success");
+        }else if (value < 80){
+          bar.attr('class', "bar bar-warning");
+        }else if (value <= 100){
+          bar.attr('class', "bar bar-danger");
+        }
+      }
+      function refresh(){
+        cpu();
+        memory();
+      }
+      $(function() {
+        refresh();
+        window.setInterval('refresh()', {{ time_refresh }});
+      });
+    </script>
 {% endblock %}
