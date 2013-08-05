@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from vds.models import Host
+from dashboard.views import SortHosts
 from webvirtmgr.server import ConnServer
 from libvirt import libvirtError
 
@@ -30,7 +31,7 @@ def snapshot(request, host_id):
     if not conn:
         errors.append(e.message)
     else:
-        all_vm = conn.vds_get_node()
+        all_vm = SortHosts(conn.vds_get_node())
         all_vm_snap = conn.snapshots_get_node()
         conn.close()
 
@@ -62,7 +63,7 @@ def dom_snapshot(request, host_id, vname):
     if not conn:
         errors.append(e.message)
     else:
-        all_vm = conn.vds_get_node()
+        all_vm = SortHosts(conn.vds_get_node())
         all_vm_snap = conn.snapshots_get_node()
         vm_snapshot = conn.snapshots_get_vds(vname)
 

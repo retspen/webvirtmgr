@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from vds.models import Host
+from dashboard.views import SortHosts
 from webvirtmgr.server import ConnServer
 from libvirt import libvirtError
 import re
@@ -85,7 +86,7 @@ def storage(request, host_id, pool):
                         except libvirtError as error_msg:
                             errors.append(error_msg.message)
         else:
-            all_vm = conn.vds_get_node()
+            all_vm = SortHosts(conn.vds_get_node())
             form_hdd_size = [10, 20, 40, 80, 160, 320, 640]
             stg = conn.storagePool(pool)
             size, free, usage, percent, state, s_type, path = conn.storage_get_info(pool)

@@ -4,12 +4,11 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
-from vds.models import Host, Flavor, Vm
+from vds.models import Host, Flavor
+from dashboard.views import SortHosts
 from webvirtmgr.server import ConnServer
 from libvirt import libvirtError
 import re
-from string import letters, digits
-from random import choice
 
 
 def newvm(request, host_id):
@@ -38,7 +37,7 @@ def newvm(request, host_id):
         except:
             flavors = 'error'
 
-        all_vm = conn.vds_get_node()
+        all_vm = SortHosts(conn.vds_get_node())
         all_networks = conn.networks_get_node()
         all_storages = conn.storages_get_node()
         all_img = conn.images_get_storages(all_storages)
@@ -52,8 +51,6 @@ def newvm(request, host_id):
         if not all_storages:
             msg = _("You haven't defined have any storage pools")
             errors.append(msg)
-
-        
 
         if request.method == 'POST':
             if 'add_flavor' in request.POST:

@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from vds.models import Host, Vm
+from dashboard.views import SortHosts
 from webvirtmgr.server import ConnServer
 from libvirt import libvirtError
 
@@ -31,7 +32,7 @@ def vds(request, host_id, vname):
     if not conn:
         errors.append(e.message)
     else:
-        all_vm = conn.vds_get_node()
+        all_vm = SortHosts(conn.vds_get_node())
         vcpu, memory, mac, network,description = conn.vds_get_info(vname)
         cpu_usage = conn.vds_cpu_usage(vname)
         memory_usage = conn.vds_memory_usage(vname)[1]
