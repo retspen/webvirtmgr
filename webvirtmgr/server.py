@@ -118,6 +118,8 @@ class ConnServer(object):
 
         """
 
+        ram = int(ram) * 1024
+
         iskvm = re.search('kvm', self.conn.getCapabilities())
         if iskvm:
             dom_type = 'kvm'
@@ -153,7 +155,7 @@ class ConnServer(object):
 
         xml = """<domain type='%s'>
                   <name>%s</name>
-                  <memory unit='MiB'>%s</memory>
+                  <memory unit='KiB'>%s</memory>
                   <vcpu>%s</vcpu>
                   <os>
                     <type arch='x86_64' machine='%s'>hvm</type>
