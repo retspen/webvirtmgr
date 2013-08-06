@@ -1,7 +1,7 @@
 # WebVirtMgr panel - v2.3.7
 
 * Fix sort hosts and VM's (Thanks: <a href="https://github.com/bwcherry">bwcherry</a>) 
-* CPU and Memory auto-updating (Thanks: <a href="https://github.com/keyz182">keyz182</a>)
+* CPU and Memory auto-updating (Big Thanks: <a href="https://github.com/keyz182">keyz182</a>)
 
 ## 1. Introduction
 
