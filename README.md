@@ -21,7 +21,7 @@ WebVirtMgr is licensed under the Apache Licence, Version 2.0 (http://www.apache.
 
 Run:
 
-    $ su -c 'yum -y install git python-pip python-virtinst httpd mod_python mod_wsgi python-websockify'
+    $ su -c 'yum -y install git python-pip python-virtinst httpd mod_wsgi python-websockify'
     $ su -c 'python-pip install Django==1.4.5'
 
 ### CentOS 6.2, RedHat 6.2 and above
@@ -29,14 +29,14 @@ Run:
 Run:
 
     $ su -c 'yum -y install http://dl.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm'
-    $ su -c 'yum -y install git python-pip python-virtinst httpd mod_python mod_wsgi python-websockify'
+    $ su -c 'yum -y install git python-pip python-virtinst httpd mod_wsgi python-websockify'
     $ su -c 'python-pip install Django==1.4.5'
 
 ### Ubuntu 12.04 and above
 
 Run:
 
-    $ sudo apt-get install git python-pip virtinst apache2 libapache2-mod-python libapache2-mod-wsgi novnc
+    $ sudo apt-get install git python-pip virtinst apache2 libapache2-mod-wsgi novnc
     $ sudo pip install Django==1.4.5
 
 ## 3. Setup
@@ -71,52 +71,37 @@ Enter in your browser:
     
     http://x.x.x.x:8000 (x.x.x.x - your server IP address )
 
-## 4. Setup Web (Choose only one method: Virtual Host or WSGI)
-
-###1. Virtual Host 
+## 4. Setup Web (Autostart panel)
 
 Add file webvirtmgr.conf in conf.d directory (Ubuntu: "/etc/apache2/conf.d" or RedHat,Fedora,CentOS: "/etc/httpd/conf.d"):
 
+    WSGISocketPrefix run/wsgi
     <VirtualHost *:80>
         ServerAdmin webmaster@dummy-host.example.com
         ServerName dummy-host.example.com
 
-        SetHandler python-program
-        PythonHandler django.core.handlers.modpython
-        SetEnv DJANGO_SETTINGS_MODULE webvirtmgr.settings
-        PythonOption django.root /webvirtmgr
-        PythonDebug On
-        PythonPath "['/var/www/webvirtmgr'] + sys.path"
-        
-        ErrorLog ${APACHE_LOG_DIR}/webvirtmgr-error_log
-        CustomLog ${APACHE_LOG_DIR}/webvirtmgr-access_log common
+        WSGIDaemonProcess webvirtmgr display-name=%{GROUP} python-path=/var/www/webvirtmgr
+        WSGIProcessGroup webvirtmgr
+        WSGIScriptAlias / /var/www/webvirtmgr/webvirtmgr/wsgi.py
+
+        Alias /static /var/www/webvirtmgr/static/
+        Alias /media /var/www/webvirtmgr/media/
+
+        <Directory /var/www/webvirtmgr/webvirtmgr>
+            <Files wsgi.py>
+                Order deny,allow
+                Allow from all
+            </Files>
+        </Directory>
+
+        CustomLog logs/webvirtmgr-access_log common
+        ErrorLog logs/webvirtmgr-error_log
     </VirtualHost>
 
 Copy the folder and change owner (Ubuntu: "www-data:www-data", Fedora, Redhat, CentOS: "apache:apache"):
 
     $ sudo cp -r webvirtmgr /var/www/
     $ sudo chown -R www-data:www-data /var/www/webvirtmgr
-
-Reload apache:
-    
-    $ sudo service apache2 reload
-    
-###2. WSGI
-
-Add file webvirtmgr.conf in conf.d directory (Ubuntu: "/etc/apache2/conf.d" or RedHat,Fedora,CentOS: "/etc/httpd/conf.d"):
-
-    WSGIScriptAlias / /var/www/webvirtmgr/webvirtmgr/wsgi.py
-    WSGIPythonPath /var/www/webvirtmgr/
-
-    Alias /static /var/www/webvirtmgr/static/
-    Alias /media /var/www/webvirtmgr/media/
-
-    <Directory /var/www/webvirtmgr/webvirtmgr>
-        <Files wsgi.py>
-            Order deny,allow
-            Allow from all
-        </Files>
-    </Directory>
 
 Reload apache:
     
