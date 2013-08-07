@@ -29,7 +29,7 @@
               </div>
               {% endif %}
             {% endifequal %}
-            {% if size %}
+            {% if path %}
             <div class="row-fluid">
               <div class="span5">
                 <p>{% trans "Pool name" %}</p>
@@ -54,7 +54,7 @@
               </div>
             </div>
             {% endif %}       
-            {% if size %}
+            {% if path %}
               {% ifequal pool "iso" %}          
                 <h3>{% trans "Images" %}</h3>
                 <hr>
