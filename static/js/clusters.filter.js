@@ -31,7 +31,7 @@ $(document).ready(function() {
         }
     });
 
-    // add event button labeled "filter"
+    // add event button labeled "clear"
     $('#filter_clear').click(function(event) {
         $('#filter_input').val('');
         $('#filter_button').click();
