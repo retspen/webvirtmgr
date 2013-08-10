@@ -9,7 +9,7 @@ DB_PATH = os.path.join(ROOT_PATH, '..', 'webvirtmgr.db')
 if ROOT_PATH not in sys.path:
     sys.path.append(ROOT_PATH)
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 if DEBUG:
