@@ -1,11 +1,49 @@
 # -*- coding: utf-8 -*-
+#
+# Utility functions used for guest installation
+#
 
 import libvirt
-import virtinst.util as util
 from network.IPy import IP
 import re
 import time
+import libxml2
 from datetime import datetime
+
+
+def get_xml_path(xml, path=None, func=None):
+    """
+    Return the content from the passed xml xpath, or return the result
+    of a passed function (receives xpathContext as its only arg)
+    """
+    doc = None
+    ctx = None
+    result = None
+
+    try:
+        doc = libxml2.parseDoc(xml)
+        ctx = doc.xpathNewContext()
+
+        if path:
+            ret = ctx.xpathEval(path)
+            if ret != None:
+                if type(ret) == list:
+                    if len(ret) >= 1:
+                        result = ret[0].content
+                else:
+                    result = ret
+
+        elif func:
+            result = func(ctx)
+
+        else:
+            raise ValueError("'path' or 'func' is required.")
+    finally:
+        if doc:
+            doc.freeDoc()
+        if ctx:
+            ctx.xpathFreeContext()
+    return result
 
 
 class ConnServer(object):
@@ -82,7 +120,7 @@ class ConnServer(object):
         """
 
         stg = self.storagePool(storage)
-        stg_type = util.get_xml_path(stg.XMLDesc(0), "/pool/@type")
+        stg_type = get_xml_path(stg.XMLDesc(0), "/pool/@type")
         if stg_type == 'dir':
             volume = volume + '.img'
         vl = stg.storageVolLookupByName(volume)
@@ -126,7 +164,7 @@ class ConnServer(object):
         else:
             dom_type = 'qemu'
 
-        machine = util.get_xml_path(self.conn.getCapabilities(), "/capabilities/guest/arch/machine/@canonical")
+        machine = get_xml_path(self.conn.getCapabilities(), "/capabilities/guest/arch/machine/@canonical")
         if not machine:
             machine = 'pc-1.0'
 
@@ -147,7 +185,7 @@ class ConnServer(object):
                 stg.refresh(0)
                 for img in stg.listVolumes():
                     if img == vol:
-                        stg_type = util.get_xml_path(stg.XMLDesc(0), "/pool/@type")
+                        stg_type = get_xml_path(stg.XMLDesc(0), "/pool/@type")
                         if stg_type == 'dir':
                             image_type = 'qcow2'
                         else:
@@ -279,7 +317,7 @@ class ConnServer(object):
         info.append(self.conn.getInfo()[0])
         info.append(self.conn.getInfo()[2])
         try:
-            info.append(util.get_xml_path(self.conn.getSysinfo(0),
+            info.append(get_xml_path(self.conn.getSysinfo(0),
                         "/sysinfo/processor/entry[6]"))
         except:
             info.append('Unknown')
@@ -345,7 +383,7 @@ class ConnServer(object):
 
         stg = self.storagePool(storage)
         size = int(size) * 1073741824
-        stg_type = util.get_xml_path(stg.XMLDesc(0), "/pool/@type")
+        stg_type = get_xml_path(stg.XMLDesc(0), "/pool/@type")
         if stg_type == 'dir':
             name = name + '.img'
             alloc = 0
@@ -370,7 +408,7 @@ class ConnServer(object):
         """
 
         stg = self.storagePool(storage)
-        stg_type = util.get_xml_path(stg.XMLDesc(0), "/pool/@type")
+        stg_type = get_xml_path(stg.XMLDesc(0), "/pool/@type")
         if stg_type == 'dir':
             new_img = new_img + '.img'
         vol = stg.storageVolLookupByName(img)
@@ -434,8 +472,8 @@ class ConnServer(object):
         info.append(int(percent))
         info.append(stg.isActive())
         xml = stg.XMLDesc(0)
-        info.append(util.get_xml_path(xml, "/pool/@type"))
-        info.append(util.get_xml_path(xml, "/pool/target/path"))
+        info.append(get_xml_path(xml, "/pool/@type"))
+        info.append(get_xml_path(xml, "/pool/target/path"))
         return info
 
     def new_storage_pool(self, type_pool, name, source, target):
@@ -485,7 +523,7 @@ class ConnServer(object):
             vol = stg.storageVolLookupByName(name)
             xml = vol.XMLDesc(0)
             size = vol.info()[1]
-            format = util.get_xml_path(xml, "/volume/target/format/@type")
+            format = get_xml_path(xml, "/volume/target/format/@type")
             volinfo[name] = size, format
         return volinfo
 
@@ -542,8 +580,8 @@ class ConnServer(object):
         xml_net = net.XMLDesc(0)
         ipv4 = []
 
-        fw = util.get_xml_path(xml_net, "/network/forward/@mode")
-        forwardDev = util.get_xml_path(xml_net, "/network/forward/@dev")
+        fw = get_xml_path(xml_net, "/network/forward/@mode")
+        forwardDev = get_xml_path(xml_net, "/network/forward/@dev")
 
         if fw:
             ipv4.append([fw, forwardDev])
@@ -551,8 +589,8 @@ class ConnServer(object):
             ipv4.append(None)
 
         # Subnet block
-        addrStr = util.get_xml_path(xml_net, "/network/ip/@address")
-        netmaskStr = util.get_xml_path(xml_net, "/network/ip/@netmask")
+        addrStr = get_xml_path(xml_net, "/network/ip/@address")
+        netmaskStr = get_xml_path(xml_net, "/network/ip/@netmask")
 
         if addrStr and netmaskStr:
             netmask = IP(netmaskStr)
@@ -563,8 +601,8 @@ class ConnServer(object):
             ipv4.append(None)
 
         # DHCP block
-        dhcpstart = util.get_xml_path(xml_net, "/network/ip/dhcp/range[1]/@start")
-        dhcpend = util.get_xml_path(xml_net, "/network/ip/dhcp/range[1]/@end")
+        dhcpstart = get_xml_path(xml_net, "/network/ip/dhcp/range[1]/@start")
+        dhcpend = get_xml_path(xml_net, "/network/ip/dhcp/range[1]/@end")
 
         if not dhcpstart or not dhcpend:
             pass
@@ -635,7 +673,7 @@ class ConnServer(object):
         """
 
         dom = self.lookupVM(vname)
-        port = util.get_xml_path(dom.XMLDesc(0), "/domain/devices/graphics/@port")
+        port = get_xml_path(dom.XMLDesc(0), "/domain/devices/graphics/@port")
         return port
 
     def vds_mount_iso(self, vname, image):
@@ -739,16 +777,16 @@ class ConnServer(object):
         info = []
         dom = self.lookupVM(vname)
         xml = dom.XMLDesc(0)
-        info.append(util.get_xml_path(xml, "/domain/vcpu"))
-        mem = util.get_xml_path(xml, "/domain/memory")
+        info.append(get_xml_path(xml, "/domain/vcpu"))
+        mem = get_xml_path(xml, "/domain/memory")
         mem = int(mem) / 1024
         info.append(int(mem))
-        info.append(util.get_xml_path(xml, "/domain/devices/interface/mac/@address"))
-        nic = util.get_xml_path(xml, "/domain/devices/interface/source/@network")
+        info.append(get_xml_path(xml, "/domain/devices/interface/mac/@address"))
+        nic = get_xml_path(xml, "/domain/devices/interface/source/@network")
         if nic is None:
-            nic = util.get_xml_path(xml, "/domain/devices/interface/source/@bridge")
+            nic = get_xml_path(xml, "/domain/devices/interface/source/@bridge")
         info.append(nic)
-        description = util.get_xml_path(xml, "/domain/description")
+        description = get_xml_path(xml, "/domain/description")
         info.append(description)
         return info
 
@@ -765,13 +803,13 @@ class ConnServer(object):
         xml = dom.XMLDesc(0)
 
         for num in range(1, 5):
-            hdd_dev = util.get_xml_path(xml, "/domain/devices/disk[%s]/@device" % (num))
+            hdd_dev = get_xml_path(xml, "/domain/devices/disk[%s]/@device" % (num))
             if hdd_dev == 'disk':
-                dev_bus = util.get_xml_path(xml, "/domain/devices/disk[%s]/target/@dev" % (num))
-                hdd = util.get_xml_path(xml, "/domain/devices/disk[%s]/source/@file" % (num))
+                dev_bus = get_xml_path(xml, "/domain/devices/disk[%s]/target/@dev" % (num))
+                hdd = get_xml_path(xml, "/domain/devices/disk[%s]/source/@file" % (num))
                 # If xml create custom
                 if not hdd:
-                    hdd = util.get_xml_path(xml, "/domain/devices/disk[%s]/source/@dev" % (num))
+                    hdd = get_xml_path(xml, "/domain/devices/disk[%s]/source/@dev" % (num))
                 try:
                     img = self.storageVolPath(hdd)
                     img_vol = img.name()
@@ -798,9 +836,9 @@ class ConnServer(object):
         dom = self.lookupVM(vname)
         xml = dom.XMLDesc(0)
         for num in range(1, 5):
-            hdd_dev = util.get_xml_path(xml, "/domain/devices/disk[%s]/@device" % (num))
+            hdd_dev = get_xml_path(xml, "/domain/devices/disk[%s]/@device" % (num))
             if hdd_dev == 'cdrom':
-                media = util.get_xml_path(xml, "/domain/devices/disk[%s]/source/@file" % (num))
+                media = get_xml_path(xml, "/domain/devices/disk[%s]/source/@file" % (num))
                 if media:
                     vol = self.storageVolPath(media)
                     img = re.sub('.iso', '', vol.name())
@@ -868,7 +906,7 @@ class ConnServer(object):
         """
 
         dom = self.lookupVM(vname)
-        img = util.get_xml_path(dom.XMLDesc(0), "/domain/devices/disk[1]/source/@file")
+        img = get_xml_path(dom.XMLDesc(0), "/domain/devices/disk[1]/source/@file")
         vol = self.storageVolPath(img)
         vol.delete(0)
 
@@ -895,17 +933,17 @@ class ConnServer(object):
         for vm_id in self.conn.listDomainsID():
             vm_id = int(vm_id)
             dom = self.conn.lookupByID(vm_id)
-            mem = util.get_xml_path(dom.XMLDesc(0), "/domain/memory")
+            mem = get_xml_path(dom.XMLDesc(0), "/domain/memory")
             mem = int(mem) * 1024
             mem_usage = (mem * 100) / host_mem
-            vcpu = util.get_xml_path(dom.XMLDesc(0), "/domain/vcpu")
+            vcpu = get_xml_path(dom.XMLDesc(0), "/domain/vcpu")
             vname[dom.name()] = (dom.info()[0], vcpu, mem, mem_usage)
         for name in self.conn.listDefinedDomains():
             dom = self.lookupVM(name)
-            mem = util.get_xml_path(dom.XMLDesc(0), "/domain/memory")
+            mem = get_xml_path(dom.XMLDesc(0), "/domain/memory")
             mem = int(mem) * 1024
             mem_usage = (mem * 100) / host_mem
-            vcpu = util.get_xml_path(dom.XMLDesc(0), "/domain/vcpu")
+            vcpu = get_xml_path(dom.XMLDesc(0), "/domain/vcpu")
             vname[dom.name()] = (dom.info()[0], vcpu, mem, mem_usage)
         return vname
 
