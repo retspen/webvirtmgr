@@ -55,7 +55,7 @@
                   {% ifequal dom.info.0 5 %}
                   <a href="#console" role="button" class="btn disabled" style="height:40px;width:60px;"><i class="icon-align-justify"></i><br>{% trans "Console" %}</a>
                   {% else %}
-                  <a href="#console" role="button" class="btn" data-toggle="modal" style="height:40px;width:60px;" onclick="open_vnc()"><i class="icon-align-justify"></i><br>{% trans "Console" %}</a>
+                  <a href="#console" role="button" class="btn" data-toggle="modal" title="VNC Port: {{ vnc_port }}" style="height:40px;width:60px;" onclick="open_vnc()"><i class="icon-align-justify"></i><br>{% trans "Console" %}</a>
                   {% endifequal %}
                   {% ifequal dom.info.0 5 %}
                   <button type="submit" class="btn" name="start" value="Start" style="height:50px;width:80px;"><i class="icon-off"></i><br>{% trans "Start" %}</button>
@@ -312,15 +312,14 @@
                   </form>
                 </div>
               </div> <!-- /editModal -->
-
           </div><!--/span-->
         </div><!--/row-fluid-->
       </div><!--/container-fluid-->
-      <script>
-        function open_vnc() { window.open('{% url vnc host_id vname %}?token={{ vm.vname }}','','width=850,height=485') }
-      </script>
 {% endblock %}
 {% block script %}
+    <script>
+      function open_vnc() { window.open('{% url vnc host_id vname %}?token={{ vm.vname }}','','width=850,height=485') }
+    </script>
     <script type="text/javascript">
       function cpu(){
         $.get('/info/vds/cpu/{{ host_id }}/{{ vname }}', function(data) {

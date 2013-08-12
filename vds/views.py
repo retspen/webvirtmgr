@@ -10,6 +10,7 @@ from webvirtmgr.server import ConnServer
 from libvirt import libvirtError
 from webvirtmgr.settings import TIME_JS_REFRESH
 
+
 def cpuusage(request, host_id, vname):
     """
 
@@ -20,19 +21,18 @@ def cpuusage(request, host_id, vname):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
-    errors = []
-    messages = []
     host = Host.objects.get(id=host_id)
 
     try:
         conn = ConnServer(host)
-    except libvirtError as e:
+    except:
         conn = None
 
     if conn:
         cpu_usage = conn.vds_cpu_usage(vname)
-    
+
     return HttpResponse(cpu_usage)
+
 
 def memusage(request, host_id, vname):
     """
@@ -44,19 +44,18 @@ def memusage(request, host_id, vname):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
-    errors = []
-    messages = []
     host = Host.objects.get(id=host_id)
 
     try:
         conn = ConnServer(host)
-    except libvirtError as e:
+    except:
         conn = None
 
     if conn:
         memory_usage = conn.vds_memory_usage(vname)[1]
-    
+
     return HttpResponse(memory_usage)
+
 
 def vds(request, host_id, vname):
     """
@@ -82,7 +81,7 @@ def vds(request, host_id, vname):
         errors.append(e.message)
     else:
         all_vm = SortHosts(conn.vds_get_node())
-        vcpu, memory, mac, network,description = conn.vds_get_info(vname)
+        vcpu, memory, mac, network, description = conn.vds_get_info(vname)
         cpu_usage = conn.vds_cpu_usage(vname)
         memory_usage = conn.vds_memory_usage(vname)[1]
         hdd_image = conn.vds_get_hdd(vname)
@@ -91,6 +90,7 @@ def vds(request, host_id, vname):
         dom = conn.lookupVM(vname)
         vcpu_range = [str(x) for x in range(1, 9)]
         memory_range = [128, 256, 512, 768, 1024, 2048, 4096, 8192, 16384]
+        vnc_port = conn.vnc_get_port(vname)
 
         try:
             vm = Vm.objects.get(vname=vname)
@@ -170,7 +170,7 @@ def vds(request, host_id, vname):
                 except libvirtError as msg_error:
                     errors.append(msg_error.message)
             if 'edit' in request.POST:
-	        description = request.POST.get('description', '')
+                description = request.POST.get('description', '')
                 vcpu = request.POST.get('vcpu', '')
                 ram = request.POST.get('ram', '')
                 try:
@@ -179,7 +179,7 @@ def vds(request, host_id, vname):
                         conn.vds_set_vnc_passwd(vname, vm.vnc_passwd)
                     return HttpResponseRedirect(request.get_full_path())
                 except libvirtError as msg_error:
-                    errors.append(msg_error.message)                
+                    errors.append(msg_error.message)
             if 'vnc_pass' in request.POST:
                 if request.POST.get('auto_pass', ''):
                     from string import letters, digits
