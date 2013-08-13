@@ -87,7 +87,7 @@ def dashboard(request):
             have_simbol = re.search('[^a-zA-Z0-9\_\-\.]+', hostname)
             ip_have_simbol = re.search('[^a-z0-9\.\-]+', ipaddr)
             domain = re.search('[\.]+', ipaddr)
-            privat_ip = re.search('^0\.|^127\.|^255\.', ipaddr)
+            privat_ip = re.search('^0\.|^255\.', ipaddr)
 
             if not hostname:
                 msg = _('No hostname has been entered')
@@ -109,7 +109,7 @@ def dashboard(request):
                 msg = _('No IP address has been entered')
                 errors.append(msg)
             elif privat_ip:
-                msg = _('IP address can not be a private address space')
+                msg = _('Wrong IP address')
                 errors.append(msg)
             else:
                 if ip_have_simbol or not domain:
