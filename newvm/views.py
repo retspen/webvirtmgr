@@ -86,9 +86,10 @@ def newvm(request, host_id):
 
                 symbol = re.search('[^a-zA-Z0-9\_\-\.]+', vname)
 
-                if vname in all_vm:
-                    msg = _("A virtual machine with this name already exists")
-                    errors.append(msg)
+                if all_vm:
+                    if vname in all_vm:
+                        msg = _("A virtual machine with this name already exists")
+                        errors.append(msg)
                 if len(vname) > 14:
                     msg = _("The name of the virtual machine must not exceed 14 characters")
                     errors.append(msg)
