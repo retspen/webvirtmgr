@@ -855,7 +855,12 @@ class ConnServer(object):
 
         dom = self.lookupVM(vname)
         xml = dom.XMLDesc(0)
-        newxml = "<graphics type='vnc' passwd='%s'>" % passwd
+        find_tag = re.findall('\<graphics.*\/\>', xml)
+        if find_tag:
+            close_tag = '/'
+        else:
+            close_tag = ''
+        newxml = "<graphics type='vnc' passwd='%s'%s>" % (passwd, close_tag)
         xmldom = re.sub('\<graphics.*\>', newxml, xml)
         self.conn.defineXML(xmldom)
 
