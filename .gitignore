@@ -4,3 +4,4 @@ venv
 .DS_Store
 ._*
 *.sublime*
+.idea

@@ -101,7 +101,7 @@ def network(request, host_id, pool):
             all_vm = SortHosts(conn.vds_get_node())
             info = conn.network_get_info(pool)
 
-            if info[0] == True:
+            if info[0]:
                 ipv4_net = conn.network_get_subnet(pool)
 
             if request.method == 'POST':

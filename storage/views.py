@@ -91,8 +91,7 @@ def storage(request, host_id, pool):
             stg = conn.storagePool(pool)
             size, free, usage, percent, state, s_type, path = conn.storage_get_info(pool)
 
-            # refresh storage if acitve
-            if state == True:
+            if state:
                 stg.refresh(0)
                 volumes_info = conn.volumes_get_info(pool)
 
