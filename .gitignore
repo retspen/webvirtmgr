@@ -5,3 +5,5 @@ venv
 ._*
 *.sublime*
 .idea
+Vagrantfile
+.vagrant
