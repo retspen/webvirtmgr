@@ -21,7 +21,7 @@
             {% if errors %}
             {% for error in errors %}
             <div class="row-fluid">
-              <div class="span8 alert alert-block alert-error">
+              <div class="alert alert-block alert-error">
                 <a class="close" data-dismiss="alert">&times;</a>
                 <p>{{ error }}</p>
               </div>
@@ -32,12 +32,12 @@
             {% if vname and not vm_snapshot %}
               <br>
               <div class="well pagination-centered">
-                <h4>{% trans "You don't have any snapshots for" %} - <a href="{% url vds host_id vname %}">{{ vname }}</a></h4>
+                <h4>{% trans "You do not have any snapshots for" %} - <a href="{% url vds host_id vname %}">{{ vname }}</a></h4>
               </div>
             {% endif %}
 
             {% if vname and vm_snapshot %}
-            <a href="{% url vds host_id vname %}">{{ vname }}</a><br><br>
+            <h5>{% trans "Virtual Machine" %}:</b> <a href="{% url vds host_id vname %}">{{ vname }}</a></h5>
             <table class="table table-bordered">
               <thead>
                 <tr>
@@ -75,7 +75,7 @@
             {% if not vname and not all_vm_snap %}
               <br>
               <div class="well pagination-centered">
-                <h4>{% trans "You don't have any snapshots" %}</h4>
+                <h4>{% trans "You do not have any snapshots" %}</h4>
               </div>
             {% endif %}
           </div><!--/span-->

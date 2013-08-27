@@ -3,3 +3,7 @@ venv
 *.pyc
 .DS_Store
 ._*
+*.sublime*
+.idea
+Vagrantfile
+.vagrant

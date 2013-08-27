@@ -4,13 +4,11 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
-from vds.models import Host, Flavor, Vm
-import libvirt_func
-import virtinst.util as util
+from vds.models import Host, Flavor
+from dashboard.views import SortHosts
+from webvirtmgr.server import ConnServer
 from libvirt import libvirtError
 import re
-from string import letters, digits
-from random import choice
 
 
 def newvm(request, host_id):
@@ -23,121 +21,29 @@ def newvm(request, host_id):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
-    def add_vm(name, ram, vcpu, image, net, virtio, passwd):
-        """
-        Create VM function
-
-        """
-
-        iskvm = re.search('kvm', conn.getCapabilities())
-        if iskvm:
-            dom_type = 'kvm'
-        else:
-            dom_type = 'qemu'
-
-        machine = util.get_xml_path(conn.getCapabilities(), "/capabilities/guest/arch/machine/@canonical")
-        if not machine:
-            machine = 'pc-1.0'
-
-        if re.findall('/usr/libexec/qemu-kvm', conn.getCapabilities()):
-            emulator = '/usr/libexec/qemu-kvm'
-        elif re.findall('/usr/bin/kvm', conn.getCapabilities()):
-            emulator = '/usr/bin/kvm'
-        elif re.findall('/usr/bin/qemu-kvm', conn.getCapabilities()):
-            emulator = '/usr/bin/qemu-kvm'      
-        else:
-            emulator = '/usr/bin/qemu-system-x86_64'
-
-        img = conn.storageVolLookupByPath(image)
-        vol = img.name()
-        for storage in all_storages:
-            stg = conn.storagePoolLookupByName(storage)
-            if stg.info()[0] != 0:
-                stg.refresh(0)
-                for img in stg.listVolumes():
-                    if img == vol:
-                        stg_type = util.get_xml_path(stg.XMLDesc(0), "/pool/@type")
-                        if stg_type == 'dir':
-                            image_type = 'qcow2'
-                        else:
-                            image_type = 'raw'
-
-        xml = """<domain type='%s'>
-                  <name>%s</name>
-                  <memory unit='MiB'>%s</memory>
-                  <vcpu>%s</vcpu>
-                  <os>
-                    <type arch='x86_64' machine='%s'>hvm</type>
-                    <boot dev='hd'/>
-                    <boot dev='cdrom'/>
-                    <bootmenu enable='yes'/>
-                  </os>
-                  <features>
-                    <acpi/>
-                    <apic/>
-                    <pae/>
-                  </features>
-                  <clock offset='utc'/>
-                  <on_poweroff>destroy</on_poweroff>
-                  <on_reboot>restart</on_reboot>
-                  <on_crash>restart</on_crash>
-                  <devices>
-                    <emulator>%s</emulator>
-                    <disk type='file' device='disk'>
-                      <driver name='qemu' type='%s'/>
-                      <source file='%s'/>""" % (dom_type, name, ram, vcpu, machine,
-                                                emulator, image_type, image)
-
-        if virtio:
-            xml += """<target dev='vda' bus='virtio'/>"""
-        else:
-            xml += """<target dev='hda' bus='ide'/>"""
-
-        xml += """</disk>
-                    <disk type='file' device='cdrom'>
-                      <driver name='qemu' type='raw'/>
-                      <source file=''/>
-                      <target dev='hdc' bus='ide'/>
-                      <readonly/>
-                    </disk>"""
-
-        if re.findall("br", net):
-            xml += """<interface type='bridge'>
-                    <source bridge='%s'/>""" % (net)
-        else:
-            xml += """<interface type='network'>
-                    <source network='%s'/>""" % (net)
-        if virtio:
-            xml += """<model type='virtio'/>"""
-
-        xml += """</interface>
-                    <input type='tablet' bus='usb'/>
-                    <input type='mouse' bus='ps2'/>
-                    <graphics type='vnc' passwd='%s'/>
-                    <memballoon model='virtio'/>
-                  </devices>
-                </domain>""" % (passwd)
-        conn.defineXML(xml)
-        dom = conn.lookupByName(name)
-        dom.setAutostart(1)
-
+    errors = []
     host = Host.objects.get(id=host_id)
-    conn = libvirt_func.libvirt_conn(host)
 
-    if type(conn) == dict:
-        return HttpResponseRedirect('/overview/%s/' % host_id)
+    try:
+        conn = ConnServer(host)
+    except libvirtError as e:
+        conn = None
+
+    if not conn:
+        errors.append(e.message)
     else:
         try:
             flavors = Flavor.objects.filter().order_by('id')
         except:
             flavors = 'error'
 
-        all_vm = libvirt_func.vds_get_node(conn)
-        all_networks = libvirt_func.networks_get_node(conn)
-        all_storages = libvirt_func.storages_get_node(conn)
-        all_img = libvirt_func.images_get_storages(conn, all_storages)
-
-        errors = []
+        all_vm = SortHosts(conn.vds_get_node())
+        all_networks = conn.networks_get_node()
+        all_storages = conn.storages_get_node()
+        all_img = conn.images_get_storages(all_storages)
+        vcpu_range = [x for x in range(1, 9)]
+        hdd_digits_size = [a for a in range(1, 601)]
+        memory_range = ['128', '256', '512', '768', '1024', '2048', '4096', '8192', '16384']
 
         if not all_networks:
             msg = _("You haven't defined any virtual networks")
@@ -145,8 +51,6 @@ def newvm(request, host_id):
         if not all_storages:
             msg = _("You haven't defined have any storage pools")
             errors.append(msg)
-
-        hdd_digits_size = [a for a in range(1, 601)]
 
         if request.method == 'POST':
             if 'add_flavor' in request.POST:
@@ -182,11 +86,12 @@ def newvm(request, host_id):
 
                 symbol = re.search('[^a-zA-Z0-9\_\-\.]+', vname)
 
-                if vname in all_vm:
-                    msg = _("A virtual machine with this name already exists")
-                    errors.append(msg)
-                if len(vname) > 12:
-                    msg = _("The name of the virtual machine must not exceed 12 characters")
+                if all_vm:
+                    if vname in all_vm:
+                        msg = _("A virtual machine with this name already exists")
+                        errors.append(msg)
+                if len(vname) > 14:
+                    msg = _("The name of the virtual machine must not exceed 14 characters")
                     errors.append(msg)
                 if symbol:
                     msg = _("The name of the virtual machine must not contain any special characters")
@@ -201,40 +106,27 @@ def newvm(request, host_id):
                             msg = _("First you need to create an image")
                             errors.append(msg)
                         else:
-                            image = libvirt_func.image_get_path(conn, img, all_storages)
+                            image = conn.image_get_path(img, all_storages)
                     else:
                         try:
-                            stg = conn.storagePoolLookupByName(storage)
-                            libvirt_func.new_volume(stg, vname, hdd_size)
+                            conn.new_volume(storage, vname, hdd_size)
                         except libvirtError as msg_error:
                             errors.append(msg_error.message)
                     if not errors:
                         if not img:
-                            stg_type = util.get_xml_path(stg.XMLDesc(0), "/pool/@type")
-                            if stg_type == 'dir':
-                                vol = vname + '.img'
-                            else:
-                                vol = vname
-                            vl = stg.storageVolLookupByName(vol)
+                            vl = conn.storageVol(vname, storage)
                         else:
-                            vol = img
-                            vl = conn.storageVolLookupByPath(image)
+                            vl = conn.storageVolPath(image)
 
                         image = vl.path()
-                        vnc_passwd = ''.join([choice(letters + digits) for i in range(12)])
 
                         try:
-                            add_vm(vname, ram, vcpu, image, net, virtio, vnc_passwd)
+                            conn.add_vm(vname, ram, vcpu, image, net, virtio, all_storages)
+                            return HttpResponseRedirect('/vds/%s/%s/' % (host_id, vname))
                         except libvirtError as msg_error:
                             if hdd_size:
                                 vl.delete(0)
                             errors.append(msg_error.message)
-
-                        if not errors:
-                            new_vm = Vm(host_id=host_id, vname=vname, vnc_passwd=vnc_passwd)
-                            new_vm.save()
-                            return HttpResponseRedirect('/vds/%s/%s/' % (host_id, vname))
-
         conn.close()
 
     return render_to_response('newvm.html', locals(), context_instance=RequestContext(request))

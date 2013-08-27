@@ -1,6 +1,22 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load staticfiles %}
 {% block title %}{% trans "Dashboard" %}{% endblock %}
+{% block style %}
+      /* tables */
+      table#sortTable th {
+        background-image: url("{% static "img/bg.gif" %}");
+        background-repeat: no-repeat;
+        background-position: center right;
+        cursor: pointer;
+      }
+      table#sortTable thead tr .headerSortUp {
+        background-image: url("{% static "img/asc.gif" %}");
+      }
+      table#sortTable thead tr .headerSortDown {
+        background-image: url("{% static "img/desc.gif" %}");
+      }
+{% endblock %}
 {% block content %}
     <div class="pull-right">
       <a href="{% url page_setup %}">{% trans "Host Server Setup" %}</a>
@@ -26,13 +42,13 @@
     </div>
     {% if host_info %}
     <div class="span8">
-      <table class="table table-hover">
+      <table class="table table-hover" id="sortTable">
         <thead>
           <tr>
             <th>#</th>
             <th>{% trans "Server" %}</th>
             <th>{% trans "Status" %}</th>
-            <th>{% trans "Action" %}</th>
+            <th id="tabAction">{% trans "Action" %}</th>
           </tr>
         </thead>
         <tbody>
@@ -176,4 +192,12 @@
           </div>
         </div> <!-- /addModal -->
       </div>
+{% endblock %}
+{% block script %}
+  <script src="{% static "js/jquery.tablesorter.js" %}"></script>
+  <script >
+    $(function() {
+      $("#sortTable").tablesorter({ sortList: [[0,0]] });
+    });
+  </script>
 {% endblock %}

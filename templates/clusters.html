@@ -21,7 +21,7 @@
           {% for host, vms in hosts_vms.items %}
           <tr>
             <td>{{ forloop.counter }}</td>
-            <td><a href="{% url overview host.0 %}">{{ host.1 }}</a></td>
+            <td><a href="{% url overview host.0 %}"><strong>{{ host.1 }}</strong></a></td>
             <td>{% ifequal host.2 1 %}<font color="green">{% trans "Active" %}</font>{% endifequal %}
                 {% ifequal host.2 2 %}<font color="red">{% trans "Not Active" %}</font>{% endifequal %}
             </td>
@@ -53,4 +53,7 @@
       {% endif %}
         </div>
       </div>
+{% endblock %}
+{% block script %}
+    <script src="/static/js/clusters.filter.js"></script>
 {% endblock %}

@@ -23,53 +23,57 @@
             {% ifequal pool 'add' %}
               {% if not errors %}
               <div class="well pagination-centered">
-                <h4>{% trans "You don't have any virtual networks" %}</h4>
+                <h4>{% trans "You do not have any virtual networks" %}</h4>
               </div>
               {% endif %}
             {% endifequal %}
 
             {% if info %}
-            {% if networks %}
-            <div class="row-fluid">
-              <div class="span5">
-                <p>{% trans "Pool name" %}</p>
-                <p>{% trans "Device pool" %}</p>
-                <p>{% trans "State" %}</p>
+              {% if networks %}
+              <div class="row-fluid">
+                <div class="span5">
+                  <p>{% trans "Pool name" %}</p>
+                  <p>{% trans "Device pool" %}</p>
+                  <p>{% trans "State" %}</p>
+                </div>
+                <div class="span7">
+                  <p>[{% for key, value in networks.items %} {% ifequal key pool %}<b>{{ pool }}</b>{% else %}<a href="/network/{{ host_id }}/{{ key }}">{{ key }}</a>{% endifequal %}{% endfor %} ]</p>
+                  <p>{{ info.1 }}</p>
+                  <form action="/network/{{ host_id }}/{{ pool }}/" method="post" style="height:10px;">{% csrf_token %}
+                    {% ifequal info.0 0 %}
+                    <input type="submit" class="btn btn-primary" name="start" value="{% trans "Start" %}">
+                    <input type="submit" class="btn btn-danger" name="delete" value="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
+                    {% else %}
+                    <input type="submit" class="btn btn-primary" name="stop" value="{% trans "Stop" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
+                    {% endifequal %}
+                  </form>
+                </div>
               </div>
-              <div class="span7">
-                <p>[{% for key, value in networks.items %} {% ifequal key pool %}<b>{{ pool }}</b>{% else %}<a href="/network/{{ host_id }}/{{ key }}">{{ key }}</a>{% endifequal %}{% endfor %} ]</p>
-                <p>{{ info.1 }}</p>
-                <form action="/network/{{ host_id }}/{{ pool }}/" method="post" style="height:10px;">{% csrf_token %}
-                  {% ifequal info.0 0 %}
-                  <input type="submit" class="btn btn-primary" name="start" value="{% trans "Start" %}">
-                  <input type="submit" class="btn btn-danger" name="delete" value="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
-                  {% else %}
-                  <input type="submit" class="btn btn-primary" name="stop" value="{% trans "Stop" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
-                  {% endifequal %}
-                </form>
-              </div>
-            </div>
-            <h3>{% trans "IPv4 configuration" %}</h3>
-            <hr>
-            <div class="row-fluid">
-              <div class="span5">
-                <p>{% trans "Type forwarding" %}</p>
-                <p>{% trans "Subnet pool" %}</p>
-                <p>{% trans "DHCP" %}</p>
-                {% if ipv4_net.2 %}
-                <p>{% trans "Start" %}</p>
-                <p>{% trans "End" %}</p> 
+              <h3>{% trans "IPv4 configuration" %}</h3>
+              <hr>
+              <div class="row-fluid">
+                <div class="span5">
+                  <p>{% trans "Type forwarding" %}</p>
+                  <p>{% trans "Subnet pool" %}</p>
+                  <p>{% trans "DHCP" %}</p>
+                  {% if ipv4_net.2 %}
+                  <p>{% trans "Start" %}</p>
+                  <p>{% trans "End" %}</p> 
+                  {% endif %}
+                </div>
+                <div class="span5">
+                  <p>{% ifequal ipv4_net.0.0 'nat' %} {% trans "NAT" %} {% endifequal %} {% ifequal ipv4_net.0.0 'route' %} {% trans "ROUTE" %} {% endifequal %} {% if not ipv4_net.0.0 %} {% trans "ISOLATE" %} {% endif %}</p>
+                  <p>{{ ipv4_net.1 }}</p>
+                  <p>{% if ipv4_net.2 %}<font color="green">{% trans "ON" %}</font>{% else %}<font color="red">{% trans "OFF" %}</font>{% endif %}</p>
+                    {% if not ipv4_net.2 %}
+                    {% trans "None" %}
+                    {% else %}
+                    {% for dhcp in ipv4_net.2 %} 
+                      <p>{{ dhcp }}</p>
+                    {% endfor %}
+                  </div>
+                  {% endif %}
                 {% endif %}
-              </div>
-              <div class="span5">
-                <p>{% ifequal ipv4_net.0.0 'nat' %} {% trans "NAT" %} {% endifequal %} {% ifequal ipv4_net.0.0 'route' %} {% trans "ROUTE" %} {% endifequal %} {% if not ipv4_net.0.0 %} {% trans "ISOLATE" %} {% endif %}</p>
-                <p>{{ ipv4_net.1 }}</p>
-                <p>{% if ipv4_net.2 %}<font color="green">{% trans "ON" %}</font>{% else %}<font color="red">{% trans "OFF" %}</font>{% endif %}</p>
-                {% for dhcp in ipv4_net.2 %} 
-                  <p>{{ dhcp }}</p>
-                {% endfor %}
-              </div>
-              {% endif %}
               {% endif %}
             </div>
           </div><!--/span-->

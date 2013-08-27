@@ -1,13 +1,5 @@
 # -*- coding: utf-8 -*-
-
 import os
-import sys
-
-ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.path.join(ROOT_PATH, '..', 'webvirtmgr.db')
-
-if ROOT_PATH not in sys.path:
-    sys.path.append(ROOT_PATH)
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
@@ -21,14 +13,11 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': DB_PATH,
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',
-        'PORT': '',
+        'NAME': os.path.join(os.path.dirname(__file__), '..', 'webvirtmgr.db'),
     }
 }
 
+TIME_JS_REFRESH = 2000
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 ALLOWED_HOSTS = ['*']
 TIME_ZONE = 'Europe/Zaporozhye'
@@ -37,13 +26,12 @@ SITE_ID = 1
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
-MEDIA_ROOT = os.path.abspath(os.path.join(ROOT_PATH, '..', 'media'))
-MEDIA_URL = '/media/'
-STATIC_ROOT = os.path.abspath(os.path.join(ROOT_PATH, '..', 'static'))
+MEDIA_ROOT = ''
+MEDIA_URL = ''
+STATIC_ROOT = os.path.join(os.path.dirname(__file__), '..', 'static')
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
-    os.path.abspath(os.path.join(ROOT_PATH, '', 'static')),
 )
 
 STATICFILES_FINDERS = (
@@ -74,7 +62,7 @@ ROOT_URLCONF = 'webvirtmgr.urls'
 WSGI_APPLICATION = 'webvirtmgr.wsgi.application'
 
 TEMPLATE_DIRS = (
-    os.path.abspath(os.path.join(ROOT_PATH, '..', 'templates')),
+    os.path.join(os.path.dirname(__file__), '..', 'templates'),
 )
 
 INSTALLED_APPS = (
@@ -84,9 +72,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
-    # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'vds',
 )

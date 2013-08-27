@@ -53,7 +53,7 @@
                             <div class="control-group">
                             <label class="control-label">{% trans "Name" %}</label>
                               <div class="controls">
-                                <input type="text" class="input-large" name="name" placeholder="{% trans "Name" %}" maxlength="12" required pattern="^[a-zA-Z0-9_]+$">
+                                <input type="text" class="input-large" name="name" placeholder="{% trans "Name" %}" maxlength="14" required pattern="^[a-zA-Z0-9_]+$">
                                 <input type="hidden" class="input-large" name="vcpu" value="{{ flavor.vcpu }}">
                                 <input type="hidden" class="input-large" name="ram" value="{{ flavor.ram }}">
                                 <input type="hidden" class="input-large" name="hdd_size" value="{{ flavor.hdd }}">
@@ -83,7 +83,7 @@
                             <div class="control-group">
                               <label class="control-label">{% trans "VirtIO" %}</label>
                               <div class="controls">
-                                <input type="checkbox" name="virtio" value="true">
+                                <input type="checkbox" name="virtio" value="true" checked>
                               </div> 
                             </div>
                           </fieldset>
@@ -112,7 +112,7 @@
             </table>
             {% else %}
             <div class="well pagination-centered">
-              <h4>{% trans "You don't have any flavors" %}</h4>
+              <h4>{% trans "You do not have any flavors" %}</h4>
             </div>
             {% endif %}
             <div id="addModalCustom" class="modal hide fade">
@@ -126,21 +126,16 @@
                     <div class="control-group">
                     <label class="control-label">{% trans "Name" %}</label>
                       <div class="controls">
-                        <input type="text" class="input-large" name="name" placeholder="{% trans "Name" %}" maxlength="12" required pattern="^[a-zA-Z0-9_]+$">
+                        <input type="text" class="input-large" name="name" placeholder="{% trans "Name" %}" maxlength="14" required pattern="^[a-zA-Z0-9_]+$">
                       </div> 
-                     </div>
+                    </div>
                     <div class="control-group">
                       <label class="control-label">{% trans "VCPU" %}</label>
                       <div class="controls">
                         <select name="vcpu">
-                          <option value="1">1</option>
-                          <option value="2">2</option>
-                          <option value="3">3</option>
-                          <option value="4">4</option>
-                          <option value="5">5</option>
-                          <option value="6">6</option>
-                          <option value="7">7</option>
-                          <option value="8">8</option>
+                          {% for cpu in vcpu_range %}
+                            <option value="{{ cpu }}">{{ cpu }}</option>
+                          {% endfor %}
                         </select>
                       </div> 
                     </div>
@@ -148,15 +143,9 @@
                       <label class="control-label">{% trans "RAM" %}</label>
                       <div class="controls">
                         <select name="ram">
-                          <option value="128">128 {% trans "MB" %}</option>
-                          <option value="256">256 {% trans "MB" %}</option>
-                          <option value="512">512 {% trans "MB" %}</option>
-                          <option value="768">768 {% trans "MB" %}</option>
-                          <option value="1024">1024 {% trans "MB" %}</option>
-                          <option value="2048">2048 {% trans "MB" %}</option>
-                          <option value="4096">4096 {% trans "MB" %}</option>
-                          <option value="8192">8192 {% trans "MB" %}</option>
-                          <option value="16384">16384 {% trans "MB" %}</option>
+                          {% for mem in memory_range %}
+                            <option value="{{ mem }}">{{ mem }} {% trans "MB" %}</option>
+                          {% endfor %}
                         </select>
                       </div> 
                     </div>
@@ -188,7 +177,7 @@
                     <div class="control-group">
                       <label class="control-label">{% trans "VirtIO" %}</label>
                       <div class="controls">
-                        <input type="checkbox" name="virtio" value="true">
+                        <input type="checkbox" name="virtio" value="true" checked>
                       </div> 
                     </div>
                   </fieldset>
@@ -221,14 +210,9 @@
                       <label class="control-label">{% trans "VCPU" %}</label>
                       <div class="controls">
                         <select name="vcpu">
-                          <option value="1">1</option>
-                          <option value="2">2</option>
-                          <option value="3">3</option>
-                          <option value="4">4</option>
-                          <option value="5">5</option>
-                          <option value="6">6</option>
-                          <option value="7">7</option>
-                          <option value="8">8</option>
+                          {% for cpu in vcpu_range %}
+                            <option value="{{ cpu }}">{{ cpu }}</option>
+                          {% endfor %}
                         </select>
                       </div> 
                     </div>
@@ -236,15 +220,9 @@
                       <label class="control-label">{% trans "RAM" %}</label>
                       <div class="controls">
                         <select name="ram">
-                          <option value="128">128 {% trans "MB" %}</option>
-                          <option value="256">256 {% trans "MB" %}</option>
-                          <option value="512">512 {% trans "MB" %}</option>
-                          <option value="768">768 {% trans "MB" %}</option>
-                          <option value="1024">1024 {% trans "GB" %}</option>
-                          <option value="2048">2048 {% trans "GB" %}</option>
-                          <option value="4096">4096 {% trans "GB" %}</option>
-                          <option value="8192">8192 {% trans "GB" %}</option>
-                          <option value="16384">16384 {% trans "GB" %}</option>
+                          {% for mem in memory_range %}
+                            <option value="{{ mem }}">{{ mem }} {% trans "MB" %}</option>
+                          {% endfor %}
                         </select>
                       </div> 
                     </div>

@@ -147,5 +147,10 @@
     </applet>
   </div>
 {% endif %}
+{% if errors %}
+  {% for error in errors %}
+    <p>{{ error }}</p>
+  {% endfor %}
+{% endif %}
 </body>
 </html>

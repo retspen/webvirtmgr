@@ -5,7 +5,8 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from vds.models import Host
-import libvirt_func
+from dashboard.views import SortHosts
+from webvirtmgr.server import ConnServer
 from network.IPy import IP
 from libvirt import libvirtError
 import re
@@ -21,14 +22,18 @@ def network(request, host_id, pool):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
+    errors = []
     host = Host.objects.get(id=host_id)
-    conn = libvirt_func.libvirt_conn(host)
 
-    if type(conn) == dict:
-        return HttpResponseRedirect('/overview/%s/' % host_id)
+    try:
+        conn = ConnServer(host)
+    except libvirtError as e:
+        conn = None
+
+    if not conn:
+        errors.append(e.message)
     else:
-
-        networks = libvirt_func.networks_get_node(conn)
+        networks = conn.networks_get_node()
 
         if pool is None:
             if len(networks) == 0:
@@ -47,8 +52,6 @@ def network(request, host_id, pool):
 
                     name_have_symbol = re.search('[^a-zA-Z0-9\_\-]+', pool_name)
                     ip_have_symbol = re.search('[^0-9\.\/]+', net_addr)
-
-                    errors = []
 
                     if not pool_name:
                         msg = _("No pool name has been entered")
@@ -90,42 +93,37 @@ def network(request, host_id, pool):
                         errors.append(msg)
                     if not errors:
                         try:
-                            libvirt_func.new_network_pool(conn, pool_name, forward, gw, netmask, dhcp)
-                            net = conn.networkLookupByName(pool_name)
-                            net.create()
-                            net.setAutostart(1)
+                            conn.new_network_pool(pool_name, forward, gw, netmask, dhcp)
                             return HttpResponseRedirect('/network/%s/%s/' % (host_id, pool_name))
                         except libvirtError as error_msg:
                             errors.append(error_msg.message)
         else:
-            all_vm = libvirt_func.vds_get_node(conn)
-            net = conn.networkLookupByName(pool)
+            all_vm = SortHosts(conn.vds_get_node())
+            info = conn.network_get_info(pool)
 
-            info = libvirt_func.network_get_info(net)
-
-            if info[0] == True:
-                ipv4_net = libvirt_func.network_get_subnet(net)
+            if info[0]:
+                ipv4_net = conn.network_get_subnet(pool)
 
             if request.method == 'POST':
+                net = conn.networkPool(pool)
                 if 'start' in request.POST:
                     try:
                         net.create()
-                        return HttpResponseRedirect('/network/%s/%s' % (host_id, pool))
+                        return HttpResponseRedirect(request.get_full_path())
                     except libvirtError as error_msg:
                         errors.append(error_msg.message)
                 if 'stop' in request.POST:
                     try:
                         net.destroy()
+                        return HttpResponseRedirect(request.get_full_path())
                     except libvirtError as error_msg:
                         errors.append(error_msg.message)
-                    return HttpResponseRedirect('/network/%s/%s' % (host_id, pool))
                 if 'delete' in request.POST:
                     try:
                         net.undefine()
+                        return HttpResponseRedirect('/network/%s/' % host_id)
                     except libvirtError as error_msg:
                         errors.append(error_msg.message)
-                    return HttpResponseRedirect('/network/%s/' % host_id)
-
         conn.close()
 
     return render_to_response('network.html', locals(), context_instance=RequestContext(request))

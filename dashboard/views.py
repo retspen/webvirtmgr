@@ -3,11 +3,24 @@
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
+from django.utils.datastructures import SortedDict
 from django.utils.translation import ugettext_lazy as _
 from vds.models import Host
-import libvirt_func
-from libvirt import libvirtError
+from webvirtmgr.server import ConnServer
 import re
+
+
+def SortHosts(hosts):
+    """
+
+    Sorts dictionary of hosts by key
+
+    """
+    if hosts:
+        sorted_hosts = []
+        for host in sorted(hosts.iterkeys()):
+            sorted_hosts.append((host, hosts[host]))
+        return SortedDict(sorted_hosts)
 
 
 def index(request):
@@ -74,7 +87,7 @@ def dashboard(request):
             have_simbol = re.search('[^a-zA-Z0-9\_\-\.]+', hostname)
             ip_have_simbol = re.search('[^a-z0-9\.\-]+', ipaddr)
             domain = re.search('[\.]+', ipaddr)
-            privat_ip = re.search('^0\.|^127\.|^255\.', ipaddr)
+            privat_ip = re.search('^0\.|^255\.', ipaddr)
 
             if not hostname:
                 msg = _('No hostname has been entered')
@@ -96,7 +109,7 @@ def dashboard(request):
                 msg = _('No IP address has been entered')
                 errors.append(msg)
             elif privat_ip:
-                msg = _('IP address can not be a private address space')
+                msg = _('Wrong IP address')
                 errors.append(msg)
             else:
                 if ip_have_simbol or not domain:
@@ -134,6 +147,8 @@ def dashboard(request):
                 add_host.save()
                 return HttpResponseRedirect(request.get_full_path())
 
+    host_info = SortHosts(host_info)
+
     return render_to_response('dashboard.html', locals(), context_instance=RequestContext(request))
 
 
@@ -143,30 +158,6 @@ def clusters(request):
     Infrastructure page.
 
     """
-
-    def vds_on_host():
-        import virtinst.util as util
-        host_mem = conn.getInfo()[1] * 1048576
-        try:
-            vname = {}
-            for vm_id in conn.listDomainsID():
-                vm_id = int(vm_id)
-                dom = conn.lookupByID(vm_id)
-                mem = util.get_xml_path(dom.XMLDesc(0), "/domain/memory")
-                mem = int(mem) * 1024
-                mem_usage = (mem * 100) / host_mem
-                vcpu = util.get_xml_path(dom.XMLDesc(0), "/domain/vcpu")
-                vname[dom.name()] = (dom.info()[0], vcpu, mem, mem_usage)
-            for vm in conn.listDefinedDomains():
-                dom = conn.lookupByName(vm)
-                mem = util.get_xml_path(dom.XMLDesc(0), "/domain/memory")
-                mem = int(mem) * 1024
-                mem_usage = (mem * 100) / host_mem
-                vcpu = util.get_xml_path(dom.XMLDesc(0), "/domain/vcpu")
-                vname[dom.name()] = (dom.info()[0], vcpu, mem, mem_usage)
-            return vname
-        except libvirtError as e:
-            return e.message
 
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
@@ -189,12 +180,16 @@ def clusters(request):
             status = 2
 
         if status == 1:
-            conn = libvirt_func.libvirt_conn(host)
-            host_info = libvirt_func.node_get_info(conn)
-            host_mem = libvirt_func.memory_get_usage(conn)
-            hosts_vms[host.id, host.hostname, status, host_info[2], host_mem[0], host_mem[2]] = vds_on_host()
+            conn = ConnServer(host)
+            host_info = conn.node_get_info()
+            host_mem = conn.memory_get_usage()
+            hosts_vms[host.id, host.hostname, status, host_info[2], host_mem[0], host_mem[2]] = conn.vds_on_cluster()
         else:
             hosts_vms[host.id, host.hostname, status, None, None, None] = None
+
+    for host in hosts_vms:
+        hosts_vms[host] = SortHosts(hosts_vms[host])
+    hosts_vms = SortHosts(hosts_vms)
 
     return render_to_response('clusters.html', locals(), context_instance=RequestContext(request))
 

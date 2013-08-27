@@ -19,6 +19,8 @@
         margin: 0 auto;
         max-width: 990px;
       }
+      {% block style %}
+      {% endblock %}
     </style>
     <link href="{% static "css/bootstrap-responsive.css" %}" rel="stylesheet">
 
@@ -26,7 +28,6 @@
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-
     <link rel="shortcut icon" href="{% static "img/favicon.ico" %}">
   </head>
   <body>
@@ -51,7 +52,9 @@
     <div class="container-narrow">
       {% block content %}{% endblock %}
     </div> <!-- /container-narrow -->
-    <script src="{% static "js/jquery.js" %}"></script>
-    <script src="{% static "js/bootstrap.js" %}"></script>
+    <script src="{% static "js/jquery-migrate.min.js" %}"></script>
+    <script src="{% static "js/jquery.min.js" %}"></script>
+    <script src="{% static "js/bootstrap.min.js" %}"></script>
+    {% block script %}{% endblock %}
   </body>
 </html>
