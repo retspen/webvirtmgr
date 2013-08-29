@@ -2,12 +2,12 @@ from django.db import models
 
 
 class Host(models.Model):
+    name = models.CharField(max_length=20)
     hostname = models.CharField(max_length=20)
-    ipaddr = models.IPAddressField()
-    login = models.CharField(max_length=12)
-    passwd = models.CharField(max_length=14, blank=True, null=True)
-    conn_type = models.CharField(max_length=3)
-    ssh_port = models.IntegerField(default='22')
+    login = models.CharField(max_length=20)
+    password = models.CharField(max_length=14, blank=True, null=True)
+    type = models.CharField(max_length=3)
+    port = models.IntegerField(blank=True, null=True)
 
     def __unicode__(self):
         return self.hostname
@@ -23,7 +23,7 @@ class Flavor(models.Model):
         return self.name
 
 
-class Vm(models.Model):
+class Instance(models.Model):
     host = models.ForeignKey(Host)
     vname = models.CharField(max_length=12)
     vnc_passwd = models.CharField(max_length=12)

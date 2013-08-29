@@ -1,0 +1,364 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% block title %}{% trans "VM's" %} - {{ vname }}{% endblock %}
+{% block style %}
+    <link href="{% static "css/progressbar.css" %}" rel="stylesheet" xmlns="http://www.w3.org/1999/html">
+{% endblock %}
+{% block content %}
+    <div class="row" xmlns="http://www.w3.org/1999/html">
+        {% include 'sidebar.html' %}
+        <div class="col-md-9" role="main">
+            <div class="page-header">
+                <h1>{% trans "Virtual Machine" %}</h1>
+            </div>
+            {% if errors %}
+                {% for error in errors %}
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            {% if message %}
+                <div class="alert alert-success">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    {{ message }}
+                </div>
+            {% endif %}
+            <div class="block-btn">
+                <li>{% trans "Action For This Server" %}</li>
+            </div>
+            <div class="col-md-12" id="instaction">
+                <form action="" method="post">{% csrf_token %}
+                    {% ifequal dom.info.0 5 %}
+                        <button class="btn btn-default btn-lg disabled" id="inst-btn">{% trans "Console" %}</button>
+                    {% else %}
+                        <a href="#console" class="btn btn-default btn-lg" id="inst-btn" data-toggle="modal" title="VNC Port: {{ vnc_port }}" onclick="open_vnc()">{% trans "Console" %}</a>
+                    {% endifequal %}
+                    {% ifequal dom.info.0 5 %}
+                        <button type="submit" class="btn btn-default btn-lg" id="inst-btn" name="start">{% trans "Start" %}</button>
+                    {% endifequal %}
+                    {% ifequal dom.info.0 1 %}
+                        <button href="#Power" class="btn btn-default btn-lg" id="inst-btn" data-toggle="modal">{% trans "Shutdown" %}</button>
+                    {% endifequal %}
+                    {% ifequal dom.info.0 3 %}
+                        <button class="btn btn-default btn-lg disabled" id="inst-btn" data-toggle="modal">{% trans "Shutdown" %}</button>
+                    {% endifequal %}
+                    <a href="#Delete" class="btn btn-default btn-lg" id="inst-btn" data-toggle="modal">{% trans "Delete" %}</a>
+                    {% ifequal dom.info.0 3 %}
+                        <button type="submit" name="resume" class="btn btn-default btn-lg" id="inst-btn">{% trans "Resume" %}</button>
+                        <button type="submit" name="snapshot" class="btn btn-default btn-lg" id="inst-btn">{% trans "Snapshot" %}</button>
+                    {% endifequal %}
+                    {% ifequal dom.info.0 1 %}
+                        <button type="submit" name="suspend" class="btn btn-default btn-lg" id="inst-btn">{% trans "Suspend" %}</button>
+                        <button class="btn btn-default btn-lg disabled" id="inst-btn">{% trans "Snapshot" %}</button>
+                    {% endifequal %}
+                    {% ifequal dom.info.0 5 %}
+                        <button class="btn btn-default btn-lg disabled" id="inst-btn">{% trans "Suspend" %}</button>
+                        <button type="submit" name="snapshot" class="btn btn-default btn-lg" id="inst-btn">{% trans "Snapshot" %}</button>
+                    {% endifequal %}
+                    {% ifequal dom.info.0 5 %}
+                        <a href="#Edit" class="btn btn-default btn-lg" data-toggle="modal" id="inst-btn">{% trans "Edit" %}</a>
+                    {% else %}
+                        <button href="#" class="btn btn-default btn-lg disabled" id="inst-btn">{% trans "Edit" %}</button>
+                    {% endifequal %}
+                </form>
+
+                {% if not instance.vnc_passwd and dom.info.0 == 5 %}
+                    <div class="block-btn">
+                        <button href="#noVNC" class="btn btn-default" data-toggle="modal">{% trans "Set VNC Password" %}</button>
+                    </div>
+                {% endif %}
+
+            </div>
+            <hr>
+            <div class="block-btn">
+                <li>{% trans "Name & Status" %}</li>
+            </div>
+            <div class="row show-grid">
+                <div class="col-md-6">
+                    <p><strong>{% trans "Name" %}:</strong></p>
+                    <p><strong>{% trans "Description" %}:</strong></p>
+                    <p><strong>{% trans "Status" %}:</strong></p>
+                </div>
+                <div class="col-md-6">
+                    <p>{{ vname }}</p>
+                    <p>{{ description }}</p>
+                    <p>{% if dom.info %}
+                        <span class={% ifequal dom.info.0 5 %}"text-danger">{% trans "Shuttoff" %}{% endifequal %}{% ifequal dom.info.0 1 %}"text-success">{% trans "Running" %}{% endifequal %}{% ifequal dom.info.0 3 %}"text-warnging">{% trans "Suspend" %}{% endifequal %}</span>
+                    {% else %}
+                        {% trans "None" %}
+                    {% endif %}
+                    </p>
+                </div>
+            </div>
+            <hr>
+            <div class="block-btn">
+                <li>{% trans "Technical Details" %}</li>
+            </div>
+            <div class="row show-grid">
+                <div class="col-md-6">
+                    <p><strong>{% trans "Processor" %}:</strong></p>
+                    <p style="height:30px">{% trans "Usage" %}</p>
+                    <p><strong>{% trans "Memory" %}:</strong></p>
+                    <p style="height:30px">{% trans "Usage" %}</p>
+                    <p><strong>{% trans "Network" %}:</strong></p>
+                </div>
+                <div class="col-md-6">
+                    <p>VCPU {{ vcpu }} </p>
+                    <p>
+                    <div class="progress">
+                        <span id="cpu-usage" style="text-align:center;">{% ifequal dom.info.0 5 %}0%{% endifequal %}</span>
+                        <div class="progress-bar" id="cpu-usage-bar" style="width:{{ cpu_usage }}%;"></div>
+                    </div>
+                    </p>
+                    <p>{{ memory }} {% trans "MB" %}</p>
+                    <p>
+                    <div class="progress">
+                        <span id="memory-usage" style="text-align:center;">{% ifequal dom.info.0 5 %}0%{% endifequal %}</span>
+                        <div class="progress-bar" id="memory-usage-bar" style="width:{{ mem_perc }}%;"></div>
+                    </div>
+                    </p>
+                    <p>{{ mac }} ({{ network }})</p>
+                </div>
+            </div>
+            <hr>
+            <div class="block-btn">
+                <li>{% trans "Storage Details" %}</li>
+            </div>
+            <div class="row show-grid">
+                <div class="col-md-6">
+                    {% for dev_bus, hdd_dev in hdd_image.items reversed %}
+                        <p><strong>{% trans "Disk" %} {{ dev_bus }}:</strong></p>
+                    {% endfor %}
+                </div>
+                <div class="col-md-6">
+                    {% for dev_bus, hdd_dev in hdd_image.items reversed %}
+                        <p> {{ hdd_dev.0 }} ({{ hdd_dev.1 }})</p>
+                    {% endfor %}
+                </div>
+            </div>
+            <hr>
+            <div class="block-btn">
+                <li>{% trans "Media Details" %}</li>
+            </div>
+            {% if media %}
+                <div class="row show-grid">
+                    <div class="col-md-6">
+                        <p><strong>{% trans "Connected" %}:</strong></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p>{{ media }}</p>
+                    </div>
+                </div>
+            {% endif %}
+            <form action="" method="post">{% csrf_token %}
+                {% if media %}
+                    <input type="hidden" name="iso_img" value="{{ path }}">
+                    <button type="submit" class="btn btn-default"  name="remove_iso" onclick="return confirm('{% trans "Are you sure?" %}')">{% trans "Disconnect" %}</button>
+                {% else %}
+                    <div class="form-group">
+                    <label class="col-lg-1 control-label">{% trans "Images" %}:</label>
+                    <div class="col-lg-5">
+                        <select name="iso_img" class="form-control">
+                            {% if iso_images %}
+                                {% for iso in iso_images %}
+                                    <option value="{{ iso }}">{{ iso }}</option>
+                                {% endfor %}
+                            {% else %}
+                                <option value="none">{% trans "None" %}</option>
+                            {% endif %}
+                        </select>
+                        <br>
+                        {% if iso_images %}
+                            <button type="submit" class="btn btn-default" name="add_iso" >{% trans "Connect" %}</button>
+                        {% else %}
+                            <button class="btn btn-default disabled" name="connect">{% trans "Connect" %}</button>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+
+    <!-- Power -->
+    <div class="modal fade" id="Power" tabindex="-1" role="dialog" aria-labelledby="PowerLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">{% trans "Power On Server" %}</h4>
+                </div>
+                <div class="modal-body">
+                    <p>{% trans "Shutdown sends ACPI shutdown signal to guest system. Force shutdown is lost immediately." %}</p>
+                </div>
+                <form class="form-horizontal" method="post" role="form">{% csrf_token %}
+                    <div class="form-group">
+                        <label class="col-lg-4 control-label">{% trans "Action" %}</label>
+                        <div class="col-lg-6">
+                            <label class="radio">
+                                <input type="radio" name="power" value="shutdown"/>{% trans "Shutdown" %}
+                            </label>
+                            <label class="radio">
+                                <input type="radio" name="power" value="destroy"/>{% trans "Force Shutdown" %}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+                        <button type="submit" class="btn btn-primary">{% trans "Send" %}</button>
+                    </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <!-- Delete -->
+    <div class="modal fade" id="Delete" tabindex="-1" role="dialog" aria-labelledby="DeleteLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">{% trans "Undefined Server" %}</h4>
+                </div>
+                <div class="modal-body">
+                    <p>{% trans "Delete HDD image?" %}</p>
+                </div>
+                <form class="form-group" method="post" role="form">{% csrf_token %}
+                    <div class="checkbox">
+                        <label>
+                          <input type="checkbox" name="image" value="true"><strong>{% trans "General HDD device" %}</strong>
+                        </label>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+                        <button type="submit" class="btn btn-primary" name="delete">{% trans "Delete" %}</button>
+                    </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <!-- Modal noVNC -->
+    <div class="modal fade" id="noVNC" tabindex="-1" role="dialog" aria-labelledby="noVNCLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">{% trans "Add New Flavor" %}</h4>
+                </div>
+                <div class="modal-body">
+                    <p>{% trans "Enter the VNC password or select Generate" %}</p>
+                </div>
+                <form class="form-horizontal" method="post" role="form">{% csrf_token %}
+                    <div class="form-group">
+                        <label for="inputPassword1" class="col-lg-3 control-label">Password</label>
+                        <div class="col-lg-6">
+                            <input type="password" class="form-control" name="vnc_passwd" placeholder="{% trans "Password" %}" maxlength="14">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-offset-1 col-lg-6">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="auto_pass" value="true">{% trans "Generate" %}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+                        <button type="submit" class="btn btn-primary" name="vnc_pass">{% trans "Create" %}</button>
+                    </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <!-- Modal Flavor -->
+    <div class="modal fade" id="Edit" tabindex="-1" role="dialog" aria-labelledby="EditLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">{% trans "Add New Flavor" %}</h4>
+                </div>
+                <div class="modal-body">
+                    <p>{% trans "Change Description, VCPU or RAM" %}</p>
+                </div>
+                <form class="form-horizontal" method="post" role="form">{% csrf_token %}
+                    <div class="form-group">
+                        <label class="col-lg-4 control-label">{% trans "Description" %}</label>
+                        <div class="col-lg-6">
+                            <input type="text" class="form-control" name="description" value="{{ description }}"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-4 control-label">{% trans "VCPU" %}</label>
+                        <div class="col-lg-6">
+                            <select name="vcpu" class="form-control">
+                                {% for cpu in vcpu_range %}
+                                    <option value="{{ cpu }}" {% if cpu == vcpu %}selected{% endif %}>{{ cpu }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-4 control-label">{% trans "RAM" %}</label>
+                        <div class="col-lg-6">
+                            <select name="ram" class="form-control">
+                                {% for mem in memory_range %}
+                                    <option value="{{ mem }}" {% if mem == memory %}selected{% endif %}>{{ mem }} {% trans "MB" %}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+                        <button type="submit" class="btn btn-primary" name="edit">{% trans "Change" %}</button>
+                    </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+{% endblock %}
+{% block script %}
+    <script>
+        function open_vnc() { window.open('{% url 'console' host_id vname %}?token={{ instance.vname }}','','width=850,height=485') }
+    </script>
+    {% ifequal dom.info.0 1 %}
+        <script type="text/javascript">
+            function cpu(){
+                $.get('/info/vds/cpu/{{ host_id }}/{{ vname }}', function(data) {
+                    setBar($('#cpu-usage-bar'),$('#cpu-usage'),data);
+                });
+            }
+            function memory(){
+                $.get('/info/vds/memory/{{ host_id }}/{{ vname }}', function(data) {
+                    setBar($('#memory-usage-bar'),$('#memory-usage'),data);
+                });
+            }
+            function setBar(bar,text,value){
+                text.text(value +'%').fadeIn();
+                bar.css({'width':value +'%'});
+                if (value < 50){
+                    bar.attr('class', "bar bar-success");
+                }else if (value < 80){
+                    bar.attr('class', "bar bar-warning");
+                }else if (value <= 100){
+                    bar.attr('class', "bar bar-danger");
+                }
+            }
+            function refresh(){
+                cpu();
+                memory();
+            }
+            $(function() {
+                refresh();
+                window.setInterval('refresh()', {{ time_refresh }});
+            });
+        </script>
+    {% endifequal %}
+{% endblock %}

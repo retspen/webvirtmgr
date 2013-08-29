@@ -17,7 +17,7 @@
 . /etc/rc.d/init.d/functions
 
 prog="webvirtmgr-novnc"
-exec="/var/www/webvirtmgr/vnc/$prog"
+exec="/var/www/webvirtmgr/console/$prog"
 lockfile="/var/lock/subsys/$prog"
 pidfile="/var/run/webvirtmgr/$prog.pid"
 logfile="/var/log/$prog.log"

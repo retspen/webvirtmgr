@@ -4,7 +4,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
-from vds.models import Host, Vm
+from instance.models import Host, Instance
 from dashboard.views import SortHosts
 from webvirtmgr.server import ConnServer
 from libvirt import libvirtError
@@ -17,7 +17,6 @@ def cpuusage(request, host_id, vname):
     VM Cpu Usage
 
     """
-
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
@@ -40,7 +39,6 @@ def memusage(request, host_id, vname):
     VM Memory Usage
 
     """
-
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
@@ -57,13 +55,12 @@ def memusage(request, host_id, vname):
     return HttpResponse(memory_usage)
 
 
-def vds(request, host_id, vname):
+def instance(request, host_id, vname):
     """
 
     VDS block
 
     """
-
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
@@ -86,16 +83,16 @@ def vds(request, host_id, vname):
         memory_usage = conn.vds_memory_usage(vname)[1]
         hdd_image = conn.vds_get_hdd(vname)
         iso_images = sorted(conn.get_all_media())
-        media = conn.vds_get_media(vname)
+        media, path = conn.vds_get_media(vname)
         dom = conn.lookupVM(vname)
         vcpu_range = [str(x) for x in range(1, 9)]
         memory_range = [128, 256, 512, 768, 1024, 2048, 4096, 8192, 16384]
         vnc_port = conn.vnc_get_port(vname)
 
         try:
-            vm = Vm.objects.get(vname=vname)
+            instance = Instance.objects.get(vname=vname)
         except:
-            vm = None
+            instance = None
 
         if request.method == 'POST':
             if 'start' in request.POST:
@@ -136,8 +133,8 @@ def vds(request, host_id, vname):
                     if request.POST.get('image', ''):
                         conn.vds_remove_hdd(vname)
                     try:
-                        vm = Vm.objects.get(host=host_id, vname=vname)
-                        vm.delete()
+                        instance = Instance.objects.get(host=host_id, vname=vname)
+                        instance.delete()
                     except:
                         pass
                     dom.undefine()
@@ -155,8 +152,8 @@ def vds(request, host_id, vname):
                 image = request.POST.get('iso_img', '')
                 try:
                     conn.vds_umount_iso(vname, image)
-                    if vm:
-                        conn.vds_set_vnc_passwd(vname, vm.vnc_passwd)
+                    if instance:
+                        conn.vds_set_vnc_passwd(vname, instance.vnc_passwd)
                     return HttpResponseRedirect(request.get_full_path())
                 except libvirtError as msg_error:
                     errors.append(msg_error.message)
@@ -164,8 +161,8 @@ def vds(request, host_id, vname):
                 image = request.POST.get('iso_img', '')
                 try:
                     conn.vds_mount_iso(vname, image)
-                    if vm:
-                        conn.vds_set_vnc_passwd(vname, vm.vnc_passwd)
+                    if instance:
+                        conn.vds_set_vnc_passwd(vname, instance.vnc_passwd)
                     return HttpResponseRedirect(request.get_full_path())
                 except libvirtError as msg_error:
                     errors.append(msg_error.message)
@@ -175,8 +172,8 @@ def vds(request, host_id, vname):
                 ram = request.POST.get('ram', '')
                 try:
                     conn.vds_edit(vname, description, ram, vcpu)
-                    if vm:
-                        conn.vds_set_vnc_passwd(vname, vm.vnc_passwd)
+                    if instance:
+                        conn.vds_set_vnc_passwd(vname, instance.vnc_passwd)
                     return HttpResponseRedirect(request.get_full_path())
                 except libvirtError as msg_error:
                     errors.append(msg_error.message)
@@ -184,19 +181,16 @@ def vds(request, host_id, vname):
                 if request.POST.get('auto_pass', ''):
                     from string import letters, digits
                     from random import choice
-
                     passwd = ''.join([choice(letters + digits) for i in range(12)])
                 else:
                     passwd = request.POST.get('vnc_passwd', '')
-
                     if not passwd:
                         msg = _("Enter the VNC password or select Generate")
                         errors.append(msg)
-
                 if not errors:
                     try:
                         conn.vds_set_vnc_passwd(vname, passwd)
-                        vnc_pass = Vm(host_id=host_id, vname=vname, vnc_passwd=passwd)
+                        vnc_pass = Instance(host_id=host_id, vname=vname, vnc_passwd=passwd)
                         vnc_pass.save()
                     except libvirtError as msg_error:
                         errors.append(msg_error.message)
@@ -204,4 +198,4 @@ def vds(request, host_id, vname):
 
         conn.close()
 
-    return render_to_response('vds.html', locals(), context_instance=RequestContext(request))
+    return render_to_response('instance.html', locals(), context_instance=RequestContext(request))

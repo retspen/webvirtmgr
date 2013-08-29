@@ -6,15 +6,17 @@ $.expr[':'].Contains = $.expr.createPseudo(function(arg) {
 
 $(document).ready(function() {
     var filter_html = [
-        '<div class="input-append">',
-        '<input type="text" id="filter_input" />',
-        '<input type="button" class="btn btn-success" id="filter_button" value="Filter" />',
-        '<input type="button" class="btn btn-danger" id="filter_clear" value="Clear" />',
+        '<div class="input-append form-inline pull-right" style="margin-right: 20px;">',
+        '<div class="form-group" style="margin-bottom: 25px;">',
+        '<input type="text" class="form-control" id="filter_input" />',
+        '</div>',
+        '<input type="button" class="btn btn-default" id="filter_button" value="Filter" />',
+        '<button type="button" class="btn btn-default" id="filter_clear">Clear</button>',
         '</div>'
     ].join('');
 
     // add html to div as first child
-    $('div.span8').prepend(filter_html);
+    $('div.row').prepend(filter_html);
 
     // add event button labeled "filter"
     $('#filter_button').click(function(event) {
@@ -43,7 +45,4 @@ $(document).ready(function() {
             $('#filter_button').click();
         }
     });
-
-    // focus on input field
-    $('#filter_input').focus();
 });

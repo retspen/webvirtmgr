@@ -4,7 +4,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
-from vds.models import Host
+from instance.models import Host
 from dashboard.views import SortHosts
 from webvirtmgr.server import ConnServer
 from libvirt import libvirtError
@@ -53,7 +53,6 @@ def overview(request, host_id):
     Overview page.
 
     """
-
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 

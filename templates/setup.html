@@ -15,7 +15,7 @@ egrep -c '(vmx|svm)' /proc/cpuinfo
 <p>If <strong>0</strong> it means that your CPU doesn't support hardware virtualization.</p>
 </p>If <strong>1</strong> or more it does - but you still need to make sure that virtualization is enabled in the BIOS.</p>
 <br />
-<h3>Installation and setup KVM</h3> 
+<h3>Installation and setup KVM</h3>
 <h4>ContOS, Fedora, RedHat</h4>
 <p>Install packages libvirt-bin, KVM</p>
 <pre>
@@ -64,7 +64,7 @@ $ sudo service libvirtd start
 $ sudo service libvirt-bin restart
 </pre>
 <br />
-<h3>Configuring authorization</h3> 
+<h3>Configuring authorization</h3>
 <p>Adding users and setting their passwords is done with the <code>saslpasswd2</code> command. When running this command it is important to tell it that the appname is <code>libvirt</code>. As an example, to add a user <code>fred</code>, run</p>
 <pre>
 $ sudo saslpasswd2 -a libvirt fred

@@ -38,19 +38,19 @@ class NovaWebSocketProxy(wsproxy.WebSocketProxy):
         cookie.load(self.headers.getheader('cookie'))
         token = cookie['token'].value
 
-        from vds.models import Host, Vm
+        from instance.models import Host, Instance
         from webvirtmgr.server import ConnServer
 
         try:
-            vm = Vm.objects.get(vname=token)
-            host = Host.objects.get(id=vm.host.id)
+            instance = Instance.objects.get(vname=token)
+            host = Host.objects.get(id=instance.host.id)
             conn = ConnServer(host)
 
             if type(conn) == dict:
                 pass
             else:
-                port = conn.vnc_get_port(vm.vname)
-                host = vm.host.ipaddr
+                port = conn.vnc_get_port(instance.vname)
+                host = instance.host.hostname
         except:
             port = None
             host = None

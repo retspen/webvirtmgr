@@ -26,7 +26,7 @@ def get_xml_path(xml, path=None, func=None):
 
         if path:
             ret = ctx.xpathEval(path)
-            if ret != None:
+            if ret is not None:
                 if type(ret) == list:
                     if len(ret) >= 1:
                         result = ret[0].content
@@ -45,6 +45,30 @@ def get_xml_path(xml, path=None, func=None):
             ctx.xpathFreeContext()
     return result
 
+def network_size(subnet, dhcp=None):
+    """
+
+    Func return network size.
+
+    """
+    netmask = IP(subnet).strNetmask()
+    ipaddr = IP(subnet)
+    gateway = ipaddr[0].strNormal()[-1]
+    if gateway == '0':
+        gw = ipaddr[1].strNormal()
+        dhcp_start = ipaddr[2].strNormal()
+        subnet_end = ipaddr.len() - 2
+        dhcp_end = ipaddr[subnet_end].strNormal()
+    else:
+        gw = ipaddr[0].strNormal()
+        dhcp_start = ipaddr[1].strNormal()
+        subnet_end = ipaddr.len() - 2
+        dhcp_end = ipaddr[subnet_end].strNormal()
+    if dhcp:
+        return gw, netmask, [dhcp_start, dhcp_end]
+    else:
+        return gw, netmask, None
+
 
 class ConnServer(object):
     def __init__(self, host):
@@ -53,12 +77,11 @@ class ConnServer(object):
         Return connection object.
 
         """
-
         self.login = host.login
-        self.host = host.ipaddr
-        self.passwd = host.passwd
-        self.type = host.conn_type
-        self.port = host.ssh_port
+        self.host = host.hostname
+        self.passwd = host.password
+        self.type = host.type
+        self.port = host.port
 
         if self.type == 'tcp':
             def creds(credentials, user_data):
@@ -87,8 +110,6 @@ class ConnServer(object):
         Return VM object.
 
         """
-
-
         dom = self.conn.lookupByName(vname)
         return dom
 
@@ -98,7 +119,6 @@ class ConnServer(object):
         Return storage object.
 
         """
-
         stg = self.conn.storagePoolLookupByName(storage)
         return stg
 
@@ -108,7 +128,6 @@ class ConnServer(object):
         Return network object.
 
         """
-
         net = self.conn.networkLookupByName(network)
         return net
 
@@ -118,7 +137,6 @@ class ConnServer(object):
         Return volume object.
 
         """
-
         stg = self.storagePool(storage)
         stg_type = get_xml_path(stg.XMLDesc(0), "/pool/@type")
         if stg_type == 'dir':
@@ -132,7 +150,6 @@ class ConnServer(object):
         Return volume object by path.
 
         """
-
         vl = self.conn.storageVolLookupByPath(volume)
         return vl
 
@@ -142,7 +159,6 @@ class ConnServer(object):
         Check hardware acceleration.
 
         """
-
         xml = self.conn.getCapabilities()
         kvm = re.search('kvm', xml)
         if kvm:
@@ -155,7 +171,6 @@ class ConnServer(object):
         Create VM function
 
         """
-
         ram = int(ram) * 1024
 
         iskvm = re.search('kvm', self.conn.getCapabilities())
@@ -193,6 +208,7 @@ class ConnServer(object):
 
         xml = """<domain type='%s'>
                   <name>%s</name>
+                  <description>None</description>
                   <memory unit='KiB'>%s</memory>
                   <vcpu>%s</vcpu>
                   <os>
@@ -258,7 +274,6 @@ class ConnServer(object):
         Get all VM in host server
 
         """
-
         vname = {}
         for vm_id in self.conn.listDomainsID():
             vm_id = int(vm_id)
@@ -275,7 +290,6 @@ class ConnServer(object):
         Function return host server virtual networks.
 
         """
-
         virtnet = {}
         for network in self.conn.listNetworks():
             net = self.conn.networkLookupByName(network)
@@ -293,7 +307,6 @@ class ConnServer(object):
         Function return host server storages.
 
         """
-
         storages = {}
         for storage in self.conn.listStoragePools():
             stg = self.conn.storagePoolLookupByName(storage)
@@ -311,14 +324,13 @@ class ConnServer(object):
         Function return host server information: hostname, cpu, memory, ...
 
         """
-
         info = []
         info.append(self.conn.getHostname())
         info.append(self.conn.getInfo()[0])
         info.append(self.conn.getInfo()[2])
         try:
             info.append(get_xml_path(self.conn.getSysinfo(0),
-                        "/sysinfo/processor/entry[6]"))
+                                     "/sysinfo/processor/entry[6]"))
         except:
             info.append('Unknown')
         info.append(self.conn.getURI())
@@ -331,7 +343,6 @@ class ConnServer(object):
         Function return memory usage on node.
 
         """
-
         allmem = self.conn.getInfo()[1] * 1048576
         get_freemem = self.conn.getMemoryStats(-1, 0)
         if type(get_freemem) == dict:
@@ -352,24 +363,23 @@ class ConnServer(object):
         Function return cpu usage on node.
 
         """
-
         prev_idle = 0
         prev_total = 0
         cpu = self.conn.getCPUStats(-1, 0)
         if type(cpu) == dict:
             for num in range(2):
-                    idle = self.conn.getCPUStats(-1, 0).values()[1]
-                    total = sum(self.conn.getCPUStats(-1, 0).values())
-                    diff_idle = idle - prev_idle
-                    diff_total = total - prev_total
-                    diff_usage = (1000 * (diff_total - diff_idle) / diff_total + 5) / 10
-                    prev_total = total
-                    prev_idle = idle
-                    if num == 0:
-                        time.sleep(1)
-                    else:
-                        if diff_usage < 0:
-                            diff_usage = 0
+                idle = self.conn.getCPUStats(-1, 0).values()[1]
+                total = sum(self.conn.getCPUStats(-1, 0).values())
+                diff_idle = idle - prev_idle
+                diff_total = total - prev_total
+                diff_usage = (1000 * (diff_total - diff_idle) / diff_total + 5) / 10
+                prev_total = total
+                prev_idle = idle
+                if num == 0:
+                    time.sleep(1)
+                else:
+                    if diff_usage < 0:
+                        diff_usage = 0
         else:
             diff_usage = None
         return diff_usage
@@ -380,7 +390,6 @@ class ConnServer(object):
         Add new volume in storage
 
         """
-
         stg = self.storagePool(storage)
         size = int(size) * 1073741824
         stg_type = get_xml_path(stg.XMLDesc(0), "/pool/@type")
@@ -406,7 +415,6 @@ class ConnServer(object):
         Function clone volume
 
         """
-
         stg = self.storagePool(storage)
         stg_type = get_xml_path(stg.XMLDesc(0), "/pool/@type")
         if stg_type == 'dir':
@@ -429,7 +437,6 @@ class ConnServer(object):
         Function return all images on all storages
 
         """
-
         disk = []
         for storage in storages:
             stg = self.storagePool(storage)
@@ -448,7 +455,6 @@ class ConnServer(object):
         Function return volume path.
 
         """
-
         for storage in storages:
             stg = self.storagePool(storage)
             for img in stg.listVolumes():
@@ -462,7 +468,6 @@ class ConnServer(object):
         Function return storage info.
 
         """
-
         stg = self.storagePool(storage)
         if stg.info()[3] == 0:
             percent = 0
@@ -482,7 +487,6 @@ class ConnServer(object):
         Function create storage pool.
 
         """
-
         xml = """
                 <pool type='%s'>
                 <name>%s</name>""" % (type_pool, name)
@@ -516,7 +520,6 @@ class ConnServer(object):
         Function return volume info.
 
         """
-
         stg = self.storagePool(storage)
         volinfo = {}
         for name in stg.listVolumes():
@@ -527,13 +530,12 @@ class ConnServer(object):
             volinfo[name] = size, format
         return volinfo
 
-    def new_network_pool(self, name, forward, gw, netmask, dhcp):
+    def new_network_pool(self, name, forward, gw, netmask, dhcp=None):
         """
 
         Function create network pool.
 
         """
-
         xml = """
             <network>
                 <name>%s</name>""" % (name)
@@ -544,10 +546,10 @@ class ConnServer(object):
         xml += """<bridge stp='on' delay='0' />
                     <ip address='%s' netmask='%s'>""" % (gw, netmask)
 
-        if dhcp[0] == '1':
+        if dhcp:
             xml += """<dhcp>
                         <range start='%s' end='%s' />
-                    </dhcp>""" % (dhcp[1], dhcp[2])
+                    </dhcp>""" % (dhcp[0], dhcp[1])
 
         xml += """</ip>
             </network>"""
@@ -562,7 +564,6 @@ class ConnServer(object):
         Function return network info.
 
         """
-
         info = []
         net = self.networkPool(network)
         info.append(net.isActive())
@@ -575,7 +576,6 @@ class ConnServer(object):
         Function return virtual network info: ip, netmask, dhcp, type forward.
 
         """
-
         net = self.networkPool(network)
         xml_net = net.XMLDesc(0)
         ipv4 = []
@@ -616,7 +616,6 @@ class ConnServer(object):
         Function return all snaphots on node.
 
         """
-
         vname = {}
         for vm_id in self.conn.listDomainsID():
             vm_id = int(vm_id)
@@ -635,7 +634,6 @@ class ConnServer(object):
         Function return all vds snaphots.
 
         """
-
         snapshots = {}
         dom = self.lookupVM(vname)
         all_snapshot = dom.snapshotListNames(0)
@@ -649,7 +647,6 @@ class ConnServer(object):
         Function delete vds snaphots.
 
         """
-
         dom = self.lookupVM(vname)
         snap = dom.snapshotLookupByName(name_snap, 0)
         snap.delete(0)
@@ -660,7 +657,6 @@ class ConnServer(object):
         Function revert vds snaphots.
 
         """
-
         dom = self.lookupVM(vname)
         snap = dom.snapshotLookupByName(name_snap, 0)
         dom.revertToSnapshot(snap, 0)
@@ -671,7 +667,6 @@ class ConnServer(object):
         Function rever vds snaphots.
 
         """
-
         dom = self.lookupVM(vname)
         port = get_xml_path(dom.XMLDesc(0), "/domain/devices/graphics/@port")
         return port
@@ -682,7 +677,6 @@ class ConnServer(object):
         Function mount iso image on vds. Changes on XML config.
 
         """
-
         storages = self.storages_get_node()
         dom = self.lookupVM(vname)
         image = image + '.iso'
@@ -714,10 +708,9 @@ class ConnServer(object):
         Function umount iso image on vds. Changes on XML config.
 
         """
-
-        storages = self.storages_get_node()
+        #storages = self.storages_get_node()
         dom = self.lookupVM(vname)
-        image = image + '.iso'
+        #image = image + '.iso'
 
         if dom.info()[0] == 1:
             xml = """<disk type='file' device='cdrom'>
@@ -729,14 +722,14 @@ class ConnServer(object):
             xmldom = dom.XMLDesc(0)
             self.conn.defineXML(xmldom)
         if dom.info()[0] == 5:
-            for storage in storages:
-                stg = self.storagePool(storage)
-                for img in stg.listVolumes():
-                    if image == img:
-                        vol = stg.storageVolLookupByName(image)
-                        xml = dom.XMLDesc(0)
-                        xmldom = xml.replace("<source file='%s'/>\n" % vol.path(), '')
-                        self.conn.defineXML(xmldom)
+            # for storage in storages:
+            #     stg = self.storagePool(storage)
+                # for img in stg.listVolumes():
+                #     if image == img:
+                #         vol = stg.storageVolLookupByName(image)
+            xml = dom.XMLDesc(0)
+            xmldom = xml.replace("<source file='%s'/>\n" % image, '')
+            self.conn.defineXML(xmldom)
 
     def vds_cpu_usage(self, vname):
         """
@@ -744,14 +737,16 @@ class ConnServer(object):
         Function return vds cpu usage.
 
         """
-
         dom = self.lookupVM(vname)
-        nbcore = self.conn.getInfo()[2]
-        cpu_use_ago = dom.info()[4]
-        time.sleep(1)
-        cpu_use_now = dom.info()[4]
-        diff_usage = cpu_use_now - cpu_use_ago
-        cpu_usage = 100 * diff_usage / (1 * nbcore * 10**9L)
+        if dom.info()[0] == 1:
+            nbcore = self.conn.getInfo()[2]
+            cpu_use_ago = dom.info()[4]
+            time.sleep(1)
+            cpu_use_now = dom.info()[4]
+            diff_usage = cpu_use_now - cpu_use_ago
+            cpu_usage = 100 * diff_usage / (1 * nbcore * 10**9L)
+        else:
+            cpu_usage = 0
         return cpu_usage
 
     def vds_memory_usage(self, vname):
@@ -760,11 +755,13 @@ class ConnServer(object):
         Function return vds memory usage.
 
         """
-
         dom = self.lookupVM(vname)
         allmem = self.conn.getInfo()[1] * 1048576
-        dom_mem = dom.info()[1] * 1024
-        percent = (dom_mem * 100) / allmem
+        if dom.info()[0] == 1:
+            dom_mem = dom.info()[1] * 1024
+            percent = (dom_mem * 100) / allmem
+        else:
+            percent = 0
         return allmem, percent
 
     def vds_get_info(self, vname):
@@ -773,7 +770,6 @@ class ConnServer(object):
         Function return vds info.
 
         """
-
         info = []
         dom = self.lookupVM(vname)
         xml = dom.XMLDesc(0)
@@ -796,7 +792,6 @@ class ConnServer(object):
         Function return vds hdd info.
 
         """
-
         all_hdd_dev = {}
         storages = self.storages_get_node()
         dom = self.lookupVM(vname)
@@ -832,7 +827,6 @@ class ConnServer(object):
         Function return vds media info.
 
         """
-
         dom = self.lookupVM(vname)
         xml = dom.XMLDesc(0)
         for num in range(1, 5):
@@ -840,11 +834,13 @@ class ConnServer(object):
             if hdd_dev == 'cdrom':
                 media = get_xml_path(xml, "/domain/devices/disk[%s]/source/@file" % (num))
                 if media:
-                    vol = self.storageVolPath(media)
-                    img = re.sub('.iso', '', vol.name())
-                    return img
+                    try:
+                        vol = self.storageVolPath(media)
+                        return vol.name(), vol.path()
+                    except:
+                        return media, media
                 else:
-                    return None
+                    return None, None
 
     def vds_set_vnc_passwd(self, vname, passwd):
         """
@@ -852,7 +848,6 @@ class ConnServer(object):
         Function set vnc password to vds.
 
         """
-
         dom = self.lookupVM(vname)
         xml = dom.XMLDesc(0)
         find_tag = re.findall('\<graphics.*\/\>', xml)
@@ -870,7 +865,6 @@ class ConnServer(object):
         Function change ram and cpu on vds.
 
         """
-
         dom = self.lookupVM(vname)
         xml = dom.XMLDesc(0)
         memory = int(ram) * 1024
@@ -890,7 +884,6 @@ class ConnServer(object):
         Function return all media.
 
         """
-
         iso = []
         storages = self.storages_get_node()
         for storage in storages:
@@ -899,7 +892,6 @@ class ConnServer(object):
                 stg.refresh(0)
                 for img in stg.listVolumes():
                     if re.findall(".iso", img):
-                        img = re.sub('.iso', '', img)
                         iso.append(img)
         return iso
 
@@ -909,7 +901,6 @@ class ConnServer(object):
         Function delete vds hdd.
 
         """
-
         dom = self.lookupVM(vname)
         img = get_xml_path(dom.XMLDesc(0), "/domain/devices/disk[1]/source/@file")
         vol = self.storageVolPath(img)
@@ -921,7 +912,6 @@ class ConnServer(object):
         Function create vds snapshot.
 
         """
-
         dom = self.lookupVM(vname)
         xml = """<domainsnapshot>\n
                      <name>%d</name>\n
@@ -933,6 +923,11 @@ class ConnServer(object):
         dom.snapshotCreateXML(xml, 0)
 
     def vds_on_cluster(self):
+        """
+
+        Function show all host and vds
+
+        """
         vname = {}
         host_mem = self.conn.getInfo()[1] * 1048576
         for vm_id in self.conn.listDomainsID():
@@ -958,5 +953,4 @@ class ConnServer(object):
         Close libvirt connection.
 
         """
-
         self.conn.close()

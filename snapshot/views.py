@@ -4,7 +4,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
-from vds.models import Host
+from instance.models import Host
 from dashboard.views import SortHosts
 from webvirtmgr.server import ConnServer
 from libvirt import libvirtError
@@ -16,7 +16,6 @@ def snapshot(request, host_id):
     Snapshot block
 
     """
-
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
@@ -47,7 +46,6 @@ def dom_snapshot(request, host_id, vname):
     Snapshot block
 
     """
-
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
@@ -74,7 +72,7 @@ def dom_snapshot(request, host_id, vname):
                     conn.snapshot_delete(vname, snap_name)
                     return HttpResponseRedirect('/snapshot/%s/%s/' % (host_id, vname))
                 except libvirtError as error_msg:
-                        errors.append(error_msg.message)
+                    errors.append(error_msg.message)
             if 'revert' in request.POST:
                 snap_name = request.POST.get('name', '')
                 try:
@@ -82,6 +80,6 @@ def dom_snapshot(request, host_id, vname):
                     message = _("Successful revert snapshot: ")
                     message = message + snap_name
                 except libvirtError as error_msg:
-                        errors.append(error_msg.message)
+                    errors.append(error_msg.message)
 
     return render_to_response('snapshot.html', locals(), context_instance=RequestContext(request))

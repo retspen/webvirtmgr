@@ -1,0 +1,75 @@
+body {
+    padding-top: 0px;
+    padding-bottom: 40px;
+    background-color: #fff;
+}
+.alert {
+    width: 700px;
+    margin: auto;
+    margin-bottom: 15px;
+}
+.container {
+    max-width: 980px;
+}
+.navbar-inverse {
+    text-shadow: 0 -1px 0 rgba(0,0,0,.15);
+    background-color: #563d7c;
+    border-color: #463265;
+    box-shadow: 0 1px 0 rgba(255,255,255,.1);
+}
+.navbar-inverse .navbar-brand:hover, .navbar-inverse .navbar-brand:focus {
+    color: #ffffff;
+    background-color: transparent;
+}
+.bs-sidenav {
+    margin-top: 10px;
+    margin-bottom: 30px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-shadow: 0 1px 0 #fff;
+    background-color: #f7f5fa;
+    border-radius: 5px;
+}
+.bs-sidebar .nav > li > a {
+    display: block;
+    color: #716b7a;
+    padding: 5px 20px;
+}
+.bs-sidebar .nav .nav > li > a {
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 30px;
+    font-size: 90%;
+}
+.fade.in {
+    background: rgba(0,0,0,0.3);
+}
+.form-group {
+    margin-top: 25px;
+}
+.table thead > tr > th {
+    border-bottom: none;
+}
+.page-header {
+    margin: 20px 0 20px;
+}
+.well {
+    text-align: center;
+}
+.block-btn {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+#inst-btn {
+    width: 108px;
+}
+.modal-body {
+    padding-left: 10px;
+    padding-bottom: 0;
+}
+.checkbox {
+    margin-left: 15px;
+}
+.progress {
+    width: 250px;
+}

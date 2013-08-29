@@ -1,6 +1,6 @@
 [
   {
-    "model": "vds.Flavor",
+    "model": "instance.Flavor",
     "pk": 1,
     "fields": {
       "name": "micro",
@@ -10,7 +10,7 @@
     }
   },
   {
-    "model": "vds.Flavor",
+    "model": "instance.Flavor",
     "pk": 2,
     "fields": {
       "name": "mini",
@@ -20,7 +20,7 @@
     }
   },
   {
-    "model": "vds.Flavor",
+    "model": "instance.Flavor",
     "pk": 3,
     "fields": {
       "name": "small",
@@ -30,7 +30,7 @@
     }
   },
   {
-    "model": "vds.Flavor",
+    "model": "instance.Flavor",
     "pk": 4,
     "fields": {
       "name": "medium",
@@ -40,7 +40,7 @@
     }
   },
   {
-    "model": "vds.Flavor",
+    "model": "instance.Flavor",
     "pk": 5,
     "fields": {
       "name": "large",
@@ -50,7 +50,7 @@
     }
   },
   {
-    "model": "vds.Flavor",
+    "model": "instance.Flavor",
     "pk": 6,
     "fields": {
       "name": "xlarge",

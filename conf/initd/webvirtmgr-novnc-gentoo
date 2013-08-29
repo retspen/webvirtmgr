@@ -1,0 +1,42 @@
+#!/sbin/runscript
+# Copyright 2013 Joachim Langenbach
+# Distributed under the terms of the GNU General Public License v2
+
+description="WebVirtMgr NoVNC proxy"
+NAME=webvirtmgr-novnc
+PIDFILE=/var/run/$NAME.pid
+
+checkconfig() {
+	# Exit if the package is not installed
+	if [ ! -x ${WEBVIRTMGR_DAEMON} ]; then
+		eerror "Daemon ${WEBVIRTMGR_DAEMON} not found"
+		return 1
+	fi
+
+	# create lock dir
+	if [ ! -x ${WEBVIRTMGR_LOCK_DIR} ]; then
+		mkdir -p ${WEBVIRTMGR_LOCK_DIR}
+		chown ${WEBVIRTMGR_USER} ${WEBVIRTMGR_LOCK_DIR}
+		if [ ! -x ${WEBVIRTMGR_LOCK_DIR} ]; then
+			eerror "Could not create lock dir ${WEBVIRTMGR_LOCK_DIR}"
+			return 1
+		fi
+	fi
+}
+
+start() {
+	checkconfig || return 1
+	ebegin "Starting ${description}"
+	start-stop-daemon --start --background --quiet --user "${WEBVIRTMGR_USER}" --group "${WEBVIRTMGR_GROUP}" --make-pidfile --pidfile "${PIDFILE}" \
+	--name "${WEBVIRTMGR_DAEMON}"
+	eend ${?}
+}
+
+stop() {
+	checkconfig || return 1
+	ebegin "Stopping ${description}"
+	start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 --pidfile ${PIDFILE}
+	RETVAL="$?"
+	rm -f ${PIDFILE}
+	eend ${RETVAL}
+}
