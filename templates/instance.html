@@ -325,7 +325,7 @@
 
 {% endblock %}
 {% block script %}
-    <script>
+    <script type="text/javascript">
         function open_vnc() { window.open('{% url 'console' host_id vname %}?token={{ instance.vname }}','','width=850,height=485') }
     </script>
     {% ifequal dom.info.0 1 %}
@@ -344,11 +344,11 @@
                 text.text(value +'%').fadeIn();
                 bar.css({'width':value +'%'});
                 if (value < 50){
-                    bar.attr('class', "bar bar-success");
+                    bar.attr('class', "progress-bar progress-bar-success");
                 }else if (value < 80){
-                    bar.attr('class', "bar bar-warning");
+                    bar.attr('class', "progress-bar progress-bar-warning");
                 }else if (value <= 100){
-                    bar.attr('class', "bar bar-danger");
+                    bar.attr('class', "progress-bar progress-bar-danger");
                 }
             }
             function refresh(){
