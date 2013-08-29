@@ -73,3 +73,6 @@ body {
 .progress {
     width: 250px;
 }
+#error {
+    text-align: center;
+}
