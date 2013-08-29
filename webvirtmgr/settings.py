@@ -124,6 +124,28 @@ INSTALLED_APPS = (
     'instance',
 )
 
+INSTALLED_APPS += ('django_jenkins',)
+
+JENKINS_TASKS = (
+    'django_jenkins.tasks.run_pylint',
+    'django_jenkins.tasks.with_coverage',
+    'django_jenkins.tasks.django_tests',
+    'django_jenkins.tasks.run_pep8',
+    'django_jenkins.tasks.run_pyflakes',
+)
+
+PROJECT_APPS = (
+    'dashboard',
+    'overview',
+    'newvm',
+    'storage',
+    'network',
+    'snapshot',
+    'vds',
+    'vnc',
+    'webvirtmgr',
+)
+
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error when DEBUG=False.
