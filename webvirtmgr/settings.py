@@ -141,8 +141,8 @@ PROJECT_APPS = (
     'storage',
     'network',
     'snapshot',
-    'vds',
-    'vnc',
+    'instance',
+    'console',
     'webvirtmgr',
 )
 
