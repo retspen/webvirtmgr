@@ -7,7 +7,7 @@
                         <a href="#"><span class="glyphicon glyphicon-wrench"></span> <strong>{% trans "Server Settings" %}</strong></a>
                         <ul class="nav">
                             <li {% active request "^/overview" %}>
-                                <a href="{% url 'overview' host_id %}"><span class="glyphicon glyphicon-eye-open"></span> {% trans "Overview" %}</a>
+                                <a href="{% url 'overview' host_id %}"><span class="glyphicon glyphicon-info-sign"></span> {% trans "Overview" %}</a>
                             </li>
                             <li {% active request "^/newvm" %}>
                                 <a href="{% url 'newvm' host_id %}"><span class="glyphicon glyphicon-plus"></span> {% trans "Create VM" %}</a>
