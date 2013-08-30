@@ -1,9 +1,9 @@
-# WebVirtMgr panel - v2.4.0
+# WebVirtMgr panel - v3
 
-* Fix sort hosts and VM's (Thanks: <a href="https://github.com/bwcherry">bwcherry</a>) 
-* CPU and Memory auto-updating (Big Thanks: <a href="https://github.com/keyz182">keyz182</a>)
-* Remove dependent library python-virtinst (fedora, redhat, centos) or virtinst (ubuntu)
-* Add docs info for supervisor (virtualenv)
+* Move to Django-1.5.x
+* Move to Bootstrap-3.0
+* Fix many bugs
+* Add gentoo init scripts (Thanks: Joachim Langenbach)
 
 ## 1. Introduction
 
@@ -24,7 +24,7 @@ WebVirtMgr is licensed under the Apache Licence, Version 2.0 (http://www.apache.
 Run:
 
     $ su -c 'yum -y install git python-pip libvirt-python libxml2-python httpd mod_wsgi python-websockify'
-    $ su -c 'python-pip install Django==1.4.5'
+    $ su -c 'python-pip install Django==1.5.2'
 
 ### CentOS 6.2, RedHat 6.2 and above
 
@@ -32,14 +32,14 @@ Run:
 
     $ su -c 'yum -y install http://dl.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm'
     $ su -c 'yum -y install git python-pip libvirt-python libxml2-python httpd mod_wsgi python-websockify'
-    $ su -c 'python-pip install Django==1.4.5'
+    $ su -c 'python-pip install Django==1.5.2'
 
 ### Ubuntu 12.04 and above
 
 Run:
 
     $ sudo apt-get install git python-pip python-libvirt python-libxml2 apache2 libapache2-mod-wsgi novnc
-    $ sudo pip install Django==1.4.5
+    $ sudo pip install Django==1.5.2
 
 ## 3. Setup
 

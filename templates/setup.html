@@ -118,4 +118,16 @@ Thread(s) per core:  1
 NUMA cell(s):        1
 Memory size:         2019260 kB
 </pre>
+<p>If you have same error:</p>
+<pre>
+$ virsh -c qemu+tcp://<strong>IP_address</strong>/system nodeinfo
+Please enter your authentication name: fred
+Please enter your password:
+error: authentication failed: authentication failed
+error: failed to connect to the hypervisor
+</pre>
+<p>Try input login with domain <code>sasldblistusers2 -f /etc/libvirt/passwd.db</code></p>
+<pre>
+fred@webvirtmgr.net
+</pre>
 {% endblock %}
