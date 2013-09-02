@@ -1,11 +1,9 @@
-  # -*- coding: utf-8 -*-
-
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from instance.models import Host
-from dashboard.views import SortHosts
+from dashboard.views import sort_host
 from webvirtmgr.server import ConnServer
 from libvirt import libvirtError
 
@@ -30,7 +28,7 @@ def snapshot(request, host_id):
     if not conn:
         errors.append(e.message)
     else:
-        all_vm = SortHosts(conn.vds_get_node())
+        all_vm = sort_host(conn.vds_get_node())
         all_vm_snap = conn.snapshots_get_node()
         conn.close()
 
@@ -50,6 +48,7 @@ def dom_snapshot(request, host_id, vname):
         return HttpResponseRedirect('/login')
 
     errors = []
+    message = ''
     snapshot_page = True
     host = Host.objects.get(id=host_id)
 
@@ -61,7 +60,7 @@ def dom_snapshot(request, host_id, vname):
     if not conn:
         errors.append(e.message)
     else:
-        all_vm = SortHosts(conn.vds_get_node())
+        all_vm = sort_host(conn.vds_get_node())
         all_vm_snap = conn.snapshots_get_node()
         vm_snapshot = conn.snapshots_get_vds(vname)
 
@@ -78,8 +77,17 @@ def dom_snapshot(request, host_id, vname):
                 try:
                     conn.snapshot_revert(vname, snap_name)
                     message = _("Successful revert snapshot: ")
-                    message = message + snap_name
+                    message += snap_name
                 except libvirtError as error_msg:
                     errors.append(error_msg.message)
 
-    return render_to_response('snapshot.html', locals(), context_instance=RequestContext(request))
+    return render_to_response('snapshot.html', {'host_id': host_id,
+                                                'vname': vname,
+                                                'errors': errors,
+                                                'message': message,
+                                                'snapshot_page': snapshot_page,
+                                                'all_vm': all_vm,
+                                                'all_vm_snap': all_vm_snap,
+                                                'vm_snapshot': vm_snapshot
+                                                },
+                              context_instance=RequestContext(request))

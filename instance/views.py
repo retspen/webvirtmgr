@@ -1,11 +1,9 @@
-# -*- coding: utf-8 -*-
-
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from instance.models import Host, Instance
-from dashboard.views import SortHosts
+from dashboard.views import sort_host
 from webvirtmgr.server import ConnServer
 from libvirt import libvirtError
 from webvirtmgr.settings import TIME_JS_REFRESH
@@ -77,13 +75,13 @@ def instance(request, host_id, vname):
     if not conn:
         errors.append(e.message)
     else:
-        all_vm = SortHosts(conn.vds_get_node())
+        all_vm = sort_host(conn.vds_get_node())
         vcpu, memory, mac, network, description = conn.vds_get_info(vname)
         cpu_usage = conn.vds_cpu_usage(vname)
         memory_usage = conn.vds_memory_usage(vname)[1]
         hdd_image = conn.vds_get_hdd(vname)
         iso_images = sorted(conn.get_all_media())
-        media, path = conn.vds_get_media(vname)
+        media, media_path = conn.vds_get_media(vname)
         dom = conn.lookupVM(vname)
         vcpu_range = [str(x) for x in range(1, 9)]
         memory_range = [128, 256, 512, 768, 1024, 2048, 4096, 8192, 16384]
@@ -198,4 +196,20 @@ def instance(request, host_id, vname):
 
         conn.close()
 
-    return render_to_response('instance.html', locals(), context_instance=RequestContext(request))
+    return render_to_response('instance.html', {'host_id': host_id,
+                                                'vname': vname,
+                                                'messages': messages,
+                                                'errors': errors,
+                                                'instance': instance,
+                                                'all_vm': all_vm,
+                                                'vcpu': vcpu, 'cpu_usage': cpu_usage, 'vcpu_range': vcpu_range,
+                                                'description': description,
+                                                'mac': mac, 'network': network,
+                                                'memory': memory, 'memory_usage': memory_usage, 'memory_range': memory_range,
+                                                'hdd_image': hdd_image, 'iso_images': iso_images,
+                                                'media': media, 'path': media_path,
+                                                'dom': dom,
+                                                'vnc_port': vnc_port,
+                                                'time_refresh': time_refresh
+                                                },
+                              context_instance=RequestContext(request))

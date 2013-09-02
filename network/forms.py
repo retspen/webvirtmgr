@@ -11,8 +11,8 @@ class AddNetPool(forms.Form):
 
     def clean_name(self):
         name = self.cleaned_data['name']
-        have_simbol = re.search('[^a-zA-Z0-9_\-\.]+', name)
-        if have_simbol:
+        have_symbol = re.search('[a-zA-Z0-9._-]+', name)
+        if have_symbol:
             raise forms.ValidationError(_('The pool name must not contain any special characters'))
         elif len(name) > 20:
             raise forms.ValidationError(_('The pool name must not exceed 20 characters'))
@@ -20,8 +20,8 @@ class AddNetPool(forms.Form):
 
     def clean_subnet(self):
         subnet = self.cleaned_data['subnet']
-        have_simbol = re.search('[^0-9\.\/]+', subnet)
-        if have_simbol:
+        have_symbol = re.search('[0-9./]+', subnet)
+        if have_symbol:
             raise forms.ValidationError(_('The pool subnet must not contain any special characters'))
         elif len(subnet) > 20:
             raise forms.ValidationError(_('The pool subnet must not exceed 20 characters'))

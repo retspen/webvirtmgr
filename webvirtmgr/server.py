@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # Utility functions used for guest installation
 #
 
@@ -45,29 +43,25 @@ def get_xml_path(xml, path=None, func=None):
             ctx.xpathFreeContext()
     return result
 
-def network_size(subnet, dhcp=None):
+
+def network_size(net, dhcp=None):
     """
 
-    Func return network size.
+    Func return gateway, mask and dhcp pool.
 
     """
-    netmask = IP(subnet).strNetmask()
-    ipaddr = IP(subnet)
-    gateway = ipaddr[0].strNormal()[-1]
-    if gateway == '0':
-        gw = ipaddr[1].strNormal()
-        dhcp_start = ipaddr[2].strNormal()
-        subnet_end = ipaddr.len() - 2
-        dhcp_end = ipaddr[subnet_end].strNormal()
+    mask = IP(net).strNetmask()
+    addr = IP(net)
+    if addr[0].strNormal()[-1] == '0':
+        gateway = addr[1].strNormal()
+        dhcp_pool = [addr[2].strNormal(), addr[addr.len() - 2].strNormal()]
     else:
-        gw = ipaddr[0].strNormal()
-        dhcp_start = ipaddr[1].strNormal()
-        subnet_end = ipaddr.len() - 2
-        dhcp_end = ipaddr[subnet_end].strNormal()
+        gateway = addr[0].strNormal()
+        dhcp_pool = [addr[1].strNormal(), addr[addr.len() - 2].strNormal()]
     if dhcp:
-        return gw, netmask, [dhcp_start, dhcp_end]
+        return gateway, mask, dhcp_pool
     else:
-        return gw, netmask, None
+        return gateway, mask, None
 
 
 class ConnServer(object):
@@ -110,7 +104,10 @@ class ConnServer(object):
         Return VM object.
 
         """
-        dom = self.conn.lookupByName(vname)
+        try:
+            dom = self.conn.lookupByName(vname)
+        except:
+            dom = None
         return dom
 
     def storagePool(self, storage):
@@ -119,7 +116,10 @@ class ConnServer(object):
         Return storage object.
 
         """
-        stg = self.conn.storagePoolLookupByName(storage)
+        try:
+            stg = self.conn.storagePoolLookupByName(storage)
+        except:
+            stg = None
         return stg
 
     def networkPool(self, network):
@@ -128,7 +128,10 @@ class ConnServer(object):
         Return network object.
 
         """
-        net = self.conn.networkLookupByName(network)
+        try:
+            net = self.conn.networkLookupByName(network)
+        except:
+            net = None
         return net
 
     def storageVol(self, volume, storage):
@@ -140,9 +143,9 @@ class ConnServer(object):
         stg = self.storagePool(storage)
         stg_type = get_xml_path(stg.XMLDesc(0), "/pool/@type")
         if stg_type == 'dir':
-            volume = volume + '.img'
-        vl = stg.storageVolLookupByName(volume)
-        return vl
+            volume += '.img'
+        stg_volume = stg.storageVolLookupByName(volume)
+        return stg_volume
 
     def storageVolPath(self, volume):
         """
@@ -150,8 +153,8 @@ class ConnServer(object):
         Return volume object by path.
 
         """
-        vl = self.conn.storageVolLookupByPath(volume)
-        return vl
+        stg_volume = self.conn.storageVolLookupByPath(volume)
+        return stg_volume
 
     def hard_accel_node(self):
         """
@@ -166,7 +169,7 @@ class ConnServer(object):
         else:
             return False
 
-    def add_vm(self, name, ram, vcpu, image, net, virtio, storages):
+    def add_vm(self, name, ram, cpu, image, net, virtio, storages):
         """
         Create VM function
 
@@ -230,7 +233,7 @@ class ConnServer(object):
                     <emulator>%s</emulator>
                     <disk type='file' device='disk'>
                       <driver name='qemu' type='%s'/>
-                      <source file='%s'/>""" % (dom_type, name, ram, vcpu, machine,
+                      <source file='%s'/>""" % (dom_type, name, ram, cpu, machine,
                                                 emulator, image_type, image)
 
         if virtio:
@@ -248,10 +251,10 @@ class ConnServer(object):
 
         if re.findall("br", net):
             xml += """<interface type='bridge'>
-                    <source bridge='%s'/>""" % (net)
+                    <source bridge='%s'/>""" % net
         else:
             xml += """<interface type='network'>
-                    <source network='%s'/>""" % (net)
+                    <source network='%s'/>""" % net
         if virtio:
             xml += """<model type='virtio'/>"""
 
@@ -394,7 +397,7 @@ class ConnServer(object):
         size = int(size) * 1073741824
         stg_type = get_xml_path(stg.XMLDesc(0), "/pool/@type")
         if stg_type == 'dir':
-            name = name + '.img'
+            name += '.img'
             alloc = 0
         else:
             alloc = size
@@ -418,7 +421,7 @@ class ConnServer(object):
         stg = self.storagePool(storage)
         stg_type = get_xml_path(stg.XMLDesc(0), "/pool/@type")
         if stg_type == 'dir':
-            new_img = new_img + '.img'
+            new_img += '.img'
         vol = stg.storageVolLookupByName(img)
         xml = """
             <volume>
@@ -459,8 +462,8 @@ class ConnServer(object):
             stg = self.storagePool(storage)
             for img in stg.listVolumes():
                 if vol == img:
-                    vl = stg.storageVolLookupByName(vol)
-                    return vl.path()
+                    stg_volume = stg.storageVolLookupByName(vol)
+                    return stg_volume.path()
 
     def storage_get_info(self, storage):
         """
@@ -469,16 +472,19 @@ class ConnServer(object):
 
         """
         stg = self.storagePool(storage)
-        if stg.info()[3] == 0:
-            percent = 0
+        if stg:
+            if stg.info()[3] == 0:
+                percent = 0
+            else:
+                percent = (stg.info()[2] * 100) / stg.info()[1]
+            info = stg.info()[1:4]
+            info.append(int(percent))
+            info.append(stg.isActive())
+            xml = stg.XMLDesc(0)
+            info.append(get_xml_path(xml, "/pool/@type"))
+            info.append(get_xml_path(xml, "/pool/target/path"))
         else:
-            percent = (stg.info()[2] * 100) / stg.info()[1]
-        info = stg.info()[1:4]
-        info.append(int(percent))
-        info.append(stg.isActive())
-        xml = stg.XMLDesc(0)
-        info.append(get_xml_path(xml, "/pool/@type"))
-        info.append(get_xml_path(xml, "/pool/target/path"))
+            info = [None] * 7
         return info
 
     def new_storage_pool(self, type_pool, name, source, target):
@@ -506,7 +512,7 @@ class ConnServer(object):
                   <target>
                        <path>%s</path>
                   </target>
-                </pool>""" % (target)
+                </pool>""" % target
         self.conn.storagePoolDefineXML(xml, 0)
         stg = self.storagePool(name)
         if type_pool == 'logical':
@@ -521,16 +527,16 @@ class ConnServer(object):
 
         """
         stg = self.storagePool(storage)
-        volinfo = {}
+        volume_info = {}
         for name in stg.listVolumes():
             vol = stg.storageVolLookupByName(name)
             xml = vol.XMLDesc(0)
             size = vol.info()[1]
-            format = get_xml_path(xml, "/volume/target/format/@type")
-            volinfo[name] = size, format
-        return volinfo
+            volume_format = get_xml_path(xml, "/volume/target/format/@type")
+            volume_info[name] = size, volume_format
+        return volume_info
 
-    def new_network_pool(self, name, forward, gw, netmask, dhcp=None):
+    def new_network_pool(self, name, forward, gateway, mask, dhcp=None):
         """
 
         Function create network pool.
@@ -538,13 +544,13 @@ class ConnServer(object):
         """
         xml = """
             <network>
-                <name>%s</name>""" % (name)
+                <name>%s</name>""" % name
 
         if forward == "nat" or "route":
-            xml += """<forward mode='%s'/>""" % (forward)
+            xml += """<forward mode='%s'/>""" % forward
 
         xml += """<bridge stp='on' delay='0' />
-                    <ip address='%s' netmask='%s'>""" % (gw, netmask)
+                    <ip address='%s' netmask='%s'>""" % (gateway, mask)
 
         if dhcp:
             xml += """<dhcp>
@@ -566,8 +572,11 @@ class ConnServer(object):
         """
         info = []
         net = self.networkPool(network)
-        info.append(net.isActive())
-        info.append(net.bridgeName())
+        if net:
+            info.append(net.isActive())
+            info.append(net.bridgeName())
+        else:
+            info = [None] * 2
         return info
 
     def network_get_subnet(self, network):
@@ -580,34 +589,34 @@ class ConnServer(object):
         xml_net = net.XMLDesc(0)
         ipv4 = []
 
-        fw = get_xml_path(xml_net, "/network/forward/@mode")
-        forwardDev = get_xml_path(xml_net, "/network/forward/@dev")
+        fw_type = get_xml_path(xml_net, "/network/forward/@mode")
+        fw_dev = get_xml_path(xml_net, "/network/forward/@dev")
 
-        if fw:
-            ipv4.append([fw, forwardDev])
+        if fw_type:
+            ipv4.append([fw_type, fw_dev])
         else:
             ipv4.append(None)
 
         # Subnet block
-        addrStr = get_xml_path(xml_net, "/network/ip/@address")
-        netmaskStr = get_xml_path(xml_net, "/network/ip/@netmask")
+        addr_str = get_xml_path(xml_net, "/network/ip/@address")
+        mask_str = get_xml_path(xml_net, "/network/ip/@netmask")
 
-        if addrStr and netmaskStr:
-            netmask = IP(netmaskStr)
-            gateway = IP(addrStr)
+        if addr_str and mask_str:
+            netmask = IP(mask_str)
+            gateway = IP(addr_str)
             network = IP(gateway.int() & netmask.int())
-            ipv4.append(IP(str(network) + "/" + netmaskStr))
+            ipv4.append(IP(str(network) + "/" + mask_str))
         else:
             ipv4.append(None)
 
         # DHCP block
-        dhcpstart = get_xml_path(xml_net, "/network/ip/dhcp/range[1]/@start")
-        dhcpend = get_xml_path(xml_net, "/network/ip/dhcp/range[1]/@end")
+        dhcp_start = get_xml_path(xml_net, "/network/ip/dhcp/range[1]/@start")
+        dhcp_end = get_xml_path(xml_net, "/network/ip/dhcp/range[1]/@end")
 
-        if not dhcpstart or not dhcpend:
+        if not dhcp_start or not dhcp_end:
             pass
         else:
-            ipv4.append([IP(dhcpstart), IP(dhcpend)])
+            ipv4.append([IP(dhcp_start), IP(dhcp_end)])
         return ipv4
 
     def snapshots_get_node(self):
@@ -679,7 +688,7 @@ class ConnServer(object):
         """
         storages = self.storages_get_node()
         dom = self.lookupVM(vname)
-        image = image + '.iso'
+        image += '.iso'
 
         for storage in storages:
             stg = self.storagePool(storage)
@@ -699,7 +708,8 @@ class ConnServer(object):
                         vol = stg.storageVolLookupByName(image)
                         xml = dom.XMLDesc(0)
                         newxml = "<disk type='file' device='cdrom'>\n      <driver name='qemu' type='raw'/>\n      <source file='%s'/>" % vol.path()
-                        xmldom = xml.replace("<disk type='file' device='cdrom'>\n      <driver name='qemu' type='raw'/>", newxml)
+                        xmldom = xml.replace(
+                            "<disk type='file' device='cdrom'>\n      <driver name='qemu' type='raw'/>", newxml)
                         self.conn.defineXML(xmldom)
 
     def vds_umount_iso(self, vname, image):
@@ -708,10 +718,7 @@ class ConnServer(object):
         Function umount iso image on vds. Changes on XML config.
 
         """
-        #storages = self.storages_get_node()
         dom = self.lookupVM(vname)
-        #image = image + '.iso'
-
         if dom.info()[0] == 1:
             xml = """<disk type='file' device='cdrom'>
                          <driver name="qemu" type='raw'/>
@@ -722,11 +729,6 @@ class ConnServer(object):
             xmldom = dom.XMLDesc(0)
             self.conn.defineXML(xmldom)
         if dom.info()[0] == 5:
-            # for storage in storages:
-            #     stg = self.storagePool(storage)
-                # for img in stg.listVolumes():
-                #     if image == img:
-                #         vol = stg.storageVolLookupByName(image)
             xml = dom.XMLDesc(0)
             xmldom = xml.replace("<source file='%s'/>\n" % image, '')
             self.conn.defineXML(xmldom)
@@ -744,7 +746,7 @@ class ConnServer(object):
             time.sleep(1)
             cpu_use_now = dom.info()[4]
             diff_usage = cpu_use_now - cpu_use_ago
-            cpu_usage = 100 * diff_usage / (1 * nbcore * 10**9L)
+            cpu_usage = 100 * diff_usage / (1 * nbcore * 10 ** 9L)
         else:
             cpu_usage = 0
         return cpu_usage
@@ -850,13 +852,13 @@ class ConnServer(object):
         """
         dom = self.lookupVM(vname)
         xml = dom.XMLDesc(0)
-        find_tag = re.findall('\<graphics.*\/\>', xml)
+        find_tag = re.findall('<graphics.*/>', xml)
         if find_tag:
             close_tag = '/'
         else:
             close_tag = ''
         newxml = "<graphics type='vnc' passwd='%s'%s>" % (passwd, close_tag)
-        xmldom = re.sub('\<graphics.*\>', newxml, xml)
+        xmldom = re.sub('<graphics.*>', newxml, xml)
         self.conn.defineXML(xmldom)
 
     def vds_edit(self, vname, description, ram, vcpu):
@@ -869,13 +871,13 @@ class ConnServer(object):
         xml = dom.XMLDesc(0)
         memory = int(ram) * 1024
         xml_memory = "<memory unit='KiB'>%s</memory>" % memory
-        xml_memory_change = re.sub('\<memory.*memory\>', xml_memory, xml)
+        xml_memory_change = re.sub('<memory.*memory>', xml_memory, xml)
         xml_curmemory = "<currentMemory unit='KiB'>%s</currentMemory>" % memory
-        xml_curmemory_change = re.sub('\<currentMemory.*currentMemory\>', xml_curmemory, xml_memory_change)
+        xml_curmemory_change = re.sub('<currentMemory.*currentMemory>', xml_curmemory, xml_memory_change)
         xml_vcpu = "<vcpu>%s</vcpu>" % vcpu
-        xml_vcpu_change = re.sub('\<vcpu.*vcpu\>', xml_vcpu, xml_curmemory_change)
+        xml_vcpu_change = re.sub('<vcpu.*vcpu>', xml_vcpu, xml_curmemory_change)
         xml_description = "<description>%s</description>" % description
-        xml_description_change = re.sub('\<description.*description\>', xml_description, xml_vcpu_change)
+        xml_description_change = re.sub('<description.*description>', xml_description, xml_vcpu_change)
         self.conn.defineXML(xml_description_change)
 
     def get_all_media(self):

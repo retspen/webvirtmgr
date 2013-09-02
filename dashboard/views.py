@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
@@ -9,7 +7,7 @@ from webvirtmgr.server import ConnServer
 from dashboard.forms import HostAddTcpForm, HostAddSshForm
 
 
-def SortHosts(hosts):
+def sort_host(hosts):
     """
 
     Sorts dictionary of hosts by key
@@ -46,55 +44,66 @@ def dashboard(request):
     def get_hosts_status(hosts):
         """
 
-        :param hosts:
-        :return:
+        Function return all hosts all vds on host
+
         """
         all_hosts = {}
         for host in hosts:
             try:
                 import socket
-                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                s.settimeout(1)
+                socket_host = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                socket_host.settimeout(1)
                 if host.type == 'ssh':
-                    s.connect((host.hostname, host.port))
+                    socket_host.connect((host.hostname, host.port))
                 else:
-                    s.connect((host.hostname, 16509))
-                s.close()
+                    socket_host.connect((host.hostname, 16509))
+                socket_host.close()
                 status = 1
-            except Exception as err:
+            except socket as err:
                 status = err
             all_hosts[host.id] = (host.name, host.hostname, status)
         return all_hosts
 
     hosts = Host.objects.filter()
     hosts_info = get_hosts_status(hosts)
+    form = None
 
     if request.method == 'POST':
         if 'host_del' in request.POST:
             del_host = Host.objects.get(id=request.POST.get('host_id', ''))
-            hostname = del_host.hostname
             del_host.delete()
             return HttpResponseRedirect(request.get_full_path())
         if 'host_tcp_add' in request.POST:
             form = HostAddTcpForm(request.POST)
             if form.is_valid():
                 data = form.cleaned_data
-                new_host = Host(name=data['name'], hostname=data['hostname'], type='tcp',
-                                login=data['login'], password=data['password1'])
+                new_host = Host(name=data['name'],
+                                hostname=data['hostname'],
+                                type='tcp',
+                                login=data['login'],
+                                password=data['password1']
+                                )
                 new_host.save()
                 return HttpResponseRedirect(request.get_full_path())
         if 'host_ssh_add' in request.POST:
             form = HostAddSshForm(request.POST)
             if form.is_valid():
                 data = form.cleaned_data
-                new_host = Host(name=data['name'], hostname=data['hostname'], type='ssh',
-                                port=data['port'], login=login)
+                new_host = Host(name=data['name'],
+                                hostname=data['hostname'],
+                                type='ssh',
+                                port=data['port'],
+                                login=data['login']
+                                )
                 new_host.save()
                 return HttpResponseRedirect(request.get_full_path())
 
-    hosts_info = SortHosts(hosts_info)
+    hosts_info = sort_host(hosts_info)
 
-    return render_to_response('dashboard.html', locals(), context_instance=RequestContext(request))
+    return render_to_response('dashboard.html', {'hosts_info': hosts_info,
+                                                 'form': form,
+                                                 },
+                              context_instance=RequestContext(request))
 
 
 def infrastructure(request):
@@ -112,15 +121,15 @@ def infrastructure(request):
     for host in hosts:
         try:
             import socket
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.settimeout(1)
+            socket_host = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            socket_host.settimeout(1)
             if host.type == 'ssh':
-                s.connect((host.hostname, host.port))
+                socket_host.connect((host.hostname, host.port))
             else:
-                s.connect((host.hostname, 16509))
-            s.close()
+                socket_host.connect((host.hostname, 16509))
+            socket_host.close()
             status = 1
-        except Exception as err:
+        except socket:
             status = 2
 
         if status == 1:
@@ -132,11 +141,16 @@ def infrastructure(request):
             hosts_vms[host.id, host.name, status, None, None, None] = None
 
     for host in hosts_vms:
-        hosts_vms[host] = SortHosts(hosts_vms[host])
-    hosts_vms = SortHosts(hosts_vms)
+        hosts_vms[host] = sort_host(hosts_vms[host])
+    hosts_vms = sort_host(hosts_vms)
 
-    return render_to_response('infrastructure.html', locals(), context_instance=RequestContext(request))
+    return render_to_response('infrastructure.html', {'hosts_info': host_info,
+                                                      'host_mem': host_mem,
+                                                      'hosts_vms': hosts_vms,
+                                                      'hosts': hosts
+                                                      },
+                              context_instance=RequestContext(request))
 
 
 def page_setup(request):
-    return render_to_response('setup.html', locals(), context_instance=RequestContext(request))
+    return render_to_response('setup.html', {}, context_instance=RequestContext(request))

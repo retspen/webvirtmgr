@@ -1,24 +1,23 @@
 {% load i18n %}
-{% load tags_active %}
         <div class="col-md-3">
             <div class="bs-sidebar hidden-print affix" role="complementary">
                 <ul class="nav bs-sidenav">
                     <li>
                         <a href="#"><span class="glyphicon glyphicon-wrench"></span> <strong>{% trans "Server Settings" %}</strong></a>
                         <ul class="nav">
-                            <li {% active request "^/overview" %}>
+                            <li>
                                 <a href="{% url 'overview' host_id %}"><span class="glyphicon glyphicon-info-sign"></span> {% trans "Overview" %}</a>
                             </li>
-                            <li {% active request "^/newvm" %}>
-                                <a href="{% url 'newvm' host_id %}"><span class="glyphicon glyphicon-plus"></span> {% trans "Create VM" %}</a>
+                            <li>
+                                <a href="{% url 'create' host_id %}"><span class="glyphicon glyphicon-plus"></span> {% trans "Create VM" %}</a>
                             </li>
-                            <li {% active request "^/storage" %}>
+                            <li>
                                 <a href="{% url 'storage' host_id %}"><span class="glyphicon glyphicon-hdd"></span> {% trans "Storage pool" %}</a>
                             </li>
-                            <li {% active request "^/network" %}>
+                            <li>
                                 <a href="{% url 'network' host_id %}"><span class="glyphicon glyphicon-globe"></span> {% trans "Network pool" %}</a>
                             </li>
-                            <li {% active request "^/snapshot" %}>
+                            <li>
                                 <a href="{% url 'snapshot' host_id %}"><span class="glyphicon glyphicon-camera"></span> {% trans "Snapshots" %}</a>
                             </li>
                         </ul>
@@ -28,7 +27,7 @@
                         <ul class="nav">
                             {% if not all_vm %}
                                 <li>
-                                    <a href="{% url 'newvm' host_id %}"><span class="glyphicon glyphicon-plus"></span> {% trans "Create VM" %}</a>
+                                    <a href="{% url 'create' host_id %}"><span class="glyphicon glyphicon-plus"></span> {% trans "Create VM" %}</a>
                                 </li>
                             {% else %}
                                 {% if not snapshot_page %}

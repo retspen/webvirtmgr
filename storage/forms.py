@@ -5,39 +5,39 @@ import re
 
 class AddStgPool(forms.Form):
     name = forms.CharField(max_length=20)
-    type = forms.CharField(max_length=10)
+    storage_type = forms.CharField(max_length=10)
     target = forms.CharField(max_length=100, required=False)
     source = forms.CharField(max_length=100, required=False)
 
     def clean_name(self):
         name = self.cleaned_data['name']
-        have_simbol = re.search('[^a-zA-Z0-9_\-\.]+', name)
-        if have_simbol:
+        have_symbol = re.search('[a-zA-Z0-9._-]+', name)
+        if have_symbol:
             raise forms.ValidationError(_('The pool name must not contain any special characters'))
         elif len(name) > 20:
             raise forms.ValidationError(_('The pool name must not exceed 20 characters'))
         return name
 
     def clean_target(self):
-        type = self.cleaned_data['type']
+        storage_type = self.cleaned_data['type']
         target = self.cleaned_data['target']
-        have_simbol = re.search('[^a-zA-Z0-9\/]+', target)
-        if have_simbol:
+        have_symbol = re.search('[a-zA-Z0-9/]+', target)
+        if have_symbol:
             raise forms.ValidationError(_('The type must not contain any special characters'))
-        if type == 'dir':
-           if not target:
-               raise forms.ValidationError(_('No path has been entered'))
+        if storage_type == 'dir':
+            if not target:
+                raise forms.ValidationError(_('No path has been entered'))
         return target
 
     def clean_source(self):
-        type = self.cleaned_data['type']
+        storage_type = self.cleaned_data['type']
         source = self.cleaned_data['source']
-        have_simbol = re.search('[^a-zA-Z0-9\/]+', source)
-        if have_simbol:
+        have_symbol = re.search('[a-zA-Z0-9/]+', source)
+        if have_symbol:
             raise forms.ValidationError(_('The type must not contain any special characters'))
-        if type == 'logical':
-           if not source:
-               raise forms.ValidationError(_('No device has been entered'))
+        if storage_type == 'logical':
+            if not source:
+                raise forms.ValidationError(_('No device has been entered'))
         return source
 
 
@@ -47,8 +47,8 @@ class AddImage(forms.Form):
 
     def clean_name(self):
         name = self.cleaned_data['name']
-        have_simbol = re.search('[^a-zA-Z0-9\_\-\.]+', name)
-        if have_simbol:
+        have_symbol = re.search('[a-zA-Z0-9._-]+', name)
+        if have_symbol:
             raise forms.ValidationError(_('The image name must not contain any special characters'))
         elif len(name) > 20:
             raise forms.ValidationError(_('The image name must not exceed 20 characters'))
@@ -61,8 +61,8 @@ class CloneImage(forms.Form):
 
     def clean_name(self):
         name = self.cleaned_data['name']
-        have_simbol = re.search('[^a-zA-Z0-9\_\-\.]+', name)
-        if have_simbol:
+        have_symbol = re.search('[a-zA-Z0-9._-]+', name)
+        if have_symbol:
             raise forms.ValidationError(_('The image name must not contain any special characters'))
         elif len(name) > 20:
             raise forms.ValidationError(_('The image name must not exceed 20 characters'))

@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import patterns, url
 from django.conf import settings
 
 urlpatterns = patterns('',
@@ -9,7 +9,7 @@ urlpatterns = patterns('',
     url(r'^setup/$', 'dashboard.views.page_setup', name='page_setup'),
     url(r'^infrastructure/$', 'dashboard.views.infrastructure', name='infrastructure'),
     url(r'^overview/(\d+)/$', 'overview.views.overview', name='overview'),
-    url(r'^newvm/(\d+)/$', 'newvm.views.newvm', name='newvm'),
+    url(r'^create/(\d+)/$', 'newvm.views.create', name='create'),
     url(r'^storage/(\d+)/$', 'storage.views.storage', {'pool': None}, name='storage'),
     url(r'^storage/(\d+)/([\w\-\.]+)/$', 'storage.views.storage', name='storage'),
     url(r'^network/(\d+)/$', 'network.views.network', {'pool': None}, name='network'),

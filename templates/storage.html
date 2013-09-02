@@ -27,7 +27,7 @@
                 <a href="#AddIsoPool" class="btn btn-success" data-toggle="modal">{% trans "Add ISO Pool" %}</a>
             </div>
             {% ifequal pool 'add' %}
-                {% if not errors %}
+                {% if not errors and not storages %}
                     <div class="well">
                         <h4>{% trans "You do not have any storages" %}</h4>
                     </div>

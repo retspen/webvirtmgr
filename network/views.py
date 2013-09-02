@@ -1,12 +1,10 @@
-# -*- coding: utf-8 -*-
-
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from instance.models import Host
 from network.forms import AddNetPool
-from dashboard.views import SortHosts
+from dashboard.views import sort_host
 from webvirtmgr.server import ConnServer, network_size
 from libvirt import libvirtError
 
@@ -20,6 +18,8 @@ def network(request, host_id, pool):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
+    errors = []
+    form = None
     host = Host.objects.get(id=host_id)
 
     try:
@@ -38,52 +38,61 @@ def network(request, host_id, pool):
             else:
                 return HttpResponseRedirect('/network/%s/%s/' % (host_id, networks.keys()[0]))
 
-        if pool == 'add':
-            if request.method == 'POST':
-                if 'pool_add' in request.POST:
-                    form = AddNetPool(request.POST)
-                    if form.is_valid():
-                        errors = []
-                        data = form.cleaned_data
-                        if data['name'] in networks.keys():
-                            msg = _("Pool name already in use")
-                            errors.append(msg)
-                        try:
-                            gateway, netmask, dhcp = network_size(data['subnet'], data['dhcp'])
-                        except:
-                            msg = _("Input subnet pool error")
-                            errors.append(msg)
-                        if not errors:
-                            try:
-                                conn.new_network_pool(data['name'], data['forward'], gateway, netmask, dhcp)
-                                return HttpResponseRedirect('/network/%s/%s/' % (host_id, data['name']))
-                            except libvirtError as e:
-                                errors.append(e.message)
+        all_vm = sort_host(conn.vds_get_node())
+        info = conn.network_get_info(pool)
+
+        if info[0]:
+            ipv4_net = conn.network_get_subnet(pool)
         else:
-            all_vm = SortHosts(conn.vds_get_node())
-            info = conn.network_get_info(pool)
-            if info[0]:
-                ipv4_net = conn.network_get_subnet(pool)
-            if request.method == 'POST':
-                net = conn.networkPool(pool)
-                if 'start' in request.POST:
+            ipv4_net = None
+
+        if request.method == 'POST':
+            if 'pool_add' in request.POST:
+                form = AddNetPool(request.POST)
+                if form.is_valid():
+                    data = form.cleaned_data
+                    if data['name'] in networks.keys():
+                        msg = _("Pool name already in use")
+                        errors.append(msg)
                     try:
-                        net.create()
-                        return HttpResponseRedirect(request.get_full_path())
-                    except libvirtError as error_msg:
-                        errors.append(error_msg.message)
-                if 'stop' in request.POST:
-                    try:
-                        net.destroy()
-                        return HttpResponseRedirect(request.get_full_path())
-                    except libvirtError as error_msg:
-                        errors.append(error_msg.message)
-                if 'delete' in request.POST:
-                    try:
-                        net.undefine()
-                        return HttpResponseRedirect('/network/%s/' % host_id)
-                    except libvirtError as error_msg:
-                        errors.append(error_msg.message)
+                        gateway, netmask, dhcp = network_size(data['subnet'], data['dhcp'])
+                    except:
+                        msg = _("Input subnet pool error")
+                        errors.append(msg)
+                    if not errors:
+                        try:
+                            conn.new_network_pool(data['name'], data['forward'], gateway, netmask, dhcp)
+                            return HttpResponseRedirect('/network/%s/%s/' % (host_id, data['name']))
+                        except libvirtError as e:
+                            errors.append(e.message)
+            net = conn.networkPool(pool)
+            if 'start' in request.POST:
+                try:
+                    net.create()
+                    return HttpResponseRedirect(request.get_full_path())
+                except libvirtError as error_msg:
+                    errors.append(error_msg.message)
+            if 'stop' in request.POST:
+                try:
+                    net.destroy()
+                    return HttpResponseRedirect(request.get_full_path())
+                except libvirtError as error_msg:
+                    errors.append(error_msg.message)
+            if 'delete' in request.POST:
+                try:
+                    net.undefine()
+                    return HttpResponseRedirect('/network/%s/' % host_id)
+                except libvirtError as error_msg:
+                    errors.append(error_msg.message)
         conn.close()
 
-    return render_to_response('network.html', locals(), context_instance=RequestContext(request))
+    return render_to_response('network.html', {'host_id': host_id,
+                                               'errors': errors,
+                                               'form': form,
+                                               'networks': networks,
+                                               'pool': pool,
+                                               'all_vm': all_vm,
+                                               'info': info,
+                                               'ipv4_net': ipv4_net
+                                               },
+                              context_instance=RequestContext(request))

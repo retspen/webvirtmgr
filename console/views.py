@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
@@ -35,12 +33,18 @@ def console(request, host_id, vname):
             socket_port = 6080
             socket_host = request.get_host()
             if ':' in socket_host:
-                socket_host = re.sub('\:[0-9]+', '', socket_host)
+                socket_host = re.sub(':[0-9]+', '', socket_host)
         except:
             instance = None
 
         conn.close()
 
-    response = render_to_response('console.html', locals(), context_instance=RequestContext(request))
+    response = render_to_response('console.html', {'vnc_port': vnc_port,
+                                                   'socket_port': socket_port,
+                                                   'socket_host': socket_host,
+                                                   'instance': instance,
+                                                   'errors': errors
+                                                   },
+                                  context_instance=RequestContext(request))
     response.set_cookie('token', vname)
     return response

@@ -26,60 +26,58 @@
                 <a href="#AddNetPool" class="btn btn-success" data-toggle="modal">{% trans "Add Pool" %}</a>
             </div>
             {% ifequal pool 'add' %}
-                {% if not errors %}
+                {% if not errors and not networks %}
                     <div class="well">
-                        <h4>{% trans "You do not have any storages" %}</h4>
+                        <h4>{% trans "You do not have any virtual networks" %}</h4>
                     </div>
                 {% endif %}
             {% endifequal %}
 
-            {% if info %}
-                {% if networks %}
-                    <div class="row show-grid">
-                        <div class="col-md-6">
-                            <p>{% trans "Pool name" %}</p>
-                            <p>{% trans "Device pool" %}</p>
-                            <p>{% trans "State" %}</p>
-                        </div>
-                        <div class="col-md-6">
-                            <p>[{% for key, value in networks.items %} {% ifequal key pool %}<b>{{ pool }}</b>{% else %}<a href="{% url 'network' host_id key %}">{{ key }}</a>{% endifequal %}{% endfor %} ]</p>
-                            <p>{{ info.1 }}</p>
-                            <form action="{% url 'network' host_id pool %}" method="post">{% csrf_token %}
-                                {% ifequal info.0 0 %}
-                                    <input type="submit" class="btn btn-primary" name="start" value="{% trans "Start" %}">
-                                    <input type="submit" class="btn btn-danger" name="delete" value="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
-                                {% else %}
-                                    <input type="submit" class="btn btn-primary" name="stop" value="{% trans "Stop" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
-                                {% endifequal %}
-                            </form>
-                        </div>
+            {% if info.1 %}
+                <div class="row show-grid">
+                    <div class="col-md-6">
+                        <p>{% trans "Pool name" %}</p>
+                        <p>{% trans "Device pool" %}</p>
+                        <p>{% trans "State" %}</p>
                     </div>
-                    <h3>{% trans "IPv4 configuration" %}</h3>
-                    <hr>
-                    <div class="row show-grid">
-                        <div class="col-md-6">
-                            <p>{% trans "Type forwarding" %}</p>
-                            <p>{% trans "Subnet pool" %}</p>
-                            {% if info.0 %}
-                                <p>{% trans "DHCP" %}</p>
-                            {% endif %}
-                            {% if ipv4_net.2 %}
-                                <p>{% trans "Start" %}</p>
-                                <p>{% trans "End" %}</p>
-                            {% endif %}
-                        </div>
-                        <div class="col-md-6">
-                            <p>{% ifequal ipv4_net.0.0 'nat' %} {% trans "NAT" %} {% endifequal %} {% ifequal ipv4_net.0.0 'route' %} {% trans "ROUTE" %} {% endifequal %} {% if not ipv4_net.0.0 %} {% trans "ISOLATE" %} {% endif %}</p>
-                            <p>{{ ipv4_net.1 }}</p>
-                            <p>{% if ipv4_net.2 %}<span class="text-success">{% trans "ON" %}</span>{% else %}<span class="text-danger">{% trans "OFF" %}</span>{% endif %}</p>
-                            {% if ipv4_net.2 %}
-                                {% for dhcp in ipv4_net.2 %}
-                                    <p>{{ dhcp }}</p>
-                                {% endfor %}
-                            {% endif %}
-                        </div>
+                    <div class="col-md-6">
+                        <p>[{% for key, value in networks.items %} {% ifequal key pool %}<b>{{ pool }}</b>{% else %}<a href="{% url 'network' host_id key %}">{{ key }}</a>{% endifequal %}{% endfor %} ]</p>
+                        <p>{{ info.1 }}</p>
+                        <form action="{% url 'network' host_id pool %}" method="post">{% csrf_token %}
+                            {% ifequal info.0 0 %}
+                                <input type="submit" class="btn btn-primary" name="start" value="{% trans "Start" %}">
+                                <input type="submit" class="btn btn-danger" name="delete" value="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
+                            {% else %}
+                                <input type="submit" class="btn btn-primary" name="stop" value="{% trans "Stop" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
+                            {% endifequal %}
+                        </form>
                     </div>
-                {% endif %}
+                </div>
+                <h3>{% trans "IPv4 configuration" %}</h3>
+                <hr>
+                <div class="row show-grid">
+                    <div class="col-md-6">
+                        <p>{% trans "Type forwarding" %}</p>
+                        <p>{% trans "Subnet pool" %}</p>
+                        {% if info.0 %}
+                            <p>{% trans "DHCP" %}</p>
+                        {% endif %}
+                        {% if ipv4_net.2 %}
+                            <p>{% trans "Start" %}</p>
+                            <p>{% trans "End" %}</p>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <p>{% ifequal ipv4_net.0.0 'nat' %} {% trans "NAT" %} {% endifequal %} {% ifequal ipv4_net.0.0 'route' %} {% trans "ROUTE" %} {% endifequal %} {% if not ipv4_net.0.0 %} {% trans "ISOLATE" %} {% endif %}</p>
+                        <p>{{ ipv4_net.1 }}</p>
+                        <p>{% if ipv4_net.2 %}<span class="text-success">{% trans "ON" %}</span>{% else %}<span class="text-danger">{% trans "OFF" %}</span>{% endif %}</p>
+                        {% if ipv4_net.2 %}
+                            {% for dhcp in ipv4_net.2 %}
+                                <p>{{ dhcp }}</p>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
             {% endif %}
         </div>
     </div>

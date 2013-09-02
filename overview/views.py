@@ -1,11 +1,9 @@
-# -*- coding: utf-8 -*-
-
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from instance.models import Host
-from dashboard.views import SortHosts
+from dashboard.views import sort_host
 from webvirtmgr.server import ConnServer
 from libvirt import libvirtError
 from webvirtmgr.settings import TIME_JS_REFRESH
@@ -73,9 +71,9 @@ def overview(request, host_id):
             msg = _('Your CPU doesn\'t support hardware virtualization')
             errors.append(msg)
 
-        all_vm = SortHosts(conn.vds_get_node())
+        all_vm = sort_host(conn.vds_get_node())
         hostname, arch, cpus, cpu_model, type_conn, libvirt_ver = conn.node_get_info()
-        all_mem, mem_usage, mem_perc = conn.memory_get_usage()
+        all_mem, mem_usage, mem_percent = conn.memory_get_usage()
         cpu_usage = conn.cpu_get_usage()
 
         if request.method == 'POST':
@@ -114,4 +112,13 @@ def overview(request, host_id):
 
         conn.close()
 
-    return render_to_response('overview.html', locals(), context_instance=RequestContext(request))
+    return render_to_response('overview.html', {'host_id': host_id,
+                                                'errors': errors,
+                                                'time_refresh': time_refresh,
+                                                'all_vm': all_vm,
+                                                'hostname': hostname,
+                                                'arch': arch, 'cpus': cpus, 'cpu_model': cpu_model, 'cpu_usage': cpu_usage,
+                                                'type_conn': type_conn, 'libvirt_ver': libvirt_ver,
+                                                'all_mem': all_mem, 'mem_usage': mem_usage, 'mem_percent': mem_percent
+                                                },
+                              context_instance=RequestContext(request))

@@ -20,8 +20,8 @@ class HostAddTcpForm(forms.Form):
 
     def clean_name(self):
         name = self.cleaned_data['name']
-        have_simbol = re.search('[^a-zA-Z0-9_\-\.]+', name)
-        if have_simbol:
+        have_symbol = re.search('[a-zA-Z0-9._-]+', name)
+        if have_symbol:
             raise forms.ValidationError(_('The host name must not contain any special characters'))
         elif len(name) > 20:
             raise forms.ValidationError(_('The host name must not exceed 20 characters'))
@@ -33,10 +33,10 @@ class HostAddTcpForm(forms.Form):
 
     def clean_hostname(self):
         hostname = self.cleaned_data['hostname']
-        have_simbol = re.search('[^a-z0-9\.\-]+', hostname)
-        domain = re.search('[\.]+', hostname)
-        wrong_ip = re.search('^0\.|^255\.', hostname)
-        if have_simbol or not domain:
+        have_symbol = re.search('[a-zA-Z0-9._-]+', hostname)
+        domain = re.search('[.]+', hostname)
+        wrong_ip = re.search('^0.|^255.', hostname)
+        if have_symbol or not domain:
             raise forms.ValidationError(_('Hostname must contain only numbers, or the domain name separated by "."'))
         elif wrong_ip:
             raise forms.ValidationError(_('Wrong IP address'))
@@ -55,8 +55,8 @@ class HostAddSshForm(forms.Form):
 
     def clean_name(self):
         name = self.cleaned_data['name']
-        have_simbol = re.search('[^a-zA-Z0-9_\-\.]+', name)
-        if have_simbol:
+        have_symbol = re.search('[a-zA-Z0-9._-]+', name)
+        if have_symbol:
             raise forms.ValidationError(_('The name of the host must not contain any special characters'))
         elif len(name) > 20:
             raise forms.ValidationError(_('The name of the host must not exceed 20 characters'))
@@ -68,10 +68,10 @@ class HostAddSshForm(forms.Form):
 
     def clean_hostname(self):
         hostname = self.cleaned_data['hostname']
-        have_simbol = re.search('[^a-z0-9\.\-]+', hostname)
-        domain = re.search('[\.]+', hostname)
-        wrong_ip = re.search('^0\.|^255\.', hostname)
-        if have_simbol or not domain:
+        have_symbol = re.search('[a-zA-Z0-9._-]+', hostname)
+        domain = re.search('[.]+', hostname)
+        wrong_ip = re.search('^0.|^255.', hostname)
+        if have_symbol or not domain:
             raise forms.ValidationError(_('Hostname must contain only numbers, or the domain name separated by "."'))
         elif wrong_ip:
             raise forms.ValidationError(_('Wrong IP address'))
