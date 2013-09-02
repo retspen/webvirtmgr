@@ -117,6 +117,8 @@ def infrastructure(request):
 
     hosts = Host.objects.filter().order_by('id')
     hosts_vms = {}
+    host_info = None
+    host_mem = None
 
     for host in hosts:
         try:

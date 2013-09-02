@@ -21,11 +21,7 @@
         <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
             <ul class="nav navbar-nav">
                 <li>
-                    {% if hosts or host %}
-                        <a href="{% url 'infrastructure' %}" title="{% trans "Show all host and vm's" %}">{% trans "Infrastructure" %}</a>
-                    {% else %}
-                        <a href="#" title="{% trans "Show all host and vm's" %}">{% trans "Infrastructure" %}</a>
-                    {% endif %}
+                    <a href="{% url 'infrastructure' %}" title="{% trans "Show all host and vm's" %}">{% trans "Infrastructure" %}</a>
                 </li>
                 <li>
                     <a href="{% url 'page_setup' %}" title="{% trans "Host server setup" %}">{% trans "Docs" %}</a>
