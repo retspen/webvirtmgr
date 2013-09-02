@@ -59,7 +59,7 @@ def dashboard(request):
                     socket_host.connect((host.hostname, 16509))
                 socket_host.close()
                 status = 1
-            except socket as err:
+            except Exception as err:
                 status = err
             all_hosts[host.id] = (host.name, host.hostname, status)
         return all_hosts
@@ -131,7 +131,7 @@ def infrastructure(request):
                 socket_host.connect((host.hostname, 16509))
             socket_host.close()
             status = 1
-        except socket:
+        except:
             status = 2
 
         if status == 1:
