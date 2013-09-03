@@ -1,6 +1,6 @@
 # WebVirtMgr panel - v3
 
-<code>Upgrade from v2 not support</code>
+Warning: Upgrade from v2 not support!!!
 
 * Move to Django-1.5.x
 * Move to Bootstrap-3.0
@@ -164,3 +164,7 @@ And then install and setup nginx for static files.
     $ git pull
 
 Support: support@webvirtmgr.net or <a href="https://github.com/retspen/webvirtmgr/issues">GitHub Issues</a>
+
+Powered by
+
+<img src=http://www.jetbrains.com/img/logos/pycharm_logo.gif>
