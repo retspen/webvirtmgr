@@ -16,10 +16,28 @@
                     </div>
                 {% endfor %}
             {% endif %}
-            {% if form.errors %}
+            {% if form.name.errors %}
                 <div class="alert alert-danger">
                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                    {{ form.errors }}
+                    {% for error in form.name.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% if form.target.errors %}
+                <div class="alert alert-danger">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    {% for error in form.target.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% if form.source.errors %}
+                <div class="alert alert-danger">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    {% for error in form.source.errors %}
+                        {{ error }}
+                    {% endfor %}
                 </div>
             {% endif %}
             <div class="block-btn">
@@ -197,8 +215,8 @@
                             <div class="form-group">
                                 <label class="col-lg-4 control-label">{% trans "Type" %}</label>
                                 <div class="col-lg-6">
-                                    <input type="text" class="form-control" name="type" value="dir" disabled>
-                                    <input type="hidden" name="type" value="dir">
+                                    <input type="text" class="form-control" name="stg_type" value="dir" disabled>
+                                    <input type="hidden" name="stg_type" value="dir">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -224,8 +242,8 @@
                             <div class="form-group">
                                 <label class="col-lg-4 control-label">{% trans "Type" %}</label>
                                 <div class="col-lg-6">
-                                    <input type="text" class="form-control" name="type" value="logical" disabled>
-                                    <input type="hidden" name="type" value="logical">
+                                    <input type="text" class="form-control" name="stg_type" value="logical" disabled>
+                                    <input type="hidden" name="stg_type" value="logical">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -265,7 +283,7 @@
                         <div class="col-lg-6">
                             <input type="text" class="form-control" name="name" value="iso" disabled>
                             <input type="hidden" name="name" value="iso">
-                            <input type="hidden" name="type" value="dir">
+                            <input type="hidden" name="stg_type" value="dir">
                         </div>
                     </div>
                     <div class="form-group">

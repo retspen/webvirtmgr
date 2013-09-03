@@ -64,7 +64,7 @@ def storage(request, host_id, pool):
                         errors.append(msg)
                     if not errors:
                         try:
-                            conn.new_storage_pool(data['type'], data['name'], data['source'], data['target'])
+                            conn.new_storage_pool(data['stg_type'], data['name'], data['source'], data['target'])
                             return HttpResponseRedirect('/storage/%s/%s/' % (host_id, data['name']))
                         except libvirtError as error_msg:
                             errors.append(error_msg.message)

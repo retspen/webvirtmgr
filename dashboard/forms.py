@@ -5,11 +5,16 @@ import re
 
 
 class HostAddTcpForm(forms.Form):
-    name = forms.CharField(max_length=20)
-    hostname = forms.CharField(max_length=100)
-    login = forms.CharField(max_length=20)
-    password1 = forms.CharField(max_length=20)
-    password2 = forms.CharField(max_length=20)
+    name = forms.CharField(error_messages={'required': _('No hostname has been entered')},
+                           max_length=20)
+    hostname = forms.CharField(error_messages={'required': _('No IP / Domain name has been entered')},
+                               max_length=100)
+    login = forms.CharField(error_messages={'required': _('No login has been entered')},
+                            max_length=20)
+    password1 = forms.CharField(error_messages={'required': _('No password has been entered')},
+                                max_length=20)
+    password2 = forms.CharField(error_messages={'required': _('No password confirm name has been entered')},
+                                max_length=20)
 
     def match_password(self):
         password1 = self.cleaned_data['password1']
@@ -20,7 +25,7 @@ class HostAddTcpForm(forms.Form):
 
     def clean_name(self):
         name = self.cleaned_data['name']
-        have_symbol = re.search('[a-zA-Z0-9._-]+', name)
+        have_symbol = re.match('[^a-zA-Z0-9._-]+', name)
         if have_symbol:
             raise forms.ValidationError(_('The host name must not contain any special characters'))
         elif len(name) > 20:
@@ -33,10 +38,9 @@ class HostAddTcpForm(forms.Form):
 
     def clean_hostname(self):
         hostname = self.cleaned_data['hostname']
-        have_symbol = re.search('[a-zA-Z0-9._-]+', hostname)
-        domain = re.search('[.]+', hostname)
-        wrong_ip = re.search('^0.|^255.', hostname)
-        if have_symbol or not domain:
+        have_symbol = re.match('[^a-z0-9.-]+', hostname)
+        wrong_ip = re.match('^0.|^255.', hostname)
+        if have_symbol:
             raise forms.ValidationError(_('Hostname must contain only numbers, or the domain name separated by "."'))
         elif wrong_ip:
             raise forms.ValidationError(_('Wrong IP address'))
@@ -48,14 +52,17 @@ class HostAddTcpForm(forms.Form):
 
 
 class HostAddSshForm(forms.Form):
-    name = forms.CharField(max_length=20)
-    hostname = forms.CharField(max_length=100)
-    login = forms.CharField(max_length=20)
-    port = forms.IntegerField()
+    name = forms.CharField(error_messages={'required': _('No hostname has been entered')},
+                           max_length=20)
+    hostname = forms.CharField(error_messages={'required': _('No IP / Domain name has been entered')},
+                               max_length=100)
+    login = forms.CharField(error_messages={'required': _('No login has been entered')},
+                            max_length=20)
+    port = forms.IntegerField(error_messages={'required': _('No SSH port has been entered')})
 
     def clean_name(self):
         name = self.cleaned_data['name']
-        have_symbol = re.search('[a-zA-Z0-9._-]+', name)
+        have_symbol = re.match('[^a-zA-Z0-9._-]+', name)
         if have_symbol:
             raise forms.ValidationError(_('The name of the host must not contain any special characters'))
         elif len(name) > 20:
@@ -68,10 +75,9 @@ class HostAddSshForm(forms.Form):
 
     def clean_hostname(self):
         hostname = self.cleaned_data['hostname']
-        have_symbol = re.search('[a-zA-Z0-9._-]+', hostname)
-        domain = re.search('[.]+', hostname)
-        wrong_ip = re.search('^0.|^255.', hostname)
-        if have_symbol or not domain:
+        have_symbol = re.match('[^a-zA-Z0-9._-]+', hostname)
+        wrong_ip = re.match('^0.|^255.', hostname)
+        if have_symbol:
             raise forms.ValidationError(_('Hostname must contain only numbers, or the domain name separated by "."'))
         elif wrong_ip:
             raise forms.ValidationError(_('Wrong IP address'))

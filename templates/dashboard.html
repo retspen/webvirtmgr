@@ -7,10 +7,44 @@
 {% endblock %}
 {% block content %}
     <div class="row">
-        {% if form.errors %}
+        {% if form.name.errors %}
             <div class="alert alert-danger">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                {{ form.errors }}
+                {% for error in form.name.errors  %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% if form.hostname.errors %}
+            <div class="alert alert-danger">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                {% for error in form.hostname.errors  %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% if form.login.errors %}
+            <div class="alert alert-danger">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                {% for error in form.login.errors  %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% if form.password1.errors or form.password2.errors %}
+            <div class="alert alert-danger">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                {% for error in form.password1.errors  %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% if form.port.errors %}
+            <div class="alert alert-danger">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                {% for error in form.port.errors  %}
+                    {{ error }}
+                {% endfor %}
             </div>
         {% endif %}
         <div class="col-md-12" role="main">

@@ -5,14 +5,19 @@ import re
 
 
 class FlavorAddForm(forms.Form):
-    name = forms.CharField(max_length=20)
-    vcpu = forms.IntegerField()
-    hdd = forms.IntegerField()
-    ram = forms.IntegerField()
+    name = forms.CharField(label="Name",
+                           error_messages={'required': _('No flavor name has been entered')},
+                           max_length=20)
+    vcpu = forms.IntegerField(label="VCPU",
+                              error_messages={'required': _('No VCPU has been entered')},)
+    hdd = forms.IntegerField(label="HDD",
+                             error_messages={'required': _('No HDD image has been entered')},)
+    ram = forms.IntegerField(label="RAM",
+                             error_messages={'required': _('No RAM size has been entered')},)
 
     def clean_name(self):
         name = self.cleaned_data['name']
-        have_symbol = re.search('[a-zA-Z0-9._-]+', name)
+        have_symbol = re.match('[^a-zA-Z0-9._-]+', name)
         if have_symbol:
             raise forms.ValidationError(_('The flavor name must not contain any special characters'))
         elif len(name) > 20:
@@ -25,11 +30,13 @@ class FlavorAddForm(forms.Form):
 
 
 class NewVMForm(forms.Form):
-    name = forms.CharField(max_length=20)
-    vcpu = forms.IntegerField()
+    name = forms.CharField(error_messages={'required': _('No Virtual Machine name has been entered')},
+                           max_length=20)
+    vcpu = forms.IntegerField(error_messages={'required': _('No VCPU has been entered')})
     hdd = forms.IntegerField(required=False)
-    ram = forms.IntegerField()
-    network = forms.CharField(max_length=20)
+    ram = forms.IntegerField(error_messages={'required': _('No RAM size has been entered')})
+    network = forms.CharField(error_messages={'required': _('No Network pool has been choice')},
+                              max_length=20)
     storage = forms.CharField(max_length=20, required=False)
     image = forms.CharField(max_length=20, required=False)
     hdd_size = forms.IntegerField(required=False)
@@ -37,7 +44,7 @@ class NewVMForm(forms.Form):
 
     def clean_name(self):
         name = self.cleaned_data['name']
-        have_symbol = re.search('[a-zA-Z0-9._-]+', name)
+        have_symbol = re.match('[^a-zA-Z0-9._-]+', name)
         if have_symbol:
             raise forms.ValidationError(_('The name of the virtual machine must not contain any special characters'))
         elif len(name) > 20:
