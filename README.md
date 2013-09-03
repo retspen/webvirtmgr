@@ -1,5 +1,7 @@
 # WebVirtMgr panel - v3
 
+<code>Upgrade from v2 not support</code>
+
 * Move to Django-1.5.x
 * Move to Bootstrap-3.0
 * Fix many bugs
