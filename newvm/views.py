@@ -45,9 +45,6 @@ def newvm(request, host_id):
         hdd_digits_size = [a for a in range(1, 601)]
         memory_range = ['128', '256', '512', '768', '1024', '2048', '4096', '8192', '16384']
 
-        if not all_networks:
-            msg = _("You haven't defined any virtual networks")
-            errors.append(msg)
         if not all_storages:
             msg = _("You haven't defined have any storage pools")
             errors.append(msg)

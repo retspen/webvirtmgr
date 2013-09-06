@@ -90,7 +90,7 @@
                           </div>
                           <div class="modal-footer">
                             <a href="#" class="btn" data-dismiss="modal">{% trans "Cancel" %}</a>
-                            {% if all_storages and all_networks %}
+                            {% if all_storages %}
                             <input type="submit" class="btn btn-success" name="newvm" value="{% trans "Submit" %}">
                             {% else %}
                             <a href="#" class="btn btn-success disabled">{% trans "Submit" %}</a>
@@ -184,7 +184,7 @@
                   </div>
                   <div class="modal-footer">
                     <a href="#" class="btn" data-dismiss="modal">{% trans "Cancel" %}</a>
-                    {% if all_storages and all_networks %}
+                    {% if all_storages %}
                     <input type="submit" class="btn btn-success" name="newvm" value="{% trans "Submit" %}">
                     {% else %}
                     <a href="#" class="btn btn-success disabled">{% trans "Submit" %}</a>
