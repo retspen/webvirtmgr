@@ -36,9 +36,6 @@ def create(request, host_id):
         all_storages = conn.storages_get_node()
         all_img = conn.images_get_storages(all_storages)
 
-        if not all_networks:
-            msg = _("You haven't defined any virtual networks")
-            errors.append(msg)
         if not all_storages:
             msg = _("You haven't defined have any storage pools")
             errors.append(msg)

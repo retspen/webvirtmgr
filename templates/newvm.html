@@ -127,7 +127,7 @@
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-                                                    {% if all_storages and all_networks %}
+                                                    {% if all_storages %}
                                                         <button type="submit" class="btn btn-primary" name="instance_add">{% trans "Create" %}</button>
                                                     {% else %}
                                                         <button class="btn btn-primary disabled">{% trans "Create" %}</button>
@@ -218,7 +218,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-                        {% if all_storages and all_networks %}
+                        {% if all_storages %}
                             <button type="submit" class="btn btn-primary" name="instance_add">{% trans "Create" %}</button>
                         {% else %}
                             <button class="btn btn-primary disabled" >{% trans "Create" %}</button>
