@@ -51,8 +51,6 @@ Run:
     $ cd webvirtmgr
     $ ./manage.py syncdb
     
-Or install <a href="https://github.com/euforia/webvirtmgr">RPM</a> (CentOS, RHEL, Fedora, Oracle Linux 6)  
-
 Enter the user information:
 
     You just installed Django's auth system, which means you don't have any superusers defined.
