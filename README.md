@@ -1,4 +1,4 @@
-### <a href="https://github.com/retspen/webvirtmgr/tree/nestene">WebVirtMgr panel - v.3</a>
+### <a href="https://github.com/retspen/webvirtmgr/tree/nestene">WebVirtMgr panel - v3.0</a>
 
 # WebVirtMgr panel - v2.4.0
 
