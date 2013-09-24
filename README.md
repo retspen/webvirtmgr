@@ -47,7 +47,7 @@ Run:
 
 Run: 
     
-    $ git clone git://github.com/retspen/webvirtmgr.git
+    $ git clone git://github.com/retspen/webvirtmgr.git -b nestene
     $ cd webvirtmgr
     $ ./manage.py syncdb
     
