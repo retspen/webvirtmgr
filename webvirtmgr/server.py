@@ -688,7 +688,6 @@ class ConnServer(object):
         """
         storages = self.storages_get_node()
         dom = self.lookupVM(vname)
-        image += '.iso'
 
         for storage in storages:
             stg = self.storagePool(storage)
