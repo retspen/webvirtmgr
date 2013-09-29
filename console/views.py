@@ -17,6 +17,7 @@ def console(request, host_id, vname):
         return HttpResponseRedirect('/login')
 
     errors = []
+    vnc_port = socket_host = socket_port = None
     host = Host.objects.get(id=host_id)
 
     try:
