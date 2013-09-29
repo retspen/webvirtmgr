@@ -89,8 +89,10 @@ class HostAddSshForm(forms.Form):
 
     def clean_port(self):
         port = self.cleaned_data['port']
-        if not port.isdigit():
+        try:
+            port = int(port)
+        except ValueError:
             raise forms.ValidationError(_('SSH port must be digits'))
-        if int(port) <= 21:
+        if port <= 21:
             raise forms.ValidationError(_('SSH port must be >= 22'))
         return port
