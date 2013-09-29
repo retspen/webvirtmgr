@@ -19,7 +19,7 @@ def network(request, host_id, pool):
         return HttpResponseRedirect('/login')
 
     errors = []
-    form = None
+    form = info = ipv4_net = None
     host = Host.objects.get(id=host_id)
 
     try:
@@ -39,12 +39,13 @@ def network(request, host_id, pool):
                 return HttpResponseRedirect('/network/%s/%s/' % (host_id, networks.keys()[0]))
 
         all_vm = sort_host(conn.vds_get_node())
-        info = conn.network_get_info(pool)
 
-        if info[0]:
-            ipv4_net = conn.network_get_subnet(pool)
-        else:
-            ipv4_net = None
+        if not pool == 'add':
+            info = conn.network_get_info(pool)
+            if info[0]:
+                ipv4_net = conn.network_get_subnet(pool)
+            else:
+                ipv4_net = None
 
         if request.method == 'POST':
             if 'pool_add' in request.POST:
