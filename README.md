@@ -129,7 +129,7 @@ Run:
     $ sudo service webvirtmgr-novnc start
     $ sudo update-rc.d webvirtmgr-novnc defaults
 
-## 6. Gunicorn and Runit (Only for geeks)
+## 6. Gunicorn and Supervisor (Only for geeks)
 
 Install gunicorn:
 
