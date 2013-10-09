@@ -26,7 +26,7 @@ WebVirtMgr is licensed under the Apache Licence, Version 2.0 (http://www.apache.
 Run:
 
     $ su -c 'yum -y install git python-pip libvirt-python libxml2-python httpd mod_wsgi python-websockify'
-    $ su -c 'python-pip install Django==1.5.2'
+    $ su -c 'python-pip install Django==1.5.4'
 
 ### CentOS 6.2, RedHat 6.2 and above
 
@@ -34,14 +34,14 @@ Run:
 
     $ su -c 'yum -y install http://dl.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm'
     $ su -c 'yum -y install git python-pip libvirt-python libxml2-python httpd mod_wsgi python-websockify'
-    $ su -c 'python-pip install Django==1.5.2'
+    $ su -c 'python-pip install Django==1.5.4'
 
 ### Ubuntu 12.04 and above
 
 Run:
 
     $ sudo apt-get install git python-pip python-libvirt python-libxml2 apache2 libapache2-mod-wsgi novnc
-    $ sudo pip install Django==1.5.2
+    $ sudo pip install Django==1.5.4
 
 ## 3. Setup
 
