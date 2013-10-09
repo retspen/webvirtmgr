@@ -33,12 +33,12 @@ class NewVMForm(forms.Form):
     name = forms.CharField(error_messages={'required': _('No Virtual Machine name has been entered')},
                            max_length=20)
     vcpu = forms.IntegerField(error_messages={'required': _('No VCPU has been entered')})
+    host_model = forms.BooleanField(required=False)
     hdd = forms.IntegerField(required=False)
     ram = forms.IntegerField(error_messages={'required': _('No RAM size has been entered')})
-    network = forms.CharField(error_messages={'required': _('No Network pool has been choice')},
-                              max_length=20)
+    networks = forms.CharField(error_messages={'required': _('No Network pool has been choice')})
     storage = forms.CharField(max_length=20, required=False)
-    image = forms.CharField(max_length=20, required=False)
+    images = forms.CharField(required=False)
     hdd_size = forms.IntegerField(required=False)
     virtio = forms.BooleanField(required=False)
 
