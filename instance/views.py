@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from instance.models import Host, Instance
 from dashboard.views import sort_host
 from webvirtmgr.server import ConnServer
-from libvirt import libvirtError
+from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE
 from webvirtmgr.settings import TIME_JS_REFRESH
 
 
@@ -219,7 +219,7 @@ def instance(request, host_id, vname):
                                                 'hdd_image': hdd_image, 'iso_images': iso_images,
                                                 'media': media, 'path': media_path,
                                                 'dom': dom,
-                                                'vm_xml': dom.XMLDesc(0),
+                                                'vm_xml': dom.XMLDesc(VIR_DOMAIN_XML_SECURE),
                                                 'vnc_port': vnc_port,
                                                 'time_refresh': time_refresh
                                                 },
