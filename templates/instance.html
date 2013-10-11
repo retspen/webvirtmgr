@@ -65,12 +65,12 @@
                     {% endifequal %}
                 </form>
 
-                {% if not instance.vnc_passwd and dom.info.0 == 5 %}
-                    <div class="block-btn">
-                        <button href="#noVNC" class="btn btn-default" data-toggle="modal">{% trans "Set VNC Password" %}</button>
-                    </div>
-                {% endif %}
-
+                <div class="block-btn">
+                    {% if not instance.vnc_passwd and dom.info.0 == 5 %}
+                    <button href="#noVNC" class="btn btn-default" data-toggle="modal">{% trans "Set VNC Password" %}</button>
+                    {% endif %}
+                    <button href="#viewXML" class="btn btn-default" data-toggle="modal">{% trans "View / Edit VM XML" %}</button>
+                </div>
             </div>
             <hr>
             <div class="block-btn">
@@ -103,7 +103,7 @@
                     <p style="height:30px">{% trans "Usage" %}</p>
                     <p><strong>{% trans "Memory" %}:</strong></p>
                     <p style="height:30px">{% trans "Usage" %}</p>
-                    <p><strong>{% trans "Network" %}:</strong></p>
+                    <p><strong>{% trans "Networks" %}:</strong></p>
                 </div>
                 <div class="col-md-6">
                     <p>VCPU {{ vcpu }} </p>
@@ -120,7 +120,9 @@
                         <div class="progress-bar" id="memory-usage-bar" style="width:{{ mem_perc }}%;"></div>
                     </div>
                     </p>
-                    <p>{{ mac }} ({{ network }})</p>
+                    {% for network in networks %}
+                        <p>{{ network.mac }} ({{ network.nic }})</p>
+                    {% endfor %}
                 </div>
             </div>
             <hr>
@@ -246,10 +248,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">{% trans "Add New Flavor" %}</h4>
-                </div>
-                <div class="modal-body">
-                    <p>{% trans "Enter the VNC password or select Generate" %}</p>
+                    <h4 class="modal-title">{% trans "Enter the VNC password or select Generate" %}</h4>
                 </div>
                 <form class="form-horizontal" method="post" role="form">{% csrf_token %}
                     <div class="form-group">
@@ -270,6 +269,32 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
                         <button type="submit" class="btn btn-primary" name="vnc_pass">{% trans "Create" %}</button>
+                    </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <!-- Modal viewXML -->
+    <div class="modal fade" id="viewXML" tabindex="-1" role="dialog" aria-labelledby="viewXMLLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">{% trans "VM XML" %}</h4>
+                </div>
+                <div id="viewXMLpre">
+                    <pre class="pre-scrollable">{{ vm_xml }}</pre>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+                        <button type="button" class="btn btn-primary" onclick="javascript:$('#viewXMLpre').hide();$('#viewXMLform').show();">{% trans "Edit" %}</button>
+                    </div>
+                </div>
+                <form id="viewXMLform" class="form-horizontal" method="post" role="form" style="display: none;">{% csrf_token %}
+                    <textarea class="form-control" rows="18" name="vm_xml">{{ vm_xml }}</textarea>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+                        <button type="submit" class="btn btn-danger" name="xml_edit">{% trans "Save" %}</button>
                     </div>
                 </form>
             </div><!-- /.modal-content -->
