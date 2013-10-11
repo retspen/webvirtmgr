@@ -41,6 +41,7 @@ Run:
 Run:
 
     $ sudo apt-get install git python-pip python-libvirt python-libxml2 apache2 libapache2-mod-wsgi novnc
+    $ sudo ln -s /var/run/apache2 /etc/apache2/run
     $ sudo pip install Django==1.5.4
 
 ## 3. Setup
@@ -65,15 +66,12 @@ Add pre-installed flavors:
     
     $ ./manage.py loaddata conf/flavor.json
 
-Run app for test:
+## 4. Setup Apache
 
-    $ ./manage.py runserver 0:8000
-    
-Enter in your browser:
-    
-    http://x.x.x.x:8000 (x.x.x.x - your server IP address )
+Copy the folder and change owner (Ubuntu: "www-data.", Fedora, Redhat, CentOS: "apache."):
 
-## 4. Setup Web (Autostart panel)
+    $ sudo cp -r webvirtmgr /var/www/
+    $ sudo chown -R apache. /var/www/webvirtmgr
 
 Add file webvirtmgr.conf in conf.d directory (Ubuntu: "/etc/apache2/conf.d" or RedHat,Fedora,CentOS: "/etc/httpd/conf.d"):
 
@@ -100,14 +98,9 @@ Add file webvirtmgr.conf in conf.d directory (Ubuntu: "/etc/apache2/conf.d" or R
         ErrorLog logs/webvirtmgr-error_log
     </VirtualHost>
 
-Copy the folder and change owner (Ubuntu: "www-data:www-data", Fedora, Redhat, CentOS: "apache:apache"):
+Reload apache (Ubuntu: "apache2", Fedora, Redhat, CentOS: "httpd"):
 
-    $ sudo cp -r webvirtmgr /var/www/
-    $ sudo chown -R www-data:www-data /var/www/webvirtmgr
-
-Reload apache:
-    
-    $ sudo service apache2 reload
+    $ sudo service httpd reload
 
 ## 5. Setup Websoket proxy (noVNC)
 
@@ -160,6 +153,14 @@ And then install and setup nginx for static files.
 
     $ cd /path to/webvirtmgr
     $ git pull
+
+If have error or not run panel (only for DEBUG or DEVELOP):
+
+    $ ./manage.py runserver 0:8000
+
+Enter in your browser:
+
+    http://x.x.x.x:8000 (x.x.x.x - your server IP address )
 
 Support: support@webvirtmgr.net or <a href="https://github.com/retspen/webvirtmgr/issues">GitHub Issues</a>
 
