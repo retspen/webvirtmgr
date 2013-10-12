@@ -64,31 +64,37 @@ def create(request, host_id):
                             errors.append(msg)
                     if not errors:
                         if not data['hdd_size']:
-                            if not data['image']:
+                            if not data['images']:
                                 msg = _("First you need to create an image")
                                 errors.append(msg)
                             else:
-                                image = conn.image_get_path(data['image'], all_storages)
+                                vol_paths = []
+                                for vol in data['images'].split(','):
+                                    vol_paths.append(conn.image_get_path(vol, all_storages))
                         else:
                             try:
                                 conn.new_volume(data['storage'], data['name'], data['hdd_size'])
                             except libvirtError as msg_error:
                                 errors.append(msg_error.message)
                         if not errors:
-                            if not data['image']:
-                                volume = conn.storageVol(data['name'], data['storage'])
+                            volumes = []
+                            if not data['images']:
+                                volumes.append(conn.storageVol(data['name'], data['storage']))
                             else:
-                                volume = conn.storageVolPath(image)
+                                for vol_path in vol_paths:
+                                    volumes.append(conn.storageVolPath(vol_path))
 
-                            image = volume.path()
+                            images = []
+                            for vol in volumes:
+                                images.append(vol.path())
 
                             try:
-                                conn.add_vm(data['name'], data['ram'], data['vcpu'], image,
-                                            data['network'], data['virtio'], all_storages)
+                                conn.add_vm(data['name'], data['ram'], data['vcpu'], data['host_model'], images,
+                                            data['networks'], data['virtio'], all_storages)
                                 return HttpResponseRedirect('/instance/%s/%s/' % (host_id, data['name']))
                             except libvirtError as msg_error:
                                 if data['hdd_size']:
-                                    volume.delete(0)
+                                    volumes[0].delete(0)
                                 errors.append(msg_error.message)
         conn.close()
 

@@ -1,4 +1,4 @@
-# WebVirtMgr panel - v3
+# WebVirtMgr panel - v3.1.1
 
 Warning: Upgrade from v2 not support!!!
 
@@ -6,6 +6,11 @@ Warning: Upgrade from v2 not support!!!
 * Move to Bootstrap-3.0
 * Fix many bugs
 * Add gentoo init scripts (Thanks: Joachim Langenbach)
+Big Thanks: Alex Kuksenko (<a href="https://github.com/retif">Github</a>)
+* Add support for more than one HDD
+* Add support for multi networks
+* Add support for hardware CPU (host cpu instead of virtual)
+* View and Edit XML Virtual Machine
 
 ## 1. Introduction
 
@@ -154,6 +159,8 @@ And then install and setup nginx for static files.
     $ cd /path to/webvirtmgr
     $ git pull
 
+## 8. Debug
+
 If have error or not run panel (only for DEBUG or DEVELOP):
 
     $ ./manage.py runserver 0:8000
@@ -162,7 +169,7 @@ Enter in your browser:
 
     http://x.x.x.x:8000 (x.x.x.x - your server IP address )
 
-Support: support@webvirtmgr.net or <a href="https://github.com/retspen/webvirtmgr/issues">GitHub Issues</a>
+Support: <a href="https://github.com/retspen/webvirtmgr/issues">GitHub Issues</a>
 
 Powered by
 

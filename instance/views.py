@@ -76,7 +76,7 @@ def instance(request, host_id, vname):
         errors.append(e.message)
     else:
         all_vm = sort_host(conn.vds_get_node())
-        vcpu, memory, mac, network, description = conn.vds_get_info(vname)
+        vcpu, memory, networks, description = conn.vds_get_info(vname)
         cpu_usage = conn.vds_cpu_usage(vname)
         memory_usage = conn.vds_memory_usage(vname)[1]
         hdd_image = conn.vds_get_hdd(vname)
@@ -175,6 +175,16 @@ def instance(request, host_id, vname):
                     return HttpResponseRedirect(request.get_full_path())
                 except libvirtError as msg_error:
                     errors.append(msg_error.message)
+            if 'xml_edit' in request.POST:
+                xml = request.POST.get('vm_xml', '')
+                try:
+                    if xml:
+                        conn.defineXML(xml)
+                        if instance:
+                            conn.vds_set_vnc_passwd(vname, instance.vnc_passwd)
+                    return HttpResponseRedirect(request.get_full_path())
+                except libvirtError as msg_error:
+                    errors.append(msg_error.message)
             if 'vnc_pass' in request.POST:
                 if request.POST.get('auto_pass', ''):
                     from string import letters, digits
@@ -204,11 +214,12 @@ def instance(request, host_id, vname):
                                                 'all_vm': all_vm,
                                                 'vcpu': vcpu, 'cpu_usage': cpu_usage, 'vcpu_range': vcpu_range,
                                                 'description': description,
-                                                'mac': mac, 'network': network,
+                                                'networks': networks,
                                                 'memory': memory, 'memory_usage': memory_usage, 'memory_range': memory_range,
                                                 'hdd_image': hdd_image, 'iso_images': iso_images,
                                                 'media': media, 'path': media_path,
                                                 'dom': dom,
+                                                'vm_xml': dom.XMLDesc(0),
                                                 'vnc_port': vnc_port,
                                                 'time_refresh': time_refresh
                                                 },
