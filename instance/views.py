@@ -180,6 +180,8 @@ def instance(request, host_id, vname):
                 try:
                     if xml:
                         conn.defineXML(xml)
+                        if instance:
+                            conn.vds_set_vnc_passwd(vname, instance.vnc_passwd)
                     return HttpResponseRedirect(request.get_full_path())
                 except libvirtError as msg_error:
                     errors.append(msg_error.message)

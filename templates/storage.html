@@ -154,7 +154,7 @@
                                                         <div class="form-group">
                                                             <label class="col-lg-4 control-label">{% trans "Name" %}</label>
                                                             <div class="col-lg-6">
-                                                                <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}">
+                                                                <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}" required pattern="[a-z0-9_]+">
                                                                 <input type="hidden" name="image" value="{{ key }}">
                                                             </div>
                                                             <label class="col-lg-1 control-label">.img</label>
@@ -222,7 +222,7 @@
                             <div class="form-group">
                                 <label class="col-lg-4 control-label">{% trans "Name" %}</label>
                                 <div class="col-lg-6">
-                                    <input type="text" class="form-control" name="name" placeholder="default" maxlength="20" required pattern="^[a-zA-Z0-9_]+$">
+                                    <input type="text" class="form-control" name="name" placeholder="default" maxlength="20" required pattern="[a-zA-Z0-9_]+">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -249,13 +249,13 @@
                             <div class="form-group">
                                 <label class="col-lg-4 control-label">{% trans "Name" %}</label>
                                 <div class="col-lg-6">
-                                    <input type="text" class="form-control" name="name" placeholder="default" maxlength="20" required pattern="^[a-zA-Z0-9_]+$">
+                                    <input type="text" class="form-control" name="name" placeholder="default" maxlength="20" required pattern="[a-zA-Z0-9_]+">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-lg-4 control-label">{% trans "Device" %}</label>
                                 <div class="col-lg-6">
-                                    <input type="text" class="form-control" name="source" value="/dev/sdb">
+                                    <input type="text" class="form-control" name="source" value="/dev/sdb" required pattern="[a-z0-9\/]+">
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -289,7 +289,7 @@
                     <div class="form-group">
                         <label class="col-lg-4 control-label">{% trans "Path" %}</label>
                         <div class="col-lg-6">
-                            <input type="text" class="form-control" name="target" value="/var/www/webvirtmgr/images">
+                            <input type="text" class="form-control" name="target" value="/var/www/webvirtmgr/images" required pattern="[a-z0-9\/]+">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -313,13 +313,13 @@
                     <div class="form-group">
                         <label class="col-lg-4 control-label">{% trans "Name" %}</label>
                         <div class="col-lg-6">
-                            <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}">
+                            <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}" required pattern="[a-z0-9_]+">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-lg-4 control-label">{% trans "Size" %}</label>
                         <div class="col-lg-6">
-                            <input type="text" class="form-control" name="size" value="10" maxlength="3" required pattern="^[0-9]+$">
+                            <input type="text" class="form-control" name="size" value="10" maxlength="3" required pattern="[0-9]+">
                         </div>
                         <label class="col-lg-1 control-label">{% trans "GB" %}</label>
                     </div>

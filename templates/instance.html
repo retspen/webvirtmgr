@@ -69,7 +69,6 @@
                     {% if not instance.vnc_passwd and dom.info.0 == 5 %}
                     <button href="#noVNC" class="btn btn-default" data-toggle="modal">{% trans "Set VNC Password" %}</button>
                     {% endif %}
-                    <button href="#viewXML" class="btn btn-default" data-toggle="modal">{% trans "View / Edit VM XML" %}</button>
                 </div>
             </div>
             <hr>
@@ -275,75 +274,74 @@
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 
-    <!-- Modal viewXML -->
-    <div class="modal fade" id="viewXML" tabindex="-1" role="dialog" aria-labelledby="viewXMLLabel" aria-hidden="true">
+     <!-- Modal Edit -->
+    <div class="modal fade" id="Edit" tabindex="-1" role="dialog" aria-labelledby="addHostLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">{% trans "VM XML" %}</h4>
+                    <h4 class="modal-title">{% trans "Change Virtual Machine Settings" %}</h4>
                 </div>
-                <div id="viewXMLpre">
-                    <pre class="pre-scrollable">{{ vm_xml }}</pre>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-                        <button type="button" class="btn btn-primary" onclick="javascript:$('#viewXMLpre').hide();$('#viewXMLform').show();">{% trans "Edit" %}</button>
+                <div class="tabbable">
+                    <ul class="nav nav-tabs">
+                        <li class="active">
+                            <a href="#1" data-toggle="tab">{% trans "Change settings" %}</a>
+                        </li>
+                        <li><a href="#2" data-toggle="tab">{% trans "Edit XML" %}</a></li>
+                    </ul>
+                </div>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="1">
+                        <form class="form-horizontal" method="post" role="form">{% csrf_token %}
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">{% trans "Description" %}</label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control" name="description" value="{{ description }}"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">{% trans "VCPU" %}</label>
+                                <div class="col-lg-6">
+                                    <select name="vcpu" class="form-control">
+                                        {% for cpu in vcpu_range %}
+                                            <option value="{{ cpu }}" {% if cpu == vcpu %}selected{% endif %}>{{ cpu }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">{% trans "RAM" %}</label>
+                                <div class="col-lg-6">
+                                    <select name="ram" class="form-control">
+                                        {% for mem in memory_range %}
+                                            <option value="{{ mem }}" {% if mem == memory %}selected{% endif %}>{{ mem }} {% trans "MB" %}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+                                <button type="submit" class="btn btn-primary" name="edit">{% trans "Change" %}</button>
+                            </div>
+                        </form>
                     </div>
-                </div>
-                <form id="viewXMLform" class="form-horizontal" method="post" role="form" style="display: none;">{% csrf_token %}
-                    <textarea class="form-control" rows="18" name="vm_xml">{{ vm_xml }}</textarea>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-                        <button type="submit" class="btn btn-danger" name="xml_edit">{% trans "Save" %}</button>
-                    </div>
-                </form>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-
-    <!-- Modal Flavor -->
-    <div class="modal fade" id="Edit" tabindex="-1" role="dialog" aria-labelledby="EditLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">{% trans "Add New Flavor" %}</h4>
-                </div>
-                <div class="modal-body">
-                    <p>{% trans "Change Description, VCPU or RAM" %}</p>
-                </div>
-                <form class="form-horizontal" method="post" role="form">{% csrf_token %}
-                    <div class="form-group">
-                        <label class="col-lg-4 control-label">{% trans "Description" %}</label>
-                        <div class="col-lg-6">
-                            <input type="text" class="form-control" name="description" value="{{ description }}"/>
+                    <div class="tab-pane" id="2">
+                        <div id="viewXMLpre">
+                            <pre class="pre-scrollable">{{ vm_xml }}</pre>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+                                <button type="button" class="btn btn-primary" onclick="javascript:$('#viewXMLpre').hide();$('#viewXMLform').show();">{% trans "Edit" %}</button>
+                            </div>
                         </div>
+                        <form id="viewXMLform" class="form-horizontal" method="post" role="form" style="display: none;">{% csrf_token %}
+                            <textarea class="form-control" rows="18" name="vm_xml">{{ vm_xml }}</textarea>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+                                <button type="submit" class="btn btn-danger" name="xml_edit">{% trans "Save" %}</button>
+                            </div>
+                        </form>
                     </div>
-                    <div class="form-group">
-                        <label class="col-lg-4 control-label">{% trans "VCPU" %}</label>
-                        <div class="col-lg-6">
-                            <select name="vcpu" class="form-control">
-                                {% for cpu in vcpu_range %}
-                                    <option value="{{ cpu }}" {% if cpu == vcpu %}selected{% endif %}>{{ cpu }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-lg-4 control-label">{% trans "RAM" %}</label>
-                        <div class="col-lg-6">
-                            <select name="ram" class="form-control">
-                                {% for mem in memory_range %}
-                                    <option value="{{ mem }}" {% if mem == memory %}selected{% endif %}>{{ mem }} {% trans "MB" %}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-                        <button type="submit" class="btn btn-primary" name="edit">{% trans "Change" %}</button>
-                    </div>
-                </form>
+                </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->

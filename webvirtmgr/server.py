@@ -199,7 +199,7 @@ class ConnServer(object):
         disks = []
         for image in images:
             img = self.storageVolPath(image)
-            image_type = self.getVolumeImageType(storages, img.name())
+            image_type = self.get_vol_image_type(storages, img.name())
             disks.append({'image': image, 'type': image_type})
 
         xml = """<domain type='%s'>
@@ -275,7 +275,7 @@ class ConnServer(object):
         dom = self.lookupVM(name)
         dom.setAutostart(1)
 
-    def getVolumeImageType(self, storages, vol):
+    def get_vol_image_type(self, storages, vol):
         for storage in storages:
             stg = self.storagePool(storage)
             if stg.info()[0] != 0:
@@ -904,6 +904,11 @@ class ConnServer(object):
         self.conn.defineXML(xml_description_change)
 
     def defineXML(self, xml):
+        """
+
+        Funciton define VM config
+
+        """
         self.conn.defineXML(xml)
 
 

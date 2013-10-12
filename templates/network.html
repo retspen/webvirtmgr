@@ -104,20 +104,20 @@
                     <div class="form-group">
                         <label class="col-lg-4 control-label">{% trans "Name" %}</label>
                         <div class="col-lg-6">
-                            <input type="text" class="form-control" name="name" placeholder="default">
+                            <input type="text" class="form-control" name="name" placeholder="default" required pattern="[a-zA-Z0-9_]+">
 
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-lg-4 control-label">{% trans "Subnet pool" %}</label>
                         <div class="col-lg-6">
-                            <input type="text" class="form-control" name="subnet" value="192.168.100.0/24">
+                            <input type="text" class="form-control" name="subnet" value="192.168.100.0/24" required pattern="[0-9\/\.]+">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-lg-4 control-label">{% trans "DHCP" %}</label>
                         <div class="col-lg-6">
-                            <input type="checkbox" name="dhcp" value="1" checked>
+                            <input type="checkbox" name="dhcp" value="true" checked>
                         </div>
                     </div>
                     <div class="form-group">

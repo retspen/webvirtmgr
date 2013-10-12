@@ -54,6 +54,14 @@
                     {% endfor %}
                 </div>
             {% endif %}
+            {% if form.networks.errors %}
+                <div class="alert alert-danger">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    {% for error in form.networks.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
             <div class="block-btn">
                 <a data-toggle="modal" href="#addCustom" class="btn btn-success">{% trans "Custom VM" %}</a>
                 <a data-toggle="modal" href="#addFlavor" class="btn btn-success">{% trans "Add Flavor" %}</a>
@@ -90,7 +98,7 @@
                                                 <div class="form-group">
                                                     <label class="col-lg-4 control-label">{% trans "Name" %}</label>
                                                     <div class="col-lg-6">
-                                                        <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}" maxlength="14" required pattern="^[a-zA-Z0-9_]+$">
+                                                        <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}" maxlength="14" required pattern="[a-zA-Z0-9_]+">
                                                         <input type="hidden" name="vcpu" value="{{ flavor.vcpu }}">
                                                         <input type="hidden" name="ram" value="{{ flavor.ram }}">
                                                         <input type="hidden" name="hdd_size" value="{{ flavor.hdd }}">
@@ -113,13 +121,20 @@
                                                 <div class="form-group">
                                                     <label class="col-lg-4 control-label">{% trans "Network" %}</label>
                                                     <div class="col-lg-6">
-                                                        <select name="network" class="form-control">
+                                                        <select name="networks" class="form-control">
                                                             {% for network in all_networks %}
                                                                 <option value="{{ network }}">{{ network }}</option>
                                                             {% endfor %}
                                                             <option value="br0">br0</option>
                                                         </select>
                                                     </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-lg-4 control-label">{% trans "Host-Model" %}</label>
+                                                    <div class="col-lg-6">
+                                                        <input type="checkbox" name="host_model" value="true" checked>
+                                                    </div>
+                                                    <label class="col-lg-1 control-label">{% trans "CPU" %}</label>
                                                 </div>
                                                 <div class="form-group">
                                                     <label class="col-lg-4 control-label">{% trans "VirtIO" %}</label>
@@ -171,20 +186,26 @@
                     <div class="form-group">
                         <label class="col-lg-4 control-label">{% trans "Name" %}</label>
                         <div class="col-lg-6">
-                            <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}" maxlength="14" required pattern="^[a-zA-Z0-9_]+$">
+                            <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}" maxlength="14" required pattern="[a-zA-Z0-9_]+">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-lg-4 control-label">{% trans "VCPU" %}</label>
                         <div class="col-lg-6">
-                            <input type="text" class="form-control" name="vcpu" value="1" maxlength="1" required pattern="^[0-9]+$">
-                            <label><input type="checkbox" name="host_model" value="true">cpu host-model</label>
+                            <input type="text" class="form-control" name="vcpu" value="1" maxlength="1" required pattern="[0-9]">
                         </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-4 control-label">{% trans "Host-Model" %}</label>
+                        <div class="col-lg-6">
+                            <input type="checkbox" name="host_model" value="true" checked>
+                        </div>
+                        <label class="col-lg-1 control-label">{% trans "CPU" %}</label>
                     </div>
                     <div class="form-group">
                         <label class="col-lg-4 control-label">{% trans "RAM" %}</label>
                         <div class="col-lg-6">
-                            <input type="text" class="form-control" name="ram" value="512" maxlength="5" required pattern="^[0-9]+$">
+                            <input type="text" class="form-control" name="ram" value="512" maxlength="5" required pattern="[0-9]+">
                         </div>
                         <label class="col-lg-1 control-label">{% trans "MB" %}</label>
                     </div>
@@ -252,26 +273,26 @@
                     <div class="form-group">
                         <label class="col-lg-4 control-label">{% trans "Name" %}</label>
                         <div class="col-lg-6">
-                            <input type="text" name="name" class="form-control" placeholder="Micro" maxlength="20" required pattern="^[a-zA-Z0-9]+$">
+                            <input type="text" name="name" class="form-control" placeholder="Micro" maxlength="20" required pattern="[a-zA-Z0-9]+">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-lg-4 control-label">{% trans "VCPU" %}</label>
                         <div class="col-lg-6">
-                            <input type="text" class="form-control" name="vcpu" value="1" maxlength="1" required pattern="^[0-9]+$">
+                            <input type="text" class="form-control" name="vcpu" value="1" maxlength="1" required pattern="[0-9]">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-lg-4 control-label">{% trans "RAM" %}</label>
                         <div class="col-lg-6">
-                            <input type="text" class="form-control" name="ram" value="512" maxlength="5" required pattern="^[0-9]+$">
+                            <input type="text" class="form-control" name="ram" value="512" maxlength="5" required pattern="[0-9]+">
                         </div>
                         <label class="col-lg-1 control-label">{% trans "MB" %}</label>
                     </div>
                     <div class="form-group">
                         <label class="col-lg-4 control-label">{% trans "HDD" %}</label>
                         <div class="col-lg-6">
-                            <input type="text" class="form-control" name="hdd" value="10" maxlength="3" required pattern="^[0-9]+$">
+                            <input type="text" class="form-control" name="hdd" value="10" maxlength="3" required pattern="[0-9]+">
                         </div>
                         <label class="col-lg-1 control-label">{% trans "GB" %}</label>
                     </div>
