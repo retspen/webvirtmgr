@@ -77,17 +77,18 @@
                     <div class="col-md-6">
                         <p>{% trans "Type forwarding" %}</p>
                         <p>{% trans "Subnet pool" %}</p>
-                        {% if info.0 %}
-                            <p>{% trans "DHCP" %}</p>
-                        {% endif %}
+                        <p>{% trans "DHCP" %}</p>
                         {% if ipv4_net.2 %}
                             <p>{% trans "Start" %}</p>
                             <p>{% trans "End" %}</p>
                         {% endif %}
                     </div>
                     <div class="col-md-6">
-                        <p>{% ifequal ipv4_net.0.0 'nat' %} {% trans "NAT" %} {% endifequal %} {% ifequal ipv4_net.0.0 'route' %} {% trans "ROUTE" %} {% endifequal %} {% if not ipv4_net.0.0 %} {% trans "ISOLATE" %} {% endif %}</p>
-                        <p>{{ ipv4_net.1 }}</p>
+                        <p>{% ifequal ipv4_net.0.0 'nat' %} {% trans "NAT" %} {% endifequal %}
+                           {% ifequal ipv4_net.0.0 'route' %} {% trans "ROUTE" %} {% endifequal %}
+                           {% ifequal ipv4_net.0.0 'bridge' %} {% trans "BRIDGE" %} {% endifequal %}
+                           {% if not ipv4_net.0.0 %} {% trans "ISOLATE" %} {% endif %}</p>
+                        <p>{% if ipv4_net.1 %}{{ ipv4_net.1 }}{% else %}{% trans "None" %}{% endif %}</p>
                         <p>{% if ipv4_net.2 %}<span class="text-success">{% trans "ON" %}</span>{% else %}<span class="text-danger">{% trans "OFF" %}</span>{% endif %}</p>
                         {% if ipv4_net.2 %}
                             {% for dhcp in ipv4_net.2 %}

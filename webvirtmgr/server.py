@@ -725,7 +725,7 @@ class ConnServer(object):
                         vol = stg.storageVolLookupByName(image)
                         xml = """<disk type='file' device='cdrom'>
                                     <driver name='qemu' type='raw'/>
-                                    <target dev='hdc' bus='ide'/>
+                                    <target dev='sda' bus='ide'/>
                                     <source file='%s'/>
                                  </disk>""" % vol.path()
                         dom.attachDevice(xml)
@@ -749,7 +749,7 @@ class ConnServer(object):
         if dom.info()[0] == 1:
             xml = """<disk type='file' device='cdrom'>
                          <driver name="qemu" type='raw'/>
-                         <target dev='hdc' bus='ide'/>
+                         <target dev='sda' bus='ide'/>
                          <readonly/>
                       </disk>"""
             dom.attachDevice(xml)
