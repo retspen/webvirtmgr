@@ -555,7 +555,7 @@ class ConnServer(object):
             volume_info[name] = size, volume_format
         return volume_info
 
-    def new_network_pool(self, name, forward, gateway, mask, dhcp=None):
+    def new_network_pool(self, name, forward, gateway, mask, dhcp, bridge_name):
         """
 
         Function create network pool.
@@ -565,19 +565,28 @@ class ConnServer(object):
             <network>
                 <name>%s</name>""" % name
 
-        if forward == "nat" or "route":
+        if forward in ['nat', 'route', 'bridge']:
             xml += """<forward mode='%s'/>""" % forward
 
-        xml += """<bridge stp='on' delay='0' />
-                    <ip address='%s' netmask='%s'>""" % (gateway, mask)
+        xml += """<bridge """
+        if forward in ['nat', 'route', 'none']:
+            xml += """stp='on' delay='0'"""
+        if forward == 'bridge':
+            xml += """name='%s'""" % bridge_name
+        xml += """/>"""
 
-        if dhcp:
-            xml += """<dhcp>
-                        <range start='%s' end='%s' />
-                    </dhcp>""" % (dhcp[0], dhcp[1])
+        if forward != 'bridge':
+            xml += """
+                        <ip address='%s' netmask='%s'>""" % (gateway, mask)
 
-        xml += """</ip>
-            </network>"""
+            if dhcp:
+                xml += """<dhcp>
+                            <range start='%s' end='%s' />
+                        </dhcp>""" % (dhcp[0], dhcp[1])
+
+            xml += """</ip>"""
+        xml += """</network>"""
+
         self.conn.networkDefineXML(xml)
         net = self.networkPool(name)
         net.create()

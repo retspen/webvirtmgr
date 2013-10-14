@@ -55,6 +55,8 @@ def network(request, host_id, pool):
                     if data['name'] in networks.keys():
                         msg = _("Pool name already in use")
                         errors.append(msg)
+                    if data['forward'] == 'bridge' and data['bridge_name'] == '':
+                        errors.append('Please enter bridge name')
                     try:
                         gateway, netmask, dhcp = network_size(data['subnet'], data['dhcp'])
                     except:
@@ -62,7 +64,7 @@ def network(request, host_id, pool):
                         errors.append(msg)
                     if not errors:
                         try:
-                            conn.new_network_pool(data['name'], data['forward'], gateway, netmask, dhcp)
+                            conn.new_network_pool(data['name'], data['forward'], gateway, netmask, dhcp, data['bridge_name'])
                             return HttpResponseRedirect('/network/%s/%s/' % (host_id, data['name']))
                         except libvirtError as e:
                             errors.append(e.message)
