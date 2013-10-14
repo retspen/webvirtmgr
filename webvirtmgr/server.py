@@ -249,12 +249,7 @@ class ConnServer(object):
                     </disk>"""
 
         for net in nets.split(','):
-            if re.findall("br", net):
-                xml += """
-                    <interface type='bridge'>
-                        <source bridge='%s'/>""" % net
-            else:
-                xml += """
+            xml += """
                     <interface type='network'>
                         <source network='%s'/>""" % net
             if virtio:
