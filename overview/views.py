@@ -57,6 +57,9 @@ def overview(request, host_id):
     errors = []
     time_refresh = TIME_JS_REFRESH
     host = Host.objects.get(id=host_id)
+    all_vm = hostname = arch = cpus = cpu_model = \
+        type_conn = libvirt_ver = all_mem = \
+        mem_usage = mem_percent = cpu_usage = None
 
     try:
         conn = ConnServer(host)
