@@ -116,13 +116,13 @@
                             <input type="text" class="form-control" name="name" placeholder="default" required pattern="[a-zA-Z0-9_]+">
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group bridge_name_form_group_dhcp">
                         <label class="col-lg-4 control-label">{% trans "Subnet pool" %}</label>
                         <div class="col-lg-6">
                             <input type="text" class="form-control" name="subnet" value="192.168.100.0/24" required pattern="[0-9\/\.]+">
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group bridge_name_form_group_dhcp">
                         <label class="col-lg-4 control-label">{% trans "DHCP" %}</label>
                         <div class="col-lg-6">
                             <input type="checkbox" name="dhcp" value="true" checked>
@@ -142,7 +142,7 @@
                     <div class="form-group" id="bridge_name_form_group">
                         <label class="col-lg-4 control-label">{% trans "Bridge Name" %}</label>
                         <div class="col-lg-6">
-                            <input type="text" class="form-control" name="bridge_name" placeholder="default">
+                            <input type="text" class="form-control" name="bridge_name" placeholder="br0">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -161,8 +161,10 @@
             $('#forward_select').change(function(eventObject) {
                 if($(this).val() == 'bridge') {
                     $('#bridge_name_form_group').show();
+                    $('.bridge_name_form_group_dhcp').hide();
                 } else {
                     $('#bridge_name_form_group').hide();
+                    $('.bridge_name_form_group_dhcp').show();
                 }
             }).change();
         });

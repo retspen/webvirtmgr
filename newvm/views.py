@@ -39,6 +39,9 @@ def create(request, host_id):
         if not all_storages:
             msg = _("You haven't defined have any storage pools")
             errors.append(msg)
+        if not all_networks:
+            msg = _("You haven't defined have any network pools")
+            errors.append(msg)
 
         if request.method == 'POST':
             if 'flavor_add' in request.POST:

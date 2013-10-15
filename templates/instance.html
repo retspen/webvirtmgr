@@ -251,18 +251,15 @@
                 </div>
                 <form class="form-horizontal" method="post" role="form">{% csrf_token %}
                     <div class="form-group">
-                        <label for="inputPassword1" class="col-lg-3 control-label">Password</label>
+                        <label for="inputPassword1" class="col-lg-3 control-label">{% trans "Generate" %}</label>
                         <div class="col-lg-6">
-                            <input type="password" class="form-control" name="vnc_passwd" placeholder="{% trans "Password" %}" maxlength="14">
+                            <input type="checkbox" name="auto_pass" value="true" id="vnc_passwd_gen">
                         </div>
                     </div>
-                    <div class="form-group">
-                        <div class="col-lg-offset-1 col-lg-6">
-                            <div class="checkbox">
-                                <label>
-                                    <input type="checkbox" name="auto_pass" value="true">{% trans "Generate" %}
-                                </label>
-                            </div>
+                    <div class="form-group" id="vnc_passwd_manual">
+                        <label for="inputPassword1" class="col-lg-3 control-label">{% trans "Password" %}</label>
+                        <div class="col-lg-6">
+                            <input type="password" class="form-control" name="vnc_passwd" placeholder="{% trans "Password" %}" maxlength="14">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -350,6 +347,15 @@
 {% block script %}
     <script type="text/javascript">
         function open_vnc() { window.open('{% url 'console' host_id vname %}?token={{ instance.vname }}','','width=850,height=485') }
+    </script>
+    <script type="text/javascript">
+        $(document).on('change','#vnc_passwd_gen',function(){
+            if($(this).prop('checked')) {
+                $('#vnc_passwd_manual').hide();
+            } else {
+                $('#vnc_passwd_manual').show();
+            }
+        });
     </script>
     {% ifequal dom.info.0 1 %}
         <script type="text/javascript">
