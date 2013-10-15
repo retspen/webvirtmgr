@@ -401,7 +401,7 @@ class ConnServer(object):
             diff_usage = None
         return diff_usage
 
-    def new_volume(self, storage, name, size):
+    def new_volume(self, storage, name, size, format):
         """
 
         Add new volume in storage
@@ -421,9 +421,9 @@ class ConnServer(object):
                 <capacity>%s</capacity>
                 <allocation>%s</allocation>
                 <target>
-                    <format type='qcow2'/>
+                    <format type='%s'/>
                 </target>
-            </volume>""" % (name, size, alloc)
+            </volume>""" % (name, size, alloc, format)
         stg.createXML(xml, 0)
 
     def clone_volume(self, storage, img, new_img):

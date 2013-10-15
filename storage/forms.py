@@ -48,6 +48,7 @@ class AddStgPool(forms.Form):
 
 class AddImage(forms.Form):
     name = forms.CharField(max_length=20)
+    format = forms.ChoiceField(required=True, choices=(('raw', 'raw'), ('qcow', 'qcow'), ('qcow2', 'qcow2')))
     size = forms.IntegerField()
 
     def clean_name(self):

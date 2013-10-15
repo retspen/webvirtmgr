@@ -97,7 +97,7 @@ def storage(request, host_id, pool):
                         msg = _("Volume name already use")
                         errors.append(msg)
                     if not errors:
-                        conn.new_volume(pool, data['name'], data['size'])
+                        conn.new_volume(pool, data['name'], data['size'], data['format'])
                         return HttpResponseRedirect(request.get_full_path())
             if 'img_del' in request.POST:
                 img = request.POST.get('img', '')
