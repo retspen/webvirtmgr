@@ -317,6 +317,16 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label class="col-lg-4 control-label">{% trans "Format" %}</label>
+                        <div class="col-lg-6">
+                            <select name="format" class="form-control">
+                                <option value="raw">{% trans "raw" %}</option>
+                                <option value="qcow">{% trans "qcow" %}</option>
+                                <option value="qcow2">{% trans "qcow2" %}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label class="col-lg-4 control-label">{% trans "Size" %}</label>
                         <div class="col-lg-6">
                             <input type="text" class="form-control" name="size" value="10" maxlength="3" required pattern="[0-9]+">
