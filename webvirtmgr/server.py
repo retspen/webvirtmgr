@@ -277,11 +277,9 @@ class ConnServer(object):
                 stg.refresh(0)
                 for img in stg.listVolumes():
                     if img == vol:
-                        stg_type = get_xml_path(stg.XMLDesc(0), "/pool/@type")
-                        if stg_type == 'dir':
-                            image_type = 'qcow2'
-                        else:
-                            image_type = 'raw'
+                        vol = stg.storageVolLookupByName(img)
+                        xml = vol.XMLDesc(0)
+                        image_type = get_xml_path(xml, "/volume/target/format/@type")
         return image_type
 
 
@@ -401,7 +399,7 @@ class ConnServer(object):
             diff_usage = None
         return diff_usage
 
-    def new_volume(self, storage, name, size, format):
+    def new_volume(self, storage, name, size, format='qcow2'):
         """
 
         Add new volume in storage
@@ -437,15 +435,17 @@ class ConnServer(object):
         if stg_type == 'dir':
             new_img += '.img'
         vol = stg.storageVolLookupByName(img)
+        xml = vol.XMLDesc(0)
+        vol_format = get_xml_path(xml, "/volume/target/format/@type")
         xml = """
             <volume>
                 <name>%s</name>
                 <capacity>0</capacity>
                 <allocation>0</allocation>
                 <target>
-                    <format type='qcow2'/>
+                    <format type='%s'/>
                 </target>
-            </volume>""" % (new_img)
+            </volume>""" % (new_img, vol_format)
         stg.createXMLFrom(xml, vol, 0)
 
     def images_get_storages(self, storages):

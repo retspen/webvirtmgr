@@ -68,7 +68,7 @@ def create(request, host_id):
                     if not errors:
                         if not data['hdd_size']:
                             if not data['images']:
-                                msg = _("First you need to create an image")
+                                msg = _("First you need to create or select an image")
                                 errors.append(msg)
                             else:
                                 vol_paths = []
