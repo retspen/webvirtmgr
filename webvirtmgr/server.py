@@ -460,9 +460,7 @@ class ConnServer(object):
             if stg.info()[0] != 0:
                 stg.refresh(0)
                 for img in stg.listVolumes():
-                    if re.findall(".iso", img) or re.findall(".ISO", img):
-                        pass
-                    else:
+                    if re.findall(".img", img):
                         disk.append(img)
         return disk
 
@@ -543,11 +541,12 @@ class ConnServer(object):
         stg = self.storagePool(storage)
         volume_info = {}
         for name in stg.listVolumes():
-            vol = stg.storageVolLookupByName(name)
-            xml = vol.XMLDesc(0)
-            size = vol.info()[1]
-            volume_format = get_xml_path(xml, "/volume/target/format/@type")
-            volume_info[name] = size, volume_format
+            if re.findall(".img", name) or re.findall(".iso", name):
+                vol = stg.storageVolLookupByName(name)
+                xml = vol.XMLDesc(0)
+                size = vol.info()[1]
+                volume_format = get_xml_path(xml, "/volume/target/format/@type")
+                volume_info[name] = size, volume_format
         return volume_info
 
     def new_network_pool(self, name, forward, gateway, mask, dhcp, bridge_name):
