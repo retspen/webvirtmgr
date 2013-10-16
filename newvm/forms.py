@@ -40,6 +40,7 @@ class NewVMForm(forms.Form):
     storage = forms.CharField(max_length=20, required=False)
     images = forms.CharField(required=False)
     hdd_size = forms.IntegerField(required=False)
+    image_format = forms.ChoiceField(required=False, choices=(('raw', 'raw'), ('qcow', 'qcow'), ('qcow2', 'qcow2')))
     virtio = forms.BooleanField(required=False)
 
     def clean_name(self):
