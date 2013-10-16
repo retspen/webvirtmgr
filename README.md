@@ -1,4 +1,4 @@
-# WebVirtMgr panel - v3.1.1
+# WebVirtMgr panel - v3.2.2
 
 Warning: Upgrade from v2 not support!!!
 
@@ -12,6 +12,8 @@ Big Thanks: Alex Kuksenko (<a href="https://github.com/retif">Github</a>)
 * Add support for multi networks
 * Add support for hardware CPU (host cpu instead of virtual)
 * View and Edit XML Virtual Machine
+* Add bridge device in Network Pool
+* Add create image RAW, QCOW, QCOW2 formats
 
 ## 1. Introduction
 

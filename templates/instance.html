@@ -102,7 +102,6 @@
                     <p style="height:30px">{% trans "Usage" %}</p>
                     <p><strong>{% trans "Memory" %}:</strong></p>
                     <p style="height:30px">{% trans "Usage" %}</p>
-                    <p><strong>{% trans "Networks" %}:</strong></p>
                 </div>
                 <div class="col-md-6">
                     <p>VCPU {{ vcpu }} </p>
@@ -119,6 +118,19 @@
                         <div class="progress-bar" id="memory-usage-bar" style="width:{{ mem_perc }}%;"></div>
                     </div>
                     </p>
+                </div>
+            </div>
+            <hr>
+            <div class="block-btn">
+                <li>{% trans "Network Details" %}</li>
+            </div>
+            <div class="row show-grid">
+                <div class="col-md-6">
+                     {% for network in networks %}
+                        <p><strong>Eth{{ forloop.counter0 }}</strong></p>
+                     {% endfor %}
+                </div>
+                <div class="col-md-6">
                     {% for network in networks %}
                         <p>{{ network.mac }} ({{ network.nic }})</p>
                     {% endfor %}
@@ -136,7 +148,7 @@
                 </div>
                 <div class="col-md-6">
                     {% for dev_bus, hdd_dev in hdd_image.items reversed %}
-                        <p> {{ hdd_dev.0 }} ({{ hdd_dev.1 }})</p>
+                        <p>{{ hdd_dev.0 }} ({{ hdd_dev.1 }})</p>
                     {% endfor %}
                 </div>
             </div>
