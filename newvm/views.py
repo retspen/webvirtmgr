@@ -76,7 +76,7 @@ def create(request, host_id):
                                     vol_paths.append(conn.image_get_path(vol, all_storages))
                         else:
                             try:
-                                conn.new_volume(data['storage'], data['name'], data['hdd_size'])
+                                conn.new_volume(data['storage'], data['name'], data['hdd_size'], data['image_format'])
                             except libvirtError as msg_error:
                                 errors.append(msg_error.message)
                         if not errors:
