@@ -72,7 +72,8 @@ Password: xxxxxx
 Again (for verification): xxxxxx
 </pre>
 <br>
-<p>To see a list of all accounts the <code>sasldblistusers2</code> command can be used. This command expects to be given the path to the libvirt user database, which is kept in <code>/etc/libvirt/passwd.db</code></p>
+<p>Note that the generated username is in the format fred@$HOSTNAME, so when you add the new server to the web interface,
+you must use the entire username. To see a list of all accounts the <code>sasldblistusers2</code> command can be used. This command expects to be given the path to the libvirt user database, which is kept in <code>/etc/libvirt/passwd.db</code></p>
 <pre>
 $ sudo sasldblistusers2 -f /etc/libvirt/passwd.db
 fred@webvirtmgr.net: userPassword
