@@ -76,6 +76,9 @@ body {
 #error {
     text-align: center;
 }
+#format_convert {
+    display: none;
+}
 @media (max-width: 1200px) {
     form .form-group {
      padding-left: 15px;

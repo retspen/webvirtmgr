@@ -123,8 +123,12 @@ def storage(request, host_id, pool):
                         msg = _("Name of volume name already use")
                         errors.append(msg)
                     if not errors:
+                        if 'convert' in data:
+                            format = data['format']
+                        else:
+                            format = None
                         try:
-                            conn.clone_volume(pool, data['image'], data['name'])
+                            conn.clone_volume(pool, data['image'], data['name'], format)
                             return HttpResponseRedirect(request.get_full_path())
                         except libvirtError as error_msg:
                             errors.append(error_msg.message)

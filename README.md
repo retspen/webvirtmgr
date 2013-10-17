@@ -1,4 +1,4 @@
-# WebVirtMgr panel - v3.2.2
+# WebVirtMgr panel - v3.2.7
 
 Warning: Upgrade from v2 not support!!!
 
@@ -6,6 +6,7 @@ Warning: Upgrade from v2 not support!!!
 * Move to Bootstrap-3.0
 * Fix many bugs
 * Add gentoo init scripts (Thanks: Joachim Langenbach)
+* Add function convert images
 
 Big Thanks: Alex Kuksenko (<a href="https://github.com/retif">Github</a>)
 * Add support for more than one HDD

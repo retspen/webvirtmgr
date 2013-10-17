@@ -424,7 +424,7 @@ class ConnServer(object):
             </volume>""" % (name, size, alloc, format)
         stg.createXML(xml, 0)
 
-    def clone_volume(self, storage, img, new_img):
+    def clone_volume(self, storage, img, new_img, format=None):
         """
 
         Function clone volume
@@ -435,8 +435,9 @@ class ConnServer(object):
         if stg_type == 'dir':
             new_img += '.img'
         vol = stg.storageVolLookupByName(img)
-        xml = vol.XMLDesc(0)
-        vol_format = get_xml_path(xml, "/volume/target/format/@type")
+        if not format:
+            xml = vol.XMLDesc(0)
+            format = get_xml_path(xml, "/volume/target/format/@type")
         xml = """
             <volume>
                 <name>%s</name>
@@ -445,7 +446,7 @@ class ConnServer(object):
                 <target>
                     <format type='%s'/>
                 </target>
-            </volume>""" % (new_img, vol_format)
+            </volume>""" % (new_img, format)
         stg.createXMLFrom(xml, vol, 0)
 
     def images_get_storages(self, storages):

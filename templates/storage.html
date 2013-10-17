@@ -159,6 +159,22 @@
                                                             </div>
                                                             <label class="col-lg-1 control-label">.img</label>
                                                         </div>
+                                                        <div class="form-group">
+                                                            <label class="col-lg-4 control-label">{% trans "Convert" %}</label>
+                                                            <div class="col-lg-6">
+                                                                <input id="img_convert" type="checkbox" name="convert" value="true">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group" id="format_convert">
+                                                            <label class="col-lg-4 control-label">{% trans "Format" %}</label>
+                                                            <div class="col-lg-6">
+                                                                <select name="format" class="form-control">
+                                                                    <option value="raw">{% trans "raw" %}</option>
+                                                                    <option value="qcow">{% trans "qcow" %}</option>
+                                                                    <option value="qcow2">{% trans "qcow2" %}</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
                                                             <button type="submit" class="btn btn-primary" name="img_clone">{% trans "Clone" %}</button>
@@ -365,4 +381,15 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
+{% endblock %}
+{% block script %}
+    <script type="text/javascript">
+        $(document).on('change','#img_convert',function(){
+            if($(this).prop('checked')) {
+                $('#format_convert').show();
+            } else {
+                $('#format_convert').hide();
+            }
+        });
+    </script>
 {% endblock %}
