@@ -76,3 +76,9 @@ body {
 #error {
     text-align: center;
 }
+@media (max-width: 1200px) {
+    form .form-group {
+     padding-left: 15px;
+     padding-right: 15px;
+ }
+}
