@@ -79,10 +79,13 @@ Add pre-installed flavors:
 
 Copy the folder and change owner (Ubuntu: "www-data.", Fedora, Redhat, CentOS: "apache."):
 
+    $ cd ..
     $ sudo cp -r webvirtmgr /var/www/
     $ sudo chown -R apache. /var/www/webvirtmgr
 
 Add file webvirtmgr.conf in conf.d directory (Ubuntu: "/etc/apache2/conf.d" or RedHat,Fedora,CentOS: "/etc/httpd/conf.d"):
+
+Fedora, Redhat, CentOS:
 
     WSGISocketPrefix run/wsgi
     <VirtualHost *:80>
@@ -107,6 +110,32 @@ Add file webvirtmgr.conf in conf.d directory (Ubuntu: "/etc/apache2/conf.d" or R
         ErrorLog logs/webvirtmgr-error_log
     </VirtualHost>
 
+Ubuntu:
+
+    WSGISocketPrefix run/wsgi
+    <VirtualHost *:80>
+        ServerAdmin webmaster@dummy-host.example.com
+        ServerName dummy-host.example.com
+
+        WSGIDaemonProcess webvirtmgr display-name=%{GROUP} python-path=/var/www/webvirtmgr
+        WSGIProcessGroup webvirtmgr
+        WSGIScriptAlias / /var/www/webvirtmgr/webvirtmgr/wsgi.py
+
+        Alias /static /var/www/webvirtmgr/static/
+        Alias /media /var/www/webvirtmgr/media/
+
+        <Directory /var/www/webvirtmgr/webvirtmgr>
+            <Files wsgi.py>
+                Order deny,allow
+                Allow from all
+            </Files>
+        </Directory>
+
+        CustomLog ${APACHE_LOG_DIR}/webvirtmgr-access_log common
+        ErrorLog ${APACHE_LOG_DIR}/webvirtmgr-error_log
+    </VirtualHost>
+
+
 Reload apache (Ubuntu: "apache2", Fedora, Redhat, CentOS: "httpd"):
 
     $ sudo service httpd reload
@@ -117,7 +146,7 @@ Reload apache (Ubuntu: "apache2", Fedora, Redhat, CentOS: "httpd"):
 
 Run:
 
-    $ sudo cp conf/initd/webvirtmgr-novnc-redhat /etc/init.d/webvirtmgr-novnc
+    $ sudo cp /var/www/webvirtmgr/conf/initd/webvirtmgr-novnc-redhat /etc/init.d/webvirtmgr-novnc
     $ sudo service webvirtmgr-novnc start
     $ sudo chkconfig webvirtmgr-novnc on
 
@@ -127,7 +156,7 @@ Run:
 
     $ sudo service novnc stop
     $ sudo update-rc.d -f novnc remove
-    $ sudo cp conf/initd/webvirtmgr-novnc-ubuntu /etc/init.d/webvirtmgr-novnc
+    $ sudo cp /var/www/webvirtmgr/conf/initd/webvirtmgr-novnc-ubuntu /etc/init.d/webvirtmgr-novnc
     $ sudo service webvirtmgr-novnc start
     $ sudo update-rc.d webvirtmgr-novnc defaults
 
