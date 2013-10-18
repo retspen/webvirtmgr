@@ -106,8 +106,8 @@ Fedora, Redhat, CentOS:
             </Files>
         </Directory>
 
-        CustomLog logs/webvirtmgr-access_log common
-        ErrorLog logs/webvirtmgr-error_log
+        CustomLog ${APACHE_LOG_DIR}/webvirtmgr-access_log common
+        ErrorLog ${APACHE_LOG_DIR}/webvirtmgr-error_log
     </VirtualHost>
 
 Ubuntu:
