@@ -1,4 +1,4 @@
-# WebVirtMgr panel - v3.2.7
+# WebVirtMgr panel - v3.3.4
 
 Warning: Upgrade from v2 not support!!!
 
@@ -7,6 +7,7 @@ Warning: Upgrade from v2 not support!!!
 * Fix many bugs
 * Add gentoo init scripts (Thanks: Joachim Langenbach)
 * Add function convert images
+* Rebuild VNC fanctional
 
 Big Thanks: Alex Kuksenko (<a href="https://github.com/retif">Github</a>)
 * Add support for more than one HDD
