@@ -2,11 +2,13 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
-from instance.models import Host, Flavor
+from instance.models import Host, Flavor, Instance
 from dashboard.views import sort_host
 from newvm.forms import FlavorAddForm, NewVMForm
 from webvirtmgr.server import ConnServer
 from libvirt import libvirtError
+from string import letters, digits
+from random import choice
 
 
 def create(request, host_id):
@@ -92,8 +94,11 @@ def create(request, host_id):
                                 images.append(vol.path())
 
                             try:
+                                passwd = ''.join([choice(letters + digits) for i in range(12)])
                                 conn.add_vm(data['name'], data['ram'], data['vcpu'], data['host_model'], images,
-                                            data['networks'], data['virtio'], all_storages)
+                                            data['networks'], data['virtio'], all_storages, passwd)
+                                vnc_pass = Instance(host_id=host_id, vname=data['name'], vnc_passwd=passwd)
+                                vnc_pass.save()
                                 return HttpResponseRedirect('/instance/%s/%s/' % (host_id, data['name']))
                             except libvirtError as msg_error:
                                 if data['hdd_size']:

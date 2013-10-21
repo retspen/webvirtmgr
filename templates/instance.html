@@ -64,12 +64,6 @@
                         <button href="#" class="btn btn-default btn-lg disabled" id="inst-btn"><span class="glyphicon glyphicon-edit"></span><br> {% trans "Edit" %}</button>
                     {% endifequal %}
                 </form>
-
-                <div class="block-btn">
-                    {% if not instance.vnc_passwd and dom.info.0 == 5 %}
-                    <button href="#noVNC" class="btn btn-default" data-toggle="modal">{% trans "Set VNC Password" %}</button>
-                    {% endif %}
-                </div>
             </div>
             <hr>
             <div class="block-btn">
@@ -253,37 +247,7 @@
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 
-    <!-- Modal noVNC -->
-    <div class="modal fade" id="noVNC" tabindex="-1" role="dialog" aria-labelledby="noVNCLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">{% trans "Enter the VNC password or select Generate" %}</h4>
-                </div>
-                <form class="form-horizontal" method="post" role="form">{% csrf_token %}
-                    <div class="form-group">
-                        <label for="inputPassword1" class="col-lg-3 control-label">{% trans "Generate" %}</label>
-                        <div class="col-lg-6">
-                            <input type="checkbox" name="auto_pass" value="true" id="vnc_passwd_gen">
-                        </div>
-                    </div>
-                    <div class="form-group" id="vnc_passwd_manual">
-                        <label for="inputPassword1" class="col-lg-3 control-label">{% trans "Password" %}</label>
-                        <div class="col-lg-6">
-                            <input type="password" class="form-control" name="vnc_passwd" placeholder="{% trans "Password" %}" maxlength="14">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-                        <button type="submit" class="btn btn-primary" name="vnc_pass">{% trans "Create" %}</button>
-                    </div>
-                </form>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-
-     <!-- Modal Edit -->
+    <!-- Modal Edit -->
     <div class="modal fade" id="Edit" tabindex="-1" role="dialog" aria-labelledby="addHostLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -294,9 +258,10 @@
                 <div class="tabbable">
                     <ul class="nav nav-tabs">
                         <li class="active">
-                            <a href="#1" data-toggle="tab">{% trans "Change settings" %}</a>
+                            <a href="#1" data-toggle="tab">{% trans "Settings" %}</a>
                         </li>
-                        <li><a href="#2" data-toggle="tab">{% trans "Edit XML" %}</a></li>
+                        <li><a href="#2" data-toggle="tab">{% trans "VNC" %}</a></li>
+                        <li><a href="#3" data-toggle="tab">{% trans "XML" %}</a></li>
                     </ul>
                 </div>
                 <div class="tab-content">
@@ -335,6 +300,26 @@
                         </form>
                     </div>
                     <div class="tab-pane" id="2">
+                        <form class="form-horizontal" method="post" role="form">{% csrf_token %}
+                            <div class="form-group">
+                                <label for="inputPassword1" class="col-lg-3 control-label">{% trans "Generate" %}</label>
+                                <div class="col-lg-6">
+                                    <input type="checkbox" name="auto_pass" value="true" id="vnc_passwd_gen">
+                                </div>
+                            </div>
+                            <div class="form-group" id="vnc_passwd_manual">
+                                <label for="inputPassword1" class="col-lg-3 control-label">{% trans "Password" %}</label>
+                                <div class="col-lg-6">
+                                    <input type="password" class="form-control" name="vnc_passwd" placeholder="{% trans "Password" %}" maxlength="14">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+                                <button type="submit" class="btn btn-primary" name="vnc_pass">{% trans "Change" %}</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane" id="3">
                         <div id="viewXMLpre">
                             <pre class="pre-scrollable">{{ vm_xml }}</pre>
                             <div class="modal-footer">

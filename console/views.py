@@ -28,7 +28,6 @@ def console(request, host_id, vname):
     if not conn:
         errors.append(e.message)
     else:
-        vnc_port = conn.vnc_get_port(vname)
         try:
             instance = Instance.objects.get(host=host_id, vname=vname)
             socket_port = 6080
@@ -40,8 +39,7 @@ def console(request, host_id, vname):
 
         conn.close()
 
-    response = render_to_response('console.html', {'vnc_port': vnc_port,
-                                                   'socket_port': socket_port,
+    response = render_to_response('console.html', {'socket_port': socket_port,
                                                    'socket_host': socket_host,
                                                    'instance': instance,
                                                    'errors': errors

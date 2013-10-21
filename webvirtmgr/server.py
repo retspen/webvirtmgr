@@ -2,6 +2,7 @@
 #
 
 import libvirt
+from libvirt import VIR_DOMAIN_XML_SECURE
 from network.IPy import IP
 import re
 import time
@@ -170,7 +171,7 @@ class ConnServer(object):
         else:
             return False
 
-    def add_vm(self, name, ram, cpu, host_model, images, nets, virtio, storages):
+    def add_vm(self, name, ram, cpu, host_model, images, nets, virtio, storages, passwd=None):
         """
         Create VM function
 
@@ -260,12 +261,12 @@ class ConnServer(object):
         xml += """
                     <input type='tablet' bus='usb'/>
                     <input type='mouse' bus='ps2'/>
-                    <graphics type='vnc' port='-1' autoport='yes' listen='0.0.0.0'>
+                    <graphics type='vnc' port='-1' autoport='yes' listen='0.0.0.0' passwd='%s'>
                       <listen type='address' address='0.0.0.0'/>
                     </graphics>
                     <memballoon model='virtio'/>
                   </devices>
-                </domain>"""
+                </domain>""" % (passwd)
         self.conn.defineXML(xml)
         dom = self.lookupVM(name)
         dom.setAutostart(1)
@@ -724,11 +725,11 @@ class ConnServer(object):
                                     <source file='%s'/>
                                  </disk>""" % vol.path()
                         dom.attachDevice(xml)
-                        xmldom = dom.XMLDesc(0)
+                        xmldom = dom.XMLDesc(VIR_DOMAIN_XML_SECURE)
                         self.conn.defineXML(xmldom)
                     if dom.info()[0] == 5:
                         vol = stg.storageVolLookupByName(image)
-                        xml = dom.XMLDesc(0)
+                        xml = dom.XMLDesc(VIR_DOMAIN_XML_SECURE)
                         newxml = "<disk type='file' device='cdrom'>\n      <driver name='qemu' type='raw'/>\n      <source file='%s'/>" % vol.path()
                         xmldom = xml.replace(
                             "<disk type='file' device='cdrom'>\n      <driver name='qemu' type='raw'/>", newxml)
@@ -748,10 +749,10 @@ class ConnServer(object):
                          <readonly/>
                       </disk>"""
             dom.attachDevice(xml)
-            xmldom = dom.XMLDesc(0)
+            xmldom = dom.XMLDesc(VIR_DOMAIN_XML_SECURE)
             self.conn.defineXML(xmldom)
         if dom.info()[0] == 5:
-            xml = dom.XMLDesc(0)
+            xml = dom.XMLDesc(VIR_DOMAIN_XML_SECURE)
             xmldom = xml.replace("<source file='%s'/>\n" % image, '')
             self.conn.defineXML(xmldom)
 
@@ -878,7 +879,7 @@ class ConnServer(object):
 
         """
         dom = self.lookupVM(vname)
-        xml = dom.XMLDesc(0)
+        xml = dom.XMLDesc(VIR_DOMAIN_XML_SECURE)
         find_tag = re.findall('<graphics.*/>', xml)
         if find_tag:
             close_tag = '/'
@@ -895,7 +896,7 @@ class ConnServer(object):
 
         """
         dom = self.lookupVM(vname)
-        xml = dom.XMLDesc(0)
+        xml = dom.XMLDesc(VIR_DOMAIN_XML_SECURE)
         memory = int(ram) * 1024
         xml_memory = "<memory unit='KiB'>%s</memory>" % memory
         xml_memory_change = re.sub('<memory.*memory>', xml_memory, xml)
@@ -955,7 +956,7 @@ class ConnServer(object):
                      <name>%d</name>\n
                      <state>shutoff</state>\n
                      <creationTime>%d</creationTime>\n""" % (time.time(), time.time())
-        xml += dom.XMLDesc(0)
+        xml += dom.XMLDesc(VIR_DOMAIN_XML_SECURE)
         xml += """<active>0</active>\n
                   </domainsnapshot>"""
         dom.snapshotCreateXML(xml, 0)

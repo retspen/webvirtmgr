@@ -150,8 +150,7 @@ def instance(request, host_id, vname):
                 image = request.POST.get('iso_img', '')
                 try:
                     conn.vds_umount_iso(vname, image)
-                    if instance:
-                        conn.vds_set_vnc_passwd(vname, instance.vnc_passwd)
+
                     return HttpResponseRedirect(request.get_full_path())
                 except libvirtError as msg_error:
                     errors.append(msg_error.message)
@@ -159,8 +158,6 @@ def instance(request, host_id, vname):
                 image = request.POST.get('iso_img', '')
                 try:
                     conn.vds_mount_iso(vname, image)
-                    if instance:
-                        conn.vds_set_vnc_passwd(vname, instance.vnc_passwd)
                     return HttpResponseRedirect(request.get_full_path())
                 except libvirtError as msg_error:
                     errors.append(msg_error.message)
@@ -170,8 +167,6 @@ def instance(request, host_id, vname):
                 ram = request.POST.get('ram', '')
                 try:
                     conn.vds_edit(vname, description, ram, vcpu)
-                    if instance:
-                        conn.vds_set_vnc_passwd(vname, instance.vnc_passwd)
                     return HttpResponseRedirect(request.get_full_path())
                 except libvirtError as msg_error:
                     errors.append(msg_error.message)
@@ -180,8 +175,6 @@ def instance(request, host_id, vname):
                 try:
                     if xml:
                         conn.defineXML(xml)
-                        if instance:
-                            conn.vds_set_vnc_passwd(vname, instance.vnc_passwd)
                     return HttpResponseRedirect(request.get_full_path())
                 except libvirtError as msg_error:
                     errors.append(msg_error.message)
@@ -198,7 +191,8 @@ def instance(request, host_id, vname):
                 if not errors:
                     try:
                         conn.vds_set_vnc_passwd(vname, passwd)
-                        vnc_pass = Instance(host_id=host_id, vname=vname, vnc_passwd=passwd)
+                        vnc_pass = Instance.objects.get(vname=vname)
+                        vnc_pass.vnc_passwd = passwd
                         vnc_pass.save()
                     except libvirtError as msg_error:
                         errors.append(msg_error.message)
