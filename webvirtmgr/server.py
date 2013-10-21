@@ -871,6 +871,7 @@ class ConnServer(object):
                         return media, media
                 else:
                     return None, None
+            return None, None
 
     def vds_set_vnc_passwd(self, vname, passwd):
         """
