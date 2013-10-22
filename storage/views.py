@@ -26,7 +26,8 @@ def storage(request, host_id, pool):
         destination.close()
 
     errors = []
-    form = None
+    form = stg = size = free = usage = percent = \
+        state = s_type = path = volumes_info = None
     host = Host.objects.get(id=host_id)
 
     try:
@@ -45,14 +46,15 @@ def storage(request, host_id, pool):
                 return HttpResponseRedirect('/storage/%s/%s/' % (host_id, storages.keys()[0]))
 
         all_vm = sort_host(conn.vds_get_node())
-        stg = conn.storagePool(pool)
-        size, free, usage, percent, state, s_type, path = conn.storage_get_info(pool)
 
-        if state:
-            stg.refresh(0)
-            volumes_info = conn.volumes_get_info(pool)
-        else:
-            volumes_info = None
+        if not pool == 'add':
+            stg = conn.storagePool(pool)
+            size, free, usage, percent, state, s_type, path = conn.storage_get_info(pool)
+            if state:
+                stg.refresh(0)
+                volumes_info = conn.volumes_get_info(pool)
+            else:
+                volumes_info = None
 
         if request.method == 'POST':
             if 'pool_add' in request.POST:
@@ -95,7 +97,7 @@ def storage(request, host_id, pool):
                         msg = _("Volume name already use")
                         errors.append(msg)
                     if not errors:
-                        conn.new_volume(pool, data['name'], data['size'])
+                        conn.new_volume(pool, data['name'], data['size'], data['format'])
                         return HttpResponseRedirect(request.get_full_path())
             if 'img_del' in request.POST:
                 img = request.POST.get('img', '')
@@ -121,8 +123,12 @@ def storage(request, host_id, pool):
                         msg = _("Name of volume name already use")
                         errors.append(msg)
                     if not errors:
+                        if 'convert' in data:
+                            format = data['format']
+                        else:
+                            format = None
                         try:
-                            conn.clone_volume(pool, data['image'], data['name'])
+                            conn.clone_volume(pool, data['image'], data['name'], format)
                             return HttpResponseRedirect(request.get_full_path())
                         except libvirtError as error_msg:
                             errors.append(error_msg.message)

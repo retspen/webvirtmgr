@@ -4,7 +4,9 @@
 {% block title %}{% trans "Create VM" %}{% endblock %}
 {% block style %}
     <link href="{% static "css/progressbar.css" %}" rel="stylesheet">
+    <link href="{% static "css/bootstrap-multiselect.css" %}" rel="stylesheet">
 {% endblock %}
+
 {% block content %}
     <div class="row">
         {% include 'sidebar.html' %}
@@ -52,6 +54,14 @@
                     {% endfor %}
                 </div>
             {% endif %}
+            {% if form.networks.errors %}
+                <div class="alert alert-danger">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    {% for error in form.networks.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
             <div class="block-btn">
                 <a data-toggle="modal" href="#addCustom" class="btn btn-success">{% trans "Custom VM" %}</a>
                 <a data-toggle="modal" href="#addFlavor" class="btn btn-success">{% trans "Add Flavor" %}</a>
@@ -88,7 +98,7 @@
                                                 <div class="form-group">
                                                     <label class="col-lg-4 control-label">{% trans "Name" %}</label>
                                                     <div class="col-lg-6">
-                                                        <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}" maxlength="14" required pattern="^[a-zA-Z0-9_]+$">
+                                                        <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}" maxlength="14" required pattern="[a-zA-Z0-9_]+">
                                                         <input type="hidden" name="vcpu" value="{{ flavor.vcpu }}">
                                                         <input type="hidden" name="ram" value="{{ flavor.ram }}">
                                                         <input type="hidden" name="hdd_size" value="{{ flavor.hdd }}">
@@ -111,18 +121,24 @@
                                                 <div class="form-group">
                                                     <label class="col-lg-4 control-label">{% trans "Network" %}</label>
                                                     <div class="col-lg-6">
-                                                        <select name="network" class="form-control">
+                                                        <select name="networks" class="form-control">
                                                             {% for network in all_networks %}
                                                                 <option value="{{ network }}">{{ network }}</option>
                                                             {% endfor %}
-                                                            <option value="br0">br0</option>
                                                         </select>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
+                                                    <label class="col-lg-4 control-label">{% trans "Host-Model" %}</label>
+                                                    <div class="col-lg-6">
+                                                        <input type="checkbox" name="host_model" value="true" checked>
+                                                    </div>
+                                                    <label class="col-lg-1 control-label">{% trans "CPU" %}</label>
+                                                </div>
+                                                <div class="form-group">
                                                     <label class="col-lg-4 control-label">{% trans "VirtIO" %}</label>
                                                     <div class="col-lg-6">
-                                                        <input type="checkbox" class="form-control" name="virtio" value="true" checked>
+                                                        <input type="checkbox" name="virtio" value="true" checked>
                                                     </div>
                                                 </div>
                                                 <div class="modal-footer">
@@ -169,26 +185,37 @@
                     <div class="form-group">
                         <label class="col-lg-4 control-label">{% trans "Name" %}</label>
                         <div class="col-lg-6">
-                            <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}" maxlength="14" required pattern="^[a-zA-Z0-9_]+$">
+                            <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}" maxlength="14" required pattern="[a-zA-Z0-9_]+">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-lg-4 control-label">{% trans "VCPU" %}</label>
                         <div class="col-lg-6">
-                            <input type="text" class="form-control" name="vcpu" value="1" maxlength="1" required pattern="^[0-9]+$">
+                            <input type="text" class="form-control" name="vcpu" value="1" maxlength="1" required pattern="[0-9]">
                         </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-4 control-label">{% trans "Host-Model" %}</label>
+                        <div class="col-lg-6">
+                            <input type="checkbox" name="host_model" value="true" checked>
+                        </div>
+                        <label class="col-lg-1 control-label">{% trans "CPU" %}</label>
                     </div>
                     <div class="form-group">
                         <label class="col-lg-4 control-label">{% trans "RAM" %}</label>
                         <div class="col-lg-6">
-                            <input type="text" class="form-control" name="ram" value="512" maxlength="5" required pattern="^[0-9]+$">
+                            <input type="text" class="form-control" name="ram" value="512" maxlength="5" required pattern="[0-9]+">
                         </div>
                         <label class="col-lg-1 control-label">{% trans "MB" %}</label>
                     </div>
                     <div class="form-group">
                         <label class="col-lg-4 control-label">{% trans "HDD" %}</label>
                         <div class="col-lg-6">
-                            <select name="image" class="form-control">
+                            <ul id="img-list">
+                                <!-- populated from javascript -->
+                            </ul>
+                            <input id="images" name="images" type="hidden" value=""/>
+                            <select id="image-control" name="image-control" class="form-control" multiple="multiple">
                                 {% if all_img %}
                                     {% for name in all_img %}
                                         <option value="{{ name }}">{{ name }}</option>
@@ -202,24 +229,27 @@
                     <div class="form-group">
                         <label class="col-lg-4 control-label">{% trans "Network" %}</label>
                         <div class="col-lg-6">
-                            <select name="network" class="form-control">
+                            <ul id="net-list">
+                                <!-- populated from javascript -->
+                            </ul>
+                            <input id="networks" type="hidden" name="networks" value=""/>
+                            <select id="network-control" name="network-control" class="form-control" multiple="multiple">
                                 {% for network in all_networks %}
                                     <option value="{{ network }}">{{ network }}</option>
                                 {% endfor %}
-                                <option value="br0">br0</option>
                             </select>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-lg-4 control-label">{% trans "VirtIO" %}</label>
                         <div class="col-lg-6">
-                            <input type="checkbox" class="form-control" name="virtio" value="true" checked>
+                            <input type="checkbox" name="virtio" value="true" checked>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
                         {% if all_storages %}
-                            <button type="submit" class="btn btn-primary" name="instance_add">{% trans "Create" %}</button>
+                            <button type="submit" class="btn btn-primary" name="instance_add" value="1">{% trans "Create" %}</button>
                         {% else %}
                             <button class="btn btn-primary disabled" >{% trans "Create" %}</button>
                         {% endif %}
@@ -241,26 +271,26 @@
                     <div class="form-group">
                         <label class="col-lg-4 control-label">{% trans "Name" %}</label>
                         <div class="col-lg-6">
-                            <input type="text" name="name" class="form-control" placeholder="Micro" maxlength="20" required pattern="^[a-zA-Z0-9]+$">
+                            <input type="text" name="name" class="form-control" placeholder="Micro" maxlength="20" required pattern="[a-zA-Z0-9]+">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-lg-4 control-label">{% trans "VCPU" %}</label>
                         <div class="col-lg-6">
-                            <input type="text" class="form-control" name="vcpu" value="1" maxlength="1" required pattern="^[0-9]+$">
+                            <input type="text" class="form-control" name="vcpu" value="1" maxlength="1" required pattern="[0-9]">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-lg-4 control-label">{% trans "RAM" %}</label>
                         <div class="col-lg-6">
-                            <input type="text" class="form-control" name="ram" value="512" maxlength="5" required pattern="^[0-9]+$">
+                            <input type="text" class="form-control" name="ram" value="512" maxlength="5" required pattern="[0-9]+">
                         </div>
                         <label class="col-lg-1 control-label">{% trans "MB" %}</label>
                     </div>
                     <div class="form-group">
                         <label class="col-lg-4 control-label">{% trans "HDD" %}</label>
                         <div class="col-lg-6">
-                            <input type="text" class="form-control" name="hdd" value="10" maxlength="3" required pattern="^[0-9]+$">
+                            <input type="text" class="form-control" name="hdd" value="10" maxlength="3" required pattern="[0-9]+">
                         </div>
                         <label class="col-lg-1 control-label">{% trans "GB" %}</label>
                     </div>
@@ -272,4 +302,70 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
+{% endblock %}
+
+{% block script %}
+    <script src="{% static "js/bootstrap-multiselect.js" %}"></script>
+
+    <script>
+        function toggleValue(string, updated_value, checked) {
+            var result = '';
+            if(checked) {
+                result = string;
+                if(result != '') result += ',';
+                result += updated_value;
+            } else {
+                $.each(string.split(','), function(index, value) {
+                    if(value == updated_value) return;
+                    if(result != '') result += ',';
+                    result += value;
+                });
+            }
+            return result;
+        }
+
+        $(document).ready(function() {
+            $('#image-control').multiselect({
+                buttonText: function(options, select) { return 'Add image <b class="caret"></b>'; },
+                buttonTitle: function(options, select) { return ''; },
+                onChange:function(element, checked){
+                    var input_value = toggleValue($('#images').val(), element.val(), checked);
+                    $('#images').val(input_value);
+                    var selected_list_html = '';
+                    var counter = 0;
+                    if(input_value != '') {
+                        $.each(input_value.split(','),function(index, value) {
+                            var li = '<li>hdd'+counter +
+                                    ' -> '+value + ' ' +
+                                    '<a class="btn-link" onclick="javascript:$(\'#image-control\').multiselect(\'deselect\', \'' + value + '\')">x</a></li>';
+                            selected_list_html += li;
+                            counter++;
+                        });
+                    }
+                    $('#img-list').html(selected_list_html);
+                }
+            });
+
+            $('#network-control').multiselect({
+                buttonText: function(options, select) { return 'Add network <b class="caret"></b>'; },
+                buttonTitle: function(options, select) { return ''; },
+                onChange:function(element, checked){
+                    var input_value = toggleValue($('#networks').val(), element.val(), checked);
+                    $('#networks').val(input_value);
+                    var selected_list_html = '';
+                    var counter = 0;
+                    if(input_value != '') {
+                        $.each(input_value.split(','),function(index, value) {
+                            var li = '<li>eth'+counter +
+                                    ' -> '+value + ' ' +
+                                    '<a class="btn-link" onclick="javascript:$(\'#network-control\').multiselect(\'deselect\', \'' + value + '\')">x</a></li>';
+                            selected_list_html += li;
+                            counter++;
+                        });
+                    }
+                    $('#net-list').html(selected_list_html);
+                }
+            });
+        });
+    </script>
 {% endblock %}

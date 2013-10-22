@@ -32,6 +32,14 @@
                     {% endfor %}
                 </div>
             {% endif %}
+            {% if form.bridge_name.errors %}
+                <div class="alert alert-danger">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    {% for error in form.bridge_name.errors  %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
             <div class="block-btn">
                 <a href="#AddNetPool" class="btn btn-success" data-toggle="modal">{% trans "Add Pool" %}</a>
             </div>
@@ -69,17 +77,18 @@
                     <div class="col-md-6">
                         <p>{% trans "Type forwarding" %}</p>
                         <p>{% trans "Subnet pool" %}</p>
-                        {% if info.0 %}
-                            <p>{% trans "DHCP" %}</p>
-                        {% endif %}
+                        <p>{% trans "DHCP" %}</p>
                         {% if ipv4_net.2 %}
                             <p>{% trans "Start" %}</p>
                             <p>{% trans "End" %}</p>
                         {% endif %}
                     </div>
                     <div class="col-md-6">
-                        <p>{% ifequal ipv4_net.0.0 'nat' %} {% trans "NAT" %} {% endifequal %} {% ifequal ipv4_net.0.0 'route' %} {% trans "ROUTE" %} {% endifequal %} {% if not ipv4_net.0.0 %} {% trans "ISOLATE" %} {% endif %}</p>
-                        <p>{{ ipv4_net.1 }}</p>
+                        <p>{% ifequal ipv4_net.0.0 'nat' %} {% trans "NAT" %} {% endifequal %}
+                           {% ifequal ipv4_net.0.0 'route' %} {% trans "ROUTE" %} {% endifequal %}
+                           {% ifequal ipv4_net.0.0 'bridge' %} {% trans "BRIDGE" %} {% endifequal %}
+                           {% if not ipv4_net.0.0 %} {% trans "ISOLATE" %} {% endif %}</p>
+                        <p>{% if ipv4_net.1 %}{{ ipv4_net.1 }}{% else %}{% trans "None" %}{% endif %}</p>
                         <p>{% if ipv4_net.2 %}<span class="text-success">{% trans "ON" %}</span>{% else %}<span class="text-danger">{% trans "OFF" %}</span>{% endif %}</p>
                         {% if ipv4_net.2 %}
                             {% for dhcp in ipv4_net.2 %}
@@ -104,30 +113,36 @@
                     <div class="form-group">
                         <label class="col-lg-4 control-label">{% trans "Name" %}</label>
                         <div class="col-lg-6">
-                            <input type="text" class="form-control" name="name" placeholder="default">
-
+                            <input type="text" class="form-control" name="name" placeholder="default" required pattern="[a-zA-Z0-9_]+">
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group bridge_name_form_group_dhcp">
                         <label class="col-lg-4 control-label">{% trans "Subnet pool" %}</label>
                         <div class="col-lg-6">
-                            <input type="text" class="form-control" name="subnet" value="192.168.100.0/24">
+                            <input type="text" class="form-control" name="subnet" value="192.168.100.0/24" required pattern="[0-9\/\.]+">
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group bridge_name_form_group_dhcp">
                         <label class="col-lg-4 control-label">{% trans "DHCP" %}</label>
                         <div class="col-lg-6">
-                            <input type="checkbox" name="dhcp" value="1" checked>
+                            <input type="checkbox" name="dhcp" value="true" checked>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-lg-4 control-label">{% trans "Type forwarding" %}</label>
                         <div class="col-lg-6">
-                            <select class="form-control" name="forward">
+                            <select id="forward_select" class="form-control" name="forward">
                                 <option value="nat">{% trans "NAT" %}</option>
                                 <option value="route">{% trans "ROUTE" %}</option>
                                 <option value="none">{% trans "ISOLATE" %}</option>
+                                <option value="bridge">{% trans "BRIDGE" %}</option>
                              </select>
+                        </div>
+                    </div>
+                    <div class="form-group" id="bridge_name_form_group">
+                        <label class="col-lg-4 control-label">{% trans "Bridge Name" %}</label>
+                        <div class="col-lg-6">
+                            <input type="text" class="form-control" name="bridge_name" placeholder="br0" pattern="[a-z0-9]+">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -138,4 +153,20 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
+{% endblock %}
+
+{% block script %}
+    <script>
+        $(document).ready(function() {
+            $('#forward_select').change(function(eventObject) {
+                if($(this).val() == 'bridge') {
+                    $('#bridge_name_form_group').show();
+                    $('.bridge_name_form_group_dhcp').hide();
+                } else {
+                    $('#bridge_name_form_group').hide();
+                    $('.bridge_name_form_group_dhcp').show();
+                }
+            }).change();
+        });
+    </script>
 {% endblock %}

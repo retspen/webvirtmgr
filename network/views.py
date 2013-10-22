@@ -19,7 +19,7 @@ def network(request, host_id, pool):
         return HttpResponseRedirect('/login')
 
     errors = []
-    form = None
+    form = info = ipv4_net = None
     host = Host.objects.get(id=host_id)
 
     try:
@@ -39,12 +39,13 @@ def network(request, host_id, pool):
                 return HttpResponseRedirect('/network/%s/%s/' % (host_id, networks.keys()[0]))
 
         all_vm = sort_host(conn.vds_get_node())
-        info = conn.network_get_info(pool)
 
-        if info[0]:
-            ipv4_net = conn.network_get_subnet(pool)
-        else:
-            ipv4_net = None
+        if not pool == 'add':
+            info = conn.network_get_info(pool)
+            if info[0]:
+                ipv4_net = conn.network_get_subnet(pool)
+            else:
+                ipv4_net = None
 
         if request.method == 'POST':
             if 'pool_add' in request.POST:
@@ -54,6 +55,8 @@ def network(request, host_id, pool):
                     if data['name'] in networks.keys():
                         msg = _("Pool name already in use")
                         errors.append(msg)
+                    if data['forward'] == 'bridge' and data['bridge_name'] == '':
+                        errors.append('Please enter bridge name')
                     try:
                         gateway, netmask, dhcp = network_size(data['subnet'], data['dhcp'])
                     except:
@@ -61,7 +64,7 @@ def network(request, host_id, pool):
                         errors.append(msg)
                     if not errors:
                         try:
-                            conn.new_network_pool(data['name'], data['forward'], gateway, netmask, dhcp)
+                            conn.new_network_pool(data['name'], data['forward'], gateway, netmask, dhcp, data['bridge_name'])
                             return HttpResponseRedirect('/network/%s/%s/' % (host_id, data['name']))
                         except libvirtError as e:
                             errors.append(e.message)

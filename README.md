@@ -1,4 +1,4 @@
-# WebVirtMgr panel - v3
+# WebVirtMgr panel - v3.3.4
 
 Warning: Upgrade from v2 not support!!!
 
@@ -6,6 +6,16 @@ Warning: Upgrade from v2 not support!!!
 * Move to Bootstrap-3.0
 * Fix many bugs
 * Add gentoo init scripts (Thanks: Joachim Langenbach)
+* Add function convert images
+* Rebuild VNC fanctional
+
+Big Thanks: Alex Kuksenko (<a href="https://github.com/retif">Github</a>)
+* Add support for more than one HDD
+* Add support for multi networks
+* Add support for hardware CPU (host cpu instead of virtual)
+* View and Edit XML Virtual Machine
+* Add bridge device in Network Pool
+* Add create image RAW, QCOW, QCOW2 formats
 
 ## 1. Introduction
 
@@ -26,7 +36,7 @@ WebVirtMgr is licensed under the Apache Licence, Version 2.0 (http://www.apache.
 Run:
 
     $ su -c 'yum -y install git python-pip libvirt-python libxml2-python httpd mod_wsgi python-websockify'
-    $ su -c 'python-pip install Django==1.5.2'
+    $ su -c 'python-pip install Django==1.5.4'
 
 ### CentOS 6.2, RedHat 6.2 and above
 
@@ -34,25 +44,24 @@ Run:
 
     $ su -c 'yum -y install http://dl.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm'
     $ su -c 'yum -y install git python-pip libvirt-python libxml2-python httpd mod_wsgi python-websockify'
-    $ su -c 'python-pip install Django==1.5.2'
+    $ su -c 'python-pip install Django==1.5.4'
 
 ### Ubuntu 12.04 and above
 
 Run:
 
     $ sudo apt-get install git python-pip python-libvirt python-libxml2 apache2 libapache2-mod-wsgi novnc
-    $ sudo pip install Django==1.5.2
+    $ sudo ln -s /var/run/apache2 /etc/apache2/run
+    $ sudo pip install Django==1.5.4
 
 ## 3. Setup
 
 Run: 
     
-    $ git clone git://github.com/retspen/webvirtmgr.git
+    $ git clone git://github.com/retspen/webvirtmgr.git -b nestene
     $ cd webvirtmgr
     $ ./manage.py syncdb
     
-Or install <a href="https://github.com/euforia/webvirtmgr">RPM</a> (CentOS, RHEL, Fedora, Oracle Linux 6)  
-
 Enter the user information:
 
     You just installed Django's auth system, which means you don't have any superusers defined.
@@ -67,17 +76,17 @@ Add pre-installed flavors:
     
     $ ./manage.py loaddata conf/flavor.json
 
-Run app for test:
+## 4. Setup Apache
 
-    $ ./manage.py runserver 0:8000
-    
-Enter in your browser:
-    
-    http://x.x.x.x:8000 (x.x.x.x - your server IP address )
+Copy the folder and change owner (Ubuntu: "www-data.", Fedora, Redhat, CentOS: "apache."):
 
-## 4. Setup Web (Autostart panel)
+    $ cd ..
+    $ sudo cp -r webvirtmgr /var/www/
+    $ sudo chown -R apache. /var/www/webvirtmgr
 
 Add file webvirtmgr.conf in conf.d directory (Ubuntu: "/etc/apache2/conf.d" or RedHat,Fedora,CentOS: "/etc/httpd/conf.d"):
+
+Fedora, Redhat, CentOS:
 
     WSGISocketPrefix run/wsgi
     <VirtualHost *:80>
@@ -102,14 +111,35 @@ Add file webvirtmgr.conf in conf.d directory (Ubuntu: "/etc/apache2/conf.d" or R
         ErrorLog logs/webvirtmgr-error_log
     </VirtualHost>
 
-Copy the folder and change owner (Ubuntu: "www-data:www-data", Fedora, Redhat, CentOS: "apache:apache"):
+Ubuntu:
 
-    $ sudo cp -r webvirtmgr /var/www/
-    $ sudo chown -R www-data:www-data /var/www/webvirtmgr
+    WSGISocketPrefix run/wsgi
+    <VirtualHost *:80>
+        ServerAdmin webmaster@dummy-host.example.com
+        ServerName dummy-host.example.com
 
-Reload apache:
-    
-    $ sudo service apache2 reload
+        WSGIDaemonProcess webvirtmgr display-name=%{GROUP} python-path=/var/www/webvirtmgr
+        WSGIProcessGroup webvirtmgr
+        WSGIScriptAlias / /var/www/webvirtmgr/webvirtmgr/wsgi.py
+
+        Alias /static /var/www/webvirtmgr/static/
+        Alias /media /var/www/webvirtmgr/media/
+
+        <Directory /var/www/webvirtmgr/webvirtmgr>
+            <Files wsgi.py>
+                Order deny,allow
+                Allow from all
+            </Files>
+        </Directory>
+
+        CustomLog ${APACHE_LOG_DIR}/webvirtmgr-access_log common
+        ErrorLog ${APACHE_LOG_DIR}/webvirtmgr-error_log
+    </VirtualHost>
+
+
+Reload apache (Ubuntu: "apache2", Fedora, Redhat, CentOS: "httpd"):
+
+    $ sudo service httpd reload
 
 ## 5. Setup Websoket proxy (noVNC)
 
@@ -117,7 +147,7 @@ Reload apache:
 
 Run:
 
-    $ sudo cp conf/initd/webvirtmgr-novnc-redhat /etc/init.d/webvirtmgr-novnc
+    $ sudo cp /var/www/webvirtmgr/conf/initd/webvirtmgr-novnc-redhat /etc/init.d/webvirtmgr-novnc
     $ sudo service webvirtmgr-novnc start
     $ sudo chkconfig webvirtmgr-novnc on
 
@@ -127,11 +157,11 @@ Run:
 
     $ sudo service novnc stop
     $ sudo update-rc.d -f novnc remove
-    $ sudo cp conf/initd/webvirtmgr-novnc-ubuntu /etc/init.d/webvirtmgr-novnc
+    $ sudo cp /var/www/webvirtmgr/conf/initd/webvirtmgr-novnc-ubuntu /etc/init.d/webvirtmgr-novnc
     $ sudo service webvirtmgr-novnc start
     $ sudo update-rc.d webvirtmgr-novnc defaults
 
-## 6. Gunicorn and Runit (Only for geeks)
+## 6. Gunicorn and Supervisor (Only for geeks)
 
 Install gunicorn:
 
@@ -163,7 +193,17 @@ And then install and setup nginx for static files.
     $ cd /path to/webvirtmgr
     $ git pull
 
-Support: support@webvirtmgr.net or <a href="https://github.com/retspen/webvirtmgr/issues">GitHub Issues</a>
+## 8. Debug
+
+If have error or not run panel (only for DEBUG or DEVELOP):
+
+    $ ./manage.py runserver 0:8000
+
+Enter in your browser:
+
+    http://x.x.x.x:8000 (x.x.x.x - your server IP address )
+
+Support: <a href="https://github.com/retspen/webvirtmgr/issues">GitHub Issues</a>
 
 Powered by
 

@@ -90,7 +90,7 @@
                             <tr>
                                 <th style="width:20px;">#</th>
                                 <th>{% trans "Name" %}</th>
-                                <th style="width:30px;">{% trans "Size" %}</th>
+                                <th style="width:90px;">{% trans "Size" %}</th>
                                 <th style="width:30px;">{% trans "Format" %}</th>
                                 <th colspan="2">{% trans "Action" %}</th>
                             </tr>
@@ -154,10 +154,26 @@
                                                         <div class="form-group">
                                                             <label class="col-lg-4 control-label">{% trans "Name" %}</label>
                                                             <div class="col-lg-6">
-                                                                <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}">
+                                                                <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}" required pattern="[a-zA-Z0-9_]+">
                                                                 <input type="hidden" name="image" value="{{ key }}">
                                                             </div>
                                                             <label class="col-lg-1 control-label">.img</label>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-lg-4 control-label">{% trans "Convert" %}</label>
+                                                            <div class="col-lg-6">
+                                                                <input id="img_convert" type="checkbox" name="convert" value="true">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group" id="format_convert">
+                                                            <label class="col-lg-4 control-label">{% trans "Format" %}</label>
+                                                            <div class="col-lg-6">
+                                                                <select name="format" class="form-control">
+                                                                    <option value="raw">{% trans "raw" %}</option>
+                                                                    <option value="qcow">{% trans "qcow" %}</option>
+                                                                    <option value="qcow2">{% trans "qcow2" %}</option>
+                                                                </select>
+                                                            </div>
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
@@ -222,7 +238,7 @@
                             <div class="form-group">
                                 <label class="col-lg-4 control-label">{% trans "Name" %}</label>
                                 <div class="col-lg-6">
-                                    <input type="text" class="form-control" name="name" placeholder="default" maxlength="20" required pattern="^[a-zA-Z0-9_]+$">
+                                    <input type="text" class="form-control" name="name" placeholder="default" maxlength="20" required pattern="[a-zA-Z0-9_]+">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -249,13 +265,13 @@
                             <div class="form-group">
                                 <label class="col-lg-4 control-label">{% trans "Name" %}</label>
                                 <div class="col-lg-6">
-                                    <input type="text" class="form-control" name="name" placeholder="default" maxlength="20" required pattern="^[a-zA-Z0-9_]+$">
+                                    <input type="text" class="form-control" name="name" placeholder="default" maxlength="20" required pattern="[a-zA-Z0-9_]+">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-lg-4 control-label">{% trans "Device" %}</label>
                                 <div class="col-lg-6">
-                                    <input type="text" class="form-control" name="source" value="/dev/sdb">
+                                    <input type="text" class="form-control" name="source" value="/dev/sdb" required pattern="[a-z0-9\/]+">
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -289,7 +305,7 @@
                     <div class="form-group">
                         <label class="col-lg-4 control-label">{% trans "Path" %}</label>
                         <div class="col-lg-6">
-                            <input type="text" class="form-control" name="target" value="/var/www/webvirtmgr/images">
+                            <input type="text" class="form-control" name="target" value="/var/www/webvirtmgr/images" required pattern="[a-z0-9\/]+">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -313,13 +329,23 @@
                     <div class="form-group">
                         <label class="col-lg-4 control-label">{% trans "Name" %}</label>
                         <div class="col-lg-6">
-                            <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}">
+                            <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}" required pattern="[a-zA-Z0-9_]+">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-4 control-label">{% trans "Format" %}</label>
+                        <div class="col-lg-6">
+                            <select name="format" class="form-control">
+                                <option value="raw">{% trans "raw" %}</option>
+                                <option value="qcow">{% trans "qcow" %}</option>
+                                <option value="qcow2">{% trans "qcow2" %}</option>
+                            </select>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-lg-4 control-label">{% trans "Size" %}</label>
                         <div class="col-lg-6">
-                            <input type="text" class="form-control" name="size" value="10" maxlength="3" required pattern="^[0-9]+$">
+                            <input type="text" class="form-control" name="size" value="10" maxlength="3" required pattern="[0-9]+">
                         </div>
                         <label class="col-lg-1 control-label">{% trans "GB" %}</label>
                     </div>
@@ -355,4 +381,15 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
+{% endblock %}
+{% block script %}
+    <script type="text/javascript">
+        $(document).on('change','#img_convert',function(){
+            if($(this).prop('checked')) {
+                $('#format_convert').show();
+            } else {
+                $('#format_convert').hide();
+            }
+        });
+    </script>
 {% endblock %}

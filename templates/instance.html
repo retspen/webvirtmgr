@@ -64,13 +64,6 @@
                         <button href="#" class="btn btn-default btn-lg disabled" id="inst-btn"><span class="glyphicon glyphicon-edit"></span><br> {% trans "Edit" %}</button>
                     {% endifequal %}
                 </form>
-
-                {% if not instance.vnc_passwd and dom.info.0 == 5 %}
-                    <div class="block-btn">
-                        <button href="#noVNC" class="btn btn-default" data-toggle="modal">{% trans "Set VNC Password" %}</button>
-                    </div>
-                {% endif %}
-
             </div>
             <hr>
             <div class="block-btn">
@@ -103,7 +96,6 @@
                     <p style="height:30px">{% trans "Usage" %}</p>
                     <p><strong>{% trans "Memory" %}:</strong></p>
                     <p style="height:30px">{% trans "Usage" %}</p>
-                    <p><strong>{% trans "Network" %}:</strong></p>
                 </div>
                 <div class="col-md-6">
                     <p>VCPU {{ vcpu }} </p>
@@ -120,7 +112,22 @@
                         <div class="progress-bar" id="memory-usage-bar" style="width:{{ mem_perc }}%;"></div>
                     </div>
                     </p>
-                    <p>{{ mac }} ({{ network }})</p>
+                </div>
+            </div>
+            <hr>
+            <div class="block-btn">
+                <li>{% trans "Network Details" %}</li>
+            </div>
+            <div class="row show-grid">
+                <div class="col-md-6">
+                     {% for network in networks %}
+                        <p><strong>Eth{{ forloop.counter0 }}</strong></p>
+                     {% endfor %}
+                </div>
+                <div class="col-md-6">
+                    {% for network in networks %}
+                        <p>{{ network.mac }} ({{ network.nic }})</p>
+                    {% endfor %}
                 </div>
             </div>
             <hr>
@@ -135,7 +142,7 @@
                 </div>
                 <div class="col-md-6">
                     {% for dev_bus, hdd_dev in hdd_image.items reversed %}
-                        <p> {{ hdd_dev.0 }} ({{ hdd_dev.1 }})</p>
+                        <p>{{ hdd_dev.0 }} ({{ hdd_dev.1 }})</p>
                     {% endfor %}
                 </div>
             </div>
@@ -240,85 +247,95 @@
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 
-    <!-- Modal noVNC -->
-    <div class="modal fade" id="noVNC" tabindex="-1" role="dialog" aria-labelledby="noVNCLabel" aria-hidden="true">
+    <!-- Modal Edit -->
+    <div class="modal fade" id="Edit" tabindex="-1" role="dialog" aria-labelledby="addHostLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">{% trans "Add New Flavor" %}</h4>
+                    <h4 class="modal-title">{% trans "Change Virtual Machine Settings" %}</h4>
                 </div>
-                <div class="modal-body">
-                    <p>{% trans "Enter the VNC password or select Generate" %}</p>
+                <div class="tabbable">
+                    <ul class="nav nav-tabs">
+                        <li class="active">
+                            <a href="#1" data-toggle="tab">{% trans "Settings" %}</a>
+                        </li>
+                        <li><a href="#2" data-toggle="tab">{% trans "VNC" %}</a></li>
+                        <li><a href="#3" data-toggle="tab">{% trans "XML" %}</a></li>
+                    </ul>
                 </div>
-                <form class="form-horizontal" method="post" role="form">{% csrf_token %}
-                    <div class="form-group">
-                        <label for="inputPassword1" class="col-lg-3 control-label">Password</label>
-                        <div class="col-lg-6">
-                            <input type="password" class="form-control" name="vnc_passwd" placeholder="{% trans "Password" %}" maxlength="14">
-                        </div>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="1">
+                        <form class="form-horizontal" method="post" role="form">{% csrf_token %}
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">{% trans "Description" %}</label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control" name="description" value="{{ description }}"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">{% trans "VCPU" %}</label>
+                                <div class="col-lg-6">
+                                    <select name="vcpu" class="form-control">
+                                        {% for cpu in vcpu_range %}
+                                            <option value="{{ cpu }}" {% if cpu == vcpu %}selected{% endif %}>{{ cpu }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">{% trans "RAM" %}</label>
+                                <div class="col-lg-6">
+                                    <select name="ram" class="form-control">
+                                        {% for mem in memory_range %}
+                                            <option value="{{ mem }}" {% if mem == memory %}selected{% endif %}>{{ mem }} {% trans "MB" %}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+                                <button type="submit" class="btn btn-primary" name="edit">{% trans "Change" %}</button>
+                            </div>
+                        </form>
                     </div>
-                    <div class="form-group">
-                        <div class="col-lg-offset-1 col-lg-6">
-                            <div class="checkbox">
-                                <label>
-                                    <input type="checkbox" name="auto_pass" value="true">{% trans "Generate" %}
-                                </label>
+                    <div class="tab-pane" id="2">
+                        <form class="form-horizontal" method="post" role="form">{% csrf_token %}
+                            <div class="form-group">
+                                <label for="inputPassword1" class="col-lg-3 control-label">{% trans "Generate" %}</label>
+                                <div class="col-lg-6">
+                                    <input type="checkbox" name="auto_pass" value="true" id="vnc_passwd_gen">
+                                </div>
+                            </div>
+                            <div class="form-group" id="vnc_passwd_manual">
+                                <label for="inputPassword1" class="col-lg-3 control-label">{% trans "Password" %}</label>
+                                <div class="col-lg-6">
+                                    <input type="password" class="form-control" name="vnc_passwd" placeholder="{% trans "Password" %}" maxlength="14">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+                                <button type="submit" class="btn btn-primary" name="vnc_pass">{% trans "Change" %}</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane" id="3">
+                        <div id="viewXMLpre">
+                            <pre class="pre-scrollable">{{ vm_xml }}</pre>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+                                <button type="button" class="btn btn-primary" onclick="javascript:$('#viewXMLpre').hide();$('#viewXMLform').show();">{% trans "Edit" %}</button>
                             </div>
                         </div>
+                        <form id="viewXMLform" class="form-horizontal" method="post" role="form" style="display: none;">{% csrf_token %}
+                            <textarea class="form-control" rows="18" name="vm_xml">{{ vm_xml }}</textarea>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+                                <button type="submit" class="btn btn-danger" name="xml_edit">{% trans "Save" %}</button>
+                            </div>
+                        </form>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-                        <button type="submit" class="btn btn-primary" name="vnc_pass">{% trans "Create" %}</button>
-                    </div>
-                </form>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-
-    <!-- Modal Flavor -->
-    <div class="modal fade" id="Edit" tabindex="-1" role="dialog" aria-labelledby="EditLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">{% trans "Add New Flavor" %}</h4>
                 </div>
-                <div class="modal-body">
-                    <p>{% trans "Change Description, VCPU or RAM" %}</p>
-                </div>
-                <form class="form-horizontal" method="post" role="form">{% csrf_token %}
-                    <div class="form-group">
-                        <label class="col-lg-4 control-label">{% trans "Description" %}</label>
-                        <div class="col-lg-6">
-                            <input type="text" class="form-control" name="description" value="{{ description }}"/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-lg-4 control-label">{% trans "VCPU" %}</label>
-                        <div class="col-lg-6">
-                            <select name="vcpu" class="form-control">
-                                {% for cpu in vcpu_range %}
-                                    <option value="{{ cpu }}" {% if cpu == vcpu %}selected{% endif %}>{{ cpu }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-lg-4 control-label">{% trans "RAM" %}</label>
-                        <div class="col-lg-6">
-                            <select name="ram" class="form-control">
-                                {% for mem in memory_range %}
-                                    <option value="{{ mem }}" {% if mem == memory %}selected{% endif %}>{{ mem }} {% trans "MB" %}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-                        <button type="submit" class="btn btn-primary" name="edit">{% trans "Change" %}</button>
-                    </div>
-                </form>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
@@ -327,6 +344,15 @@
 {% block script %}
     <script type="text/javascript">
         function open_vnc() { window.open('{% url 'console' host_id vname %}?token={{ instance.vname }}','','width=850,height=485') }
+    </script>
+    <script type="text/javascript">
+        $(document).on('change','#vnc_passwd_gen',function(){
+            if($(this).prop('checked')) {
+                $('#vnc_passwd_manual').hide();
+            } else {
+                $('#vnc_passwd_manual').show();
+            }
+        });
     </script>
     {% ifequal dom.info.0 1 %}
         <script type="text/javascript">

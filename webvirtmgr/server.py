@@ -2,11 +2,13 @@
 #
 
 import libvirt
+from libvirt import VIR_DOMAIN_XML_SECURE
 from network.IPy import IP
 import re
 import time
 import libxml2
 from datetime import datetime
+import string
 
 
 def get_xml_path(xml, path=None, func=None):
@@ -169,7 +171,7 @@ class ConnServer(object):
         else:
             return False
 
-    def add_vm(self, name, ram, cpu, image, net, virtio, storages):
+    def add_vm(self, name, ram, cpu, host_model, images, nets, virtio, storages, passwd=None):
         """
         Create VM function
 
@@ -195,26 +197,22 @@ class ConnServer(object):
         else:
             emulator = '/usr/bin/qemu-system-x86_64'
 
-        img = self.storageVolPath(image)
-        vol = img.name()
-        for storage in storages:
-            stg = self.storagePool(storage)
-            if stg.info()[0] != 0:
-                stg.refresh(0)
-                for img in stg.listVolumes():
-                    if img == vol:
-                        stg_type = get_xml_path(stg.XMLDesc(0), "/pool/@type")
-                        if stg_type == 'dir':
-                            image_type = 'qcow2'
-                        else:
-                            image_type = 'raw'
+        disks = []
+        for image in images:
+            img = self.storageVolPath(image)
+            image_type = self.get_vol_image_type(storages, img.name())
+            disks.append({'image': image, 'type': image_type})
 
         xml = """<domain type='%s'>
                   <name>%s</name>
                   <description>None</description>
                   <memory unit='KiB'>%s</memory>
-                  <vcpu>%s</vcpu>
-                  <os>
+                  <vcpu>%s</vcpu>""" % (dom_type, name, ram, cpu)
+
+        if host_model:
+            xml += """<cpu mode='host-model'/>"""
+
+        xml += """<os>
                     <type arch='x86_64' machine='%s'>hvm</type>
                     <boot dev='hd'/>
                     <boot dev='cdrom'/>
@@ -230,46 +228,61 @@ class ConnServer(object):
                   <on_reboot>restart</on_reboot>
                   <on_crash>restart</on_crash>
                   <devices>
-                    <emulator>%s</emulator>
-                    <disk type='file' device='disk'>
-                      <driver name='qemu' type='%s'/>
-                      <source file='%s'/>""" % (dom_type, name, ram, cpu, machine,
-                                                emulator, image_type, image)
+                    <emulator>%s</emulator>""" % (machine, emulator)
 
-        if virtio:
-            xml += """<target dev='vda' bus='virtio'/>"""
-        else:
-            xml += """<target dev='hda' bus='ide'/>"""
+        disk_letters = list(string.lowercase)
+        for disk in disks:
+            xml += """<disk type='file' device='disk'>
+                          <driver name='qemu' type='%s'/>
+                          <source file='%s'/>""" % (disk['type'], disk['image'])
+            if virtio:
+                xml += """<target dev='vd%s' bus='virtio'/>""" % (disk_letters.pop(0),)
+            else:
+                xml += """<target dev='hd%s' bus='ide'/>""" % (disk_letters.pop(0),)
 
-        xml += """</disk>
-                    <disk type='file' device='cdrom'>
+            xml += """</disk>"""
+
+        xml += """<disk type='file' device='cdrom'>
                       <driver name='qemu' type='raw'/>
                       <source file=''/>
-                      <target dev='hdc' bus='ide'/>
+                      <target dev='sda' bus='ide'/>
                       <readonly/>
                     </disk>"""
 
-        if re.findall("br", net):
-            xml += """<interface type='bridge'>
-                    <source bridge='%s'/>""" % net
-        else:
-            xml += """<interface type='network'>
-                    <source network='%s'/>""" % net
-        if virtio:
-            xml += """<model type='virtio'/>"""
+        for net in nets.split(','):
+            xml += """
+                    <interface type='network'>
+                        <source network='%s'/>""" % net
+            if virtio:
+                xml += """<model type='virtio'/>"""
+            xml += """
+                    </interface>"""
 
-        xml += """</interface>
+        xml += """
                     <input type='tablet' bus='usb'/>
                     <input type='mouse' bus='ps2'/>
-                    <graphics type='vnc' port='-1' autoport='yes' listen='0.0.0.0'>
+                    <graphics type='vnc' port='-1' autoport='yes' listen='0.0.0.0' passwd='%s'>
                       <listen type='address' address='0.0.0.0'/>
                     </graphics>
                     <memballoon model='virtio'/>
                   </devices>
-                </domain>"""
+                </domain>""" % (passwd)
         self.conn.defineXML(xml)
         dom = self.lookupVM(name)
         dom.setAutostart(1)
+
+    def get_vol_image_type(self, storages, vol):
+        for storage in storages:
+            stg = self.storagePool(storage)
+            if stg.info()[0] != 0:
+                stg.refresh(0)
+                for img in stg.listVolumes():
+                    if img == vol:
+                        vol = stg.storageVolLookupByName(img)
+                        xml = vol.XMLDesc(0)
+                        image_type = get_xml_path(xml, "/volume/target/format/@type")
+        return image_type
+
 
     def vds_get_node(self):
         """
@@ -387,7 +400,7 @@ class ConnServer(object):
             diff_usage = None
         return diff_usage
 
-    def new_volume(self, storage, name, size):
+    def new_volume(self, storage, name, size, format='qcow2'):
         """
 
         Add new volume in storage
@@ -407,12 +420,12 @@ class ConnServer(object):
                 <capacity>%s</capacity>
                 <allocation>%s</allocation>
                 <target>
-                    <format type='qcow2'/>
+                    <format type='%s'/>
                 </target>
-            </volume>""" % (name, size, alloc)
+            </volume>""" % (name, size, alloc, format)
         stg.createXML(xml, 0)
 
-    def clone_volume(self, storage, img, new_img):
+    def clone_volume(self, storage, img, new_img, format=None):
         """
 
         Function clone volume
@@ -423,15 +436,18 @@ class ConnServer(object):
         if stg_type == 'dir':
             new_img += '.img'
         vol = stg.storageVolLookupByName(img)
+        if not format:
+            xml = vol.XMLDesc(0)
+            format = get_xml_path(xml, "/volume/target/format/@type")
         xml = """
             <volume>
                 <name>%s</name>
                 <capacity>0</capacity>
                 <allocation>0</allocation>
                 <target>
-                    <format type='qcow2'/>
+                    <format type='%s'/>
                 </target>
-            </volume>""" % (new_img)
+            </volume>""" % (new_img, format)
         stg.createXMLFrom(xml, vol, 0)
 
     def images_get_storages(self, storages):
@@ -446,9 +462,7 @@ class ConnServer(object):
             if stg.info()[0] != 0:
                 stg.refresh(0)
                 for img in stg.listVolumes():
-                    if re.findall(".iso", img) or re.findall(".ISO", img):
-                        pass
-                    else:
+                    if re.findall(".img", img):
                         disk.append(img)
         return disk
 
@@ -529,14 +543,15 @@ class ConnServer(object):
         stg = self.storagePool(storage)
         volume_info = {}
         for name in stg.listVolumes():
-            vol = stg.storageVolLookupByName(name)
-            xml = vol.XMLDesc(0)
-            size = vol.info()[1]
-            volume_format = get_xml_path(xml, "/volume/target/format/@type")
-            volume_info[name] = size, volume_format
+            if re.findall(".img", name) or re.findall(".iso", name):
+                vol = stg.storageVolLookupByName(name)
+                xml = vol.XMLDesc(0)
+                size = vol.info()[1]
+                volume_format = get_xml_path(xml, "/volume/target/format/@type")
+                volume_info[name] = size, volume_format
         return volume_info
 
-    def new_network_pool(self, name, forward, gateway, mask, dhcp=None):
+    def new_network_pool(self, name, forward, gateway, mask, dhcp, bridge_name):
         """
 
         Function create network pool.
@@ -546,19 +561,28 @@ class ConnServer(object):
             <network>
                 <name>%s</name>""" % name
 
-        if forward == "nat" or "route":
+        if forward in ['nat', 'route', 'bridge']:
             xml += """<forward mode='%s'/>""" % forward
 
-        xml += """<bridge stp='on' delay='0' />
-                    <ip address='%s' netmask='%s'>""" % (gateway, mask)
+        xml += """<bridge """
+        if forward in ['nat', 'route', 'none']:
+            xml += """stp='on' delay='0'"""
+        if forward == 'bridge':
+            xml += """name='%s'""" % bridge_name
+        xml += """/>"""
 
-        if dhcp:
-            xml += """<dhcp>
-                        <range start='%s' end='%s' />
-                    </dhcp>""" % (dhcp[0], dhcp[1])
+        if forward != 'bridge':
+            xml += """
+                        <ip address='%s' netmask='%s'>""" % (gateway, mask)
 
-        xml += """</ip>
-            </network>"""
+            if dhcp:
+                xml += """<dhcp>
+                            <range start='%s' end='%s' />
+                        </dhcp>""" % (dhcp[0], dhcp[1])
+
+            xml += """</ip>"""
+        xml += """</network>"""
+
         self.conn.networkDefineXML(xml)
         net = self.networkPool(name)
         net.create()
@@ -688,7 +712,6 @@ class ConnServer(object):
         """
         storages = self.storages_get_node()
         dom = self.lookupVM(vname)
-        image += '.iso'
 
         for storage in storages:
             stg = self.storagePool(storage)
@@ -698,15 +721,15 @@ class ConnServer(object):
                         vol = stg.storageVolLookupByName(image)
                         xml = """<disk type='file' device='cdrom'>
                                     <driver name='qemu' type='raw'/>
-                                    <target dev='hdc' bus='ide'/>
+                                    <target dev='sda' bus='ide'/>
                                     <source file='%s'/>
                                  </disk>""" % vol.path()
                         dom.attachDevice(xml)
-                        xmldom = dom.XMLDesc(0)
+                        xmldom = dom.XMLDesc(VIR_DOMAIN_XML_SECURE)
                         self.conn.defineXML(xmldom)
                     if dom.info()[0] == 5:
                         vol = stg.storageVolLookupByName(image)
-                        xml = dom.XMLDesc(0)
+                        xml = dom.XMLDesc(VIR_DOMAIN_XML_SECURE)
                         newxml = "<disk type='file' device='cdrom'>\n      <driver name='qemu' type='raw'/>\n      <source file='%s'/>" % vol.path()
                         xmldom = xml.replace(
                             "<disk type='file' device='cdrom'>\n      <driver name='qemu' type='raw'/>", newxml)
@@ -722,14 +745,14 @@ class ConnServer(object):
         if dom.info()[0] == 1:
             xml = """<disk type='file' device='cdrom'>
                          <driver name="qemu" type='raw'/>
-                         <target dev='hdc' bus='ide'/>
+                         <target dev='sda' bus='ide'/>
                          <readonly/>
                       </disk>"""
             dom.attachDevice(xml)
-            xmldom = dom.XMLDesc(0)
+            xmldom = dom.XMLDesc(VIR_DOMAIN_XML_SECURE)
             self.conn.defineXML(xmldom)
         if dom.info()[0] == 5:
-            xml = dom.XMLDesc(0)
+            xml = dom.XMLDesc(VIR_DOMAIN_XML_SECURE)
             xmldom = xml.replace("<source file='%s'/>\n" % image, '')
             self.conn.defineXML(xmldom)
 
@@ -779,11 +802,16 @@ class ConnServer(object):
         mem = get_xml_path(xml, "/domain/memory")
         mem = int(mem) / 1024
         info.append(int(mem))
-        info.append(get_xml_path(xml, "/domain/devices/interface/mac/@address"))
-        nic = get_xml_path(xml, "/domain/devices/interface/source/@network")
-        if nic is None:
-            nic = get_xml_path(xml, "/domain/devices/interface/source/@bridge")
-        info.append(nic)
+
+        def get_networks(ctx):
+            result = []
+            for interface in ctx.xpathEval('/domain/devices/interface'):
+                mac = interface.xpathEval('mac/@address')[0].content
+                nic = interface.xpathEval('source/@network|source/@bridge')[0].content
+                result.append({'mac': mac, 'nic': nic})
+            return result
+
+        info.append(get_xml_path(xml, func=get_networks))
         description = get_xml_path(xml, "/domain/description")
         info.append(description)
         return info
@@ -843,6 +871,7 @@ class ConnServer(object):
                         return media, media
                 else:
                     return None, None
+            return None, None
 
     def vds_set_vnc_passwd(self, vname, passwd):
         """
@@ -851,7 +880,7 @@ class ConnServer(object):
 
         """
         dom = self.lookupVM(vname)
-        xml = dom.XMLDesc(0)
+        xml = dom.XMLDesc(VIR_DOMAIN_XML_SECURE)
         find_tag = re.findall('<graphics.*/>', xml)
         if find_tag:
             close_tag = '/'
@@ -868,7 +897,7 @@ class ConnServer(object):
 
         """
         dom = self.lookupVM(vname)
-        xml = dom.XMLDesc(0)
+        xml = dom.XMLDesc(VIR_DOMAIN_XML_SECURE)
         memory = int(ram) * 1024
         xml_memory = "<memory unit='KiB'>%s</memory>" % memory
         xml_memory_change = re.sub('<memory.*memory>', xml_memory, xml)
@@ -879,6 +908,15 @@ class ConnServer(object):
         xml_description = "<description>%s</description>" % description
         xml_description_change = re.sub('<description.*description>', xml_description, xml_vcpu_change)
         self.conn.defineXML(xml_description_change)
+
+    def defineXML(self, xml):
+        """
+
+        Funciton define VM config
+
+        """
+        self.conn.defineXML(xml)
+
 
     def get_all_media(self):
         """
@@ -919,7 +957,7 @@ class ConnServer(object):
                      <name>%d</name>\n
                      <state>shutoff</state>\n
                      <creationTime>%d</creationTime>\n""" % (time.time(), time.time())
-        xml += dom.XMLDesc(0)
+        xml += dom.XMLDesc(VIR_DOMAIN_XML_SECURE)
         xml += """<active>0</active>\n
                   </domainsnapshot>"""
         dom.snapshotCreateXML(xml, 0)

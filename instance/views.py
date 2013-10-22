@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from instance.models import Host, Instance
 from dashboard.views import sort_host
 from webvirtmgr.server import ConnServer
-from libvirt import libvirtError
+from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE
 from webvirtmgr.settings import TIME_JS_REFRESH
 
 
@@ -76,7 +76,7 @@ def instance(request, host_id, vname):
         errors.append(e.message)
     else:
         all_vm = sort_host(conn.vds_get_node())
-        vcpu, memory, mac, network, description = conn.vds_get_info(vname)
+        vcpu, memory, networks, description = conn.vds_get_info(vname)
         cpu_usage = conn.vds_cpu_usage(vname)
         memory_usage = conn.vds_memory_usage(vname)[1]
         hdd_image = conn.vds_get_hdd(vname)
@@ -150,8 +150,7 @@ def instance(request, host_id, vname):
                 image = request.POST.get('iso_img', '')
                 try:
                     conn.vds_umount_iso(vname, image)
-                    if instance:
-                        conn.vds_set_vnc_passwd(vname, instance.vnc_passwd)
+
                     return HttpResponseRedirect(request.get_full_path())
                 except libvirtError as msg_error:
                     errors.append(msg_error.message)
@@ -159,8 +158,6 @@ def instance(request, host_id, vname):
                 image = request.POST.get('iso_img', '')
                 try:
                     conn.vds_mount_iso(vname, image)
-                    if instance:
-                        conn.vds_set_vnc_passwd(vname, instance.vnc_passwd)
                     return HttpResponseRedirect(request.get_full_path())
                 except libvirtError as msg_error:
                     errors.append(msg_error.message)
@@ -170,8 +167,14 @@ def instance(request, host_id, vname):
                 ram = request.POST.get('ram', '')
                 try:
                     conn.vds_edit(vname, description, ram, vcpu)
-                    if instance:
-                        conn.vds_set_vnc_passwd(vname, instance.vnc_passwd)
+                    return HttpResponseRedirect(request.get_full_path())
+                except libvirtError as msg_error:
+                    errors.append(msg_error.message)
+            if 'xml_edit' in request.POST:
+                xml = request.POST.get('vm_xml', '')
+                try:
+                    if xml:
+                        conn.defineXML(xml)
                     return HttpResponseRedirect(request.get_full_path())
                 except libvirtError as msg_error:
                     errors.append(msg_error.message)
@@ -188,7 +191,8 @@ def instance(request, host_id, vname):
                 if not errors:
                     try:
                         conn.vds_set_vnc_passwd(vname, passwd)
-                        vnc_pass = Instance(host_id=host_id, vname=vname, vnc_passwd=passwd)
+                        vnc_pass = Instance.objects.get(vname=vname)
+                        vnc_pass.vnc_passwd = passwd
                         vnc_pass.save()
                     except libvirtError as msg_error:
                         errors.append(msg_error.message)
@@ -204,11 +208,12 @@ def instance(request, host_id, vname):
                                                 'all_vm': all_vm,
                                                 'vcpu': vcpu, 'cpu_usage': cpu_usage, 'vcpu_range': vcpu_range,
                                                 'description': description,
-                                                'mac': mac, 'network': network,
+                                                'networks': networks,
                                                 'memory': memory, 'memory_usage': memory_usage, 'memory_range': memory_range,
                                                 'hdd_image': hdd_image, 'iso_images': iso_images,
                                                 'media': media, 'path': media_path,
                                                 'dom': dom,
+                                                'vm_xml': dom.XMLDesc(VIR_DOMAIN_XML_SECURE),
                                                 'vnc_port': vnc_port,
                                                 'time_refresh': time_refresh
                                                 },
