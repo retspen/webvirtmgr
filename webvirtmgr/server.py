@@ -274,13 +274,16 @@ class ConnServer(object):
     def get_vol_image_type(self, storages, vol):
         for storage in storages:
             stg = self.storagePool(storage)
-            if stg.info()[0] != 0:
-                stg.refresh(0)
-                for img in stg.listVolumes():
-                    if img == vol:
-                        vol = stg.storageVolLookupByName(img)
-                        xml = vol.XMLDesc(0)
-                        image_type = get_xml_path(xml, "/volume/target/format/@type")
+            stg_type = get_xml_path(stg.XMLDesc(0), "/pool/@type")
+            if stg_type == 'logical':
+                image_type = 'raw'
+            if stg_type == 'dir':
+                if stg.info()[0] != 0:
+                    stg.refresh(0)
+                    for img in stg.listVolumes():
+                        if img == vol:
+                            vol = stg.storageVolLookupByName(img)
+                            image_type = get_xml_path(vol.XMLDesc(0), "/volume/target/format/@type")
         return image_type
 
 
@@ -459,10 +462,14 @@ class ConnServer(object):
         disk = []
         for storage in storages:
             stg = self.storagePool(storage)
+            stg_type = get_xml_path(stg.XMLDesc(0), "/pool/@type")
             if stg.info()[0] != 0:
                 stg.refresh(0)
                 for img in stg.listVolumes():
-                    if re.findall(".img", img):
+                    if stg_type == 'dir':
+                        if re.findall(".img", img):
+                            disk.append(img)
+                    if stg_type == 'logical':
                         disk.append(img)
         return disk
 
@@ -541,14 +548,20 @@ class ConnServer(object):
 
         """
         stg = self.storagePool(storage)
+        stg_type = get_xml_path(stg.XMLDesc(0), "/pool/@type")
         volume_info = {}
         for name in stg.listVolumes():
-            if re.findall(".img", name) or re.findall(".iso", name):
+            if stg_type == 'dir':
+                if re.findall(".img", name) or re.findall(".iso", name):
+                    vol = stg.storageVolLookupByName(name)
+                    xml = vol.XMLDesc(0)
+                    volume_format = get_xml_path(xml, "/volume/target/format/@type")
+                    volume_info[name] = vol.info()[1], volume_format
+            if stg_type == 'logical':
                 vol = stg.storageVolLookupByName(name)
                 xml = vol.XMLDesc(0)
-                size = vol.info()[1]
                 volume_format = get_xml_path(xml, "/volume/target/format/@type")
-                volume_info[name] = size, volume_format
+                volume_info[name] = vol.info()[1], volume_format
         return volume_info
 
     def new_network_pool(self, name, forward, gateway, mask, dhcp, bridge_name):

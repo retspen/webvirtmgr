@@ -1,4 +1,4 @@
-# WebVirtMgr panel - v3.3.8
+# WebVirtMgr panel - v3.4.1
 
 Warning: Upgrade from v2 not support!!!
 
