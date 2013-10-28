@@ -1,4 +1,4 @@
-# WebVirtMgr panel - v3.3.4
+# WebVirtMgr panel - v3.3.8
 
 Warning: Upgrade from v2 not support!!!
 
@@ -71,10 +71,6 @@ Enter the user information:
     Password: xxxxxx (Put: your password)
     Password (again): xxxxxx (Put: confirm password)
     Superuser created successfully.
-
-Add pre-installed flavors:
-    
-    $ ./manage.py loaddata conf/flavor.json
 
 ## 4. Setup Apache
 
