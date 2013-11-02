@@ -190,9 +190,12 @@ def instance(request, host_id, vname):
                         errors.append(msg)
                 if not errors:
                     try:
-                        conn.vds_set_vnc_passwd(vname, passwd)
                         vnc_pass = Instance.objects.get(vname=vname)
                         vnc_pass.vnc_passwd = passwd
+                    except:
+                        vnc_pass = Instance(host_id=host_id, vname=vname, vnc_passwd=passwd)
+                    try:
+                        conn.vds_set_vnc_passwd(vname, passwd)
                         vnc_pass.save()
                     except libvirtError as msg_error:
                         errors.append(msg_error.message)

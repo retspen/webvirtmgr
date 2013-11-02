@@ -1,4 +1,4 @@
-# WebVirtMgr panel - v3.4.1
+# WebVirtMgr panel - v3.4.3
 
 Warning: Upgrade from v2 not support!!!
 
@@ -8,6 +8,7 @@ Warning: Upgrade from v2 not support!!!
 * Add gentoo init scripts (Thanks: Joachim Langenbach)
 * Add function convert images
 * Rebuild VNC fanctional
+* Fix create or change VNC password if VM created in console
 
 Big Thanks: Alex Kuksenko (<a href="https://github.com/retif">Github</a>)
 * Add support for more than one HDD
