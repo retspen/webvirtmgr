@@ -227,11 +227,6 @@ __gather_linux_system_info() {
             ubuntu             ) n="Ubuntu"         ;;
             fedora             ) n="Fedora"         ;;
             suse               ) n="SUSE"           ;;
-            mandrake*|mandriva ) n="Mandriva"       ;;
-            gentoo             ) n="Gentoo"         ;;
-            slackware          ) n="Slackware"      ;;
-            turbolinux         ) n="TurboLinux"     ;;
-            unitedlinux        ) n="UnitedLinux"    ;;
             system             )
                 while read -r line; do
                     [ "${n}x" != "systemx" ] && break
@@ -381,14 +376,6 @@ __check_end_of_life_versions() {
             fi
             ;;
 
-        freebsd)
-            # FreeBSD versions lower than 9.1 are not supported.
-            if ([ $DISTRO_MAJOR_VERSION -eq 9 ] && [ $DISTRO_MINOR_VERSION -lt 01 ]) || [ $DISTRO_MAJOR_VERSION -lt 9 ]; then
-                echoerror "Versions lower than FreeBSD 9.1 are not supported."
-                exit 1
-            fi
-            ;;
-
         *)
             ;;
     esac
@@ -491,7 +478,7 @@ daemons_running_fedora() {
     return 0
 } 
 #
-#   Ended CentOS Install Functions
+#   Ended Fedora Install Functions
 #
 ##############################################################################
 
@@ -537,7 +524,7 @@ daemons_running_ubuntu() {
     return 0
 } 
 #
-#   Ended CentOS Install Functions
+#   Ended Ubuntu Install Functions
 #
 ##############################################################################
 
