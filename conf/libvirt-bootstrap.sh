@@ -24,7 +24,6 @@ echoerror() {
     printf "${RC} * ERROR${EC}: $@\n" 1>&2;
 }
 
-
 #---  FUNCTION  ----------------------------------------------------------------
 #          NAME:  echoinfo
 #   DESCRIPTION:  Echo information to stdout.
@@ -58,12 +57,11 @@ echodebug() {
 __test_distro_arch() {
     ARCH=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
     if [ "$ARCH" = 32 ]; then
-        echoerror "Need distro with arch x86_64"
+        echoerror "32-bit Arch kernel does not support"
         exit 1
     fi
 }
 __test_distro_arch
-
 
 #---  FUNCTION  ----------------------------------------------------------------
 #          NAME:  __test_kvm_support
@@ -358,7 +356,7 @@ __check_end_of_life_versions() {
 
         centos)
             # CentOS versions lower than 5 are no longer supported
-            if [ $DISTRO_MAJOR_VERSION -lt 5 ]; then
+            if ([ $DISTRO_MAJOR_VERSION -eq 6 ] && [ $DISTRO_MINOR_VERSION -lt 3 ]) || [ $DISTRO_MAJOR_VERSION -lt 5 ]; then
                 echoerror "End of life distributions are not supported."
                 echoerror "Please consider upgrading to the next stable. See:"
                 echoerror "    http://wiki.centos.org/Download"
@@ -368,7 +366,7 @@ __check_end_of_life_versions() {
 
         red_hat*linux)
             # Red Hat (Enterprise) Linux versions lower than 5 are no longer supported
-            if [ $DISTRO_MAJOR_VERSION -lt 5 ]; then
+            if ([ $DISTRO_MAJOR_VERSION -eq 6 ] && [ $DISTRO_MINOR_VERSION -lt 3 ]) || [ $DISTRO_MAJOR_VERSION -lt 5 ]; then
                 echoerror "End of life distributions are not supported."
                 echoerror "Please consider upgrading to the next stable. See:"
                 echoerror "    https://access.redhat.com/support/policy/updates/errata/"
@@ -419,12 +417,12 @@ install_centos_post() {
 
 daemons_running_centos() {
     if [ -f /etc/init.d/libvirtd ]; then
-        /etc/init.d/libvirtd stop > /dev/null 2>&1
-        /etc/init.d/libvirtd start
+        service libvirtd stop > /dev/null 2>&1
+        service libvirtd start
     fi
     if [ -f /etc/init.d/libvirt-guests ]; then
-        /etc/init.d/libvirt-guests stop > /dev/null 2>&1
-        /etc/init.d/libvirt-guests start
+        service libvirt-guests stop > /dev/null 2>&1
+        service libvirt-guests start
     fi
     return 0
 } 
@@ -487,13 +485,14 @@ daemons_running_fedora() {
 #   Ubuntu Install Functions
 #
 install_ubuntu() {
+    apt-get update || return 1
     apt-get -y install kvm libvirt-bin bridge-utils sasl2-bin || return 1
     return 0
 }
 
 install_ubuntu_post() {
     if [ -f /etc/default/libvirt-bin ]; then
-        sed -i 's/libvirtd_opts="-d"/libvirtd_opts="-d -l"/g' /etc/sysconfig/libvirtd
+        sed -i 's/libvirtd_opts="-d"/libvirtd_opts="-d -l"/g' /etc/default/libvirt-bin
     else
         echoerror "/etc/default/libvirt-bin not found. Exiting..."
         exit 1
@@ -507,7 +506,11 @@ install_ubuntu_post() {
         exit 1
     fi
     if [ -f /etc/libvirt/qemu.conf ]; then
-        sed -i 's/#vnc_listen/vnc_listen/g' /etc/libvirt/qemu.conf
+        if ([ $DISTRO_MAJOR_VERSION -eq 12 ] && [ $DISTRO_MINOR_VERSION -eq 04 ]); then
+            sed -i 's/# vnc_listen/vnc_listen/g' /etc/libvirt/qemu.conf
+        else
+            sed -i 's/#vnc_listen/vnc_listen/g' /etc/libvirt/qemu.conf
+        fi
     else
         echoerror "/etc/libvirt/qemu.conf not found. Exiting..."
         exit 1
@@ -518,8 +521,8 @@ install_ubuntu_post() {
 daemons_running_ubuntu() {
     if [ -f /etc/init.d/libvird ]; then
         # Still in SysV init!?
-        /etc/init.d/libvirt-bin stop > /dev/null 2>&1
-        /etc/init.d/libvirt-bin start
+        service libvirt-bin stop > /dev/null 2>&1
+        service libvirt-bin start
     fi
     return 0
 } 
