@@ -32,36 +32,41 @@
             <div class="col-md-12" id="instaction">
                 <form action="" method="post">{% csrf_token %}
                     {% ifequal dom.info.0 5 %}
-                        <button class="btn btn-default btn-lg disabled" id="inst-btn"><span class="glyphicon glyphicon-align-justify"></span><br> {% trans "Console" %}</button>
+                        <button class="btn btn-default btn-md disabled" id="inst-btn"><span class="glyphicon glyphicon-align-justify"></span><br> {% trans "Console" %}</button>
                     {% else %}
-                        <a href="#console" class="btn btn-default btn-lg" id="inst-btn" data-toggle="modal" title="VNC Port: {{ vnc_port }}" onclick="open_vnc()"><span class="glyphicon glyphicon-align-justify"></span><br> {% trans "Console" %}</a>
+                        <a href="#console" class="btn btn-default btn-md" id="inst-btn" data-toggle="modal" title="VNC Port: {{ vnc_port }}" onclick="open_vnc()"><span class="glyphicon glyphicon-align-justify"></span><br> {% trans "Console" %}</a>
                     {% endifequal %}
                     {% ifequal dom.info.0 5 %}
-                        <button type="submit" class="btn btn-default btn-lg" id="inst-btn" name="start"><span class="glyphicon glyphicon-play"></span><br> {% trans "Start" %}</button>
+                        <button type="submit" class="btn btn-default btn-md" id="inst-btn" name="start"><span class="glyphicon glyphicon-play"></span><br> {% trans "Start" %}</button>
                     {% endifequal %}
                     {% ifequal dom.info.0 1 %}
-                        <button href="#Power" class="btn btn-default btn-lg" id="inst-btn" data-toggle="modal"><span class="glyphicon glyphicon-off"></span><br> {% trans "Shutdown" %}</button>
+                        <button href="#Power" class="btn btn-default btn-md" id="inst-btn" data-toggle="modal"><span class="glyphicon glyphicon-off"></span><br> {% trans "Shutdown" %}</button>
                     {% endifequal %}
                     {% ifequal dom.info.0 3 %}
-                        <button class="btn btn-default btn-lg disabled" id="inst-btn" data-toggle="modal"><span class="glyphicon glyphicon-off"></span><br> {% trans "Shutdown" %}</button>
+                        <button class="btn btn-default btn-md disabled" id="inst-btn" data-toggle="modal"><span class="glyphicon glyphicon-off"></span><br> {% trans "Shutdown" %}</button>
                     {% endifequal %}
-                    <a href="#Delete" class="btn btn-default btn-lg" id="inst-btn" data-toggle="modal"><span class="glyphicon glyphicon-trash"></span><br> {% trans "Delete" %}</a>
+                    <a href="#Delete" class="btn btn-default btn-md" id="inst-btn" data-toggle="modal"><span class="glyphicon glyphicon-trash"></span><br> {% trans "Delete" %}</a>
                     {% ifequal dom.info.0 3 %}
-                        <button type="submit" name="resume" class="btn btn-default btn-lg" id="inst-btn"><span class="glyphicon glyphicon-play"></span><br> {% trans "Resume" %}</button>
-                        <button type="submit" name="snapshot" class="btn btn-default btn-lg" id="inst-btn"><span class="glyphicon glyphicon-camera"></span><br> {% trans "Snapshot" %}</button>
+                        <button type="submit" name="resume" class="btn btn-default btn-md" id="inst-btn"><span class="glyphicon glyphicon-play"></span><br> {% trans "Resume" %}</button>
+                        <button type="submit" name="snapshot" class="btn btn-default btn-md" id="inst-btn"><span class="glyphicon glyphicon-camera"></span><br> {% trans "Snapshot" %}</button>
+                        <a href="#Stat" class="btn btn-default btn-md disabled" id="inst-btn"><span class="glyphicon glyphicon-signal"></span><br> {% trans "Statistics" %}</a>
                     {% endifequal %}
                     {% ifequal dom.info.0 1 %}
-                        <button type="submit" name="suspend" class="btn btn-default btn-lg" id="inst-btn"><span class="glyphicon glyphicon-pause"></span><br> {% trans "Suspend" %}</button>
-                        <button class="btn btn-default btn-lg disabled" id="inst-btn"><span class="glyphicon glyphicon-camera"></span><br> {% trans "Snapshot" %}</button>
+                        <button type="submit" name="suspend" class="btn btn-default btn-md" id="inst-btn"><span class="glyphicon glyphicon-pause"></span><br> {% trans "Suspend" %}</button>
+                        <button class="btn btn-default btn-md disabled" id="inst-btn"><span class="glyphicon glyphicon-camera"></span><br> {% trans "Snapshot" %}</button>
+                        <button class="btn btn-default btn-md" id="inst-btn"><span class="glyphicon glyphicon-signal"></span><br> {% trans "Statistics" %}</button>
                     {% endifequal %}
                     {% ifequal dom.info.0 5 %}
-                        <button class="btn btn-default btn-lg disabled" id="inst-btn"><span class="glyphicon glyphicon-pause"></span><br> {% trans "Suspend" %}</button>
-                        <button type="submit" name="snapshot" class="btn btn-default btn-lg" id="inst-btn"><span class="glyphicon glyphicon-camera"></span><br> {% trans "Snapshot" %}</button>
+                        <button class="btn btn-default btn-md disabled" id="inst-btn"><span class="glyphicon glyphicon-pause"></span><br> {% trans "Suspend" %}</button>
+                        <button type="submit" name="snapshot" class="btn btn-default btn-md" id="inst-btn"><span class="glyphicon glyphicon-camera"></span><br> {% trans "Snapshot" %}</button>
                     {% endifequal %}
                     {% ifequal dom.info.0 5 %}
-                        <a href="#Edit" class="btn btn-default btn-lg" data-toggle="modal" id="inst-btn"><span class="glyphicon glyphicon-edit"></span><br> {% trans "Edit" %}</a>
+                        <button class="btn btn-default btn-md disabled" id="inst-btn"><span class="glyphicon glyphicon-signal"></span><br> {% trans "Statistics" %}</button>
+                    {% endifequal %}
+                    {% ifequal dom.info.0 5 %}
+                        <a href="#Edit" class="btn btn-default btn-md" data-toggle="modal" id="inst-btn"><span class="glyphicon glyphicon-edit"></span><br> {% trans "Edit" %}</a>
                     {% else %}
-                        <button href="#" class="btn btn-default btn-lg disabled" id="inst-btn"><span class="glyphicon glyphicon-edit"></span><br> {% trans "Edit" %}</button>
+                        <button href="#" class="btn btn-default btn-md disabled" id="inst-btn"><span class="glyphicon glyphicon-edit"></span><br> {% trans "Edit" %}</button>
                     {% endifequal %}
                 </form>
             </div>
