@@ -1,4 +1,6 @@
-# WebVirtMgr panel - v3.3.4
+# WebVirtMgr panel - v3.4.3
+
+### <a href="https://github.com/retspen/webvirtmgr/wiki/Screenshots">Screenshots</a>
 
 Warning: Upgrade from v2 not support!!!
 
@@ -8,6 +10,7 @@ Warning: Upgrade from v2 not support!!!
 * Add gentoo init scripts (Thanks: Joachim Langenbach)
 * Add function convert images
 * Rebuild VNC fanctional
+* Fix create or change VNC password if VM created in console
 
 Big Thanks: Alex Kuksenko (<a href="https://github.com/retif">Github</a>)
 * Add support for more than one HDD
@@ -71,10 +74,6 @@ Enter the user information:
     Password: xxxxxx (Put: your password)
     Password (again): xxxxxx (Put: confirm password)
     Superuser created successfully.
-
-Add pre-installed flavors:
-    
-    $ ./manage.py loaddata conf/flavor.json
 
 ## 4. Setup Apache
 
