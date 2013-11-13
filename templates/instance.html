@@ -75,12 +75,26 @@
                 <div class="block-btn">
                     <li>{% trans "Usage Statistis" %}</li>
                 </div>
-                {% for disk in disk_usage %}
                 <div class="col-md-6">
-                    <p><strong>{% trans "Disk" %} {{ disk.dev }}:</strong></p>
+                    <p><strong>{% trans "CPU" %}</strong></p>
                 </div>
                 <div class="col-md-6">
-                    <p>{% trans "Read" %}: {{ disk.rd }} Mb/s {% trans "Write" %}: {{ disk.wr }} Mb/s</p>
+                    <p>{% trans "Usage" %}: <span id="cpu">0</span>%</p>
+                </div>
+                {% for dev_bus, hdd_dev in hdd_image.items %}
+                <div class="col-md-6">
+                    <p><strong>{% trans "Disk" %} <span id="dev">{{ dev_bus }}</span>:</strong></p>
+                </div>
+                <div class="col-md-6">
+                    <p>{% trans "Read" %}: <span id="rd">0</span> Mb/s {% trans "Write" %}: <span id="wr">0</span> Mb/s</p>
+                </div>
+                {% endfor %}
+                {% for network in networks %}
+                <div class="col-md-6">
+                    <p><strong>{% trans "Eth" %} <span id="dev">{{ dev_bus }}</span>:</strong></p>
+                </div>
+                <div class="col-md-6">
+                    <p>{% trans "Rx" %}: <span id="rx">0</span> Mbps/s {% trans "Tx" %}: <span id="tx">0</span> Mbps/s</p>
                 </div>
                 {% endfor %}
                 <hr>
@@ -363,4 +377,20 @@
             return false;
         });
     </script>
+    {% ifequal dom.info.0 1 %}
+        <script type="text/javascript">
+            function cpu(){
+                $.getJSON('/info/vds/cpu/{{ host_id }}/{{ vname }}', function(data) {
+                    alert('Test');
+                });
+            }
+            function refresh(){
+                cpu();
+            }
+            $(function() {
+                refresh();
+                window.setInterval('refresh()', {{ time_refresh }});
+            });
+        </script>
+    {% endifequal %}
 {% endblock %}
