@@ -9,10 +9,60 @@ from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE
 from webvirtmgr.settings import TIME_JS_REFRESH
 
 
+def diskusage(request, host_id, vname):
+    """
+
+    VM disk IO
+
+    """
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login')
+
+    host = Host.objects.get(id=host_id)
+
+    try:
+        conn = ConnServer(host)
+    except:
+        conn = None
+
+    if conn:
+        blk_usage = conn.vds_disk_usage(vname)
+
+    response = HttpResponse()
+    response['Content-Type'] = "text/javascript"
+    response.write(blk_usage)
+    return response
+
+
+def netusage(request, host_id, vname):
+    """
+
+    VM net bandwidth
+
+    """
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login')
+
+    host = Host.objects.get(id=host_id)
+
+    try:
+        conn = ConnServer(host)
+    except:
+        conn = None
+
+    if conn:
+        net_usage = conn.vds_network_usage(vname)
+
+    response = HttpResponse()
+    response['Content-Type'] = "text/javascript"
+    response.write(net_usage)
+    return response
+
+
 def cpuusage(request, host_id, vname):
     """
 
-    VM Cpu Usage
+    VM cpu usage
 
     """
     if not request.user.is_authenticated():
@@ -28,29 +78,10 @@ def cpuusage(request, host_id, vname):
     if conn:
         cpu_usage = conn.vds_cpu_usage(vname)
 
-    return HttpResponse(cpu_usage)
-
-
-def memusage(request, host_id, vname):
-    """
-
-    VM Memory Usage
-
-    """
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect('/login')
-
-    host = Host.objects.get(id=host_id)
-
-    try:
-        conn = ConnServer(host)
-    except:
-        conn = None
-
-    if conn:
-        memory_usage = conn.vds_memory_usage(vname)[1]
-
-    return HttpResponse(memory_usage)
+    response = HttpResponse()
+    response['Content-Type'] = "text/javascript"
+    response.write(cpu_usage)
+    return response
 
 
 def instance(request, host_id, vname):
@@ -78,7 +109,6 @@ def instance(request, host_id, vname):
         all_vm = sort_host(conn.vds_get_node())
         vcpu, memory, networks, description = conn.vds_get_info(vname)
         cpu_usage = conn.vds_cpu_usage(vname)
-        memory_usage = conn.vds_memory_usage(vname)[1]
         hdd_image = conn.vds_get_hdd(vname)
         iso_images = sorted(conn.get_all_media())
         media, media_path = conn.vds_get_media(vname)
@@ -212,7 +242,7 @@ def instance(request, host_id, vname):
                                                 'vcpu': vcpu, 'cpu_usage': cpu_usage, 'vcpu_range': vcpu_range,
                                                 'description': description,
                                                 'networks': networks,
-                                                'memory': memory, 'memory_usage': memory_usage, 'memory_range': memory_range,
+                                                'memory': memory, 'memory_range': memory_range,
                                                 'hdd_image': hdd_image, 'iso_images': iso_images,
                                                 'media': media, 'path': media_path,
                                                 'dom': dom,
