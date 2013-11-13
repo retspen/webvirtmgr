@@ -116,6 +116,7 @@ def instance(request, host_id, vname):
         vcpu_range = [str(x) for x in range(1, 9)]
         memory_range = [128, 256, 512, 768, 1024, 2048, 4096, 8192, 16384]
         vnc_port = conn.vnc_get_port(vname)
+        disk_usage = conn.vds_disk_usage(vname)
 
         try:
             instance = Instance.objects.get(vname=vname)
@@ -246,6 +247,7 @@ def instance(request, host_id, vname):
                                                 'hdd_image': hdd_image, 'iso_images': iso_images,
                                                 'media': media, 'path': media_path,
                                                 'dom': dom,
+                                                'disk_usage': disk_usage,
                                                 'vm_xml': dom.XMLDesc(VIR_DOMAIN_XML_SECURE),
                                                 'vnc_port': vnc_port,
                                                 'time_refresh': time_refresh

@@ -76,7 +76,10 @@ body {
 #error {
     text-align: center;
 }
-#format_convert {
+#format-convert {
+    display: none;
+}
+#vm-stat {
     display: none;
 }
 @media (max-width: 1200px) {

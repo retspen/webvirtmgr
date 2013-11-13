@@ -798,7 +798,7 @@ class ConnServer(object):
         devices=[]
         dev_usage = []
         dom = self.lookupVM(vname)
-        tree=ElementTree.fromstring(dom.XMLDesc(0))
+        tree = ElementTree.fromstring(dom.XMLDesc(0))
 
         for source, target in zip(tree.findall("devices/disk/source"), tree.findall("devices/disk/target")):
             if source.get("file").endswith('.img'):
@@ -823,7 +823,7 @@ class ConnServer(object):
         devices=[]
         dev_usage = []
         dom = self.lookupVM(vname)
-        tree=ElementTree.fromstring(dom.XMLDesc(0))
+        tree = ElementTree.fromstring(dom.XMLDesc(0))
 
         for target in tree.findall("devices/interface/target"):
             devices.append(target.get("dev"))

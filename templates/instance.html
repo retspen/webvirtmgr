@@ -49,12 +49,12 @@
                     {% ifequal dom.info.0 3 %}
                         <button type="submit" name="resume" class="btn btn-default btn-md" id="inst-btn"><span class="glyphicon glyphicon-play"></span><br> {% trans "Resume" %}</button>
                         <button type="submit" name="snapshot" class="btn btn-default btn-md" id="inst-btn"><span class="glyphicon glyphicon-camera"></span><br> {% trans "Snapshot" %}</button>
-                        <a href="#Stat" class="btn btn-default btn-md disabled" id="inst-btn"><span class="glyphicon glyphicon-signal"></span><br> {% trans "Statistics" %}</a>
+                        <button class="btn btn-default btn-md disabled" id="inst-btn"><span class="glyphicon glyphicon-signal"></span><br> {% trans "Statistics" %}</button>
                     {% endifequal %}
                     {% ifequal dom.info.0 1 %}
                         <button type="submit" name="suspend" class="btn btn-default btn-md" id="inst-btn"><span class="glyphicon glyphicon-pause"></span><br> {% trans "Suspend" %}</button>
                         <button class="btn btn-default btn-md disabled" id="inst-btn"><span class="glyphicon glyphicon-camera"></span><br> {% trans "Snapshot" %}</button>
-                        <button class="btn btn-default btn-md" id="inst-btn"><span class="glyphicon glyphicon-signal"></span><br> {% trans "Statistics" %}</button>
+                        <a href="vm-stat" class="showbar btn btn-default btn-md" id="inst-btn"><span class="glyphicon glyphicon-signal"></span><br> {% trans "Statistics" %}</a>
                     {% endifequal %}
                     {% ifequal dom.info.0 5 %}
                         <button class="btn btn-default btn-md disabled" id="inst-btn"><span class="glyphicon glyphicon-pause"></span><br> {% trans "Suspend" %}</button>
@@ -71,6 +71,20 @@
                 </form>
             </div>
             <hr>
+            <div id="vm-stat" style="display: none;">
+                <div class="block-btn">
+                    <li>{% trans "Usage Statistis" %}</li>
+                </div>
+                {% for disk in disk_usage %}
+                <div class="col-md-6">
+                    <p><strong>{% trans "Disk" %} {{ disk.dev }}:</strong></p>
+                </div>
+                <div class="col-md-6">
+                    <p>{% trans "Read" %}: {{ disk.rd }} Mb/s {% trans "Write" %}: {{ disk.wr }} Mb/s</p>
+                </div>
+                {% endfor %}
+                <hr>
+            </div>
             <div class="block-btn">
                 <li>{% trans "Name & Status" %}</li>
             </div>
@@ -342,6 +356,11 @@
             } else {
                 $('#vnc_passwd_manual').show();
             }
+        });
+        $(document).on('click','a.showbar',function(){
+            var id = $(this).attr('href');
+            $('#' + id).slideToggle();
+            return false;
         });
     </script>
 {% endblock %}
