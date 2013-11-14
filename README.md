@@ -1,24 +1,9 @@
-# WebVirtMgr panel - v3.4.3
+# WebVirtMgr panel - v3.5.4
 
 ### <a href="https://github.com/retspen/webvirtmgr/wiki/Screenshots">Screenshots</a>
 
-Warning: Upgrade from v2 not support!!!
-
-* Move to Django-1.5.x
-* Move to Bootstrap-3.0
-* Fix many bugs
-* Add gentoo init scripts (Thanks: Joachim Langenbach)
-* Add function convert images
-* Rebuild VNC fanctional
-* Fix create or change VNC password if VM created in console
-
-Big Thanks: Alex Kuksenko (<a href="https://github.com/retif">Github</a>)
-* Add support for more than one HDD
-* Add support for multi networks
-* Add support for hardware CPU (host cpu instead of virtual)
-* View and Edit XML Virtual Machine
-* Add bridge device in Network Pool
-* Add create image RAW, QCOW, QCOW2 formats
+* Setup host server from bootstap (wget -O - https://raw.github.com/retspen/webvirtmgr/nestene/conf/libvirt-bootstrap.sh | sudo sh)
+* Add real time device usage: CPU, Disk, Network
 
 ## 1. Introduction
 
