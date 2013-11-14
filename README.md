@@ -3,7 +3,7 @@
 ### <a href="https://github.com/retspen/webvirtmgr/wiki/Screenshots">Screenshots</a>
 
 * Setup host server from bootstap (wget -O - https://raw.github.com/retspen/webvirtmgr/nestene/conf/libvirt-bootstrap.sh | sudo sh)
-* Add real time device usage: CPU, Disk, Network
+* Add staticstics real time device usage: CPU, Disk, Network
 
 ## 1. Introduction
 
