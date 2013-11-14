@@ -811,7 +811,7 @@ class ConnServer(object):
             wr_use_now = dom.blockStats(dev[0])[3]
             rd_diff_usage = rd_use_now - rd_use_ago
             wr_diff_usage = wr_use_now - wr_use_ago
-            dev_usage.append({"dev": dev[1], "rd": rd_diff_usage, "wr": wr_diff_usage})
+            dev_usage.append({'dev': dev[1], 'rd': rd_diff_usage, 'wr': wr_diff_usage})
         return dev_usage
 
     def vds_network_usage(self, vname):
@@ -827,7 +827,7 @@ class ConnServer(object):
 
         for target in tree.findall("devices/interface/target"):
             devices.append(target.get("dev"))
-        for dev in devices:
+        for i, dev in enumerate(devices):
             rx_use_ago = dom.interfaceStats(dev)[0]
             tx_use_ago = dom.interfaceStats(dev)[4]
             time.sleep(1)
@@ -835,7 +835,7 @@ class ConnServer(object):
             tx_use_now = dom.interfaceStats(dev)[4]
             rx_diff_usage = (rx_use_now - rx_use_ago) * 8
             tx_diff_usage = (tx_use_now - tx_use_ago) * 8
-            dev_usage.append({"dev": dev, "rx": rx_diff_usage, "tx": tx_diff_usage})
+            dev_usage.append({'dev': i, 'rx': rx_diff_usage, 'tx': tx_diff_usage})
         return dev_usage
 
     def vds_get_info(self, vname):

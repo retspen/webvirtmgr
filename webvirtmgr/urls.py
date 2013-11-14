@@ -22,7 +22,7 @@ urlpatterns = patterns('',
     url(r'^info/memory/(\d+)/$', 'overview.views.memusage', name='memusage'),
     url(r'^info/vds/cpu/(\d+)/([\w\-\.]+)/$', 'instance.views.cpuusage', name='vdscpuusage'),
     url(r'^info/vds/net/(\d+)/([\w\-\.]+)/$', 'instance.views.netusage', name='vdsnetusage'),
-    url(r'^info/vds/blk/(\d+)/([\w\-\.]+)/$', 'instance.views.diskusage', name='vdsdiskusage'),
+    url(r'^info/vds/disk/(\d+)/([\w\-\.]+)/$', 'instance.views.diskusage', name='vdsdiskusage'),
 )
 
 urlpatterns += patterns('',

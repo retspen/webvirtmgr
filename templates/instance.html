@@ -71,32 +71,24 @@
                 </form>
             </div>
             <hr>
-            <div id="vm-stat" style="display: none;">
+            <div id="vm-stat">
                 <div class="block-btn">
                     <li>{% trans "Usage Statistis" %}</li>
                 </div>
-                <div class="col-md-6">
-                    <p><strong>{% trans "CPU" %}</strong></p>
+                <div class="row show-grid">
+                    <div id="cpu-usage">
+                        <div class="col-md-6" id="cpu-usage">
+                            <p><strong>{% trans "CPU" %}:</strong></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p>{% trans "Usage" %}: <span id="cpu-data">0</span>%</p>
+                        </div>
+                    </div>
+                    <div id="net-usage">
+                    </div>
+                    <div id="disk-usage">
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <p>{% trans "Usage" %}: <span id="cpu">0</span>%</p>
-                </div>
-                {% for dev_bus, hdd_dev in hdd_image.items %}
-                <div class="col-md-6">
-                    <p><strong>{% trans "Disk" %} <span id="dev">{{ dev_bus }}</span>:</strong></p>
-                </div>
-                <div class="col-md-6">
-                    <p>{% trans "Read" %}: <span id="rd">0</span> Mb/s {% trans "Write" %}: <span id="wr">0</span> Mb/s</p>
-                </div>
-                {% endfor %}
-                {% for network in networks %}
-                <div class="col-md-6">
-                    <p><strong>{% trans "Eth" %} <span id="dev">{{ dev_bus }}</span>:</strong></p>
-                </div>
-                <div class="col-md-6">
-                    <p>{% trans "Rx" %}: <span id="rx">0</span> Mbps/s {% trans "Tx" %}: <span id="tx">0</span> Mbps/s</p>
-                </div>
-                {% endfor %}
                 <hr>
             </div>
             <div class="block-btn">
@@ -379,17 +371,47 @@
     </script>
     {% ifequal dom.info.0 1 %}
         <script type="text/javascript">
-            function cpu(){
+            function cpu_usage(){
                 $.getJSON('/info/vds/cpu/{{ host_id }}/{{ vname }}', function(data) {
-                    alert('Test');
+                    $('#cpu-data').text(data.cpu);
                 });
             }
-            function refresh(){
-                cpu();
+            function disk_usage(){
+                $.getJSON('/info/vds/disk/{{ host_id }}/{{ vname }}', function(data) {
+                    var disktar = document.getElementById('disk-usage');
+                    var disktartext = '';
+
+                    for(var i = 0; i < data.length; i++){
+                        disktartext += '<div class="col-md-6">' +
+                                          '<p><strong>{% trans "Disk" %} ' +  data[i].dev  + ':</strong></p>' +
+                                        '</div>' +
+                                        '<div class="col-md-6">' +
+                                          '<p>{% trans "Read" %}: ' + (data[i].rd/1024/1024).toFixed(1) + ' Mb/s {% trans "Write" %}: ' + (data[i].wr/1024/1024).toFixed(1) + ' Mb/s</p>' +
+                                        '</div>';
+                    }
+                    disktar.innerHTML = disktartext;
+                });
+            }
+            function net_usage(){
+                $.getJSON('/info/vds/net/{{ host_id }}/{{ vname }}', function(data) {
+                    var disktar = document.getElementById('net-usage');
+                    var disktartext = '';
+
+                    for(var i = 0; i < data.length; i++){
+                        disktartext += '<div class="col-md-6">' +
+                                          '<p><strong>{% trans "Eth" %}' +  data[i].dev  + ':</strong></p>' +
+                                        '</div>' +
+                                        '<div class="col-md-6">' +
+                                          '<p>{% trans "Rx" %}: ' + (data[i].rx/1024/1024).toFixed(1) + ' Mbps {% trans "Tx" %}: ' + (data[i].tx/1024/1024).toFixed(1) + ' Mbps</p>' +
+                                        '</div>';
+                    }
+                    disktar.innerHTML = disktartext;
+                });
             }
             $(function() {
-                refresh();
-                window.setInterval('refresh()', {{ time_refresh }});
+                window.setInterval('cpu_usage()', {{ time_refresh }});
+                window.setInterval('net_usage()', {{ time_refresh }});
+                window.setInterval('disk_usage()', {{ time_refresh }});
             });
         </script>
     {% endifequal %}

@@ -7,6 +7,7 @@ from dashboard.views import sort_host
 from webvirtmgr.server import ConnServer
 from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE
 from webvirtmgr.settings import TIME_JS_REFRESH
+from django.utils import simplejson
 
 
 def diskusage(request, host_id, vname):
@@ -27,10 +28,13 @@ def diskusage(request, host_id, vname):
 
     if conn:
         blk_usage = conn.vds_disk_usage(vname)
+        data = simplejson.dumps(blk_usage)
+    else:
+        data = None
 
     response = HttpResponse()
     response['Content-Type'] = "text/javascript"
-    response.write(blk_usage)
+    response.write(data)
     return response
 
 
@@ -52,10 +56,13 @@ def netusage(request, host_id, vname):
 
     if conn:
         net_usage = conn.vds_network_usage(vname)
+        data = simplejson.dumps(net_usage)
+    else:
+        data = None
 
     response = HttpResponse()
     response['Content-Type'] = "text/javascript"
-    response.write(net_usage)
+    response.write(data)
     return response
 
 
@@ -77,10 +84,13 @@ def cpuusage(request, host_id, vname):
 
     if conn:
         cpu_usage = conn.vds_cpu_usage(vname)
+        data = simplejson.dumps(cpu_usage)
+    else:
+        data = None
 
     response = HttpResponse()
     response['Content-Type'] = "text/javascript"
-    response.write(cpu_usage)
+    response.write(data)
     return response
 
 
