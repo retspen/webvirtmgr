@@ -4,66 +4,12 @@
 {% block content %}
 <h3>Supported Linux distributions</h3>
 <p>CentOS 6.2, RedHat 6.2 and above</p>
-<p>Fedora 17 and above</p>
+<p>Fedora 18 and above</p>
 <p>Ubuntu 12.04 and above</p>
-<br />
-<h3>Check that your CPU supports hardware virtualization</h3>
-<p>To run KVM, you need a processor that supports hardware virtualization. Intel and AMD both have developed extensions for their processors, deemed respectively Intel VT-x and AMD-V. To see if your processor supports one of these, you can review the output from this command:</p>
+<h3>Setup KVM on Host Server</h3>
 <pre>
-egrep -c '(vmx|svm)' /proc/cpuinfo
+$ wget -O - https://raw.github.com/retspen/webvirtmgr/nestene/conf/libvirt-bootstrap.sh | sudo sh
 </pre>
-<p>If <strong>0</strong> it means that your CPU doesn't support hardware virtualization.</p>
-</p>If <strong>1</strong> or more it does - but you still need to make sure that virtualization is enabled in the BIOS.</p>
-<br />
-<h3>Installation and setup KVM</h3>
-<h4>ContOS, Fedora, RedHat</h4>
-<p>Install packages libvirt-bin, KVM</p>
-<pre>
-$ sudo yum -y install kvm libvirt
-</pre>
-<br>
-<h4>Ubuntu, Debian</h4>
-<p>Install packages libvirt-bin, KVM, sasl2-bin</p>
-<pre>
-$ sudo apt-get -y install kvm libvirt-bin sasl2-bin
-</pre>
-<br>
-<h4>ContOS, Fedora, RedHat</h4>
-<p>Uncomment the line in the file <code>/etc/sysconfig/libvirtd</code></p>
-<pre>
-LIBVIRTD_ARGS="--listen"
-</pre>
-<br>
-<h4>Ubuntu, Debian</h4>
-<p>Add the option <code>-l</code> in the file <code>/etc/default/libvirt-bin</code></p>
-<pre>
-libvirtd_opts="-d -l"
-</pre>
-<br>
-<h4>Ubuntu, Debian, Fedora, CentOS, RedHat</h4>
-<p>The file <code>/etc/libvirt/libvirtd.conf</code> uncomment the line</p>
-<pre>
-listen_tls = 0
-listen_tcp = 1
-</pre>
-<p>The file <code>/etc/libvirt/qemu.conf</code> uncomment the line</p>
-<pre>
-vnc_listen = "0.0.0.0"
-</pre>
-<p class="text-error"><strong>Warning</strong>: VM's created are not in the WebVirtMgr does not contain a password for VNC. Don't forget set VNC password on VM page - button "Enable nosVNC"</p>
-<br>
-<h4>ContOS, Fedora, RedHat</h4>
-<p>Start the daemon libvirtd</p>
-<pre>
-$ sudo service libvirtd start
-</pre>
-<br>
-<h4>Ubuntu, Debian</h4>
-<p>Restart the daemon libvirtd, because after installation it runs automatically</p>
-<pre>
-$ sudo service libvirt-bin restart
-</pre>
-<br />
 <h3>Configuring authorization</h3>
 <p>Adding users and setting their passwords is done with the <code>saslpasswd2</code> command. When running this command it is important to tell it that the appname is <code>libvirt</code>. As an example, to add a user <code>fred</code>, run</p>
 <pre>
