@@ -9,6 +9,7 @@ import time
 import libxml2
 from datetime import datetime
 import string
+from xml.etree import ElementTree
 
 
 def get_xml_path(xml, path=None, func=None):
@@ -775,6 +776,7 @@ class ConnServer(object):
         Function return vds cpu usage.
 
         """
+        cpu_usage = {}
         dom = self.lookupVM(vname)
         if dom.info()[0] == 1:
             nbcore = self.conn.getInfo()[2]
@@ -782,25 +784,59 @@ class ConnServer(object):
             time.sleep(1)
             cpu_use_now = dom.info()[4]
             diff_usage = cpu_use_now - cpu_use_ago
-            cpu_usage = 100 * diff_usage / (1 * nbcore * 10 ** 9L)
+            cpu_usage['cpu'] = 100 * diff_usage / (1 * nbcore * 10 ** 9L)
         else:
-            cpu_usage = 0
+            cpu_usage['cpu'] = 0
         return cpu_usage
 
-    def vds_memory_usage(self, vname):
+    def vds_disk_usage(self, vname):
         """
 
-        Function return vds memory usage.
+        Function return vds block IO.
 
         """
+        devices=[]
+        dev_usage = []
         dom = self.lookupVM(vname)
-        allmem = self.conn.getInfo()[1] * 1048576
-        if dom.info()[0] == 1:
-            dom_mem = dom.info()[1] * 1024
-            percent = (dom_mem * 100) / allmem
-        else:
-            percent = 0
-        return allmem, percent
+        tree = ElementTree.fromstring(dom.XMLDesc(0))
+
+        for source, target in zip(tree.findall("devices/disk/source"), tree.findall("devices/disk/target")):
+            if source.get("file").endswith('.img'):
+                devices.append([source.get("file"), target.get("dev")])
+        for dev in devices:
+            rd_use_ago = dom.blockStats(dev[0])[1]
+            wr_use_ago = dom.blockStats(dev[0])[3]
+            time.sleep(1)
+            rd_use_now = dom.blockStats(dev[0])[1]
+            wr_use_now = dom.blockStats(dev[0])[3]
+            rd_diff_usage = rd_use_now - rd_use_ago
+            wr_diff_usage = wr_use_now - wr_use_ago
+            dev_usage.append({'dev': dev[1], 'rd': rd_diff_usage, 'wr': wr_diff_usage})
+        return dev_usage
+
+    def vds_network_usage(self, vname):
+        """
+
+        Function return vds Bandwidth.
+
+        """
+        devices=[]
+        dev_usage = []
+        dom = self.lookupVM(vname)
+        tree = ElementTree.fromstring(dom.XMLDesc(0))
+
+        for target in tree.findall("devices/interface/target"):
+            devices.append(target.get("dev"))
+        for i, dev in enumerate(devices):
+            rx_use_ago = dom.interfaceStats(dev)[0]
+            tx_use_ago = dom.interfaceStats(dev)[4]
+            time.sleep(1)
+            rx_use_now = dom.interfaceStats(dev)[0]
+            tx_use_now = dom.interfaceStats(dev)[4]
+            rx_diff_usage = (rx_use_now - rx_use_ago) * 8
+            tx_diff_usage = (tx_use_now - tx_use_ago) * 8
+            dev_usage.append({'dev': i, 'rx': rx_diff_usage, 'tx': tx_diff_usage})
+        return dev_usage
 
     def vds_get_info(self, vname):
         """
@@ -884,7 +920,6 @@ class ConnServer(object):
                         return media, media
                 else:
                     return None, None
-            return None, None
 
     def vds_set_vnc_passwd(self, vname, passwd):
         """

@@ -162,10 +162,10 @@
                                                         <div class="form-group">
                                                             <label class="col-lg-4 control-label">{% trans "Convert" %}</label>
                                                             <div class="col-lg-6">
-                                                                <input id="img_convert" type="checkbox" name="convert" value="true">
+                                                                <input id="img-convert" type="checkbox" name="convert" value="true">
                                                             </div>
                                                         </div>
-                                                        <div class="form-group" id="format_convert">
+                                                        <div class="form-group" id="format-convert">
                                                             <label class="col-lg-4 control-label">{% trans "Format" %}</label>
                                                             <div class="col-lg-6">
                                                                 <select name="format" class="form-control">
@@ -384,11 +384,11 @@
 {% endblock %}
 {% block script %}
     <script type="text/javascript">
-        $(document).on('change','#img_convert',function(){
+        $(document).on('change','#img-convert',function(){
             if($(this).prop('checked')) {
-                $('#format_convert').show();
+                $('#format-convert').show();
             } else {
-                $('#format_convert').hide();
+                $('#format-convert').hide();
             }
         });
     </script>

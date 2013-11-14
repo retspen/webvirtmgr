@@ -61,7 +61,7 @@ body {
     margin-bottom: 20px;
 }
 #inst-btn {
-    width: 108px;
+    width: 92px;
 }
 .modal-body {
     padding-left: 10px;
@@ -76,7 +76,10 @@ body {
 #error {
     text-align: center;
 }
-#format_convert {
+#format-convert {
+    display: none;
+}
+#vm-stat {
     display: none;
 }
 @media (max-width: 1200px) {

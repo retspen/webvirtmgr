@@ -32,40 +32,65 @@
             <div class="col-md-12" id="instaction">
                 <form action="" method="post">{% csrf_token %}
                     {% ifequal dom.info.0 5 %}
-                        <button class="btn btn-default btn-lg disabled" id="inst-btn"><span class="glyphicon glyphicon-align-justify"></span><br> {% trans "Console" %}</button>
+                        <button class="btn btn-default btn-md disabled" id="inst-btn"><span class="glyphicon glyphicon-align-justify"></span><br> {% trans "Console" %}</button>
                     {% else %}
-                        <a href="#console" class="btn btn-default btn-lg" id="inst-btn" data-toggle="modal" title="VNC Port: {{ vnc_port }}" onclick="open_vnc()"><span class="glyphicon glyphicon-align-justify"></span><br> {% trans "Console" %}</a>
+                        <a href="#console" class="btn btn-default btn-md" id="inst-btn" data-toggle="modal" title="VNC Port: {{ vnc_port }}" onclick="open_vnc()"><span class="glyphicon glyphicon-align-justify"></span><br> {% trans "Console" %}</a>
                     {% endifequal %}
                     {% ifequal dom.info.0 5 %}
-                        <button type="submit" class="btn btn-default btn-lg" id="inst-btn" name="start"><span class="glyphicon glyphicon-play"></span><br> {% trans "Start" %}</button>
+                        <button type="submit" class="btn btn-default btn-md" id="inst-btn" name="start"><span class="glyphicon glyphicon-play"></span><br> {% trans "Start" %}</button>
                     {% endifequal %}
                     {% ifequal dom.info.0 1 %}
-                        <button href="#Power" class="btn btn-default btn-lg" id="inst-btn" data-toggle="modal"><span class="glyphicon glyphicon-off"></span><br> {% trans "Shutdown" %}</button>
+                        <button href="#Power" class="btn btn-default btn-md" id="inst-btn" data-toggle="modal"><span class="glyphicon glyphicon-off"></span><br> {% trans "Shutdown" %}</button>
                     {% endifequal %}
                     {% ifequal dom.info.0 3 %}
-                        <button class="btn btn-default btn-lg disabled" id="inst-btn" data-toggle="modal"><span class="glyphicon glyphicon-off"></span><br> {% trans "Shutdown" %}</button>
+                        <button class="btn btn-default btn-md disabled" id="inst-btn" data-toggle="modal"><span class="glyphicon glyphicon-off"></span><br> {% trans "Shutdown" %}</button>
                     {% endifequal %}
-                    <a href="#Delete" class="btn btn-default btn-lg" id="inst-btn" data-toggle="modal"><span class="glyphicon glyphicon-trash"></span><br> {% trans "Delete" %}</a>
+                    <a href="#Delete" class="btn btn-default btn-md" id="inst-btn" data-toggle="modal"><span class="glyphicon glyphicon-trash"></span><br> {% trans "Delete" %}</a>
                     {% ifequal dom.info.0 3 %}
-                        <button type="submit" name="resume" class="btn btn-default btn-lg" id="inst-btn"><span class="glyphicon glyphicon-play"></span><br> {% trans "Resume" %}</button>
-                        <button type="submit" name="snapshot" class="btn btn-default btn-lg" id="inst-btn"><span class="glyphicon glyphicon-camera"></span><br> {% trans "Snapshot" %}</button>
+                        <button type="submit" name="resume" class="btn btn-default btn-md" id="inst-btn"><span class="glyphicon glyphicon-play"></span><br> {% trans "Resume" %}</button>
+                        <button type="submit" name="snapshot" class="btn btn-default btn-md" id="inst-btn"><span class="glyphicon glyphicon-camera"></span><br> {% trans "Snapshot" %}</button>
+                        <button class="btn btn-default btn-md disabled" id="inst-btn"><span class="glyphicon glyphicon-signal"></span><br> {% trans "Statistics" %}</button>
                     {% endifequal %}
                     {% ifequal dom.info.0 1 %}
-                        <button type="submit" name="suspend" class="btn btn-default btn-lg" id="inst-btn"><span class="glyphicon glyphicon-pause"></span><br> {% trans "Suspend" %}</button>
-                        <button class="btn btn-default btn-lg disabled" id="inst-btn"><span class="glyphicon glyphicon-camera"></span><br> {% trans "Snapshot" %}</button>
+                        <button type="submit" name="suspend" class="btn btn-default btn-md" id="inst-btn"><span class="glyphicon glyphicon-pause"></span><br> {% trans "Suspend" %}</button>
+                        <button class="btn btn-default btn-md disabled" id="inst-btn"><span class="glyphicon glyphicon-camera"></span><br> {% trans "Snapshot" %}</button>
+                        <a href="vm-stat" class="showbar btn btn-default btn-md" id="inst-btn"><span class="glyphicon glyphicon-signal"></span><br> {% trans "Statistics" %}</a>
                     {% endifequal %}
                     {% ifequal dom.info.0 5 %}
-                        <button class="btn btn-default btn-lg disabled" id="inst-btn"><span class="glyphicon glyphicon-pause"></span><br> {% trans "Suspend" %}</button>
-                        <button type="submit" name="snapshot" class="btn btn-default btn-lg" id="inst-btn"><span class="glyphicon glyphicon-camera"></span><br> {% trans "Snapshot" %}</button>
+                        <button class="btn btn-default btn-md disabled" id="inst-btn"><span class="glyphicon glyphicon-pause"></span><br> {% trans "Suspend" %}</button>
+                        <button type="submit" name="snapshot" class="btn btn-default btn-md" id="inst-btn"><span class="glyphicon glyphicon-camera"></span><br> {% trans "Snapshot" %}</button>
                     {% endifequal %}
                     {% ifequal dom.info.0 5 %}
-                        <a href="#Edit" class="btn btn-default btn-lg" data-toggle="modal" id="inst-btn"><span class="glyphicon glyphicon-edit"></span><br> {% trans "Edit" %}</a>
+                        <button class="btn btn-default btn-md disabled" id="inst-btn"><span class="glyphicon glyphicon-signal"></span><br> {% trans "Statistics" %}</button>
+                    {% endifequal %}
+                    {% ifequal dom.info.0 5 %}
+                        <a href="#Edit" class="btn btn-default btn-md" data-toggle="modal" id="inst-btn"><span class="glyphicon glyphicon-edit"></span><br> {% trans "Edit" %}</a>
                     {% else %}
-                        <button href="#" class="btn btn-default btn-lg disabled" id="inst-btn"><span class="glyphicon glyphicon-edit"></span><br> {% trans "Edit" %}</button>
+                        <button href="#" class="btn btn-default btn-md disabled" id="inst-btn"><span class="glyphicon glyphicon-edit"></span><br> {% trans "Edit" %}</button>
                     {% endifequal %}
                 </form>
             </div>
             <hr>
+            <div id="vm-stat">
+                <div class="block-btn">
+                    <li>{% trans "Usage Statistics" %}</li>
+                </div>
+                <div class="row show-grid">
+                    <div id="cpu-usage">
+                        <div class="col-md-6" id="cpu-usage">
+                            <p><strong>{% trans "CPU" %}:</strong></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p>{% trans "Usage" %}: <span id="cpu-data">0</span>%</p>
+                        </div>
+                    </div>
+                    <div id="net-usage">
+                    </div>
+                    <div id="disk-usage">
+                    </div>
+                </div>
+                <hr>
+            </div>
             <div class="block-btn">
                 <li>{% trans "Name & Status" %}</li>
             </div>
@@ -93,25 +118,11 @@
             <div class="row show-grid">
                 <div class="col-md-6">
                     <p><strong>{% trans "Processor" %}:</strong></p>
-                    <p style="height:30px">{% trans "Usage" %}</p>
                     <p><strong>{% trans "Memory" %}:</strong></p>
-                    <p style="height:30px">{% trans "Usage" %}</p>
                 </div>
                 <div class="col-md-6">
-                    <p>VCPU {{ vcpu }} </p>
-                    <p>
-                    <div class="progress">
-                        <span id="cpu-usage" style="text-align:center;">{% ifequal dom.info.0 5 %}0%{% endifequal %}</span>
-                        <div class="progress-bar" id="cpu-usage-bar" style="width:{{ cpu_usage }}%;"></div>
-                    </div>
-                    </p>
+                    <p>{{ vcpu }} VCPU</p>
                     <p>{{ memory }} {% trans "MB" %}</p>
-                    <p>
-                    <div class="progress">
-                        <span id="memory-usage" style="text-align:center;">{% ifequal dom.info.0 5 %}0%{% endifequal %}</span>
-                        <div class="progress-bar" id="memory-usage-bar" style="width:{{ mem_perc }}%;"></div>
-                    </div>
-                    </p>
                 </div>
             </div>
             <hr>
@@ -136,12 +147,12 @@
             </div>
             <div class="row show-grid">
                 <div class="col-md-6">
-                    {% for dev_bus, hdd_dev in hdd_image.items reversed %}
+                    {% for dev_bus, hdd_dev in hdd_image.items %}
                         <p><strong>{% trans "Disk" %} {{ dev_bus }}:</strong></p>
                     {% endfor %}
                 </div>
                 <div class="col-md-6">
-                    {% for dev_bus, hdd_dev in hdd_image.items reversed %}
+                    {% for dev_bus, hdd_dev in hdd_image.items %}
                         <p>{{ hdd_dev.0 }} ({{ hdd_dev.1 }})</p>
                     {% endfor %}
                 </div>
@@ -339,7 +350,6 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
-
 {% endblock %}
 {% block script %}
     <script type="text/javascript">
@@ -353,37 +363,55 @@
                 $('#vnc_passwd_manual').show();
             }
         });
+        $(document).on('click','a.showbar',function(){
+            var id = $(this).attr('href');
+            $('#' + id).slideToggle();
+            return false;
+        });
     </script>
     {% ifequal dom.info.0 1 %}
         <script type="text/javascript">
-            function cpu(){
-                $.get('/info/vds/cpu/{{ host_id }}/{{ vname }}', function(data) {
-                    setBar($('#cpu-usage-bar'),$('#cpu-usage'),data);
+            function cpu_usage(){
+                $.getJSON('/info/vds/cpu/{{ host_id }}/{{ vname }}', function(data) {
+                    $('#cpu-data').text(data.cpu);
                 });
             }
-            function memory(){
-                $.get('/info/vds/memory/{{ host_id }}/{{ vname }}', function(data) {
-                    setBar($('#memory-usage-bar'),$('#memory-usage'),data);
+            function disk_usage(){
+                $.getJSON('/info/vds/disk/{{ host_id }}/{{ vname }}', function(data) {
+                    var disktar = document.getElementById('disk-usage');
+                    var disktartext = '';
+
+                    for(var i = 0; i < data.length; i++){
+                        disktartext += '<div class="col-md-6">' +
+                                          '<p><strong>{% trans "Disk" %} ' +  data[i].dev  + ':</strong></p>' +
+                                        '</div>' +
+                                        '<div class="col-md-6">' +
+                                          '<p>{% trans "Read" %}: ' + (data[i].rd/1024/1024).toFixed(1) + ' Mb/s {% trans "Write" %}: ' + (data[i].wr/1024/1024).toFixed(1) + ' Mb/s</p>' +
+                                        '</div>';
+                    }
+                    disktar.innerHTML = disktartext;
                 });
             }
-            function setBar(bar,text,value){
-                text.text(value +'%').fadeIn();
-                bar.css({'width':value +'%'});
-                if (value < 50){
-                    bar.attr('class', "progress-bar progress-bar-success");
-                }else if (value < 80){
-                    bar.attr('class', "progress-bar progress-bar-warning");
-                }else if (value <= 100){
-                    bar.attr('class', "progress-bar progress-bar-danger");
-                }
-            }
-            function refresh(){
-                cpu();
-                memory();
+            function net_usage(){
+                $.getJSON('/info/vds/net/{{ host_id }}/{{ vname }}', function(data) {
+                    var disktar = document.getElementById('net-usage');
+                    var disktartext = '';
+
+                    for(var i = 0; i < data.length; i++){
+                        disktartext += '<div class="col-md-6">' +
+                                          '<p><strong>{% trans "Eth" %}' +  data[i].dev  + ':</strong></p>' +
+                                        '</div>' +
+                                        '<div class="col-md-6">' +
+                                          '<p>{% trans "Rx" %}: ' + (data[i].rx/1024/1024).toFixed(1) + ' Mbps {% trans "Tx" %}: ' + (data[i].tx/1024/1024).toFixed(1) + ' Mbps</p>' +
+                                        '</div>';
+                    }
+                    disktar.innerHTML = disktartext;
+                });
             }
             $(function() {
-                refresh();
-                window.setInterval('refresh()', {{ time_refresh }});
+                window.setInterval('cpu_usage()', {{ time_refresh }});
+                window.setInterval('net_usage()', {{ time_refresh }});
+                window.setInterval('disk_usage()', {{ time_refresh }});
             });
         </script>
     {% endifequal %}
