@@ -76,7 +76,7 @@ body {
 #error {
     text-align: center;
 }
-#format-convert {
+.format-convert {
     display: none;
 }
 #vm-stat {

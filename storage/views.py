@@ -123,7 +123,7 @@ def storage(request, host_id, pool):
                         msg = _("Name of volume name already use")
                         errors.append(msg)
                     if not errors:
-                        if 'convert' in data:
+                        if data['convert']:
                             format = data['format']
                         else:
                             format = None
