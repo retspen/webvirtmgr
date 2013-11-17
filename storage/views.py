@@ -28,6 +28,7 @@ def storage(request, host_id, pool):
     errors = []
     form = stg = size = free = usage = percent = \
         state = s_type = path = volumes_info = None
+    blocked = False
     host = Host.objects.get(id=host_id)
 
     try:
@@ -51,7 +52,10 @@ def storage(request, host_id, pool):
             stg = conn.storagePool(pool)
             size, free, usage, percent, state, s_type, path = conn.storage_get_info(pool)
             if state:
-                stg.refresh(0)
+                try:
+                    stg.refresh(0)
+                except libvirtError:
+                    blocked = True
                 volumes_info = conn.volumes_get_info(pool)
             else:
                 volumes_info = None
