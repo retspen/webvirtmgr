@@ -2,6 +2,7 @@
 #
 
 import libvirt
+from libvirt import libvirtError
 from libvirt import VIR_DOMAIN_XML_SECURE
 from network.IPy import IP
 import re
@@ -906,6 +907,7 @@ class ConnServer(object):
         Function return vds media info.
 
         """
+        vol_name = vol_path = None
         dom = self.lookupVM(vname)
         xml = dom.XMLDesc(0)
         for num in range(1, 5):
@@ -915,11 +917,12 @@ class ConnServer(object):
                 if media:
                     try:
                         vol = self.storageVolPath(media)
-                        return vol.name(), vol.path()
-                    except:
-                        return media, media
-                else:
-                    return None, None
+                        vol_name = vol.name()
+                        vol_path = vol.path()
+                        return vol_name, vol_path
+                    except libvirtError:
+                        vol_name = vol_path = media
+        return vol_name, vol_path
 
     def vds_set_vnc_passwd(self, vname, passwd):
         """
