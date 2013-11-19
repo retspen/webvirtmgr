@@ -37,6 +37,7 @@ def create(request, host_id):
         all_networks = conn.networks_get_node()
         all_storages = conn.storages_get_node()
         all_img = conn.images_get_storages(all_storages)
+        all_img.sort()
 
         if not all_storages:
             msg = _("You haven't defined have any storage pools")
