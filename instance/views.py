@@ -127,7 +127,7 @@ def instance(request, host_id, vname):
         vnc_port = conn.vnc_get_port(vname)
 
         try:
-            instance = Instance.objects.get(vname=vname)
+            instance = Instance.objects.get(host_id=host_id, vname=vname)
         except:
             instance = None
 
@@ -229,7 +229,7 @@ def instance(request, host_id, vname):
                         errors.append(msg)
                 if not errors:
                     try:
-                        vnc_pass = Instance.objects.get(vname=vname)
+                        vnc_pass = Instance.objects.get(host_id=host_id, vname=vname)
                         vnc_pass.vnc_passwd = passwd
                     except:
                         vnc_pass = Instance(host_id=host_id, vname=vname, vnc_passwd=passwd)
