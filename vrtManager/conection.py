@@ -53,6 +53,35 @@ class wvmConnect(object):
         
         return self.wvm
 
+    def get_machine_capable(conn):
+         """Return machine capabilities."""
+
+        machine = get_xml_path(conn.getCapabilities(), "/capabilities/guest/arch/machine/@canonical")
+        if not machine:
+            machine = 'pc-1.0'
+        return machine
+
+
+    def is_kvm_capable(conn):
+        """Return KVM capabilities."""
+
+        kvm = re.search('kvm', conn.getCapabilities())
+        if kvm:
+            return True
+        return False
+
+    def get_emulator_capable(conn):
+        """Return emulator capabilities."""
+
+        if re.findall('/usr/libexec/qemu-kvm', conn.getCapabilities()):
+            return '/usr/libexec/qemu-kvm'
+        elif re.findall('/usr/bin/kvm', conn.getCapabilities()):
+            return '/usr/bin/kvm'
+        elif re.findall('/usr/bin/qemu-kvm', conn.getCapabilities()):
+            return '/usr/bin/qemu-kvm'
+        else:
+            return '/usr/bin/qemu-system-x86_64'
+
     def lookupVM(self, vname):
         """
 
@@ -123,106 +152,6 @@ class wvmConnect(object):
             return True
         else:
             return False
-
-    def add_vm(self, name, ram, cpu, host_model, images, nets, virtio, storages, passwd=None):
-        """
-        Create VM function
-
-        """
-        ram = int(ram) * 1024
-
-        iskvm = re.search('kvm', self.open.getCapabilities())
-        if iskvm:
-            dom_type = 'kvm'
-        else:
-            dom_type = 'qemu'
-
-        machine = get_xml_path(self.open.getCapabilities(), "/capabilities/guest/arch/machine/@canonical")
-        if not machine:
-            machine = 'pc-1.0'
-
-        if re.findall('/usr/libexec/qemu-kvm', self.open.getCapabilities()):
-            emulator = '/usr/libexec/qemu-kvm'
-        elif re.findall('/usr/bin/kvm', self.open.getCapabilities()):
-            emulator = '/usr/bin/kvm'
-        elif re.findall('/usr/bin/qemu-kvm', self.open.getCapabilities()):
-            emulator = '/usr/bin/qemu-kvm'
-        else:
-            emulator = '/usr/bin/qemu-system-x86_64'
-
-        disks = []
-        for image in images:
-            img = self.storageVolPath(image)
-            image_type = self.get_vol_image_type(storages, img.name())
-            disks.append({'image': image, 'type': image_type})
-
-        xml = """<domain type='%s'>
-                  <name>%s</name>
-                  <description>None</description>
-                  <memory unit='KiB'>%s</memory>
-                  <vcpu>%s</vcpu>""" % (dom_type, name, ram, cpu)
-
-        if host_model:
-            xml += """<cpu mode='host-model'/>"""
-
-        xml += """<os>
-                    <type arch='x86_64' machine='%s'>hvm</type>
-                    <boot dev='hd'/>
-                    <boot dev='cdrom'/>
-                    <bootmenu enable='yes'/>
-                  </os>
-                  <features>
-                    <acpi/>
-                    <apic/>
-                    <pae/>
-                  </features>
-                  <clock offset='utc'/>
-                  <on_poweroff>destroy</on_poweroff>
-                  <on_reboot>restart</on_reboot>
-                  <on_crash>restart</on_crash>
-                  <devices>
-                    <emulator>%s</emulator>""" % (machine, emulator)
-
-        disk_letters = list(string.lowercase)
-        for disk in disks:
-            xml += """<disk type='file' device='disk'>
-                          <driver name='qemu' type='%s'/>
-                          <source file='%s'/>""" % (disk['type'], disk['image'])
-            if virtio:
-                xml += """<target dev='vd%s' bus='virtio'/>""" % (disk_letters.pop(0),)
-            else:
-                xml += """<target dev='hd%s' bus='ide'/>""" % (disk_letters.pop(0),)
-
-            xml += """</disk>"""
-
-        xml += """<disk type='file' device='cdrom'>
-                      <driver name='qemu' type='raw'/>
-                      <source file=''/>
-                      <target dev='sda' bus='ide'/>
-                      <readonly/>
-                    </disk>"""
-
-        for net in nets.split(','):
-            xml += """
-                    <interface type='network'>
-                        <source network='%s'/>""" % net
-            if virtio:
-                xml += """<model type='virtio'/>"""
-            xml += """
-                    </interface>"""
-
-        xml += """
-                    <input type='tablet' bus='usb'/>
-                    <input type='mouse' bus='ps2'/>
-                    <graphics type='vnc' port='-1' autoport='yes' listen='0.0.0.0' passwd='%s'>
-                      <listen type='address' address='0.0.0.0'/>
-                    </graphics>
-                    <memballoon model='virtio'/>
-                  </devices>
-                </domain>""" % (passwd)
-        self.open.defineXML(xml)
-        dom = self.lookupVM(name)
-        dom.setAutostart(1)
 
     def get_vol_image_type(self, storages, vol):
         for storage in storages:

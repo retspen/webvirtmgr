@@ -5,30 +5,26 @@
 from vrtManager import util
 from vrtManager.IPy import IP
 
+def network_size(net, dhcp=None):
+    """
+
+    Func return gateway, mask and dhcp pool.
+
+    """
+    mask = IP(net).strNetmask()
+    addr = IP(net)
+    if addr[0].strNormal()[-1] == '0':
+        gateway = addr[1].strNormal()
+        dhcp_pool = [addr[2].strNormal(), addr[addr.len() - 2].strNormal()]
+    else:
+        gateway = addr[0].strNormal()
+        dhcp_pool = [addr[1].strNormal(), addr[addr.len() - 2].strNormal()]
+    if dhcp:
+        return gateway, mask, dhcp_pool
+    else:
+        return gateway, mask, No
+
 class vmmNetwork(vmmLibvirtObject):
-    @staticmethod
-    def pretty_desc(forward, forwardDev):
-        if forward or forwardDev:
-            if not forward or forward == "nat":
-                if forwardDev:
-                    desc = _("NAT to %s") % forwardDev
-                else:
-                    desc = _("NAT")
-            elif forward == "route":
-                if forwardDev:
-                    desc = _("Route to %s") % forwardDev
-                else:
-                    desc = _("Routed network")
-            else:
-                if forwardDev:
-                    desc = "%s to %s" % (forward, forwardDev)
-                else:
-                    desc = "%s network" % forward.capitalize()
-        else:
-            desc = _("Isolated network")
-
-        return desc
-
     def __init__(self, conn, net, uuid, active):
         vmmLibvirtObject.__init__(self, conn)
         self.net = net
