@@ -1,86 +1,34 @@
-# Utility functions used for guest installation
+#
+# Copyright (C) 2013 Webvirtmgr.
 #
 
-import libvirt
-from libvirt import VIR_DOMAIN_XML_SECURE
-from network.IPy import IP
 import re
 import time
-import libxml2
-from datetime import datetime
+import libvirt
 import string
+from vrtManager.IPy import IP
+from datetime import datetime
 from xml.etree import ElementTree
+from libvirt import VIR_DOMAIN_XML_SECURE
 
+CONN_SSH = 0
+CONN_TCP = 1
 
-def get_xml_path(xml, path=None, func=None):
-    """
-    Return the content from the passed xml xpath, or return the result
-    of a passed function (receives xpathContext as its only arg)
-    """
-    doc = None
-    ctx = None
-    result = None
+class wvmConnect(object):
+    def __init__(self, host, login, passwd, conn):
+        self.login = login
+        self.host = host
+        self.passwd = passwd
+        self.conn = conn
 
-    try:
-        doc = libxml2.parseDoc(xml)
-        ctx = doc.xpathNewContext()
-
-        if path:
-            ret = ctx.xpathEval(path)
-            if ret is not None:
-                if type(ret) == list:
-                    if len(ret) >= 1:
-                        result = ret[0].content
-                else:
-                    result = ret
-
-        elif func:
-            result = func(ctx)
-
-        else:
-            raise ValueError("'path' or 'func' is required.")
-    finally:
-        if doc:
-            doc.freeDoc()
-        if ctx:
-            ctx.xpathFreeContext()
-    return result
-
-
-def network_size(net, dhcp=None):
-    """
-
-    Func return gateway, mask and dhcp pool.
-
-    """
-    mask = IP(net).strNetmask()
-    addr = IP(net)
-    if addr[0].strNormal()[-1] == '0':
-        gateway = addr[1].strNormal()
-        dhcp_pool = [addr[2].strNormal(), addr[addr.len() - 2].strNormal()]
-    else:
-        gateway = addr[0].strNormal()
-        dhcp_pool = [addr[1].strNormal(), addr[addr.len() - 2].strNormal()]
-    if dhcp:
-        return gateway, mask, dhcp_pool
-    else:
-        return gateway, mask, None
-
-
-class ConnServer(object):
-    def __init__(self, host):
+    def open(self):
         """
 
         Return connection object.
 
         """
-        self.login = host.login
-        self.host = host.hostname
-        self.passwd = host.password
-        self.type = host.type
-        self.port = host.port
-
-        if self.type == 'tcp':
+        if self.conn == CONN_TCP:
+            
             def creds(credentials, user_data):
                 for credential in credentials:
                     if credential[0] == libvirt.VIR_CRED_AUTHNAME:
@@ -96,10 +44,14 @@ class ConnServer(object):
             flags = [libvirt.VIR_CRED_AUTHNAME, libvirt.VIR_CRED_PASSPHRASE]
             auth = [flags, creds, None]
             uri = 'qemu+tcp://%s/system' % self.host
-            self.conn = libvirt.openAuth(uri, auth, 0)
-        if self.type == 'ssh':
-            uri = 'qemu+ssh://%s@%s:%s/system' % (self.login, self.host, self.port)
-            self.conn = libvirt.open(uri)
+            self.wvm = libvirt.openAuth(uri, auth, 0)
+
+        if self.conn == CONN_SSH:
+            
+            uri = 'qemu+ssh://%s@%s/system' % (self.login, self.host)
+            self.wvm = libvirt.open(uri)
+        
+        return self.wvm
 
     def lookupVM(self, vname):
         """
@@ -108,8 +60,8 @@ class ConnServer(object):
 
         """
         try:
-            dom = self.conn.lookupByName(vname)
-        except:
+            dom = self.open.lookupByName(vname)
+        except Exception:
             dom = None
         return dom
 
@@ -120,8 +72,8 @@ class ConnServer(object):
 
         """
         try:
-            stg = self.conn.storagePoolLookupByName(storage)
-        except:
+            stg = self.open.storagePoolLookupByName(storage)
+        except Exception:
             stg = None
         return stg
 
@@ -132,8 +84,8 @@ class ConnServer(object):
 
         """
         try:
-            net = self.conn.networkLookupByName(network)
-        except:
+            net = self.open.networkLookupByName(network)
+        except Exception:
             net = None
         return net
 
@@ -156,7 +108,7 @@ class ConnServer(object):
         Return volume object by path.
 
         """
-        stg_volume = self.conn.storageVolLookupByPath(volume)
+        stg_volume = self.open.storageVolLookupByPath(volume)
         return stg_volume
 
     def hard_accel_node(self):
@@ -165,7 +117,7 @@ class ConnServer(object):
         Check hardware acceleration.
 
         """
-        xml = self.conn.getCapabilities()
+        xml = self.open.getCapabilities()
         kvm = re.search('kvm', xml)
         if kvm:
             return True
@@ -179,21 +131,21 @@ class ConnServer(object):
         """
         ram = int(ram) * 1024
 
-        iskvm = re.search('kvm', self.conn.getCapabilities())
+        iskvm = re.search('kvm', self.open.getCapabilities())
         if iskvm:
             dom_type = 'kvm'
         else:
             dom_type = 'qemu'
 
-        machine = get_xml_path(self.conn.getCapabilities(), "/capabilities/guest/arch/machine/@canonical")
+        machine = get_xml_path(self.open.getCapabilities(), "/capabilities/guest/arch/machine/@canonical")
         if not machine:
             machine = 'pc-1.0'
 
-        if re.findall('/usr/libexec/qemu-kvm', self.conn.getCapabilities()):
+        if re.findall('/usr/libexec/qemu-kvm', self.open.getCapabilities()):
             emulator = '/usr/libexec/qemu-kvm'
-        elif re.findall('/usr/bin/kvm', self.conn.getCapabilities()):
+        elif re.findall('/usr/bin/kvm', self.open.getCapabilities()):
             emulator = '/usr/bin/kvm'
-        elif re.findall('/usr/bin/qemu-kvm', self.conn.getCapabilities()):
+        elif re.findall('/usr/bin/qemu-kvm', self.open.getCapabilities()):
             emulator = '/usr/bin/qemu-kvm'
         else:
             emulator = '/usr/bin/qemu-system-x86_64'
@@ -268,7 +220,7 @@ class ConnServer(object):
                     <memballoon model='virtio'/>
                   </devices>
                 </domain>""" % (passwd)
-        self.conn.defineXML(xml)
+        self.open.defineXML(xml)
         dom = self.lookupVM(name)
         dom.setAutostart(1)
 
@@ -295,11 +247,11 @@ class ConnServer(object):
 
         """
         vname = {}
-        for vm_id in self.conn.listDomainsID():
+        for vm_id in self.open.listDomainsID():
             vm_id = int(vm_id)
-            dom = self.conn.lookupByID(vm_id)
+            dom = self.open.lookupByID(vm_id)
             vname[dom.name()] = dom.info()[0]
-        for name in self.conn.listDefinedDomains():
+        for name in self.open.listDefinedDomains():
             dom = self.lookupVM(name)
             vname[dom.name()] = dom.info()[0]
         return vname
@@ -311,11 +263,11 @@ class ConnServer(object):
 
         """
         virtnet = {}
-        for network in self.conn.listNetworks():
-            net = self.conn.networkLookupByName(network)
+        for network in self.open.listNetworks():
+            net = self.open.networkLookupByName(network)
             status = net.isActive()
             virtnet[network] = status
-        for network in self.conn.listDefinedNetworks():
+        for network in self.open.listDefinedNetworks():
             net = self.networkPool(network)
             status = net.isActive()
             virtnet[network] = status
@@ -328,11 +280,11 @@ class ConnServer(object):
 
         """
         storages = {}
-        for storage in self.conn.listStoragePools():
-            stg = self.conn.storagePoolLookupByName(storage)
+        for storage in self.open.listStoragePools():
+            stg = self.open.storagePoolLookupByName(storage)
             status = stg.isActive()
             storages[storage] = status
-        for storage in self.conn.listDefinedStoragePools():
+        for storage in self.open.listDefinedStoragePools():
             stg = self.storagePool(storage)
             status = stg.isActive()
             storages[storage] = status
@@ -345,16 +297,16 @@ class ConnServer(object):
 
         """
         info = []
-        info.append(self.conn.getHostname())
-        info.append(self.conn.getInfo()[0])
-        info.append(self.conn.getInfo()[2])
+        info.append(self.open.getHostname())
+        info.append(self.open.getInfo()[0])
+        info.append(self.open.getInfo()[2])
         try:
-            info.append(get_xml_path(self.conn.getSysinfo(0),
+            info.append(get_xml_path(self.open.getSysinfo(0),
                                      "/sysinfo/processor/entry[6]"))
-        except:
+        except Exception:
             info.append('Unknown')
-        info.append(self.conn.getURI())
-        info.append(self.conn.getLibVersion())
+        info.append(self.open.getURI())
+        info.append(self.open.getLibVersion())
         return info
 
     def memory_get_usage(self):
@@ -363,8 +315,8 @@ class ConnServer(object):
         Function return memory usage on node.
 
         """
-        allmem = self.conn.getInfo()[1] * 1048576
-        get_freemem = self.conn.getMemoryStats(-1, 0)
+        allmem = self.open.getInfo()[1] * 1048576
+        get_freemem = self.open.getMemoryStats(-1, 0)
         if type(get_freemem) == dict:
             freemem = (get_freemem.values()[0] + \
                        get_freemem.values()[2] + \
@@ -385,11 +337,11 @@ class ConnServer(object):
         """
         prev_idle = 0
         prev_total = 0
-        cpu = self.conn.getCPUStats(-1, 0)
+        cpu = self.open.getCPUStats(-1, 0)
         if type(cpu) == dict:
             for num in range(2):
-                idle = self.conn.getCPUStats(-1, 0).values()[1]
-                total = sum(self.conn.getCPUStats(-1, 0).values())
+                idle = self.open.getCPUStats(-1, 0).values()[1]
+                total = sum(self.open.getCPUStats(-1, 0).values())
                 diff_idle = idle - prev_idle
                 diff_total = total - prev_total
                 diff_usage = (1000 * (diff_total - diff_idle) / diff_total + 5) / 10
@@ -535,7 +487,7 @@ class ConnServer(object):
                        <path>%s</path>
                   </target>
                 </pool>""" % target
-        self.conn.storagePoolDefineXML(xml, 0)
+        self.open.storagePoolDefineXML(xml, 0)
         stg = self.storagePool(name)
         if type_pool == 'logical':
             stg.build(0)
@@ -597,7 +549,7 @@ class ConnServer(object):
             xml += """</ip>"""
         xml += """</network>"""
 
-        self.conn.networkDefineXML(xml)
+        self.open.networkDefineXML(xml)
         net = self.networkPool(name)
         net.create()
         net.setAutostart(1)
@@ -664,12 +616,12 @@ class ConnServer(object):
 
         """
         vname = {}
-        for vm_id in self.conn.listDomainsID():
+        for vm_id in self.open.listDomainsID():
             vm_id = int(vm_id)
-            dom = self.conn.lookupByID(vm_id)
+            dom = self.open.lookupByID(vm_id)
             if dom.snapshotNum(0) != 0:
                 vname[dom.name()] = dom.info()[0]
-        for name in self.conn.listDefinedDomains():
+        for name in self.open.listDefinedDomains():
             dom = self.lookupVM(name)
             if dom.snapshotNum(0) != 0:
                 vname[dom.name()] = dom.info()[0]
@@ -740,14 +692,14 @@ class ConnServer(object):
                                  </disk>""" % vol.path()
                         dom.attachDevice(xml)
                         xmldom = dom.XMLDesc(VIR_DOMAIN_XML_SECURE)
-                        self.conn.defineXML(xmldom)
+                        self.open.defineXML(xmldom)
                     if dom.info()[0] == 5:
                         vol = stg.storageVolLookupByName(image)
                         xml = dom.XMLDesc(VIR_DOMAIN_XML_SECURE)
                         newxml = "<disk type='file' device='cdrom'>\n      <driver name='qemu' type='raw'/>\n      <source file='%s'/>" % vol.path()
                         xmldom = xml.replace(
                             "<disk type='file' device='cdrom'>\n      <driver name='qemu' type='raw'/>", newxml)
-                        self.conn.defineXML(xmldom)
+                        self.open.defineXML(xmldom)
 
     def vds_umount_iso(self, vname, image):
         """
@@ -764,11 +716,11 @@ class ConnServer(object):
                       </disk>"""
             dom.attachDevice(xml)
             xmldom = dom.XMLDesc(VIR_DOMAIN_XML_SECURE)
-            self.conn.defineXML(xmldom)
+            self.open.defineXML(xmldom)
         if dom.info()[0] == 5:
             xml = dom.XMLDesc(VIR_DOMAIN_XML_SECURE)
             xmldom = xml.replace("<source file='%s'/>\n" % image, '')
-            self.conn.defineXML(xmldom)
+            self.open.defineXML(xmldom)
 
     def vds_cpu_usage(self, vname):
         """
@@ -779,7 +731,7 @@ class ConnServer(object):
         cpu_usage = {}
         dom = self.lookupVM(vname)
         if dom.info()[0] == 1:
-            nbcore = self.conn.getInfo()[2]
+            nbcore = self.open.getInfo()[2]
             cpu_use_ago = dom.info()[4]
             time.sleep(1)
             cpu_use_now = dom.info()[4]
@@ -896,7 +848,7 @@ class ConnServer(object):
                                     vol = img
                                     vol_stg = storage
                     all_hdd_dev[dev_bus] = vol, vol_stg
-                except:
+                except Exception:
                     all_hdd_dev[dev_bus] = hdd, 'Not in the pool'
         return all_hdd_dev
 
@@ -916,7 +868,7 @@ class ConnServer(object):
                     try:
                         vol = self.storageVolPath(media)
                         return vol.name(), vol.path()
-                    except:
+                    except Exception:
                         return media, media
                 else:
                     return None, None
@@ -936,7 +888,7 @@ class ConnServer(object):
             close_tag = ''
         newxml = "<graphics type='vnc' passwd='%s'%s>" % (passwd, close_tag)
         xmldom = re.sub('<graphics.*>', newxml, xml)
-        self.conn.defineXML(xmldom)
+        self.open.defineXML(xmldom)
 
     def vds_edit(self, vname, description, ram, vcpu):
         """
@@ -955,7 +907,7 @@ class ConnServer(object):
         xml_vcpu_change = re.sub('<vcpu.*vcpu>', xml_vcpu, xml_curmemory_change)
         xml_description = "<description>%s</description>" % description
         xml_description_change = re.sub('<description.*description>', xml_description, xml_vcpu_change)
-        self.conn.defineXML(xml_description_change)
+        self.open.defineXML(xml_description_change)
 
     def defineXML(self, xml):
         """
@@ -963,7 +915,7 @@ class ConnServer(object):
         Funciton define VM config
 
         """
-        self.conn.defineXML(xml)
+        self.open.defineXML(xml)
 
 
     def get_all_media(self):
@@ -1017,16 +969,16 @@ class ConnServer(object):
 
         """
         vname = {}
-        host_mem = self.conn.getInfo()[1] * 1048576
-        for vm_id in self.conn.listDomainsID():
+        host_mem = self.open.getInfo()[1] * 1048576
+        for vm_id in self.open.listDomainsID():
             vm_id = int(vm_id)
-            dom = self.conn.lookupByID(vm_id)
+            dom = self.open.lookupByID(vm_id)
             mem = get_xml_path(dom.XMLDesc(0), "/domain/memory")
             mem = int(mem) * 1024
             mem_usage = (mem * 100) / host_mem
             vcpu = get_xml_path(dom.XMLDesc(0), "/domain/vcpu")
             vname[dom.name()] = (dom.info()[0], vcpu, mem, mem_usage)
-        for name in self.conn.listDefinedDomains():
+        for name in self.open.listDefinedDomains():
             dom = self.lookupVM(name)
             mem = get_xml_path(dom.XMLDesc(0), "/domain/memory")
             mem = int(mem) * 1024
@@ -1041,4 +993,4 @@ class ConnServer(object):
         Close libvirt connection.
 
         """
-        self.conn.close()
+        self.open.close()
