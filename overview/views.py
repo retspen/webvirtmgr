@@ -1,11 +1,11 @@
+from libvirt import libvirtError
+
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
+
 from instance.models import Host
-from dashboard.views import sort_host
-from webvirtmgr.server import ConnServer
-from libvirt import libvirtError
 from webvirtmgr.settings import TIME_JS_REFRESH
 
 

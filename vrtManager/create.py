@@ -13,6 +13,60 @@ class wvmCreate():
         """
         ram = int(ram) * 1024
 
+        xml = """
+                <domain type='%s'>
+                  <name>%s</name>
+                  <uuid>%s</uuid>
+                  <memory>%s</memory>
+                  <currentMemory>%s</currentMemory>
+                  <vcpu>%s</vcpu>""" % (domain, name, uuid, memory, memory, vcpu)
+
+        if host_model:
+            xml += """<cpu mode='host-model'/>"""
+
+        xml += """<os>
+                    <type arch='%s'>hvm</type>
+                    <boot dev='hd'/>
+                    <boot dev='cdrom'/>
+                    <bootmenu enable='yes'/>
+                  </os>""" % (arch)
+
+        xml += """<features>
+                    <acpi/><apic/><pae/>
+                  </features>
+                  <clock offset="utc"/>
+                  <on_poweroff>destroy</on_poweroff>
+                  <on_reboot>restart</on_reboot>
+                  <on_crash>restart</on_crash>
+                  <devices>"""
+
+        xml += """  <disk type='file' device='disk'>
+                      <driver name='qemu' type='raw'/>
+                      <source file='/var/lib/libvirt/images/qqqq.img'/>
+                      <target dev='sda' bus='ide'/>
+                    </disk>"""
+
+        xml += """  <disk type='file' device='cdrom'>
+                      <driver name='qemu' type='raw'/>
+                      <source file=''/>
+                      <target dev='hda' bus='ide'/>
+                      <readonly/>
+                    </disk>"""
+
+        xml += """  <interface type='network'>
+                      <source network='default'/>
+                      <mac address='52:54:00:dd:18:7e'/>
+                    </interface>"""
+
+        xml += """  <input type='mouse' bus='ps2'/>
+                    <graphics type='vnc' port='-1'/>
+                    <console type='pty'/>
+                    <video>
+                      <model type='cirrus'/>
+                    </video>
+                  </devices>
+                </domain>"""
+
         disks = []
         for image in images:
             img = self.storageVolPath(image)

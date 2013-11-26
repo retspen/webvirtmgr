@@ -3,9 +3,7 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from instance.models import Host, Flavor, Instance
-from dashboard.views import sort_host
 from newvm.forms import FlavorAddForm, NewVMForm
-from webvirtmgr.server import ConnServer
 from libvirt import libvirtError
 from string import letters, digits
 from random import choice

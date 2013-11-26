@@ -31,18 +31,10 @@
                 {% endfor %}
             </div>
         {% endif %}
-        {% if form.password1.errors or form.password2.errors %}
+        {% if form.password.errors %}
             <div class="alert alert-danger">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                {% for error in form.password1.errors  %}
-                    {{ error }}
-                {% endfor %}
-            </div>
-        {% endif %}
-        {% if form.port.errors %}
-            <div class="alert alert-danger">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                {% for error in form.port.errors  %}
+                {% for error in form.password.errors  %}
                     {{ error }}
                 {% endfor %}
             </div>
@@ -160,21 +152,15 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-lg-4 control-label">{% trans "KVM Login" %}</label>
+                                <label class="col-lg-4 control-label">{% trans "Login" %}</label>
                                 <div class="col-lg-6">
                                     <input type="text" name="login" class="form-control" placeholder="{% trans "Name" %}">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-lg-4 control-label">{% trans "KVM Password" %}</label>
+                                <label class="col-lg-4 control-label">{% trans "Password" %}</label>
                                 <div class="col-lg-6">
-                                    <input type="password" name="password1" class="form-control" placeholder="{% trans "********" %}">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-lg-4 control-label">{% trans "KVM Confirm" %}</label>
-                                <div class="col-lg-6">
-                                    <input type="password" name="password2" class="form-control" placeholder="{% trans "********" %}">
+                                    <input type="password" name="password" class="form-control" placeholder="{% trans "********" %}">
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -201,12 +187,6 @@
                                 <label class="col-lg-4 control-label">{% trans "SSH Login" %}</label>
                                 <div class="col-lg-6">
                                     <input type="text" name="login" class="form-control" placeholder="{% trans "Name" %}">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-lg-4 control-label">{% trans "SSH Port" %}</label>
-                                <div class="col-lg-6">
-                                    <input type="text" name="port" class="form-control" value="22">
                                 </div>
                             </div>
                             <div class="modal-footer">

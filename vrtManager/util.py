@@ -3,7 +3,6 @@
 #
 
 import random
-import re
 import libxml2
 
 def randomMAC():
@@ -20,19 +19,8 @@ def randomMAC():
 def randomUUID():
     """Generate a random UUID."""
 
-    return [ random.randint(0, 255) for dummy in range(0, 16) ]
-
-def uuidToString(u, conn=None):
-    if conn and hasattr(conn, "_virtinst__fake_conn_predictable"):
-        # Testing hack
-        return "00000000-1111-2222-3333-444444444444"
-
-    return "-".join(["%02x" * 4, "%02x" * 2, "%02x" * 2, "%02x" * 2,
-                     "%02x" * 6]) % tuple(u)
-
-def uuidFromString(s):
-    s = s.replace('-', '')
-    return [ int(s[i : i + 2], 16) for i in range(0, 32, 2) ]
+    u = [ random.randint(0, 255) for dummy in range(0, 16) ]
+    return "-".join(["%02x" * 4, "%02x" * 2, "%02x" * 2, "%02x" * 2, "%02x" * 6]) % tuple(u)
 
 def get_max_vcpus(conn, type=None):
     """@param conn: libvirt connection to poll for max possible vcpus
@@ -115,3 +103,4 @@ def get_xml_path(xml, path=None, func=None):
         if ctx:
             ctx.xpathFreeContext()
     return result
+

@@ -4,8 +4,6 @@ from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from instance.models import Host
 from network.forms import AddNetPool
-from dashboard.views import sort_host
-from webvirtmgr.server import ConnServer, network_size
 from libvirt import libvirtError
 
 

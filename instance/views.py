@@ -3,8 +3,6 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from instance.models import Host, Instance
-from dashboard.views import sort_host
-from webvirtmgr.server import ConnServer
 from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE
 from webvirtmgr.settings import TIME_JS_REFRESH
 from django.utils import simplejson

@@ -1,11 +1,9 @@
+import re
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from libvirt import libvirtError
 from instance.models import Host, Instance
-from webvirtmgr.server import ConnServer
-import re
-
 
 def console(request, host_id, vname):
     """

@@ -4,8 +4,11 @@
 
 import re
 import time
-import libvirt
 import string
+
+import libvirt
+import virtinst
+
 from vrtManager.IPy import IP
 from datetime import datetime
 from xml.etree import ElementTree
@@ -53,34 +56,21 @@ class wvmConnect(object):
         
         return self.wvm
 
-    def get_machine_capable(conn):
-         """Return machine capabilities."""
+    def get_cap_xml(self):
+        """Return xml capabilities"""
 
-        machine = get_xml_path(conn.getCapabilities(), "/capabilities/guest/arch/machine/@canonical")
-        if not machine:
-            machine = 'pc-1.0'
-        return machine
+        return self.wvm.conn.getCapabilities()
 
+    def get_cap(self):
+        """Return parse capabilities"""
 
-    def is_kvm_capable(conn):
+        return virtinst.CapabilitiesParser.parse(self.get_cap())
+
+    def is_kvm_supported(self):
         """Return KVM capabilities."""
 
-        kvm = re.search('kvm', conn.getCapabilities())
-        if kvm:
-            return True
-        return False
+        return self.get_cap().is_kvm_available()
 
-    def get_emulator_capable(conn):
-        """Return emulator capabilities."""
-
-        if re.findall('/usr/libexec/qemu-kvm', conn.getCapabilities()):
-            return '/usr/libexec/qemu-kvm'
-        elif re.findall('/usr/bin/kvm', conn.getCapabilities()):
-            return '/usr/bin/kvm'
-        elif re.findall('/usr/bin/qemu-kvm', conn.getCapabilities()):
-            return '/usr/bin/qemu-kvm'
-        else:
-            return '/usr/bin/qemu-system-x86_64'
 
     def lookupVM(self, vname):
         """

@@ -1,23 +1,12 @@
+import socket
+
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.datastructures import SortedDict
+
 from instance.models import Host
-from webvirtmgr.server import ConnServer
 from dashboard.forms import HostAddTcpForm, HostAddSshForm
-
-
-def sort_host(hosts):
-    """
-
-    Sorts dictionary of hosts by key
-
-    """
-    if hosts:
-        sorted_hosts = []
-        for host in sorted(hosts.iterkeys()):
-            sorted_hosts.append((host, hosts[host]))
-        return SortedDict(sorted_hosts)
 
 
 def index(request):
@@ -50,12 +39,11 @@ def dashboard(request):
         all_hosts = {}
         for host in hosts:
             try:
-                import socket
                 socket_host = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 socket_host.settimeout(1)
                 if host.type == 'ssh':
-                    socket_host.connect((host.hostname, host.port))
-                else:
+                    socket_host.connect((host.hostname, 22))
+                if host.type == 'tcp':
                     socket_host.connect((host.hostname, 16509))
                 socket_host.close()
                 status = 1
@@ -75,30 +63,28 @@ def dashboard(request):
             return HttpResponseRedirect(request.get_full_path())
         if 'host_tcp_add' in request.POST:
             form = HostAddTcpForm(request.POST)
+            print form.errors
             if form.is_valid():
                 data = form.cleaned_data
-                new_host = Host(name=data['name'],
+                new_tcp_host = Host(name=data['name'],
                                 hostname=data['hostname'],
                                 type='tcp',
                                 login=data['login'],
-                                password=data['password1']
+                                password=data['password']
                                 )
-                new_host.save()
+                new_tcp_host.save()
                 return HttpResponseRedirect(request.get_full_path())
         if 'host_ssh_add' in request.POST:
             form = HostAddSshForm(request.POST)
             if form.is_valid():
                 data = form.cleaned_data
-                new_host = Host(name=data['name'],
+                new_ssh_host = Host(name=data['name'],
                                 hostname=data['hostname'],
                                 type='ssh',
-                                port=data['port'],
                                 login=data['login']
                                 )
-                new_host.save()
+                new_ssh_host.save()
                 return HttpResponseRedirect(request.get_full_path())
-
-    hosts_info = sort_host(hosts_info)
 
     return render_to_response('dashboard.html', {'hosts_info': hosts_info,
                                                  'form': form,
@@ -131,7 +117,7 @@ def infrastructure(request):
                 socket_host.connect((host.hostname, 16509))
             socket_host.close()
             status = 1
-        except:
+        except Exeption:
             status = 2
 
         if status == 1:
@@ -144,7 +130,6 @@ def infrastructure(request):
 
     for host in hosts_vms:
         hosts_vms[host] = sort_host(hosts_vms[host])
-    hosts_vms = sort_host(hosts_vms)
 
     return render_to_response('infrastructure.html', {'hosts_info': host_info,
                                                       'host_mem': host_mem,
