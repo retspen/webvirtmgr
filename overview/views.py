@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 
-from instance.models import Host
+from instances.models import Compute
 from webvirtmgr.settings import TIME_JS_REFRESH
 
 

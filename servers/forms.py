@@ -3,10 +3,10 @@ import re
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from instance.models import Host
+from instances.models import Compute
 
 
-class HostAddTcpForm(forms.Form):
+class ComputeAddTcpForm(forms.Form):
     name = forms.CharField(error_messages={'required': _('No hostname has been entered')},
                            max_length=20)
     hostname = forms.CharField(error_messages={'required': _('No IP / Domain name has been entered')},
@@ -24,8 +24,8 @@ class HostAddTcpForm(forms.Form):
         elif len(name) > 20:
             raise forms.ValidationError(_('The host name must not exceed 20 characters'))
         try:
-            Host.objects.get(name=name)
-        except Host.DoesNotExist:
+            Compute.objects.get(name=name)
+        except Compute.DoesNotExist:
             return name
         raise forms.ValidationError(_('This host is already connected'))
 
@@ -38,13 +38,13 @@ class HostAddTcpForm(forms.Form):
         elif wrong_ip:
             raise forms.ValidationError(_('Wrong IP address'))
         try:
-            Host.objects.get(hostname=hostname)
-        except Host.DoesNotExist:
+            Compute.objects.get(hostname=hostname)
+        except Compute.DoesNotExist:
             return hostname
         raise forms.ValidationError(_('This host is already connected'))
 
 
-class HostAddSshForm(forms.Form):
+class ComputeAddSshForm(forms.Form):
     name = forms.CharField(error_messages={'required': _('No hostname has been entered')},
                            max_length=20)
     hostname = forms.CharField(error_messages={'required': _('No IP / Domain name has been entered')},
@@ -74,7 +74,7 @@ class HostAddSshForm(forms.Form):
         elif wrong_ip:
             raise forms.ValidationError(_('Wrong IP address'))
         try:
-            Host.objects.get(hostname=hostname)
-        except Host.DoesNotExist:
+            Compute.objects.get(hostname=hostname)
+        except Compute.DoesNotExist:
             return hostname
         raise forms.ValidationError(_('This host is already connected'))

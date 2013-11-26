@@ -2,7 +2,9 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
-from instance.models import Host
+
+from servers.models import Compute
+
 from libvirt import libvirtError
 
 

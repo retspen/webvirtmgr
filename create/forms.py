@@ -1,7 +1,9 @@
-from django import forms
-from instance.models import Flavor
-from django.utils.translation import ugettext_lazy as _
 import re
+
+from django import forms
+from django.utils.translation import ugettext_lazy as _
+
+from create.models import Flavor
 
 
 class FlavorAddForm(forms.Form):

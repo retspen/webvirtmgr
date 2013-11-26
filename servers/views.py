@@ -5,8 +5,8 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.datastructures import SortedDict
 
-from instance.models import Host
-from servers.forms import HostAddTcpForm, HostAddSshForm
+from servers.models import Compute
+from servers.forms import ComputeAddTcpForm, ComputeAddSshForm
 
 
 def index(request):
@@ -24,7 +24,7 @@ def index(request):
 def servers_list(request):
     """
 
-    Dashboard page.
+    Servers page.
 
     """
     if not request.user.is_authenticated():
@@ -52,43 +52,40 @@ def servers_list(request):
             all_hosts[host.id] = (host.name, host.hostname, status)
         return all_hosts
 
-    hosts = Host.objects.filter()
+    hosts = Compute.objects.filter()
     hosts_info = get_hosts_status(hosts)
     form = None
 
     if request.method == 'POST':
         if 'host_del' in request.POST:
-            del_host = Host.objects.get(id=request.POST.get('host_id', ''))
+            del_host = Compute.objects.get(id=request.POST.get('host_id', ''))
             del_host.delete()
             return HttpResponseRedirect(request.get_full_path())
         if 'host_tcp_add' in request.POST:
-            form = HostAddTcpForm(request.POST)
+            form = ComputeAddTcpForm(request.POST)
             print form.errors
             if form.is_valid():
                 data = form.cleaned_data
-                new_tcp_host = Host(name=data['name'],
-                                hostname=data['hostname'],
-                                type='tcp',
-                                login=data['login'],
-                                password=data['password']
-                                )
+                new_tcp_host = Compute(name=data['name'],
+                                       hostname=data['hostname'],
+                                       type='tcp',
+                                       login=data['login'],
+                                       password=data['password'])
                 new_tcp_host.save()
                 return HttpResponseRedirect(request.get_full_path())
         if 'host_ssh_add' in request.POST:
-            form = HostAddSshForm(request.POST)
+            form = ComputeAddSshForm(request.POST)
             if form.is_valid():
                 data = form.cleaned_data
-                new_ssh_host = Host(name=data['name'],
-                                hostname=data['hostname'],
-                                type='ssh',
-                                login=data['login']
-                                )
+                new_ssh_host = Compute(name=data['name'],
+                                       hostname=data['hostname'],
+                                       type='ssh',
+                                       login=data['login'])
                 new_ssh_host.save()
                 return HttpResponseRedirect(request.get_full_path())
 
-    return render_to_response('dashboard.html', {'hosts_info': hosts_info,
-                                                 'form': form,
-                                                 },
+    return render_to_response('servers.html', {'hosts_info': hosts_info,
+                                               'form': form},
                               context_instance=RequestContext(request))
 
 
@@ -101,7 +98,7 @@ def infrastructure(request):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
-    hosts = Host.objects.filter().order_by('id')
+    hosts = Compute.objects.filter().order_by('id')
     hosts_vms = {}
     host_info = None
     host_mem = None
@@ -128,14 +125,10 @@ def infrastructure(request):
         else:
             hosts_vms[host.id, host.name, status, None, None, None] = None
 
-    for host in hosts_vms:
-        hosts_vms[host] = sort_host(hosts_vms[host])
-
     return render_to_response('infrastructure.html', {'hosts_info': host_info,
                                                       'host_mem': host_mem,
                                                       'hosts_vms': hosts_vms,
-                                                      'hosts': hosts
-                                                      },
+                                                      'hosts': hosts},
                               context_instance=RequestContext(request))
 
 

@@ -2,10 +2,13 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
-from instance.models import Host, Instance
+from django.utils import simplejson
+
+from instances.models import Instance
+from servers.models import Compute
+
 from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE
 from webvirtmgr.settings import TIME_JS_REFRESH
-from django.utils import simplejson
 
 
 def diskusage(request, host_id, vname):

@@ -8,9 +8,9 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 
-from servers.models import Host
+from servers.models import Compute
 from create.models import Flavor
-from instance.models import Instance
+from instances.models import Instance
 
 from create.forms import FlavorAddForm, NewVMForm
 

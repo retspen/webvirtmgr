@@ -2,8 +2,10 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
-from instance.models import Host
-from storage.forms import AddStgPool, AddImage, CloneImage
+
+from servers.models import Compute
+from storages.forms import AddStgPool, AddImage, CloneImage
+
 from libvirt import libvirtError
 
 
