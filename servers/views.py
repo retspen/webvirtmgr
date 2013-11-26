@@ -6,7 +6,7 @@ from django.template import RequestContext
 from django.utils.datastructures import SortedDict
 
 from instance.models import Host
-from dashboard.forms import HostAddTcpForm, HostAddSshForm
+from servers.forms import HostAddTcpForm, HostAddSshForm
 
 
 def index(request):
@@ -18,10 +18,10 @@ def index(request):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
     else:
-        return HttpResponseRedirect('/dashboard')
+        return HttpResponseRedirect('/servers')
 
 
-def dashboard(request):
+def servers_list(request):
     """
 
     Dashboard page.

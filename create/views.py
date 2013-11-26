@@ -1,12 +1,18 @@
+from string import letters, digits
+from random import choice
+
+from libvirt import libvirtError
+
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
-from instance.models import Host, Flavor, Instance
-from newvm.forms import FlavorAddForm, NewVMForm
-from libvirt import libvirtError
-from string import letters, digits
-from random import choice
+
+from servers.models import Host
+from create.models import Flavor
+from instance.models import Instance
+
+from create.forms import FlavorAddForm, NewVMForm
 
 
 def create(request, host_id):

@@ -42,7 +42,7 @@
         <div class="col-md-12" role="main">
             <div class="page-header">
                 <a data-toggle="modal" href="#addHost" class="btn btn-success pull-right">{% trans "Add Host" %}</a>
-                <h1>{% trans "Dashboard" %}</h1>
+                <h1>{% trans "Servers List" %}</h1>
             </div>
             {% if hosts_info %}
                 <table class="table table-hover" id="sortTable">
@@ -201,10 +201,10 @@
     </div><!-- /.modal -->
 {% endblock %}
 {% block script %}
-    <script src="{% static "js/jquery.tablesorter.js" %}"></script>
-    <script >
-        $(function() {
-            $("#sortTable").tablesorter({ sortList: [[0,0]] });
-        });
-    </script>
+<script src="{% static "js/jquery.tablesorter.js" %}"></script>
+<script >
+    $(function() {
+        $("#sortTable").tablesorter({ sortList: [[0,0]] });
+    });
+</script>
 {% endblock %}
