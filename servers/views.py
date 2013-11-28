@@ -130,7 +130,3 @@ def infrastructure(request):
                                                       'hosts_vms': hosts_vms,
                                                       'hosts': hosts},
                               context_instance=RequestContext(request))
-
-
-def page_setup(request):
-    return render_to_response('setup.html', {}, context_instance=RequestContext(request))
