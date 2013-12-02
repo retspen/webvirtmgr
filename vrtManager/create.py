@@ -1,12 +1,19 @@
 #
 # Copyright (C) 2013 Webvirtmgr.
 #
+import virtinst
+from vrtManager import util
 
-class wvmCreate():
-    def __init__(self):
-        self.wvm = conn
 
-    def add_vm(self, name, ram, cpu, host_model, images, nets, virtio, storages, passwd=None):
+class wvmCreate(object):
+    def __init__(self, host, login, passwd, conn):
+        self.wvm = objconn
+
+    def get_guest_cap(self):
+        """Get guest capabilities"""
+        return virtinst.CapabilitiesParser.guest_lookup(self.wvm)
+
+    def create(self, name, ram, cpu, nets, virtio, storages):
         """
         Create VM function
 
@@ -137,6 +144,6 @@ class wvmCreate():
                     <memballoon model='virtio'/>
                   </devices>
                 </domain>""" % (passwd)
-        self.open.defineXML(xml)
+        self.wvm.defineXML(xml)
         dom = self.lookupVM(name)
         dom.setAutostart(1)

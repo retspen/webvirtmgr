@@ -4,7 +4,7 @@ from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from django.utils import simplejson
 
-from instances.models import Instance
+from instance.models import Instance
 from servers.models import Compute
 
 from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE
@@ -93,6 +93,10 @@ def cpuusage(request, host_id, vname):
     response['Content-Type'] = "text/javascript"
     response.write(data)
     return response
+
+
+def instances(request, host_id):
+    return request
 
 
 def instance(request, host_id, vname):

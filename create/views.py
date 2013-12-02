@@ -10,7 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from servers.models import Compute
 from create.models import Flavor
-from instances.models import Instance
+from instance.models import Instance
 
 from create.forms import FlavorAddForm, NewVMForm
 

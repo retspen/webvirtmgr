@@ -4,8 +4,11 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
+from django.utils import simplejson
 
-from instances.models import Compute
+from servers.models import Compute
+from vrtManager.conection import wvmConnect
+from vrtManager.hostdetails import wvmHostDetails
 from webvirtmgr.settings import TIME_JS_REFRESH
 
 
@@ -16,16 +19,21 @@ def cpuusage(request, host_id):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
-    host = Host.objects.get(id=host_id)
+    compute = Compute.objects.get(id=host_id)
 
     try:
-        conn = ConnServer(host)
-    except:
-        conn = None
-    if conn:
-        cpu_usage = conn.cpu_get_usage()
-    return HttpResponse(cpu_usage)
+        conn = wvmConnect(compute.hostname, compute.login, compute.password, compute.type)
+        hostdetail = wvmHostDetails(conn)
+    except libvirtError:
+        hostdetail = None
+    if hostdetail:
+        cpu_usage = hostdetail.cpu_get_usage()
+        data = simplejson.dumps(cpu_usage)
 
+    response = HttpResponse()
+    response['Content-Type'] = "text/javascript"
+    response.write(data)
+    return response
 
 def memusage(request, host_id):
     """
@@ -34,16 +42,21 @@ def memusage(request, host_id):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
-    host = Host.objects.get(id=host_id)
+    compute = Compute.objects.get(id=host_id)
 
     try:
-        conn = ConnServer(host)
-    except:
-        conn = None
-    if conn:
-        mem_usage = conn.memory_get_usage()
-    return HttpResponse(mem_usage[2])
+        conn = wvmConnect(compute.hostname, compute.login, compute.password, compute.type)
+        hostdetail = wvmHostDetails(conn)
+    except libvirtError:
+        hostdetail = None
+    if hostdetail:
+        mem_usage = hostdetail.memory_get_usage()
+        data = simplejson.dumps(mem_usage)
 
+    response = HttpResponse()
+    response['Content-Type'] = "text/javascript"
+    response.write(data)
+    return response
 
 def overview(request, host_id):
     """
@@ -56,28 +69,24 @@ def overview(request, host_id):
 
     errors = []
     time_refresh = TIME_JS_REFRESH
-    host = Host.objects.get(id=host_id)
     all_vm = hostname = arch = cpus = cpu_model = \
-        type_conn = libvirt_ver = all_mem = \
-        mem_usage = mem_percent = cpu_usage = None
+             type_conn = libvirt_ver = all_mem = \
+             mem_usage = mem_percent = cpu_usage = None
+
+    compute = Compute.objects.get(id=host_id)
 
     try:
-        conn = ConnServer(host)
+        conn = wvmConnect(compute.hostname, compute.login, compute.password, compute.type)
+        hostdetail = wvmHostDetails(conn)
     except libvirtError as e:
-        conn = None
+        hostdetail = None
 
-    if not conn:
+    if not hostdetail:
         errors.append(e.message)
     else:
-        have_kvm = conn.hard_accel_node()
-        if not have_kvm:
-            msg = _('Your CPU doesn\'t support hardware virtualization')
-            errors.append(msg)
-
-        all_vm = sort_host(conn.vds_get_node())
-        hostname, arch, cpus, cpu_model, type_conn, libvirt_ver = conn.node_get_info()
-        all_mem, mem_usage, mem_percent = conn.memory_get_usage()
-        cpu_usage = conn.cpu_get_usage()
+        hostname, host_arch, host_memory, logical_cpu, model_cpu, uri_conn = hostdetail.get_node_info()
+        mem_usage = hostdetail.memory_get_usage()
+        cpu_usage = hostdetail.cpu_get_usage()
 
         if request.method == 'POST':
             vname = request.POST.get('vname', '')
@@ -113,15 +122,7 @@ def overview(request, host_id):
                 except libvirtError as msg_error:
                     errors.append(msg_error.message)
 
-        conn.close()
+        #hostdetail.close()
 
-    return render_to_response('overview.html', {'host_id': host_id,
-                                                'errors': errors,
-                                                'time_refresh': time_refresh,
-                                                'all_vm': all_vm,
-                                                'hostname': hostname,
-                                                'arch': arch, 'cpus': cpus, 'cpu_model': cpu_model, 'cpu_usage': cpu_usage,
-                                                'type_conn': type_conn, 'libvirt_ver': libvirt_ver,
-                                                'all_mem': all_mem, 'mem_usage': mem_usage, 'mem_percent': mem_percent
-                                                },
+    return render_to_response('hostdeatil.html', locals(),
                               context_instance=RequestContext(request))

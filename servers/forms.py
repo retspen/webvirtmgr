@@ -3,7 +3,7 @@ import re
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from instances.models import Compute
+from servers.models import Compute
 
 
 class ComputeAddTcpForm(forms.Form):

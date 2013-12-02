@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% block title %}{% trans "Overview" %}{% endblock %}
+{% block style %}
+    <link href="{% static "css/progressbar.css" %}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+    <div class="row">
+        {% include 'sidebar.html' %}
+        <div class="col-md-9" role="main">
+            {% if errors %}
+                {% for error in errors %}
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            <div class="page-header">
+                <h1>{% trans "Overview" %}</h1>
+            </div>
+            <h4>{% trans "Basic details" %}</h4>
+            <div class="row show-grid">
+                <div class="col-md-6">
+                    <p>{% trans "Connection" %}</p>
+                    <p>{% trans "Hostname" %}</p>
+                    <p>{% trans "Memory" %}</p>
+                    <p>{% trans "Logical CPUs" %}</p>
+                    <p>{% trans "Processor" %}</p>
+                    <p>{% trans "Architecture" %}</p>
+                </div>
+                <div class="col-md-6">
+                    <p>{{ uri_conn }}</p>
+                    <p>{{ hostname }}</p>
+                    <p>{{ host_memory|filesizeformat }}</p>
+                    <p>{{ logical_cpu }}</p>
+                    <p>{{ model_cpu }}</p>
+                    <p>{{ host_arch }}</p>
+                </div>
+            </div>
+            <h4>{% trans "Performance" %}</h4>
+            <div class="row show-grid">
+                <div class="col-md-6">
+                    <p>{% trans "CPU usage" %}</p>
+                    <p>{% trans "Memory usage" %} ({{ mem_usage.usage|filesizeformat }})</p>
+                </div>
+                <div class="col-md-6">
+                    <div class="progress">
+                        <span id="cpu-usage" style="text-align:center;"></span>
+                        <div class="progress-bar" id="cpu-usage-bar" style="width:{{ cpu_usage }}%;"></div>
+                    </div>
+                    <div class="progress">
+                        <span id="memory-usage" style="text-align: center;"></span>
+                        <div class="progress-bar" id="memory-usage-bar" style="width:{{ memory_usage.1 }}%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script src="{% static "js/jquery.tablesorter.js" %}"></script>
+    <script type="text/javascript">
+        function cpu_usage(){
+            $.getJSON('/info/cpu/{{ host_id }}', function(data) {
+                $('#cpu-usage').text(data.usage + '%');
+                $('#cpu-usage-bar').css({'width':data.usage +'%'})
+                if (data.usage < 50){
+                    $('#cpu-usage-bar').attr('class', "progress-bar progress-bar-success");
+                }else if (data.usage < 80){
+                    $('#cpu-usage-bar').attr('class', "progress-bar progress-bar-warning");
+                }else if (data.usage <= 100){
+                    $('#cpu-usage-bar').attr('class', "progress-bar progress-bar-danger");
+                }
+            });
+        }
+        function mem_usage(){
+            $.getJSON('/info/memory/{{ host_id }}', function(data) {
+                $('#memory-usage').text(data.percent + '%');
+                $('#memory-usage-bar').css({'width':data.percent +'%'})
+                if (data.usage < 50){
+                    $('#memory-usage-bar').attr('class', "progress-bar progress-bar-success");
+                }else if (data.usage < 80){
+                    $('#memory-usage-bar').attr('class', "progress-bar progress-bar-warning");
+                }else if (data.usage <= 100){
+                    $('#memory-usage-bar').attr('class', "progress-bar progress-bar-danger");
+                }
+            });
+        }
+        $(function() {
+            window.setInterval('cpu_usage()', {{ time_refresh }});
+            window.setInterval('mem_usage()', {{ time_refresh }});
+        });
+    </script>
+{% endblock %}

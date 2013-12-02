@@ -3,7 +3,6 @@
 #
 
 import re
-import time
 import string
 
 import libvirt
@@ -14,7 +13,7 @@ from datetime import datetime
 from xml.etree import ElementTree
 from libvirt import VIR_DOMAIN_XML_SECURE
 
-CONN_SSH = 0
+CONN_SSH = 2
 CONN_TCP = 1
 
 class wvmConnect(object):
@@ -58,19 +57,15 @@ class wvmConnect(object):
 
     def get_cap_xml(self):
         """Return xml capabilities"""
-
-        return self.wvm.conn.getCapabilities()
+        return self.open().getCapabilities()
 
     def get_cap(self):
         """Return parse capabilities"""
-
-        return virtinst.CapabilitiesParser.parse(self.get_cap())
+        return virtinst.CapabilitiesParser.parse(self.get_cap_xml())
 
     def is_kvm_supported(self):
         """Return KVM capabilities."""
-
         return self.get_cap().is_kvm_available()
-
 
     def lookupVM(self, vname):
         """
@@ -79,7 +74,7 @@ class wvmConnect(object):
 
         """
         try:
-            dom = self.open.lookupByName(vname)
+            dom = self.open().lookupByName(vname)
         except Exception:
             dom = None
         return dom
@@ -91,7 +86,7 @@ class wvmConnect(object):
 
         """
         try:
-            stg = self.open.storagePoolLookupByName(storage)
+            stg = self.open().storagePoolLookupByName(storage)
         except Exception:
             stg = None
         return stg
@@ -103,7 +98,7 @@ class wvmConnect(object):
 
         """
         try:
-            net = self.open.networkLookupByName(network)
+            net = self.open().networkLookupByName(network)
         except Exception:
             net = None
         return net
@@ -127,7 +122,7 @@ class wvmConnect(object):
         Return volume object by path.
 
         """
-        stg_volume = self.open.storageVolLookupByPath(volume)
+        stg_volume = self.open().storageVolLookupByPath(volume)
         return stg_volume
 
     def hard_accel_node(self):
@@ -136,7 +131,7 @@ class wvmConnect(object):
         Check hardware acceleration.
 
         """
-        xml = self.open.getCapabilities()
+        xml = self.open().getCapabilities()
         kvm = re.search('kvm', xml)
         if kvm:
             return True
@@ -166,11 +161,11 @@ class wvmConnect(object):
 
         """
         vname = {}
-        for vm_id in self.open.listDomainsID():
+        for vm_id in self.open().listDomainsID():
             vm_id = int(vm_id)
-            dom = self.open.lookupByID(vm_id)
+            dom = self.open().lookupByID(vm_id)
             vname[dom.name()] = dom.info()[0]
-        for name in self.open.listDefinedDomains():
+        for name in self.open().listDefinedDomains():
             dom = self.lookupVM(name)
             vname[dom.name()] = dom.info()[0]
         return vname
@@ -182,11 +177,11 @@ class wvmConnect(object):
 
         """
         virtnet = {}
-        for network in self.open.listNetworks():
-            net = self.open.networkLookupByName(network)
+        for network in self.open().listNetworks():
+            net = self.open().networkLookupByName(network)
             status = net.isActive()
             virtnet[network] = status
-        for network in self.open.listDefinedNetworks():
+        for network in self.open().listDefinedNetworks():
             net = self.networkPool(network)
             status = net.isActive()
             virtnet[network] = status
@@ -199,81 +194,16 @@ class wvmConnect(object):
 
         """
         storages = {}
-        for storage in self.open.listStoragePools():
-            stg = self.open.storagePoolLookupByName(storage)
+        for storage in self.open().listStoragePools():
+            stg = self.open().storagePoolLookupByName(storage)
             status = stg.isActive()
             storages[storage] = status
-        for storage in self.open.listDefinedStoragePools():
+        for storage in self.open().listDefinedStoragePools():
             stg = self.storagePool(storage)
             status = stg.isActive()
             storages[storage] = status
         return storages
 
-    def node_get_info(self):
-        """
-
-        Function return host server information: hostname, cpu, memory, ...
-
-        """
-        info = []
-        info.append(self.open.getHostname())
-        info.append(self.open.getInfo()[0])
-        info.append(self.open.getInfo()[2])
-        try:
-            info.append(get_xml_path(self.open.getSysinfo(0),
-                                     "/sysinfo/processor/entry[6]"))
-        except Exception:
-            info.append('Unknown')
-        info.append(self.open.getURI())
-        info.append(self.open.getLibVersion())
-        return info
-
-    def memory_get_usage(self):
-        """
-
-        Function return memory usage on node.
-
-        """
-        allmem = self.open.getInfo()[1] * 1048576
-        get_freemem = self.open.getMemoryStats(-1, 0)
-        if type(get_freemem) == dict:
-            freemem = (get_freemem.values()[0] + \
-                       get_freemem.values()[2] + \
-                       get_freemem.values()[3]) * 1024
-            percent = (freemem * 100) / allmem
-            percent = 100 - percent
-            memusage = (allmem - freemem)
-        else:
-            memusage = None
-            percent = None
-        return allmem, memusage, percent
-
-    def cpu_get_usage(self):
-        """
-
-        Function return cpu usage on node.
-
-        """
-        prev_idle = 0
-        prev_total = 0
-        cpu = self.open.getCPUStats(-1, 0)
-        if type(cpu) == dict:
-            for num in range(2):
-                idle = self.open.getCPUStats(-1, 0).values()[1]
-                total = sum(self.open.getCPUStats(-1, 0).values())
-                diff_idle = idle - prev_idle
-                diff_total = total - prev_total
-                diff_usage = (1000 * (diff_total - diff_idle) / diff_total + 5) / 10
-                prev_total = total
-                prev_idle = idle
-                if num == 0:
-                    time.sleep(1)
-                else:
-                    if diff_usage < 0:
-                        diff_usage = 0
-        else:
-            diff_usage = None
-        return diff_usage
 
     def new_volume(self, storage, name, size, format='qcow2'):
         """
@@ -406,7 +336,7 @@ class wvmConnect(object):
                        <path>%s</path>
                   </target>
                 </pool>""" % target
-        self.open.storagePoolDefineXML(xml, 0)
+        self.open().storagePoolDefineXML(xml, 0)
         stg = self.storagePool(name)
         if type_pool == 'logical':
             stg.build(0)
@@ -468,7 +398,7 @@ class wvmConnect(object):
             xml += """</ip>"""
         xml += """</network>"""
 
-        self.open.networkDefineXML(xml)
+        self.open().networkDefineXML(xml)
         net = self.networkPool(name)
         net.create()
         net.setAutostart(1)
@@ -535,12 +465,12 @@ class wvmConnect(object):
 
         """
         vname = {}
-        for vm_id in self.open.listDomainsID():
+        for vm_id in self.open().listDomainsID():
             vm_id = int(vm_id)
-            dom = self.open.lookupByID(vm_id)
+            dom = self.open().lookupByID(vm_id)
             if dom.snapshotNum(0) != 0:
                 vname[dom.name()] = dom.info()[0]
-        for name in self.open.listDefinedDomains():
+        for name in self.open().listDefinedDomains():
             dom = self.lookupVM(name)
             if dom.snapshotNum(0) != 0:
                 vname[dom.name()] = dom.info()[0]
@@ -611,14 +541,14 @@ class wvmConnect(object):
                                  </disk>""" % vol.path()
                         dom.attachDevice(xml)
                         xmldom = dom.XMLDesc(VIR_DOMAIN_XML_SECURE)
-                        self.open.defineXML(xmldom)
+                        self.open().defineXML(xmldom)
                     if dom.info()[0] == 5:
                         vol = stg.storageVolLookupByName(image)
                         xml = dom.XMLDesc(VIR_DOMAIN_XML_SECURE)
                         newxml = "<disk type='file' device='cdrom'>\n      <driver name='qemu' type='raw'/>\n      <source file='%s'/>" % vol.path()
                         xmldom = xml.replace(
                             "<disk type='file' device='cdrom'>\n      <driver name='qemu' type='raw'/>", newxml)
-                        self.open.defineXML(xmldom)
+                        self.open().defineXML(xmldom)
 
     def vds_umount_iso(self, vname, image):
         """
@@ -635,11 +565,11 @@ class wvmConnect(object):
                       </disk>"""
             dom.attachDevice(xml)
             xmldom = dom.XMLDesc(VIR_DOMAIN_XML_SECURE)
-            self.open.defineXML(xmldom)
+            self.open().defineXML(xmldom)
         if dom.info()[0] == 5:
             xml = dom.XMLDesc(VIR_DOMAIN_XML_SECURE)
             xmldom = xml.replace("<source file='%s'/>\n" % image, '')
-            self.open.defineXML(xmldom)
+            self.open().defineXML(xmldom)
 
     def vds_cpu_usage(self, vname):
         """
@@ -650,7 +580,7 @@ class wvmConnect(object):
         cpu_usage = {}
         dom = self.lookupVM(vname)
         if dom.info()[0] == 1:
-            nbcore = self.open.getInfo()[2]
+            nbcore = self.open().getInfo()[2]
             cpu_use_ago = dom.info()[4]
             time.sleep(1)
             cpu_use_now = dom.info()[4]
@@ -807,7 +737,7 @@ class wvmConnect(object):
             close_tag = ''
         newxml = "<graphics type='vnc' passwd='%s'%s>" % (passwd, close_tag)
         xmldom = re.sub('<graphics.*>', newxml, xml)
-        self.open.defineXML(xmldom)
+        self.open().defineXML(xmldom)
 
     def vds_edit(self, vname, description, ram, vcpu):
         """
@@ -826,7 +756,7 @@ class wvmConnect(object):
         xml_vcpu_change = re.sub('<vcpu.*vcpu>', xml_vcpu, xml_curmemory_change)
         xml_description = "<description>%s</description>" % description
         xml_description_change = re.sub('<description.*description>', xml_description, xml_vcpu_change)
-        self.open.defineXML(xml_description_change)
+        self.open().defineXML(xml_description_change)
 
     def defineXML(self, xml):
         """
@@ -834,7 +764,7 @@ class wvmConnect(object):
         Funciton define VM config
 
         """
-        self.open.defineXML(xml)
+        self.open().defineXML(xml)
 
 
     def get_all_media(self):
@@ -888,16 +818,16 @@ class wvmConnect(object):
 
         """
         vname = {}
-        host_mem = self.open.getInfo()[1] * 1048576
-        for vm_id in self.open.listDomainsID():
+        host_mem = self.open().getInfo()[1] * 1048576
+        for vm_id in self.open().listDomainsID():
             vm_id = int(vm_id)
-            dom = self.open.lookupByID(vm_id)
+            dom = self.open().lookupByID(vm_id)
             mem = get_xml_path(dom.XMLDesc(0), "/domain/memory")
             mem = int(mem) * 1024
             mem_usage = (mem * 100) / host_mem
             vcpu = get_xml_path(dom.XMLDesc(0), "/domain/vcpu")
             vname[dom.name()] = (dom.info()[0], vcpu, mem, mem_usage)
-        for name in self.open.listDefinedDomains():
+        for name in self.open().listDefinedDomains():
             dom = self.lookupVM(name)
             mem = get_xml_path(dom.XMLDesc(0), "/domain/memory")
             mem = int(mem) * 1024
@@ -907,9 +837,5 @@ class wvmConnect(object):
         return vname
 
     def close(self):
-        """
-
-        Close libvirt connection.
-
-        """
-        self.open.close()
+        """Close connection"""
+        self.open().close()

@@ -1,9 +1,12 @@
 import re
+
+from libvirt import libvirtError
+
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
-from libvirt import libvirtError
-from instances.models import Instance
+
+from instance.models import Instance
 
 def console(request, host_id, vname):
     """

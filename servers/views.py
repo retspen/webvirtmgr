@@ -9,6 +9,11 @@ from servers.models import Compute
 from servers.forms import ComputeAddTcpForm, ComputeAddSshForm
 
 
+CONN_SSH = 2
+CONN_TCP = 1
+SSH_PORT = 22
+TCP_PORT = 16509
+
 def index(request):
     """
 
@@ -41,10 +46,10 @@ def servers_list(request):
             try:
                 socket_host = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 socket_host.settimeout(1)
-                if host.type == 'ssh':
-                    socket_host.connect((host.hostname, 22))
-                if host.type == 'tcp':
-                    socket_host.connect((host.hostname, 16509))
+                if host.type == CONN_SSH:
+                    socket_host.connect((host.hostname, SSH_PORT))
+                if host.type == CONN_TCP:
+                    socket_host.connect((host.hostname, TCP_PORT))
                 socket_host.close()
                 status = 1
             except Exception as err:
@@ -52,8 +57,8 @@ def servers_list(request):
             all_hosts[host.id] = (host.name, host.hostname, status)
         return all_hosts
 
-    hosts = Compute.objects.filter()
-    hosts_info = get_hosts_status(hosts)
+    computes = Compute.objects.filter()
+    hosts_info = get_hosts_status(computes)
     form = None
 
     if request.method == 'POST':
@@ -68,7 +73,7 @@ def servers_list(request):
                 data = form.cleaned_data
                 new_tcp_host = Compute(name=data['name'],
                                        hostname=data['hostname'],
-                                       type='tcp',
+                                       type=CONN_TCP,
                                        login=data['login'],
                                        password=data['password'])
                 new_tcp_host.save()
@@ -79,7 +84,7 @@ def servers_list(request):
                 data = form.cleaned_data
                 new_ssh_host = Compute(name=data['name'],
                                        hostname=data['hostname'],
-                                       type='ssh',
+                                       type=CONN_SSH,
                                        login=data['login'])
                 new_ssh_host.save()
                 return HttpResponseRedirect(request.get_full_path())
