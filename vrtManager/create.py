@@ -3,12 +3,10 @@
 #
 import virtinst
 from vrtManager import util
+from vrtManager.conection import wvmConnect
 
 
-class wvmCreate(object):
-    def __init__(self, host, login, passwd, conn):
-        self.wvm = objconn
-
+class wvmCreate(wvmConnect):
     def get_guest_cap(self):
         """Get guest capabilities"""
         return virtinst.CapabilitiesParser.guest_lookup(self.wvm)

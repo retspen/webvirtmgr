@@ -25,6 +25,7 @@
                 <div class="col-md-6">
                     <p>{% trans "Connection" %}</p>
                     <p>{% trans "Hostname" %}</p>
+                    <p>{% trans "Hypervisor" %}</p>
                     <p>{% trans "Memory" %}</p>
                     <p>{% trans "Logical CPUs" %}</p>
                     <p>{% trans "Processor" %}</p>
@@ -33,6 +34,7 @@
                 <div class="col-md-6">
                     <p>{{ uri_conn }}</p>
                     <p>{{ hostname }}</p>
+                    <p>{{ hypervisor }}</p>
                     <p>{{ host_memory|filesizeformat }}</p>
                     <p>{{ logical_cpu }}</p>
                     <p>{{ model_cpu }}</p>
@@ -47,12 +49,12 @@
                 </div>
                 <div class="col-md-6">
                     <div class="progress">
-                        <span id="cpu-usage" style="text-align:center;"></span>
-                        <div class="progress-bar" id="cpu-usage-bar" style="width:{{ cpu_usage }}%;"></div>
+                        <span id="cpu-usage" style="text-align:center;">0%</span>
+                        <div class="progress-bar" id="cpu-usage-bar" style="width:0%;"></div>
                     </div>
                     <div class="progress">
-                        <span id="memory-usage" style="text-align: center;"></span>
-                        <div class="progress-bar" id="memory-usage-bar" style="width:{{ memory_usage.1 }}%;"></div>
+                        <span id="memory-usage" style="text-align: center;">0%</span>
+                        <div class="progress-bar" id="memory-usage-bar" style="width:0%;"></div>
                     </div>
                 </div>
             </div>

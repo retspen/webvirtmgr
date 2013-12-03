@@ -64,19 +64,6 @@ __test_distro_arch() {
 __test_distro_arch
 
 #---  FUNCTION  ----------------------------------------------------------------
-#          NAME:  __test_kvm_support
-#   DESCRIPTION:  Echo errors to stderr.
-#-------------------------------------------------------------------------------
-__test_kvm_support() {
-    KVM=$(egrep -c '(vmx|svm)' /proc/cpuinfo)
-    if [ "$KVM" = 0 ]; then
-        echoerror "Your CPU doesn't support hardware virtualization"
-        exit 1
-    fi
-}
-__test_kvm_support
-
-#---  FUNCTION  ----------------------------------------------------------------
 #          NAME:  __strip_duplicates
 #   DESCRIPTION:  Strip duplicate strings
 #-------------------------------------------------------------------------------

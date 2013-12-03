@@ -2,17 +2,14 @@
 # Copyright (C) 2013 Webvirtmgr.
 #
 import time
+import virtinst
+from vrtManager.conection import wvmConnect
 
 
-class wvmHostDetails(object):
-    def __init__(self, conn):
-        self.wvm = conn.open()
-
+class wvmHostDetails(wvmConnect):
     def memory_get_usage(self):
         """
-
         Function return memory usage on node.
-
         """
         get_all_mem = self.wvm.getInfo()[1] * 1048576
         get_freemem = self.wvm.getMemoryStats(-1, 0)
@@ -29,9 +26,7 @@ class wvmHostDetails(object):
 
     def cpu_get_usage(self):
         """
-
         Function return cpu usage on node.
-
         """
         prev_idle = 0
         prev_total = 0
@@ -56,9 +51,7 @@ class wvmHostDetails(object):
 
     def get_node_info(self):
         """
-
         Function return host server information: hostname, cpu, memory, ...
-
         """
         info = []
         info.append(self.wvm.getHostname())
@@ -72,3 +65,7 @@ class wvmHostDetails(object):
             info.append('Unknown')
         info.append(self.wvm.getURI())
         return info
+
+    def get_guest_cap(self):
+        """Get guest capabilities"""
+        return virtinst.CapabilitiesParser.guest_lookup(self.wvm)
