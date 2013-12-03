@@ -33,13 +33,13 @@
                                 {% if not snapshot_page %}
                                     {% for vm in all_vm %}
                                         <li {% ifequal vm vname %}class="active"{% endifequal %}>
-                                            <a href="{% url 'instance' host_id vm %}"><span class="glyphicon glyphicon-tasks"></span> {{ vm }}</a>
+                                            <a href="{% url 'instance' host_id vm %}" title="{{ vm }}"><span class="glyphicon glyphicon-tasks"></span> {{ vm|truncatechars:25 }}</a>
                                         </li>
                                     {% endfor %}
                                 {% else %}
                                     {% for vm in all_vm %}
                                         <li {% ifequal vm vname %}class="active"{% endifequal %}>
-                                            <a href="{% url 'dom_snapshot' host_id vm %}"><span class="glyphicon glyphicon-camera"></span> {{ vm }}</a>
+                                            <a href="{% url 'dom_snapshot' host_id vm %}" title="{{ vm }}" data-toggle="tooltip"><span class="glyphicon glyphicon-camera"></span> {{ vm|truncatechars:25 }}</a>
                                         </li>
                                     {% endfor %}
                                 {% endif %}
