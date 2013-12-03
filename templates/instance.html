@@ -99,6 +99,7 @@
                     <p><strong>{% trans "Name" %}:</strong></p>
                     <p><strong>{% trans "Description" %}:</strong></p>
                     <p><strong>{% trans "Status" %}:</strong></p>
+                    <p><strong>{% trans "Autostart" %}:</strong></p>
                 </div>
                 <div class="col-md-6">
                     <p>{{ vname }}</p>
@@ -109,6 +110,7 @@
                         {% trans "None" %}
                     {% endif %}
                     </p>
+                    <p>{{ autostart }}</p>
                 </div>
             </div>
             <hr>
@@ -302,6 +304,12 @@
                                             <option value="{{ mem }}" {% if mem == memory %}selected{% endif %}>{{ mem }} {% trans "MB" %}</option>
                                         {% endfor %}
                                     </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">{% trans "Autostart" %}</label>
+                                <div class="col-lg-6">
+                                        <input type="checkbox" name="autostart" value="true" {% if autostart == 'On' %}checked{% endif %}>
                                 </div>
                             </div>
                             <div class="modal-footer">
