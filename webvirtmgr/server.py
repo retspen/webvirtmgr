@@ -173,7 +173,7 @@ class ConnServer(object):
         else:
             return False
 
-    def add_vm(self, name, ram, cpu, host_model, images, nets, virtio, storages, passwd=None):
+    def add_vm(self, name, ram, cpu, host_model, images, nets, virtio, storages, autostart, passwd=None):
         """
         Create VM function
 
@@ -271,7 +271,10 @@ class ConnServer(object):
                 </domain>""" % (passwd)
         self.conn.defineXML(xml)
         dom = self.lookupVM(name)
-        dom.setAutostart(1)
+        if autostart:
+            return dom.setAutostart(1)
+        else:
+            return dom.setAutostart(0)
 
     def get_vol_image_type(self, storages, vol):
         for storage in storages:
@@ -864,6 +867,14 @@ class ConnServer(object):
         info.append(get_xml_path(xml, func=get_networks))
         description = get_xml_path(xml, "/domain/description")
         info.append(description)
+        
+        autostart = dom.autostart()
+        if autostart == 0:
+            autostart = 'Off'
+        elif autostart == 1:
+            autostart = 'On'
+
+        info.append(autostart)
         return info
 
     def vds_get_hdd(self, vname):
@@ -941,7 +952,7 @@ class ConnServer(object):
         xmldom = re.sub('<graphics.*>', newxml, xml)
         self.conn.defineXML(xmldom)
 
-    def vds_edit(self, vname, description, ram, vcpu):
+    def vds_edit(self, vname, description, ram, vcpu, autostart):
         """
 
         Function change ram and cpu on vds.
@@ -959,6 +970,11 @@ class ConnServer(object):
         xml_description = "<description>%s</description>" % description
         xml_description_change = re.sub('<description.*description>', xml_description, xml_vcpu_change)
         self.conn.defineXML(xml_description_change)
+        
+        if autostart:
+            return dom.setAutostart(1)
+        else:
+            return dom.setAutostart(0)
 
     def defineXML(self, xml):
         """
