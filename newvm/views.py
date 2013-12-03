@@ -97,7 +97,7 @@ def create(request, host_id):
                             try:
                                 passwd = ''.join([choice(letters + digits) for i in range(12)])
                                 conn.add_vm(data['name'], data['ram'], data['vcpu'], data['host_model'], images,
-                                            data['networks'], data['virtio'], all_storages, passwd)
+                                            data['networks'], data['virtio'], data['autostart'], all_storages, passwd)
                                 vnc_pass = Instance(host_id=host_id, vname=data['name'], vnc_passwd=passwd)
                                 vnc_pass.save()
                                 return HttpResponseRedirect('/instance/%s/%s/' % (host_id, data['name']))
