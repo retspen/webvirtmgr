@@ -4,6 +4,7 @@
 import time
 import virtinst
 from vrtManager.conection import wvmConnect
+from vrtManager.util import get_xml_path
 
 
 class wvmHostDetails(wvmConnect):
@@ -69,3 +70,7 @@ class wvmHostDetails(wvmConnect):
     def get_guest_cap(self):
         """Get guest capabilities"""
         return virtinst.CapabilitiesParser.guest_lookup(self.wvm)
+
+    def hypervisor_type(self):
+        """Return hypervisor type"""
+        return self.get_guest_cap()[1].hypervisor_type

@@ -69,7 +69,7 @@ def overview(request, host_id):
     try:
         conn = wvmHostDetails(compute.hostname, compute.login, compute.password, compute.type)
         hostname, host_arch, host_memory, logical_cpu, model_cpu, uri_conn = conn.get_node_info()
-        hypervisor = conn.get_guest_cap()[1].hypervisor_type
+        hypervisor = conn.hypervisor_type()
         mem_usage = conn.memory_get_usage()
         conn.close()
     except libvirtError as err:

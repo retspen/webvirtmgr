@@ -96,7 +96,7 @@ def get_xml_path(xml, path=None, func=None):
             result = func(ctx)
 
         else:
-            raise ValueError(_("'path' or 'func' is required."))
+            raise ValueError("'path' or 'func' is required.")
     finally:
         if doc:
             doc.freeDoc()
@@ -104,3 +104,16 @@ def get_xml_path(xml, path=None, func=None):
             ctx.xpathFreeContext()
     return result
 
+def pretty_mem(val):
+    val = int(val)
+    if val > (10 * 1024 * 1024):
+        return "%2.2f GB" % (val / (1024.0 * 1024.0))
+    else:
+        return "%2.0f MB" % (val / 1024.0)
+
+def pretty_bytes(val):
+    val = int(val)
+    if val > (1024 * 1024 * 1024):
+        return "%2.2f GB" % (val / (1024.0 * 1024.0 * 1024.0))
+    else:
+        return "%2.2f MB" % (val / (1024.0 * 1024.0))

@@ -63,6 +63,22 @@ class wvmConnect(object):
         """Return KVM capabilities."""
         return self.get_cap().is_kvm_available()
 
+    def get_storages(self):
+        """
+        Function return host server storages.
+        """
+        storages = []
+        for pool in self.wvm.listStoragePools():
+            storages.append(pool)
+        for pool in self.wvm.listDefinedStoragePools():
+            storages.append(pool)
+        return storages
+
+    def stg_pool(self, pool):
+            return self.wvm.storagePoolLookupByName(pool)
+
+
+
     def lookupVM(self, vname):
         """
 
@@ -75,17 +91,7 @@ class wvmConnect(object):
             dom = None
         return dom
 
-    def storagePool(self, storage):
-        """
 
-        Return storage object.
-
-        """
-        try:
-            stg = self.wvm.storagePoolLookupByName(storage)
-        except Exception:
-            stg = None
-        return stg
 
     def networkPool(self, network):
         """
@@ -114,25 +120,11 @@ class wvmConnect(object):
 
     def storageVolPath(self, volume):
         """
-
         Return volume object by path.
-
         """
         stg_volume = self.wvm.storageVolLookupByPath(volume)
         return stg_volume
 
-    def hard_accel_node(self):
-        """
-
-        Check hardware acceleration.
-
-        """
-        xml = self.wvm.getCapabilities()
-        kvm = re.search('kvm', xml)
-        if kvm:
-            return True
-        else:
-            return False
 
     def get_vol_image_type(self, storages, vol):
         for storage in storages:
@@ -150,27 +142,22 @@ class wvmConnect(object):
         return image_type
 
 
-    def vds_get_node(self):
+    def get_instances(self):
         """
-
         Get all VM in host server
-
         """
-        vname = {}
-        for vm_id in self.wvm.listDomainsID():
-            vm_id = int(vm_id)
-            dom = self.wvm.lookupByID(vm_id)
-            vname[dom.name()] = dom.info()[0]
+        instances = {}
+        for inst_id in self.wvm.listDomainsID():
+            dom = self.wvm.lookupByID(int(inst_id))
+            instances[dom.name()] = dom.info()[0]
         for name in self.wvm.listDefinedDomains():
             dom = self.lookupVM(name)
-            vname[dom.name()] = dom.info()[0]
-        return vname
+            instances[dom.name()] = dom.info()[0]
+        return instances
 
-    def networks_get_node(self):
+    def get_networks(self):
         """
-
         Function return host server virtual networks.
-
         """
         virtnet = {}
         for network in self.wvm.listNetworks():
@@ -183,22 +170,7 @@ class wvmConnect(object):
             virtnet[network] = status
         return virtnet
 
-    def storages_get_node(self):
-        """
 
-        Function return host server storages.
-
-        """
-        storages = {}
-        for storage in self.wvm.listStoragePools():
-            stg = self.wvm.storagePoolLookupByName(storage)
-            status = stg.isActive()
-            storages[storage] = status
-        for storage in self.wvm.listDefinedStoragePools():
-            stg = self.storagePool(storage)
-            status = stg.isActive()
-            storages[storage] = status
-        return storages
 
 
     def new_volume(self, storage, name, size, format='qcow2'):
@@ -298,6 +270,7 @@ class wvmConnect(object):
                 percent = (stg.info()[2] * 100) / stg.info()[1]
             info = stg.info()[1:4]
             info.append(int(percent))
+
             info.append(stg.isActive())
             xml = stg.XMLDesc(0)
             info.append(get_xml_path(xml, "/pool/@type"))

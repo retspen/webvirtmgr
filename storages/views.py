@@ -6,6 +6,9 @@ from django.utils.translation import ugettext_lazy as _
 from servers.models import Compute
 from storages.forms import AddStgPool, AddImage, CloneImage
 
+from vrtManager.storage import wvmConnect
+from vrtManager.storage import wvmStorage
+
 from libvirt import libvirtError
 
 
@@ -26,35 +29,28 @@ def storage(request, host_id, pool):
         destination.close()
 
     errors = []
-    form = stg = size = free = usage = percent = \
-        state = s_type = path = volumes_info = None
-    host = Host.objects.get(id=host_id)
+    compute = Compute.objects.get(id=host_id)
 
     try:
-        conn = ConnServer(host)
-    except libvirtError as e:
-        conn = None
+        conn = wvmConnect(compute.hostname, compute.login, compute.password, compute.type)
+        storage_pools = conn.get_storages()
 
-    if not conn:
-        errors.append(e.message)
-    else:
-        storages = conn.storages_get_node()
         if pool is None:
-            if len(storages) == 0:
-                return HttpResponseRedirect('/storage/%s/add/' % (host_id))
-            else:
-                return HttpResponseRedirect('/storage/%s/%s/' % (host_id, storages.keys()[0]))
-
-        all_vm = sort_host(conn.vds_get_node())
-
-        if not pool == 'add':
-            stg = conn.storagePool(pool)
-            size, free, usage, percent, state, s_type, path = conn.storage_get_info(pool)
-            if state:
-                stg.refresh(0)
-                volumes_info = conn.volumes_get_info(pool)
-            else:
-                volumes_info = None
+            if len(storage_pools) > 0:
+                return HttpResponseRedirect('/storages/%s/%s/' % (host_id, storage_pools[0]))
+        else:
+            stgobj = conn.stg_pool(pool)
+            stg = wvmStorage(conn, stgobj)
+            size, free, usage = stg.get_size()
+            percent = (free * 100) / size
+            # state = stg.is_active()
+            print dir(stgobj)
+            # size, free, usage, percent, state, s_type, path = conn.storage_get_info(pool)
+            # if state:
+            #     stg.refresh(0)
+            #     volumes_info = conn.volumes_get_info(pool)
+            # else:
+            #     volumes_info = None
 
         if request.method == 'POST':
             if 'pool_add' in request.POST:
@@ -133,16 +129,7 @@ def storage(request, host_id, pool):
                         except libvirtError as error_msg:
                             errors.append(error_msg.message)
         conn.close()
+    except libvirtError as err:
+        errors.append(e.message)
 
-    return render_to_response('storage.html', {'host_id': host_id,
-                                               'errors': errors,
-                                               'form': form,
-                                               'storages': storages,
-                                               'pool': pool,
-                                               'all_vm': all_vm,
-                                               'stg': stg,
-                                               'size': size, 'free': free, 'usage': usage, 'percent': percent,
-                                               'state': state, 's_type': s_type, 'path': path,
-                                               'volumes_info': volumes_info
-                                               },
-                              context_instance=RequestContext(request))
+    return render_to_response('storages.html', locals(),  context_instance=RequestContext(request))
