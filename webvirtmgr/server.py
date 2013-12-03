@@ -173,7 +173,7 @@ class ConnServer(object):
         else:
             return False
 
-    def add_vm(self, name, ram, cpu, host_model, images, nets, virtio, storages, autostart, passwd=None):
+    def add_vm(self, name, ram, cpu, host_model, images, nets, virtio, autostart, storages, passwd=None):
         """
         Create VM function
 
@@ -271,6 +271,7 @@ class ConnServer(object):
                 </domain>""" % (passwd)
         self.conn.defineXML(xml)
         dom = self.lookupVM(name)
+        
         if autostart:
             return dom.setAutostart(1)
         else:

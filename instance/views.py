@@ -245,6 +245,7 @@ def instance(request, host_id, vname):
 
     return render_to_response('instance.html', {'host_id': host_id,
                                                 'vname': vname,
+                                                'autostart': autostart,
                                                 'messages': messages,
                                                 'errors': errors,
                                                 'instance': instance,
