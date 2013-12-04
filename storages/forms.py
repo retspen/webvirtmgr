@@ -64,8 +64,8 @@ class AddImage(forms.Form):
 class CloneImage(forms.Form):
     name = forms.CharField(max_length=20)
     image = forms.CharField(max_length=20)
-    convert = forms.BooleanField()
-    format = forms.ChoiceField(required=False, choices=(('raw', 'raw'), ('qcow', 'qcow'), ('qcow2', 'qcow2')))
+    convert = forms.BooleanField(required=False)
+    format = forms.ChoiceField(required=False, choices=(('qcow2', 'qcow2'), ('qcow', 'qcow'), ('raw', 'raw')))
 
     def clean_name(self):
         name = self.cleaned_data['name']

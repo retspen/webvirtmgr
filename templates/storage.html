@@ -46,8 +46,8 @@
                     <p>{% trans "Pool type" %}</p>
                     <p>{% trans "Pool path" %}</p>
                     <p>{% trans "Size" %} ({{ size|filesizeformat }} / {{ free|filesizeformat }})</p>
-                    <p>{% trans "Autostart" %}</p>
                     <p>{% trans "State" %}</p>
+                    <p>{% trans "Autostart" %}</p>
                 </div>
                 <div class="col-md-6">
                     <p>
@@ -64,20 +64,20 @@
                     <p>{% trans "Usage" %}: {{ percent }}%</p>
                     <p>
                         <form action="" method="post">{% csrf_token %}
-                            {% ifequal autostart 0 %}
-                                <input type="submit" class="btn btn-sm btn-default" name="set_autostart" value="{% trans "Enable" %}">
-                            {% else %}
-                                <input type="submit" class="btn btn-sm btn-default" name="unset_autostart" onclick="return confirm('{% trans "Are you sure?" %}')" value="{% trans "Disable" %}">
-                            {% endifequal %}
-                        </form>
-                    </p>
-                    <p>
-                        <form action="" method="post">{% csrf_token %}
                             {% ifequal state 0 %}
                                 <input type="submit" class="btn btn-sm btn-default" name="start" value="{% trans "Start" %}">
                                 <input type="submit" class="btn btn-sm btn-default" name="delete" value="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
                             {% else %}
                                 <input type="submit" class="btn btn-sm btn-default" name="stop" value="{% trans "Stop" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
+                            {% endifequal %}
+                        </form>
+                    </p>
+                    <p>
+                        <form action="" method="post">{% csrf_token %}
+                            {% ifequal autostart 0 %}
+                                <input type="submit" class="btn btn-sm btn-default" name="set_autostart" value="{% trans "Enable" %}">
+                            {% else %}
+                                <input type="submit" class="btn btn-sm btn-default" name="unset_autostart" onclick="return confirm('{% trans "Are you sure?" %}')" value="{% trans "Disable" %}">
                             {% endifequal %}
                         </form>
                     </p>
@@ -169,10 +169,10 @@
                                                         <div class="form-group">
                                                             <label class="col-lg-4 control-label">{% trans "Convert" %}</label>
                                                             <div class="col-lg-6">
-                                                                <input id="img-convert" type="checkbox" name="convert" value="true">
+                                                                <input class="volume-convert" type="checkbox" name="convert" value="true">
                                                             </div>
                                                         </div>
-                                                        <div class="form-group" id="format-convert">
+                                                        <div class="form-group format-convert">
                                                             <label class="col-lg-4 control-label">{% trans "Format" %}</label>
                                                             <div class="col-lg-6">
                                                                 <select name="format" class="form-control">
@@ -184,7 +184,7 @@
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-                                                            <button type="submit" class="btn btn-primary" name="img_clone">{% trans "Clone" %}</button>
+                                                            <button type="submit" class="btn btn-primary" name="cln_volume">{% trans "Clone" %}</button>
                                                         </div>
                                                     </form>
                                                 </div><!-- /.modal-content -->
@@ -198,8 +198,8 @@
                                     </td>
                                     <td style="width:30px;">
                                         <form action="" method="post" style="height:10px;">{% csrf_token %}
-                                            <input type="hidden" name="img" value="{{ key }}">
-                                            <input type="submit" class="btn btn-danger" name="img_del" value="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
+                                            <input type="hidden" name="volname" value="{{ key }}">
+                                            <input type="submit" class="btn btn-danger" name="del_volume" value="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
                                         </form>
                                     </td>
                                 </tr>
@@ -250,7 +250,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-                        <button type="submit" class="btn btn-primary" name="img_add">{% trans "Create" %}</button>
+                        <button type="submit" class="btn btn-primary" name="add_volume">{% trans "Create" %}</button>
                     </div>
                 </form>
             </div><!-- /.modal-content -->
@@ -283,11 +283,11 @@
 {% endblock %}
 {% block script %}
     <script type="text/javascript">
-        $(document).on('change','#img-convert',function(){
+        $(document).on('change','.volume-convert',function(){
             if($(this).prop('checked')) {
-                $('#format-convert').show();
+                $('.format-convert').show();
             } else {
-                $('#format-convert').hide();
+                $('.format-convert').hide();
             }
         });
     </script>

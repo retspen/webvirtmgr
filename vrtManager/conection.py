@@ -169,59 +169,6 @@ class wvmConnect(object):
             virtnet[network] = status
         return virtnet
 
-
-
-
-    def new_volume(self, storage, name, size, format='qcow2'):
-        """
-
-        Add new volume in storage
-
-        """
-        stg = self.storagePool(storage)
-        size = int(size) * 1073741824
-        stg_type = get_xml_path(stg.XMLDesc(0), "/pool/@type")
-        if stg_type == 'dir':
-            name += '.img'
-            alloc = 0
-        else:
-            alloc = size
-        xml = """
-            <volume>
-                <name>%s</name>
-                <capacity>%s</capacity>
-                <allocation>%s</allocation>
-                <target>
-                    <format type='%s'/>
-                </target>
-            </volume>""" % (name, size, alloc, format)
-        stg.createXML(xml, 0)
-
-    def clone_volume(self, storage, img, new_img, format=None):
-        """
-
-        Function clone volume
-
-        """
-        stg = self.storagePool(storage)
-        stg_type = get_xml_path(stg.XMLDesc(0), "/pool/@type")
-        if stg_type == 'dir':
-            new_img += '.img'
-        vol = stg.storageVolLookupByName(img)
-        if not format:
-            xml = vol.XMLDesc(0)
-            format = get_xml_path(xml, "/volume/target/format/@type")
-        xml = """
-            <volume>
-                <name>%s</name>
-                <capacity>0</capacity>
-                <allocation>0</allocation>
-                <target>
-                    <format type='%s'/>
-                </target>
-            </volume>""" % (new_img, format)
-        stg.createXMLFrom(xml, vol, 0)
-
     def images_get_storages(self, storages):
         """
 

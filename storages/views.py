@@ -15,7 +15,6 @@ def storages(request, host_id):
         return render_to_response('storage.html', locals(),  context_instance=RequestContext(request))
 
 
-
 def storage(request, host_id, pool):
     """
 
@@ -37,7 +36,6 @@ def storage(request, host_id, pool):
 
     try:
         conn = wvmStorage(compute.hostname, compute.login, compute.password, compute.type, pool)
-        storages = conn.get_storages()
 
         if pool is None:
             return HttpResponseRedirect('/storages/%s' % host_id)
@@ -48,13 +46,12 @@ def storage(request, host_id, pool):
             path = conn.get_target_path()
             type = conn.get_type()
             autostart = conn.get_autostart()
+
             if state:
                 conn.refresh()
                 volumes = conn.update_volumes()
             else:
                 volumes = None
-
-            print conn.get_uuid()
 
         if request.method == 'POST':
             if 'start' in request.POST:
@@ -87,47 +84,48 @@ def storage(request, host_id, pool):
                     return HttpResponseRedirect(request.get_full_path())
                 except libvirtError as error_msg:
                     errors.append(error_msg.message)
-            if 'img_add' in request.POST:
+            if 'add_volume' in request.POST:
                 form = AddImage(request.POST)
                 if form.is_valid():
                     data = form.cleaned_data
                     img_name = data['name'] + '.img'
-                    if img_name in stg.listVolumes():
+                    if img_name in conn.update_volumes():
                         msg = _("Volume name already use")
                         errors.append(msg)
                     if not errors:
-                        conn.new_volume(pool, data['name'], data['size'], data['format'])
+                        conn.create_volume(data['name'], data['size'], data['format'])
                         return HttpResponseRedirect(request.get_full_path())
-            if 'img_del' in request.POST:
-                img = request.POST.get('img', '')
+            if 'del_volume' in request.POST:
+                volname = request.POST.get('volname', '')
                 try:
-                    vol = stg.storageVolLookupByName(img)
+                    vol = conn.get_volume(volname)
                     vol.delete(0)
                     return HttpResponseRedirect(request.get_full_path())
                 except libvirtError as error_msg:
                     errors.append(error_msg.message)
             if 'iso_upload' in request.POST:
-                if str(request.FILES['file']) in stg.listVolumes():
+                if str(request.FILES['file']) in conn.update_volumes():
                     msg = _("ISO image already exist")
                     errors.append(msg)
                 else:
                     handle_uploaded_file(path, request.FILES['file'])
                     return HttpResponseRedirect(request.get_full_path())
-            if 'img_clone' in request.POST:
+            if 'cln_volume' in request.POST:
                 form = CloneImage(request.POST)
+                print form.errors
                 if form.is_valid():
                     data = form.cleaned_data
                     img_name = data['name'] + '.img'
-                    if img_name in stg.listVolumes():
+                    if img_name in conn.update_volumes():
                         msg = _("Name of volume name already use")
                         errors.append(msg)
                     if not errors:
-                        if 'convert' in data:
+                        if data['convert']:
                             format = data['format']
                         else:
                             format = None
                         try:
-                            conn.clone_volume(pool, data['image'], data['name'], format)
+                            conn.clone_volume(data['image'], data['name'], format)
                             return HttpResponseRedirect(request.get_full_path())
                         except libvirtError as error_msg:
                             errors.append(error_msg.message)
