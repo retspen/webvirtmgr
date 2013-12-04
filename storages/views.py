@@ -36,6 +36,7 @@ def storage(request, host_id, pool):
 
     try:
         conn = wvmStorage(compute.hostname, compute.login, compute.password, compute.type, pool)
+        storages = conn.get_storages()
 
         if pool is None:
             return HttpResponseRedirect('/storages/%s' % host_id)
