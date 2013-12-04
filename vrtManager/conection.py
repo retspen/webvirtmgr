@@ -78,7 +78,6 @@ class wvmConnect(object):
             return self.wvm.storagePoolLookupByName(pool)
 
 
-
     def lookupVM(self, vname):
         """
 
@@ -256,34 +255,9 @@ class wvmConnect(object):
                     stg_volume = stg.storageVolLookupByName(vol)
                     return stg_volume.path()
 
-    def storage_get_info(self, storage):
-        """
-
-        Function return storage info.
-
-        """
-        stg = self.storagePool(storage)
-        if stg:
-            if stg.info()[3] == 0:
-                percent = 0
-            else:
-                percent = (stg.info()[2] * 100) / stg.info()[1]
-            info = stg.info()[1:4]
-            info.append(int(percent))
-
-            info.append(stg.isActive())
-            xml = stg.XMLDesc(0)
-            info.append(get_xml_path(xml, "/pool/@type"))
-            info.append(get_xml_path(xml, "/pool/target/path"))
-        else:
-            info = [None] * 7
-        return info
-
     def new_storage_pool(self, type_pool, name, source, target):
         """
-
         Function create storage pool.
-
         """
         xml = """
                 <pool type='%s'>
@@ -312,34 +286,9 @@ class wvmConnect(object):
         stg.create(0)
         stg.setAutostart(1)
 
-    def volumes_get_info(self, storage):
-        """
-
-        Function return volume info.
-
-        """
-        stg = self.storagePool(storage)
-        stg_type = get_xml_path(stg.XMLDesc(0), "/pool/@type")
-        volume_info = {}
-        for name in stg.listVolumes():
-            if stg_type == 'dir':
-                if re.findall(".img", name) or re.findall(".iso", name):
-                    vol = stg.storageVolLookupByName(name)
-                    xml = vol.XMLDesc(0)
-                    volume_format = get_xml_path(xml, "/volume/target/format/@type")
-                    volume_info[name] = vol.info()[1], volume_format
-            if stg_type == 'logical':
-                vol = stg.storageVolLookupByName(name)
-                xml = vol.XMLDesc(0)
-                volume_format = get_xml_path(xml, "/volume/target/format/@type")
-                volume_info[name] = vol.info()[1], volume_format
-        return volume_info
-
     def new_network_pool(self, name, forward, gateway, mask, dhcp, bridge_name):
         """
-
         Function create network pool.
-
         """
         xml = """
             <network>

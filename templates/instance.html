@@ -104,7 +104,9 @@
                     <p>{{ vname }}</p>
                     <p>{{ description }}</p>
                     <p>{% if dom.info %}
-                        <span class={% ifequal dom.info.0 5 %}"text-danger">{% trans "Shuttoff" %}{% endifequal %}{% ifequal dom.info.0 1 %}"text-success">{% trans "Running" %}{% endifequal %}{% ifequal dom.info.0 3 %}"text-warnging">{% trans "Suspend" %}{% endifequal %}</span>
+                        <span class={% ifequal dom.info.0 5 %}"text-danger">{% trans "Shuttoff" %}{% endifequal %}
+                                    {% ifequal dom.info.0 1 %}"text-success">{% trans "Running" %}{% endifequal %}
+                                    {% ifequal dom.info.0 3 %}"text-warnging">{% trans "Suspend" %}{% endifequal %}</span>
                     {% else %}
                         {% trans "None" %}
                     {% endif %}
