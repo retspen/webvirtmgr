@@ -74,6 +74,17 @@ class wvmConnect(object):
             storages.append(pool)
         return storages
 
+    def get_networks(self):
+        """
+        Function return host server virtual networks.
+        """
+        virtnet = []
+        for net in self.wvm.listNetworks():
+            virtnet.append(net)
+        for net in self.wvm.listDefinedNetworks():
+            virtnet.append(net)
+        return virtnet
+
     def stg_pool(self, pool):
             return self.wvm.storagePoolLookupByName(pool)
 
@@ -153,21 +164,6 @@ class wvmConnect(object):
             dom = self.lookupVM(name)
             instances[dom.name()] = dom.info()[0]
         return instances
-
-    def get_networks(self):
-        """
-        Function return host server virtual networks.
-        """
-        virtnet = {}
-        for network in self.wvm.listNetworks():
-            net = self.wvm.networkLookupByName(network)
-            status = net.isActive()
-            virtnet[network] = status
-        for network in self.wvm.listDefinedNetworks():
-            net = self.networkPool(network)
-            status = net.isActive()
-            virtnet[network] = status
-        return virtnet
 
     def images_get_storages(self, storages):
         """
@@ -268,60 +264,6 @@ class wvmConnect(object):
         net.create()
         net.setAutostart(1)
 
-    def network_get_info(self, network):
-        """
-
-        Function return network info.
-
-        """
-        info = []
-        net = self.networkPool(network)
-        if net:
-            info.append(net.isActive())
-            info.append(net.bridgeName())
-        else:
-            info = [None] * 2
-        return info
-
-    def network_get_subnet(self, network):
-        """
-
-        Function return virtual network info: ip, netmask, dhcp, type forward.
-
-        """
-        net = self.networkPool(network)
-        xml_net = net.XMLDesc(0)
-        ipv4 = []
-
-        fw_type = get_xml_path(xml_net, "/network/forward/@mode")
-        fw_dev = get_xml_path(xml_net, "/network/forward/@dev")
-
-        if fw_type:
-            ipv4.append([fw_type, fw_dev])
-        else:
-            ipv4.append(None)
-
-        # Subnet block
-        addr_str = get_xml_path(xml_net, "/network/ip/@address")
-        mask_str = get_xml_path(xml_net, "/network/ip/@netmask")
-
-        if addr_str and mask_str:
-            netmask = IP(mask_str)
-            gateway = IP(addr_str)
-            network = IP(gateway.int() & netmask.int())
-            ipv4.append(IP(str(network) + "/" + mask_str))
-        else:
-            ipv4.append(None)
-
-        # DHCP block
-        dhcp_start = get_xml_path(xml_net, "/network/ip/dhcp/range[1]/@start")
-        dhcp_end = get_xml_path(xml_net, "/network/ip/dhcp/range[1]/@end")
-
-        if not dhcp_start or not dhcp_end:
-            pass
-        else:
-            ipv4.append([IP(dhcp_start), IP(dhcp_end)])
-        return ipv4
 
     def snapshots_get_node(self):
         """
