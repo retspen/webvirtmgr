@@ -2,8 +2,8 @@ from django.db import models
 
 
 class Host(models.Model):
-    name = models.CharField(max_length=20)
-    hostname = models.CharField(max_length=20)
+    name = models.CharField(max_length=255)
+    hostname = models.CharField(max_length=255)
     login = models.CharField(max_length=20)
     password = models.CharField(max_length=14, blank=True, null=True)
     type = models.CharField(max_length=3)
@@ -25,8 +25,8 @@ class Flavor(models.Model):
 
 class Instance(models.Model):
     host = models.ForeignKey(Host)
-    vname = models.CharField(max_length=12)
-    vnc_passwd = models.CharField(max_length=12)
+    vname = models.CharField(max_length=255)
+    vnc_passwd = models.CharField(max_length=255)
 
     def __unicode__(self):
         return self.vname
