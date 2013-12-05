@@ -24,22 +24,6 @@
                     {% endfor %}
                 </div>
             {% endif %}
-            {% if form.target.errors %}
-                <div class="alert alert-danger">
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                    {% for error in form.target.errors %}
-                        {{ error }}
-                    {% endfor %}
-                </div>
-            {% endif %}
-            {% if form.source.errors %}
-                <div class="alert alert-danger">
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                    {% for error in form.source.errors %}
-                        {{ error }}
-                    {% endfor %}
-                </div>
-            {% endif %}
             <div class="row show-grid">
                 <div class="col-md-6">
                     <p>{% trans "Pool name" %}</p>

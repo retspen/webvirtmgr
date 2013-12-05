@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "Network Pool" %}{% endblock %}
+{% block title %}{% trans "Virtual Networks" %}{% endblock %}
 {% block content %}
     <div class="row">
         {% include 'sidebar.html' %}
@@ -41,62 +41,19 @@
                 </div>
             {% endif %}
             <div class="block-btn">
-                <a href="#AddNetPool" class="btn btn-success" data-toggle="modal">{% trans "Add Pool" %}</a>
+                <a href="#AddNetPool" class="btn btn-lg btn-success" data-toggle="modal">{% trans "Create" %}</a>
             </div>
-            {% ifequal pool 'add' %}
-                {% if not errors and not networks %}
-                    <div class="well">
-                        <h4>{% trans "You do not have any virtual networks" %}</h4>
-                    </div>
-                {% endif %}
-            {% endifequal %}
-
-            {% if info.1 %}
-                <div class="row show-grid">
-                    <div class="col-md-6">
-                        <p>{% trans "Pool name" %}</p>
-                        <p>{% trans "Device pool" %}</p>
-                        <p>{% trans "State" %}</p>
-                    </div>
-                    <div class="col-md-6">
-                        <p>[{% for key, value in networks.items %} {% ifequal key pool %}<b>{{ pool }}</b>{% else %}<a href="{% url 'network' host_id key %}">{{ key }}</a>{% endifequal %}{% endfor %} ]</p>
-                        <p>{{ info.1 }}</p>
-                        <form action="{% url 'network' host_id pool %}" method="post">{% csrf_token %}
-                            {% ifequal info.0 0 %}
-                                <input type="submit" class="btn btn-primary" name="start" value="{% trans "Start" %}">
-                                <input type="submit" class="btn btn-danger" name="delete" value="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
-                            {% else %}
-                                <input type="submit" class="btn btn-primary" name="stop" value="{% trans "Stop" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
-                            {% endifequal %}
-                        </form>
-                    </div>
+            {% if not networks %}
+                <div class="well">
+                    <h4>{% trans "You do not have any virtual networks" %}</h4>
                 </div>
-                <h3>{% trans "IPv4 configuration" %}</h3>
+            {% else %}
                 <hr>
-                <div class="row show-grid">
-                    <div class="col-md-6">
-                        <p>{% trans "Type forwarding" %}</p>
-                        <p>{% trans "Subnet pool" %}</p>
-                        <p>{% trans "DHCP" %}</p>
-                        {% if ipv4_net.2 %}
-                            <p>{% trans "Start" %}</p>
-                            <p>{% trans "End" %}</p>
-                        {% endif %}
-                    </div>
-                    <div class="col-md-6">
-                        <p>{% ifequal ipv4_net.0.0 'nat' %} {% trans "NAT" %} {% endifequal %}
-                           {% ifequal ipv4_net.0.0 'route' %} {% trans "ROUTE" %} {% endifequal %}
-                           {% ifequal ipv4_net.0.0 'bridge' %} {% trans "BRIDGE" %} {% endifequal %}
-                           {% if not ipv4_net.0.0 %} {% trans "ISOLATE" %} {% endif %}</p>
-                        <p>{% if ipv4_net.1 %}{{ ipv4_net.1 }}{% else %}{% trans "None" %}{% endif %}</p>
-                        <p>{% if ipv4_net.2 %}<span class="text-success">{% trans "ON" %}</span>{% else %}<span class="text-danger">{% trans "OFF" %}</span>{% endif %}</p>
-                        {% if ipv4_net.2 %}
-                            {% for dhcp in ipv4_net.2 %}
-                                <p>{{ dhcp }}</p>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
-                </div>
+                <div class="btn-group">
+                    {% for pool in networks %}
+                        <a style="width: 100px;" class="btn btn-default" type="buttons" href="{% url 'network' host_id pool %}"><h4>{{ pool }}</h4></a>
+                    {% endfor %}
+                </ul>
             {% endif %}
         </div>
     </div>
@@ -109,7 +66,7 @@
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h4 class="modal-title">{% trans "Add New Network Pool" %}</h4>
                 </div>
-                <form class="form-horizontal" method="post" action="{% url 'network' host_id "add" %}" role="form">{% csrf_token %}
+                <form class="form-horizontal" method="post" action="" role="form">{% csrf_token %}
                     <div class="form-group">
                         <label class="col-lg-4 control-label">{% trans "Name" %}</label>
                         <div class="col-lg-6">
@@ -147,14 +104,13 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-                        <button type="submit" class="btn btn-primary" name="pool_add">{% trans "Create" %}</button>
+                        <button type="submit" class="btn btn-primary" name="create">{% trans "Create" %}</button>
                     </div>
                 </form>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 {% endblock %}
-
 {% block script %}
     <script>
         $(document).ready(function() {

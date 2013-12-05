@@ -85,15 +85,79 @@ class wvmConnect(object):
             virtnet.append(net)
         return virtnet
 
-    def stg_pool(self, pool):
-            return self.wvm.storagePoolLookupByName(pool)
+    def define_storage(self, xml, flag):
+        self.wvm.storagePoolDefineXML(xml, flag)
 
+    def get_storage(self, name):
+        return self.wvm.storagePoolLookupByName(name)
+
+    def create_storage(self, type, name, source, target):
+        """
+        Function create storage pool.
+        """
+        xml = """
+                <pool type='%s'>
+                <name>%s</name>""" % (type, name)
+        if type == 'logical':
+            xml += """
+                  <source>
+                    <device path='%s'/>
+                    <name>%s</name>
+                    <format type='lvm2'/>
+                  </source>""" % (source, name)
+        if type == 'logical':
+            target = '/dev/' + name
+        xml += """
+                  <target>
+                       <path>%s</path>
+                  </target>
+                </pool>""" % target
+        self.define_storage(xml, 0)
+        stg = self.get_storage(name)
+        if type == 'logical':
+            stg.build(0)
+        stg.create(0)
+        stg.setAutostart(1)
+
+    def get_network(self, net):
+        return self.wvm.networkLookupByName(net)
+
+    def define_network(self, xml):
+        self.wvm.networkDefineXML(xml)
+
+    def create_network(self, name, forward, gateway, mask, dhcp, bridge):
+        """
+        Function create network pool.
+        """
+        xml = """
+            <network>
+                <name>%s</name>""" % name
+        if forward in ['nat', 'route', 'bridge']:
+            xml += """<forward mode='%s'/>""" % forward
+        xml += """<bridge """
+        if forward in ['nat', 'route', 'none']:
+            xml += """stp='on' delay='0'"""
+        if forward == 'bridge':
+            xml += """name='%s'""" % bridge
+        xml += """/>"""
+        if forward != 'bridge':
+            xml += """
+                        <ip address='%s' netmask='%s'>""" % (gateway, mask)
+            if dhcp:
+                xml += """<dhcp>
+                            <range start='%s' end='%s' />
+                        </dhcp>""" % (dhcp[0], dhcp[1])
+
+            xml += """</ip>"""
+        xml += """</network>"""
+        self.define_network(xml)
+        net = self.get_network(name)
+        net.create()
+        net.setAutostart(1)
 
     def lookupVM(self, vname):
         """
-
         Return VM object.
-
         """
         try:
             dom = self.wvm.lookupByName(vname)
@@ -103,17 +167,8 @@ class wvmConnect(object):
 
 
 
-    def networkPool(self, network):
-        """
-
-        Return network object.
-
-        """
-        try:
-            net = self.wvm.networkLookupByName(network)
-        except Exception:
-            net = None
-        return net
+    def get_network(self, net):
+        return self.wvm.networkLookupByName(net)
 
     def storageVol(self, volume, storage):
         """
@@ -197,37 +252,6 @@ class wvmConnect(object):
                 if vol == img:
                     stg_volume = stg.storageVolLookupByName(vol)
                     return stg_volume.path()
-
-    def new_storage_pool(self, type_pool, name, source, target):
-        """
-        Function create storage pool.
-        """
-        xml = """
-                <pool type='%s'>
-                <name>%s</name>""" % (type_pool, name)
-
-        if type_pool == 'logical':
-            xml += """
-                  <source>
-                    <device path='%s'/>
-                    <name>%s</name>
-                    <format type='lvm2'/>
-                  </source>""" % (source, name)
-
-        if type_pool == 'logical':
-            target = '/dev/' + name
-
-        xml += """
-                  <target>
-                       <path>%s</path>
-                  </target>
-                </pool>""" % target
-        self.wvm.storagePoolDefineXML(xml, 0)
-        stg = self.storagePool(name)
-        if type_pool == 'logical':
-            stg.build(0)
-        stg.create(0)
-        stg.setAutostart(1)
 
     def new_network_pool(self, name, forward, gateway, mask, dhcp, bridge_name):
         """
