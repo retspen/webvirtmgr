@@ -117,7 +117,7 @@ def instance(request, host_id, vname):
         errors.append(e.message)
     else:
         all_vm = sort_host(conn.vds_get_node())
-        vcpu, memory, networks, description = conn.vds_get_info(vname)
+        vcpu, memory, networks, description, autostart = conn.vds_get_info(vname)
         hdd_image = conn.vds_get_hdd(vname)
         iso_images = sorted(conn.get_all_media())
         media, media_path = conn.vds_get_media(vname)
@@ -204,8 +204,9 @@ def instance(request, host_id, vname):
                 description = request.POST.get('description', '')
                 vcpu = request.POST.get('vcpu', '')
                 ram = request.POST.get('ram', '')
+                autostart = request.POST.get('autostart', '')
                 try:
-                    conn.vds_edit(vname, description, ram, vcpu)
+                    conn.vds_edit(vname, description, ram, vcpu, autostart)
                     return HttpResponseRedirect(request.get_full_path())
                 except libvirtError as msg_error:
                     errors.append(msg_error.message)
@@ -244,6 +245,7 @@ def instance(request, host_id, vname):
 
     return render_to_response('instance.html', {'host_id': host_id,
                                                 'vname': vname,
+                                                'autostart': autostart,
                                                 'messages': messages,
                                                 'errors': errors,
                                                 'instance': instance,

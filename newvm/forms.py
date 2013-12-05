@@ -41,6 +41,7 @@ class NewVMForm(forms.Form):
     images = forms.CharField(required=False)
     hdd_size = forms.IntegerField(required=False)
     virtio = forms.BooleanField(required=False)
+    autostart = forms.BooleanField(required=False)
 
     def clean_name(self):
         name = self.cleaned_data['name']
