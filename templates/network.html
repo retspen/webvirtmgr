@@ -16,87 +16,89 @@
                     </div>
                 {% endfor %}
             {% endif %}
-            <div class="row show-grid">
-                <div class="col-md-6">
-                    <p>{% trans "Pool name" %}</p>
-                    <p>{% trans "Device pool" %}</p>
-                    <p>{% trans "State" %}</p>
-                    <p>{% trans "Autostart" %}</p>
+            {% if device %}
+                <div class="row show-grid">
+                    <div class="col-md-6">
+                        <p>{% trans "Pool name" %}</p>
+                        <p>{% trans "Device pool" %}</p>
+                        <p>{% trans "State" %}</p>
+                        <p>{% trans "Autostart" %}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p>
+                            [{% for net in networks %}
+                                {% ifequal net pool %}
+                                    <b>{{ net }}</b>
+                                {% else %}
+                                    <a href="{% url 'network' host_id net %}">{{ net }}</a>
+                                {% endifequal %}
+                            {% endfor %} ]
+                        </p>
+                        <p>{{ device }}</p>
+                        <p>
+                            <form action="" method="post">{% csrf_token %}
+                                {% ifequal state 0 %}
+                                    <input type="submit" class="btn btn-sm btn-default" name="start" value="{% trans "Start" %}">
+                                    <input type="submit" class="btn btn-sm btn-default" name="delete" value="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
+                                {% else %}
+                                    <input type="submit" class="btn btn-sm btn-default" name="stop" value="{% trans "Stop" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
+                                {% endifequal %}
+                            </form>
+                        </p>
+                        <p>
+                            <form action="" method="post">{% csrf_token %}
+                                {% ifequal autostart 0 %}
+                                    <input type="submit" class="btn btn-sm btn-default" name="set_autostart" value="{% trans "Enable" %}">
+                                {% else %}
+                                    <input type="submit" class="btn btn-sm btn-default" name="unset_autostart" onclick="return confirm('{% trans "Are you sure?" %}')" value="{% trans "Disable" %}">
+                                {% endifequal %}
+                            </form>
+                        </p>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <p>
-                        [{% for net in networks %}
-                            {% ifequal net pool %}
-                                <b>{{ net }}</b>
-                            {% else %}
-                                <a href="{% url 'network' host_id net %}">{{ net }}</a>
-                            {% endifequal %}
-                        {% endfor %} ]
-                    </p>
-                    <p>{{ device }}</p>
-                    <p>
-                        <form action="" method="post">{% csrf_token %}
-                            {% ifequal state 0 %}
-                                <input type="submit" class="btn btn-sm btn-default" name="start" value="{% trans "Start" %}">
-                                <input type="submit" class="btn btn-sm btn-default" name="delete" value="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
-                            {% else %}
-                                <input type="submit" class="btn btn-sm btn-default" name="stop" value="{% trans "Stop" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
-                            {% endifequal %}
-                        </form>
-                    </p>
-                    <p>
-                        <form action="" method="post">{% csrf_token %}
-                            {% ifequal autostart 0 %}
-                                <input type="submit" class="btn btn-sm btn-default" name="set_autostart" value="{% trans "Enable" %}">
-                            {% else %}
-                                <input type="submit" class="btn btn-sm btn-default" name="unset_autostart" onclick="return confirm('{% trans "Are you sure?" %}')" value="{% trans "Disable" %}">
-                            {% endifequal %}
-                        </form>
-                    </p>
-                </div>
-            </div>
-            <h3>{% trans "IPv4 configuration" %}</h3>
-            <hr>
-            <div class="row show-grid">
-                <div class="col-md-6">
-                    <p>{% trans "IPv4 Forwarding" %}</p>
-                    <p>{% trans "Network" %}</p>
-                    <p>{% trans "DHCP" %}</p>
-                    {% if ipv4_dhcp_range %}
-                        <p>{% trans "Start" %}</p>
-                        <p>{% trans "End" %}</p>
-                    {% endif %}
-                </div>
-                <div class="col-md-6">
-                    <p>
-                       {% ifequal ipv4_forward.0 'nat' %}
-                           {% trans "NAT" %}
-                       {% endifequal %}
-                       {% ifequal ipv4_forward.0 'route' %}
-                           {% trans "ROUTE" %}
-                       {% endifequal %}
-                       {% ifequal ipv4_forward.0 'bridge' %}
-                           {% trans "BRIDGE" %}
-                       {% endifequal %}
-                       {% if not ipv4_forward.0 %}
-                           {% trans "ISOLATE" %}
-                       {% endif %}
-                    </p>
-                    <p>{{ ipv4_network }}</p>
-                    <p>
+                <h3>{% trans "IPv4 configuration" %}</h3>
+                <hr>
+                <div class="row show-grid">
+                    <div class="col-md-6">
+                        <p>{% trans "IPv4 Forwarding" %}</p>
+                        <p>{% trans "Network" %}</p>
+                        <p>{% trans "DHCP" %}</p>
                         {% if ipv4_dhcp_range %}
-                            <span class="text-success">{% trans "ON" %}</span>
-                        {% else %}
-                            <span class="text-danger">{% trans "OFF" %}</span>
+                            <p>{% trans "Start" %}</p>
+                            <p>{% trans "End" %}</p>
                         {% endif %}
-                    </p>
-                    {% if ipv4_dhcp_range %}
-                        {% for dhcp in ipv4_dhcp_range %}
-                            <p>{{ dhcp }}</p>
-                        {% endfor %}
-                    {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <p>
+                           {% ifequal ipv4_forward.0 'nat' %}
+                               {% trans "NAT" %}
+                           {% endifequal %}
+                           {% ifequal ipv4_forward.0 'route' %}
+                               {% trans "ROUTE" %}
+                           {% endifequal %}
+                           {% ifequal ipv4_forward.0 'bridge' %}
+                               {% trans "BRIDGE" %}
+                           {% endifequal %}
+                           {% if not ipv4_forward.0 %}
+                               {% trans "ISOLATE" %}
+                           {% endif %}
+                        </p>
+                        <p>{{ ipv4_network }}</p>
+                        <p>
+                            {% if ipv4_dhcp_range %}
+                                <span class="text-success">{% trans "ON" %}</span>
+                            {% else %}
+                                <span class="text-danger">{% trans "OFF" %}</span>
+                            {% endif %}
+                        </p>
+                        {% if ipv4_dhcp_range %}
+                            {% for dhcp in ipv4_dhcp_range %}
+                                <p>{{ dhcp }}</p>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
                 </div>
-            </div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

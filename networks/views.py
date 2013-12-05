@@ -27,17 +27,12 @@ def network(request, host_id, pool):
     try:
         conn = wvmNetwork(compute.hostname, compute.login, compute.password, compute.type, pool)
         networks = conn.get_networks()
-
-        if pool is None:
-            return HttpResponseRedirect('/networks/%s' % host_id)
-        else:
-            networks = conn.get_networks()
-            state = conn.is_active()
-            device = conn.get_bridge_device()
-            autostart = conn.get_autostart()
-            ipv4_forward = conn.get_ipv4_forward()
-            ipv4_dhcp_range = conn.get_ipv4_dhcp_range()
-            ipv4_network = conn.get_ipv4_network()
+        state = conn.is_active()
+        device = conn.get_bridge_device()
+        autostart = conn.get_autostart()
+        ipv4_forward = conn.get_ipv4_forward()
+        ipv4_dhcp_range = conn.get_ipv4_dhcp_range()
+        ipv4_network = conn.get_ipv4_network()
 
         if request.method == 'POST':
             if 'start' in request.POST:
@@ -72,6 +67,6 @@ def network(request, host_id, pool):
                     errors.append(error_msg.message)
         conn.close()
     except libvirtError as err:
-        errors.append(e.message)
+        errors.append(err.message)
 
     return render_to_response('network.html', locals(), context_instance=RequestContext(request))

@@ -15,6 +15,7 @@ def storages(request, host_id):
         return render_to_response('storage.html', locals(),  context_instance=RequestContext(request))
 
 
+
 def storage(request, host_id, pool):
     """
 
@@ -37,22 +38,18 @@ def storage(request, host_id, pool):
     try:
         conn = wvmStorage(compute.hostname, compute.login, compute.password, compute.type, pool)
         storages = conn.get_storages()
+        size, free, usage = conn.get_size()
+        percent = (free * 100) / size
+        state = conn.is_active()
+        path = conn.get_target_path()
+        type = conn.get_type()
+        autostart = conn.get_autostart()
 
-        if pool is None:
-            return HttpResponseRedirect('/storages/%s' % host_id)
+        if state:
+            conn.refresh()
+            volumes = conn.update_volumes()
         else:
-            size, free, usage = conn.get_size()
-            percent = (free * 100) / size
-            state = conn.is_active()
-            path = conn.get_target_path()
-            type = conn.get_type()
-            autostart = conn.get_autostart()
-
-            if state:
-                conn.refresh()
-                volumes = conn.update_volumes()
-            else:
-                volumes = None
+            volumes = None
 
         if request.method == 'POST':
             if 'start' in request.POST:
@@ -132,6 +129,6 @@ def storage(request, host_id, pool):
                             errors.append(error_msg.message)
         conn.close()
     except libvirtError as err:
-        errors.append(e.message)
+        errors.append(err.message)
 
     return render_to_response('storage.html', locals(),  context_instance=RequestContext(request))

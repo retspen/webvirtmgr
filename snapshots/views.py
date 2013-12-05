@@ -8,7 +8,7 @@ from servers.models import Compute
 from libvirt import libvirtError
 
 
-def snapshot(request, host_id):
+def snapshots(request, host_id):
     """
 
     Snapshot block
@@ -28,7 +28,6 @@ def snapshot(request, host_id):
     if not conn:
         errors.append(e.message)
     else:
-        all_vm = sort_host(conn.vds_get_node())
         all_vm_snap = conn.snapshots_get_node()
         conn.close()
 
@@ -38,7 +37,7 @@ def snapshot(request, host_id):
     return render_to_response('snapshot.html', locals(), context_instance=RequestContext(request))
 
 
-def dom_snapshot(request, host_id, vname):
+def snapshot(request, host_id, vname):
     """
 
     Snapshot block

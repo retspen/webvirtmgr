@@ -12,13 +12,13 @@
                                 <a href="{% url 'create' host_id %}"><span class="glyphicon glyphicon-plus"></span> {% trans "Create VM" %}</a>
                             </li>
                             <li>
-                                <a href="{% url 'storage' host_id %}"><span class="glyphicon glyphicon-hdd"></span> {% trans "Storage pool" %}</a>
+                                <a href="{% url 'storages' host_id %}"><span class="glyphicon glyphicon-hdd"></span> {% trans "Storage pool" %}</a>
                             </li>
                             <li>
-                                <a href="{% url 'network' host_id %}"><span class="glyphicon glyphicon-globe"></span> {% trans "Network pool" %}</a>
+                                <a href="{% url 'networks' host_id %}"><span class="glyphicon glyphicon-globe"></span> {% trans "Network pool" %}</a>
                             </li>
                             <li>
-                                <a href="{% url 'snapshot' host_id %}"><span class="glyphicon glyphicon-camera"></span> {% trans "Snapshots" %}</a>
+                                <a href="{% url 'snapshots' host_id %}"><span class="glyphicon glyphicon-camera"></span> {% trans "Snapshots" %}</a>
                             </li>
                             <li>
                                 <a href="{% url 'instances' host_id %}"><span class="glyphicon glyphicon-list"></span> {% trans "Instances" %}</a>
