@@ -165,16 +165,9 @@ class wvmConnect(object):
             dom = None
         return dom
 
-
-
-    def get_network(self, net):
-        return self.wvm.networkLookupByName(net)
-
-    def storageVol(self, volume, storage):
+    def get_storage_volume(self, volume, storage):
         """
-
         Return volume object.
-
         """
         stg = self.storagePool(storage)
         stg_type = get_xml_path(stg.XMLDesc(0), "/pool/@type")
@@ -183,13 +176,12 @@ class wvmConnect(object):
         stg_volume = stg.storageVolLookupByName(volume)
         return stg_volume
 
-    def storageVolPath(self, volume):
+    def get_storage_volume_path(self, volume):
         """
         Return volume object by path.
         """
         stg_volume = self.wvm.storageVolLookupByPath(volume)
         return stg_volume
-
 
     def get_vol_image_type(self, storages, vol):
         for storage in storages:
@@ -222,9 +214,7 @@ class wvmConnect(object):
 
     def images_get_storages(self, storages):
         """
-
         Function return all images on all storages
-
         """
         disk = []
         for storage in storages:
@@ -242,9 +232,7 @@ class wvmConnect(object):
 
     def image_get_path(self, vol, storages):
         """
-
         Function return volume path.
-
         """
         for storage in storages:
             stg = self.storagePool(storage)
@@ -291,9 +279,7 @@ class wvmConnect(object):
 
     def snapshots_get_node(self):
         """
-
         Function return all snaphots on node.
-
         """
         vname = {}
         for vm_id in self.wvm.listDomainsID():
@@ -309,9 +295,7 @@ class wvmConnect(object):
 
     def snapshots_get_vds(self, vname):
         """
-
         Function return all vds snaphots.
-
         """
         snapshots = {}
         dom = self.lookupVM(vname)
@@ -322,9 +306,7 @@ class wvmConnect(object):
 
     def snapshot_delete(self, vname, name_snap):
         """
-
         Function delete vds snaphots.
-
         """
         dom = self.lookupVM(vname)
         snap = dom.snapshotLookupByName(name_snap, 0)
@@ -332,9 +314,7 @@ class wvmConnect(object):
 
     def snapshot_revert(self, vname, name_snap):
         """
-
         Function revert vds snaphots.
-
         """
         dom = self.lookupVM(vname)
         snap = dom.snapshotLookupByName(name_snap, 0)
@@ -342,9 +322,7 @@ class wvmConnect(object):
 
     def vnc_get_port(self, vname):
         """
-
         Function rever vds snaphots.
-
         """
         dom = self.lookupVM(vname)
         port = get_xml_path(dom.XMLDesc(0), "/domain/devices/graphics/@port")
@@ -352,9 +330,7 @@ class wvmConnect(object):
 
     def vds_mount_iso(self, vname, image):
         """
-
         Function mount iso image on vds. Changes on XML config.
-
         """
         storages = self.storages_get_node()
         dom = self.lookupVM(vname)
@@ -383,9 +359,7 @@ class wvmConnect(object):
 
     def vds_umount_iso(self, vname, image):
         """
-
         Function umount iso image on vds. Changes on XML config.
-
         """
         dom = self.lookupVM(vname)
         if dom.info()[0] == 1:
@@ -404,9 +378,7 @@ class wvmConnect(object):
 
     def vds_cpu_usage(self, vname):
         """
-
         Function return vds cpu usage.
-
         """
         cpu_usage = {}
         dom = self.lookupVM(vname)
@@ -423,9 +395,7 @@ class wvmConnect(object):
 
     def vds_disk_usage(self, vname):
         """
-
         Function return vds block IO.
-
         """
         devices=[]
         dev_usage = []
@@ -448,9 +418,7 @@ class wvmConnect(object):
 
     def vds_network_usage(self, vname):
         """
-
         Function return vds Bandwidth.
-
         """
         devices=[]
         dev_usage = []
@@ -472,9 +440,7 @@ class wvmConnect(object):
 
     def vds_get_info(self, vname):
         """
-
         Function return vds info.
-
         """
         info = []
         dom = self.lookupVM(vname)
@@ -499,9 +465,7 @@ class wvmConnect(object):
 
     def vds_get_hdd(self, vname):
         """
-
         Function return vds hdd info.
-
         """
         all_hdd_dev = {}
         storages = self.storages_get_node()
@@ -534,9 +498,7 @@ class wvmConnect(object):
 
     def vds_get_media(self, vname):
         """
-
         Function return vds media info.
-
         """
         dom = self.lookupVM(vname)
         xml = dom.XMLDesc(0)
@@ -555,9 +517,7 @@ class wvmConnect(object):
 
     def vds_set_vnc_passwd(self, vname, passwd):
         """
-
         Function set vnc password to vds.
-
         """
         dom = self.lookupVM(vname)
         xml = dom.XMLDesc(VIR_DOMAIN_XML_SECURE)
@@ -572,9 +532,7 @@ class wvmConnect(object):
 
     def vds_edit(self, vname, description, ram, vcpu):
         """
-
         Function change ram and cpu on vds.
-
         """
         dom = self.lookupVM(vname)
         xml = dom.XMLDesc(VIR_DOMAIN_XML_SECURE)
@@ -591,18 +549,14 @@ class wvmConnect(object):
 
     def defineXML(self, xml):
         """
-
         Funciton define VM config
-
         """
         self.wvm.defineXML(xml)
 
 
     def get_all_media(self):
         """
-
         Function return all media.
-
         """
         iso = []
         storages = self.storages_get_node()
@@ -617,9 +571,7 @@ class wvmConnect(object):
 
     def vds_remove_hdd(self, vname):
         """
-
         Function delete vds hdd.
-
         """
         dom = self.lookupVM(vname)
         img = get_xml_path(dom.XMLDesc(0), "/domain/devices/disk[1]/source/@file")
@@ -628,9 +580,7 @@ class wvmConnect(object):
 
     def vds_create_snapshot(self, vname):
         """
-
         Function create vds snapshot.
-
         """
         dom = self.lookupVM(vname)
         xml = """<domainsnapshot>\n
@@ -644,9 +594,7 @@ class wvmConnect(object):
 
     def vds_on_cluster(self):
         """
-
         Function show all host and vds
-
         """
         vname = {}
         host_mem = self.wvm.getInfo()[1] * 1048576
