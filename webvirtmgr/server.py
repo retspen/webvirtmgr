@@ -1055,6 +1055,19 @@ class ConnServer(object):
             vname[dom.name()] = (dom.info()[0], vcpu, mem, mem_usage)
         return vname
 
+    def get_vnc_password_by_name(self, vname):
+        xml = self.conn.lookupByName(vname).XMLDesc(VIR_DOMAIN_XML_SECURE)
+        tree = ElementTree.fromstring(xml)
+        vnc = tree.findall('devices/graphics[@type="vnc"]')[0].attrib
+
+
+        if 'passwd' in vnc:
+            vnc_passwd = vnc['passwd']
+        else:
+            vnc_passwd = None
+
+        return vnc_passwd
+
     def close(self):
         """
 
