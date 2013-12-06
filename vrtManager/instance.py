@@ -85,9 +85,9 @@ class wvmInstance(wvmConnect):
             for interface in ctx.xpathEval('/domain/devices/disk'):
                 device = interface.xpathEval('@device')[0].content
                 if device == 'disk':
-                    dev = interface.xpathEval('targe/@dev')[0].content
+                    dev = interface.xpathEval('target/@dev')[0].content
                     file = interface.xpathEval('source/@file')[0].content
-                    result.append({'dev': dev, 'disk': file})
+                    result.append({'dev': dev, 'path': file})
             return result
         return util.get_xml_path(self._XMLDesc(0), func=disks)
 
@@ -99,7 +99,7 @@ class wvmInstance(wvmConnect):
                 if device == 'cdrom':
                     dev = interface.xpathEval('targe/@dev')[0].content
                     file = interface.xpathEval('source/@file')[0].content
-                    result.append({'dev': dev, 'disk': file})
+                    result.append({'dev': dev, 'path': file})
             return result
         return util.get_xml_path(self._XMLDesc(0), func=disks)
 

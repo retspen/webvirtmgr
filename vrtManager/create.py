@@ -63,6 +63,16 @@ class wvmCreate(wvmConnect):
         vol = self.wvm.storageVolLookupByPath(path)
         return util.get_xml_path(vol.XMLDesc(0), "/volume/target/format/@type")
 
+    def get_volume_path(self, volume, storages):
+        for storage in storages:
+            stg = self.get_storage(storage)
+            if stg.info()[0] != 0:
+                stg.refresh(0)
+                for img in stg.listVolumes():
+                    if img == volume:
+                        vol = stg.storageVolLookupByName(img)
+                        return vol.path()
+
     def _defineXML(self, xml):
         self.wvm.defineXML(xml)
 

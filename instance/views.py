@@ -162,6 +162,7 @@ def instance(request, host_id, vname):
 
         status = conn.get_status()
         networks = conn.get_net_device()
+        print conn.get_disk_device()
         # vcpu, memory, networks, description = conn.vds_get_info(vname)
         # hdd_image = conn.vds_get_hdd(vname)
         # iso_images = sorted(conn.get_all_media())

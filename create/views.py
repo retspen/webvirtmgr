@@ -78,8 +78,9 @@ def create(request, host_id):
                             errors.append(msg)
                         else:
                             for vol in data['images'].split(','):
+                                print vol
                                 try:
-                                    path = conn.get_volume_path(vol)
+                                    path = conn.get_volume_path(vol, storages)
                                     volumes[path] = conn.get_volume_type(path)
                                 except libvirtError as msg_error:
                                     errors.append(msg_error.message)
@@ -94,7 +95,7 @@ def create(request, host_id):
                         try:
                             conn.create_instance(data['name'], data['memory'], data['vcpu'], data['host_model'],
                                                  uuid, volumes, data['networks'], data['virtio'])
-                            create_instance = Instance(compute=host_id, name=data['name'], uuid=uuid)
+                            create_instance = Instance(compute_id=host_id, name=data['name'], uuid=uuid)
                             create_instance.save()
                             return HttpResponseRedirect('/instance/%s/%s/' % (host_id, data['name']))
                         except libvirtError as msg_error:
