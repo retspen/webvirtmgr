@@ -79,13 +79,36 @@ class wvmInstance(wvmConnect):
             return result
         return util.get_xml_path(self._XMLDesc(0), func=networks)
 
+    def get_disk_device(self):
+        def disks(ctx):
+            result = []
+            for interface in ctx.xpathEval('/domain/devices/disk'):
+                device = interface.xpathEval('@device')[0].content
+                if device == 'disk':
+                    dev = interface.xpathEval('targe/@dev')[0].content
+                    file = interface.xpathEval('source/@file')[0].content
+                    result.append({'dev': dev, 'disk': file})
+            return result
+        return util.get_xml_path(self._XMLDesc(0), func=disks)
+
+    def get_media_device(self):
+        def disks(ctx):
+            result = []
+            for interface in ctx.xpathEval('/domain/devices/disk'):
+                device = interface.xpathEval('@device')[0].content
+                if device == 'cdrom':
+                    dev = interface.xpathEval('targe/@dev')[0].content
+                    file = interface.xpathEval('source/@file')[0].content
+                    result.append({'dev': dev, 'disk': file})
+            return result
+        return util.get_xml_path(self._XMLDesc(0), func=disks)
 
     def _XMLDesc(self, flag):
         return self.instance.XMLDesc(flag)
 
     def get_vnc(self):
         vnc = util.get_xml_path(self._XMLDesc(0),
-                                 "/domain/devices/graphics/@port")
+                                "/domain/devices/graphics/@port")
         return vnc
 
     def mount_iso(self, image):
@@ -181,64 +204,6 @@ class wvmInstance(wvmConnect):
             tx_diff_usage = (tx_use_now - tx_use_ago) * 8
             dev_usage.append({'dev': i, 'rx': rx_diff_usage, 'tx': tx_diff_usage})
         return dev_usage
-
-    def vds_get_info(self, vname):
-        """
-        Function return vds info.
-        """
-        info = []
-        dom = self.lookupVM(vname)
-        xml = dom.XMLDesc(0)
-        info.append(get_xml_path(xml, "/domain/vcpu"))
-        mem = get_xml_path(xml, "/domain/memory")
-        mem = int(mem) / 1024
-        info.append(int(mem))
-
-        def get_networks(ctx):
-            result = []
-            for interface in ctx.xpathEval('/domain/devices/interface'):
-                mac = interface.xpathEval('mac/@address')[0].content
-                nic = interface.xpathEval('source/@network|source/@bridge')[0].content
-                result.append({'mac': mac, 'nic': nic})
-            return result
-
-        info.append(get_xml_path(xml, func=get_networks))
-        description = get_xml_path(xml, "/domain/description")
-        info.append(description)
-        return info
-
-    def get_disk(self):
-        """
-        Function return vds hdd info.
-        """
-        all_hdd_dev = {}
-        storages = self.storages_get_node()
-        dom = self.instance
-        xml = dom.XMLDesc(0)
-
-        for num in range(1, 5):
-            hdd_dev = get_xml_path(xml, "/domain/devices/disk[%s]/@device" % (num))
-            if hdd_dev == 'disk':
-                dev_bus = get_xml_path(xml, "/domain/devices/disk[%s]/target/@dev" % (num))
-                hdd = get_xml_path(xml, "/domain/devices/disk[%s]/source/@file" % (num))
-                # If xml create custom
-                if not hdd:
-                    hdd = get_xml_path(xml, "/domain/devices/disk[%s]/source/@dev" % (num))
-                try:
-                    img = self.storageVolPath(hdd)
-                    img_vol = img.name()
-                    for storage in storages:
-                        stg = self.storagePool(storage)
-                        if stg.info()[0] != 0:
-                            stg.refresh(0)
-                            for img in stg.listVolumes():
-                                if img == img_vol:
-                                    vol = img
-                                    vol_stg = storage
-                    all_hdd_dev[dev_bus] = vol, vol_stg
-                except Exception:
-                    all_hdd_dev[dev_bus] = hdd, 'Not in the pool'
-        return all_hdd_dev
 
     def vds_get_media(self, vname):
         """
