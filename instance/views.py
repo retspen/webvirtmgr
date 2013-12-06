@@ -7,15 +7,15 @@ from django.utils import simplejson
 from instance.models import Instance
 from servers.models import Compute
 
+from vrtManager.instance import wvmInstances, wvmInstance
+
 from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE
 from webvirtmgr.settings import TIME_JS_REFRESH
 
 
 def diskusage(request, host_id, vname):
     """
-
     VM disk IO
-
     """
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
@@ -41,9 +41,7 @@ def diskusage(request, host_id, vname):
 
 def netusage(request, host_id, vname):
     """
-
     VM net bandwidth
-
     """
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
@@ -69,9 +67,7 @@ def netusage(request, host_id, vname):
 
 def cpuusage(request, host_id, vname):
     """
-
     VM cpu usage
-
     """
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
@@ -96,14 +92,58 @@ def cpuusage(request, host_id, vname):
 
 
 def instances(request, host_id):
-    return request
+    """
+    Instances block
+    """
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login')
 
+    errors = []
+    instances = {}
+    compute = Compute.objects.get(id=host_id)
+
+    try:
+        conn = wvmInstances(compute.hostname,
+                            compute.login,
+                            compute.password,
+                            compute.type)
+        get_instances = conn.get_instances()
+
+        for instance in get_instances:
+            try:
+                instance_uuid = Instance.objects.get(compute_id=host_id, name=instance)
+            except:
+                instance_uuid = None
+            instances[instance] = (conn.get_instance_status(instance), instance_uuid)
+
+        if request.method == 'POST':
+            name = request.POST.get('name', '')
+            if 'start' in request.POST:
+                conn.start(name)
+                return HttpResponseRedirect(request.get_full_path())
+            if 'shutdown' in request.POST:
+                conn.shutdown(name)
+                return HttpResponseRedirect(request.get_full_path())
+            if 'destroy' in request.POST:
+                conn.force_shutdown(name)
+                return HttpResponseRedirect(request.get_full_path())
+            if 'suspend' in request.POST:
+                conn.suspend(name)
+                return HttpResponseRedirect(request.get_full_path())
+            if 'resume' in request.POST:
+                conn.resume(name)
+                return HttpResponseRedirect(request.get_full_path())
+
+        conn.close()
+
+    except libvirtError as msg_error:
+        errors.append(msg_error.message)
+
+    return render_to_response('instances.html', locals(), context_instance=RequestContext(request))
 
 def instance(request, host_id, vname):
     """
-
-    VDS block
-
+    Instance block
     """
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
@@ -111,25 +151,24 @@ def instance(request, host_id, vname):
     errors = []
     time_refresh = TIME_JS_REFRESH
     messages = []
-    host = Host.objects.get(id=host_id)
+    compute = Compute.objects.get(id=host_id)
 
     try:
-        conn = ConnServer(host)
-    except libvirtError as e:
-        conn = None
+        conn = wvmInstance(compute.hostname,
+                           compute.login,
+                           compute.password,
+                           compute.type,
+                           vname)
 
-    if not conn:
-        errors.append(e.message)
-    else:
-        all_vm = sort_host(conn.vds_get_node())
-        vcpu, memory, networks, description = conn.vds_get_info(vname)
-        hdd_image = conn.vds_get_hdd(vname)
-        iso_images = sorted(conn.get_all_media())
-        media, media_path = conn.vds_get_media(vname)
-        dom = conn.lookupVM(vname)
-        vcpu_range = [str(x) for x in range(1, 9)]
-        memory_range = [128, 256, 512, 768, 1024, 2048, 4096, 8192, 16384]
-        vnc_port = conn.vnc_get_port(vname)
+        status = conn.get_status()
+        networks = conn.get_net_device()
+        # vcpu, memory, networks, description = conn.vds_get_info(vname)
+        # hdd_image = conn.vds_get_hdd(vname)
+        # iso_images = sorted(conn.get_all_media())
+        # media, media_path = conn.vds_get_media(vname)
+        # vcpu_range = util.get_phy_cpus(conn)
+        # memory_range = [128, 256, 512, 768, 1024, 2048, 4096, 8192, 16384]
+        # vnc_port = conn.vnc_get_port(vname)
 
         try:
             instance = Instance.objects.get(vname=vname)
@@ -138,90 +177,56 @@ def instance(request, host_id, vname):
 
         if request.method == 'POST':
             if 'start' in request.POST:
-                try:
-                    dom.create()
-                    return HttpResponseRedirect(request.get_full_path())
-                except libvirtError as msg_error:
-                    errors.append(msg_error.message)
+                dom.create()
+                return HttpResponseRedirect(request.get_full_path())
             if 'power' in request.POST:
                 if 'shutdown' == request.POST.get('power', ''):
-                    try:
-                        dom.shutdown()
-                        return HttpResponseRedirect(request.get_full_path())
-                    except libvirtError as msg_error:
-                        errors.append(msg_error.message)
+                    dom.shutdown()
+                    return HttpResponseRedirect(request.get_full_path())
                 if 'destroy' == request.POST.get('power', ''):
-                    try:
-                        dom.destroy()
-                        return HttpResponseRedirect(request.get_full_path())
-                    except libvirtError as msg_error:
-                        errors.append(msg_error.message)
+                    dom.destroy()
+                    return HttpResponseRedirect(request.get_full_path())
             if 'suspend' in request.POST:
-                try:
-                    dom.suspend()
-                    return HttpResponseRedirect(request.get_full_path())
-                except libvirtError as msg_error:
-                    errors.append(msg_error.message)
+                dom.suspend()
+                return HttpResponseRedirect(request.get_full_path())
             if 'resume' in request.POST:
-                try:
-                    dom.resume()
-                    return HttpResponseRedirect(request.get_full_path())
-                except libvirtError as msg_error:
-                    errors.append(msg_error.message)
+                dom.resume()
+                return HttpResponseRedirect(request.get_full_path())
             if 'delete' in request.POST:
+                if dom.info()[0] == 1:
+                    dom.destroy()
+                if request.POST.get('image', ''):
+                    conn.vds_remove_hdd(vname)
                 try:
-                    if dom.info()[0] == 1:
-                        dom.destroy()
-                    if request.POST.get('image', ''):
-                        conn.vds_remove_hdd(vname)
-                    try:
-                        instance = Instance.objects.get(host=host_id, vname=vname)
-                        instance.delete()
-                    except:
-                        pass
-                    dom.undefine()
-                    return HttpResponseRedirect('/overview/%s/' % host_id)
-                except libvirtError as msg_error:
-                    errors.append(msg_error.message)
+                    instance = Instance.objects.get(host=host_id, vname=vname)
+                    instance.delete()
+                except:
+                    pass
+                dom.undefine()
+                return HttpResponseRedirect('/overview/%s/' % host_id)
             if 'snapshot' in request.POST:
-                try:
-                    conn.vds_create_snapshot(vname)
-                    msg = _("Create snapshot for instance successful")
-                    messages.append(msg)
-                except libvirtError as msg_error:
-                    errors.append(msg_error.message)
+                conn.vds_create_snapshot(vname)
+                msg = _("Create snapshot for instance successful")
+                messages.append(msg)
             if 'remove_iso' in request.POST:
                 image = request.POST.get('iso_img', '')
-                try:
-                    conn.vds_umount_iso(vname, image)
-
-                    return HttpResponseRedirect(request.get_full_path())
-                except libvirtError as msg_error:
-                    errors.append(msg_error.message)
+                conn.vds_umount_iso(vname, image)
+                return HttpResponseRedirect(request.get_full_path())
             if 'add_iso' in request.POST:
                 image = request.POST.get('iso_img', '')
-                try:
-                    conn.vds_mount_iso(vname, image)
-                    return HttpResponseRedirect(request.get_full_path())
-                except libvirtError as msg_error:
-                    errors.append(msg_error.message)
+                conn.vds_mount_iso(vname, image)
+                return HttpResponseRedirect(request.get_full_path())
             if 'edit' in request.POST:
                 description = request.POST.get('description', '')
                 vcpu = request.POST.get('vcpu', '')
                 ram = request.POST.get('ram', '')
-                try:
-                    conn.vds_edit(vname, description, ram, vcpu)
-                    return HttpResponseRedirect(request.get_full_path())
-                except libvirtError as msg_error:
-                    errors.append(msg_error.message)
+                conn.vds_edit(vname, description, ram, vcpu)
+                return HttpResponseRedirect(request.get_full_path())
             if 'xml_edit' in request.POST:
                 xml = request.POST.get('vm_xml', '')
-                try:
-                    if xml:
-                        conn.defineXML(xml)
+                if xml:
+                    conn.defineXML(xml)
                     return HttpResponseRedirect(request.get_full_path())
-                except libvirtError as msg_error:
-                    errors.append(msg_error.message)
             if 'vnc_pass' in request.POST:
                 if request.POST.get('auto_pass', ''):
                     from string import letters, digits
@@ -238,30 +243,13 @@ def instance(request, host_id, vname):
                         vnc_pass.vnc_passwd = passwd
                     except:
                         vnc_pass = Instance(host_id=host_id, vname=vname, vnc_passwd=passwd)
-                    try:
                         conn.vds_set_vnc_passwd(vname, passwd)
                         vnc_pass.save()
-                    except libvirtError as msg_error:
-                        errors.append(msg_error.message)
                     return HttpResponseRedirect(request.get_full_path())
 
         conn.close()
 
-    return render_to_response('instance.html', {'host_id': host_id,
-                                                'vname': vname,
-                                                'messages': messages,
-                                                'errors': errors,
-                                                'instance': instance,
-                                                'all_vm': all_vm,
-                                                'vcpu': vcpu, 'vcpu_range': vcpu_range,
-                                                'description': description,
-                                                'networks': networks,
-                                                'memory': memory, 'memory_range': memory_range,
-                                                'hdd_image': hdd_image, 'iso_images': iso_images,
-                                                'media': media, 'path': media_path,
-                                                'dom': dom,
-                                                'vm_xml': dom.XMLDesc(VIR_DOMAIN_XML_SECURE),
-                                                'vnc_port': vnc_port,
-                                                'time_refresh': time_refresh
-                                                },
-                              context_instance=RequestContext(request))
+    except libvirtError as msg_error:
+        errors.append(msg_error.message)
+
+    return render_to_response('instance.html', locals(), context_instance=RequestContext(request))

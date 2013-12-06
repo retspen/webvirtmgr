@@ -8,7 +8,7 @@ from django.template import RequestContext
 
 from instance.models import Instance
 
-def console(request, host_id, vname):
+def console(request, host_id):
     """
 
     VNC vm's block

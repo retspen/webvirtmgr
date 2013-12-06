@@ -8,7 +8,6 @@ from networks.forms import AddNetPool
 
 from vrtManager.network import wvmConnect, wvmNetwork
 from vrtManager.network import network_size
-from vrtManager import util
 
 from libvirt import libvirtError
 
