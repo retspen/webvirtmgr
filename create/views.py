@@ -5,10 +5,12 @@ from django.utils.translation import ugettext_lazy as _
 
 from servers.models import Compute
 from create.models import Flavor
+from instance.models import Instance
 
 from libvirt import libvirtError
 
 from vrtManager.create import wvmCreate
+from vrtManager import util
 from create.forms import FlavorAddForm, NewVMForm
 
 
@@ -60,11 +62,13 @@ def create(request, host_id):
             delete_flavor.delete()
             return HttpResponseRedirect(request.get_full_path())
         if 'create' in request.POST:
+            volumes = {}
             form = NewVMForm(request.POST)
+            print form.errors
             if form.is_valid():
                 data = form.cleaned_data
-                if all_vm:
-                    if data['name'] in all_vm:
+                if instances:
+                    if data['name'] in instances:
                         msg = _("A virtual machine with this name already exists")
                         errors.append(msg)
                 if not errors:
@@ -73,34 +77,30 @@ def create(request, host_id):
                             msg = _("First you need to create or select an image")
                             errors.append(msg)
                         else:
-                            vol_paths = []
                             for vol in data['images'].split(','):
-                                vol_paths.append(conn.image_get_path(vol, all_storages))
+                                try:
+                                    path = conn.get_volume_path(vol)
+                                    volumes[path] = conn.get_volume_type(path)
+                                except libvirtError as msg_error:
+                                    errors.append(msg_error.message)
                     else:
                         try:
-                            conn.new_volume(data['storage'], data['name'], data['hdd_size'])
+                            path = conn.create_volume(data['storage'], data['name'], data['hdd_size'])
+                            volumes[path] = conn.get_volume_type(path)
                         except libvirtError as msg_error:
                             errors.append(msg_error.message)
                     if not errors:
-                        volumes = []
-                        if not data['images']:
-                            volumes.append(conn.storageVol(data['name'], data['storage']))
-                        else:
-                            for vol_path in vol_paths:
-                                volumes.append(conn.storageVolPath(vol_path))
-
-                        images = []
-                        for vol in volumes:
-                            images.append(vol.path())
-
+                        uuid = util.randomUUID()
                         try:
-                            conn.add_vm(data['name'], data['ram'], data['vcpu'], data['host_model'], images,
-                                        data['networks'], data['virtio'], all_storages, passwd)
+                            conn.create_instance(data['name'], data['memory'], data['vcpu'], data['host_model'],
+                                                 uuid, volumes, data['networks'], data['virtio'])
+                            create_instance = Instance(compute=host_id, name=data['name'], uuid=uuid)
+                            create_instance.save()
                             return HttpResponseRedirect('/instance/%s/%s/' % (host_id, data['name']))
                         except libvirtError as msg_error:
                             if data['hdd_size']:
-                                volumes[0].delete(0)
+                                conn.delete_volume(volumes[0])
                             errors.append(msg_error.message)
-        conn.close()
+    conn.close()
 
     return render_to_response('create.html', locals(), context_instance=RequestContext(request))

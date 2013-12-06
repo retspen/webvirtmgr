@@ -161,6 +161,6 @@ def storage(request, host_id, pool):
                         return HttpResponseRedirect(request.get_full_path())
                     except libvirtError as error_msg:
                         errors.append(error_msg.message)
-        conn.close()
+    conn.close()
 
     return render_to_response('storage.html', locals(),  context_instance=RequestContext(request))

@@ -2,39 +2,92 @@
 # Copyright (C) 2013 Webvirtmgr.
 #
 import virtinst
+import string
 from vrtManager import util
 from vrtManager.conection import wvmConnect
 
 
 class wvmCreate(wvmConnect):
+    def get_storages_images(self, storages):
+        """
+        Function return all images on all storages
+        """
+        images = []
+        for storage in storages:
+            stg = self.get_storage(storage)
+            try:
+                stg.refresh(0)
+            except:
+                pass
+            for img in stg.listVolumes():
+                if img.endswith('.iso'):
+                    pass
+                else:
+                    images.append(img)
+        return images
+
     def get_guest_cap(self):
         """Get guest capabilities"""
         return virtinst.CapabilitiesParser.guest_lookup(self.wvm)
 
-    def create(self, name, ram, cpu, nets, virtio, storages):
+    def create_volume(self, storage, name, size, format='qcow2'):
+        size = int(size) * 1073741824
+        stg = self.get_storage(storage)
+        storage_type = util.get_xml_path(stg.XMLDesc(0), "/pool/@type")
+        if storage_type == 'dir':
+            name += '.img'
+            alloc = 0
+        else:
+            alloc = size
+        xml = """
+            <volume>
+                <name>%s</name>
+                <capacity>%s</capacity>
+                <allocation>%s</allocation>
+                <target>
+                    <format type='%s'/>
+                </target>
+            </volume>""" % (name, size, alloc, format)
+        stg.createXML(xml, 0)
+        try:
+            stg.refresh(0)
+        except:
+            pass
+        vol = stg.storageVolLookupByName(name)
+        return vol.path()
+
+    def get_volume_type(self, path):
+        """
+        Function return volume path.
+        """
+        vol = self.wvm.storageVolLookupByPath(path)
+        return util.get_xml_path(vol.XMLDesc(0), "/volume/target/format/@type")
+
+    def _defineXML(self, xml):
+        self.wvm.defineXML(xml)
+
+    def create_instance(self, name, memory, vcpu, host_model, uuid, images, networks, virtio):
         """
         Create VM function
-
         """
-        ram = int(ram) * 1024
+        memory = int(memory) * 1024
 
         xml = """
                 <domain type='%s'>
                   <name>%s</name>
                   <uuid>%s</uuid>
-                  <memory>%s</memory>
-                  <currentMemory>%s</currentMemory>
-                  <vcpu>%s</vcpu>""" % (domain, name, uuid, memory, memory, vcpu)
+                  <memory unit='KiB'>%s</memory>
+                  <vcpu>%s</vcpu>""" % (self.get_guest_cap()[1].hypervisor_type, name, uuid, memory, vcpu)
 
         if host_model:
             xml += """<cpu mode='host-model'/>"""
 
         xml += """<os>
-                    <type arch='%s'>hvm</type>
+                    <type arch='%s'>%s</type>
                     <boot dev='hd'/>
                     <boot dev='cdrom'/>
                     <bootmenu enable='yes'/>
-                  </os>""" % (arch)
+                  </os>""" % (self.get_guest_cap()[0].arch, self.get_guest_cap()[0].os_type)
 
         xml += """<features>
                     <acpi/><apic/><pae/>
@@ -45,11 +98,18 @@ class wvmCreate(wvmConnect):
                   <on_crash>restart</on_crash>
                   <devices>"""
 
-        xml += """  <disk type='file' device='disk'>
-                      <driver name='qemu' type='raw'/>
-                      <source file='/var/lib/libvirt/images/qqqq.img'/>
-                      <target dev='sda' bus='ide'/>
-                    </disk>"""
+        disk_letters = list(string.lowercase)
+        for image, type in images.items():
+            xml += """  <disk type='file' device='disk'>
+                          <driver name='qemu' type='%s'/>
+                          <source file='%s'/>""" % (type, image)
+
+            if virtio:
+                xml += """<target dev='vd%s' bus='virtio'/>""" % (disk_letters.pop(0),)
+            else:
+                xml += """<target dev='sd%s' bus='ide'/>""" % (disk_letters.pop(0),)
+
+            xml += """</disk>"""
 
         xml += """  <disk type='file' device='cdrom'>
                       <driver name='qemu' type='raw'/>
@@ -58,73 +118,7 @@ class wvmCreate(wvmConnect):
                       <readonly/>
                     </disk>"""
 
-        xml += """  <interface type='network'>
-                      <source network='default'/>
-                      <mac address='52:54:00:dd:18:7e'/>
-                    </interface>"""
-
-        xml += """  <input type='mouse' bus='ps2'/>
-                    <graphics type='vnc' port='-1'/>
-                    <console type='pty'/>
-                    <video>
-                      <model type='cirrus'/>
-                    </video>
-                  </devices>
-                </domain>"""
-
-        disks = []
-        for image in images:
-            img = self.storageVolPath(image)
-            image_type = self.get_vol_image_type(storages, img.name())
-            disks.append({'image': image, 'type': image_type})
-
-        xml = """<domain type='%s'>
-                  <name>%s</name>
-                  <description>None</description>
-                  <memory unit='KiB'>%s</memory>
-                  <vcpu>%s</vcpu>""" % (dom_type, name, ram, cpu)
-
-        if host_model:
-            xml += """<cpu mode='host-model'/>"""
-
-        xml += """<os>
-                    <type arch='x86_64' machine='%s'>hvm</type>
-                    <boot dev='hd'/>
-                    <boot dev='cdrom'/>
-                    <bootmenu enable='yes'/>
-                  </os>
-                  <features>
-                    <acpi/>
-                    <apic/>
-                    <pae/>
-                  </features>
-                  <clock offset='utc'/>
-                  <on_poweroff>destroy</on_poweroff>
-                  <on_reboot>restart</on_reboot>
-                  <on_crash>restart</on_crash>
-                  <devices>
-                    <emulator>%s</emulator>""" % (machine, emulator)
-
-        disk_letters = list(string.lowercase)
-        for disk in disks:
-            xml += """<disk type='file' device='disk'>
-                          <driver name='qemu' type='%s'/>
-                          <source file='%s'/>""" % (disk['type'], disk['image'])
-            if virtio:
-                xml += """<target dev='vd%s' bus='virtio'/>""" % (disk_letters.pop(0),)
-            else:
-                xml += """<target dev='hd%s' bus='ide'/>""" % (disk_letters.pop(0),)
-
-            xml += """</disk>"""
-
-        xml += """<disk type='file' device='cdrom'>
-                      <driver name='qemu' type='raw'/>
-                      <source file=''/>
-                      <target dev='sda' bus='ide'/>
-                      <readonly/>
-                    </disk>"""
-
-        for net in nets.split(','):
+        for net in networks.split(','):
             xml += """
                     <interface type='network'>
                         <source network='%s'/>""" % net
@@ -133,15 +127,13 @@ class wvmCreate(wvmConnect):
             xml += """
                     </interface>"""
 
-        xml += """
-                    <input type='tablet' bus='usb'/>
-                    <input type='mouse' bus='ps2'/>
-                    <graphics type='vnc' port='-1' autoport='yes' listen='0.0.0.0' passwd='%s'>
-                      <listen type='address' address='0.0.0.0'/>
-                    </graphics>
+        xml += """  <input type='mouse' bus='ps2'/>
+                    <graphics type='vnc' port='-1'/>
+                    <console type='pty'/>
+                    <video>
+                      <model type='cirrus'/>
+                    </video>
                     <memballoon model='virtio'/>
                   </devices>
-                </domain>""" % (passwd)
-        self.wvm.defineXML(xml)
-        dom = self.lookupVM(name)
-        dom.setAutostart(1)
+                </domain>"""
+        self._defineXML(xml)

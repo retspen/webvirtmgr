@@ -77,7 +77,6 @@ def network(request, host_id, pool):
         ipv4_forward = conn.get_ipv4_forward()
         ipv4_dhcp_range = conn.get_ipv4_dhcp_range()
         ipv4_network = conn.get_ipv4_network()
-
     except libvirtError as err:
         errors.append(err.message)
 
@@ -113,6 +112,6 @@ def network(request, host_id, pool):
             except libvirtError as error_msg:
                 errors.append(error_msg.message)
 
-        conn.close()
+    conn.close()
 
     return render_to_response('network.html', locals(), context_instance=RequestContext(request))

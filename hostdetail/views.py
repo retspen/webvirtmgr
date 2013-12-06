@@ -73,7 +73,6 @@ def overview(request, host_id):
         mem_usage = conn.memory_get_usage()
         conn.close()
     except libvirtError as err:
-        hostname = host_arch = host_memory = logical_cpu = model_cpu = uri_conn = None
         errors.append(err.message)
 
     return render_to_response('hostdeatil.html', locals(), context_instance=RequestContext(request))
