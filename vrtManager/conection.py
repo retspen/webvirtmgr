@@ -155,15 +155,20 @@ class wvmConnect(object):
         net.create()
         net.setAutostart(1)
 
-    def lookupVM(self, vname):
+    def get_instance(self, name):
+        return self.wvm.lookupByName(name)
+
+    def get_instances(self):
         """
-        Return VM object.
+        Get all instance in host server
         """
-        try:
-            dom = self.wvm.lookupByName(vname)
-        except Exception:
-            dom = None
-        return dom
+        instances = []
+        for inst_id in self.wvm.listDomainsID():
+            dom = self.wvm.lookupByID(int(inst_id))
+            instances.append(dom.name())
+        for name in self.wvm.listDefinedDomains():
+            instances.append(name)
+        return instances
 
     def get_storage_volume(self, volume, storage):
         """
@@ -198,37 +203,23 @@ class wvmConnect(object):
                             image_type = get_xml_path(vol.XMLDesc(0), "/volume/target/format/@type")
         return image_type
 
-
-    def get_instances(self):
-        """
-        Get all VM in host server
-        """
-        instances = {}
-        for inst_id in self.wvm.listDomainsID():
-            dom = self.wvm.lookupByID(int(inst_id))
-            instances[dom.name()] = dom.info()[0]
-        for name in self.wvm.listDefinedDomains():
-            dom = self.lookupVM(name)
-            instances[dom.name()] = dom.info()[0]
-        return instances
-
-    def images_get_storages(self, storages):
+    def get_storages_images(self, storages):
         """
         Function return all images on all storages
         """
-        disk = []
+        images = []
         for storage in storages:
-            stg = self.storagePool(storage)
-            stg_type = get_xml_path(stg.XMLDesc(0), "/pool/@type")
-            if stg.info()[0] != 0:
+            stg = self.get_storage(storage)
+            try:
                 stg.refresh(0)
-                for img in stg.listVolumes():
-                    if stg_type == 'dir':
-                        if re.findall(".img", img):
-                            disk.append(img)
-                    if stg_type == 'logical':
-                        disk.append(img)
-        return disk
+            except:
+                pass
+            for img in stg.listVolumes():
+                if img.endswith('.iso'):
+                    pass
+                else:
+                    images.append(img)
+        return images
 
     def image_get_path(self, vol, storages):
         """

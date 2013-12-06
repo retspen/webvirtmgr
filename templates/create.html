@@ -6,7 +6,6 @@
     <link href="{% static "css/progressbar.css" %}" rel="stylesheet">
     <link href="{% static "css/bootstrap-multiselect.css" %}" rel="stylesheet">
 {% endblock %}
-
 {% block content %}
     <div class="row">
         {% include 'sidebar.html' %}
@@ -22,10 +21,10 @@
                     </div>
                 {% endfor %}
             {% endif %}
-            {% if form.name.errors %}
+            {% if form.label.errors %}
                 <div class="alert alert-danger">
                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                    {% for error in form.name.errors %}
+                    {% for error in form.label.errors %}
                         {{ error }}
                     {% endfor %}
                 </div>
@@ -38,18 +37,18 @@
                     {% endfor %}
                 </div>
             {% endif %}
-            {% if form.ram.errors %}
+            {% if form.memory.errors %}
                 <div class="alert alert-danger">
                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                    {% for error in form.ram.errors %}
+                    {% for error in form.memory.errors %}
                         {{ error }}
                     {% endfor %}
                 </div>
             {% endif %}
-            {% if form.hdd.errors %}
+            {% if form.disk.errors %}
                 <div class="alert alert-danger">
                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                    {% for error in form.hdd.errors %}
+                    {% for error in form.disk.errors %}
                         {{ error }}
                     {% endfor %}
                 </div>
@@ -82,17 +81,17 @@
                     {% for flavor in flavors %}
                         <tr>
                             <td>{{ forloop.counter }}</td>
-                            <td>{{ flavor.name }}</td>
+                            <td>{{ flavor.label }}</td>
                             <td>{{ flavor.vcpu }}</td>
-                            <td>{{ flavor.ram }} {% trans "MB" %}</td>
-                            <td>{{ flavor.hdd }} {% trans "GB" %}</td>
+                            <td>{{ flavor.memory }} {% trans "MB" %}</td>
+                            <td>{{ flavor.disk }} {% trans "GB" %}</td>
                             <td style="width:5px;">
                                 <div class="modal fade" id="addVMflavor{{ forloop.counter }}" tabindex="-1" role="dialog" aria-labelledby="addVMFlavorLabel" aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                                <h4 class="modal-title">{% trans "Add New Virtual Machine" %} ({{ flavor.name }})</h4>
+                                                <h4 class="modal-title">{% trans "Create Virtual Machine" %} ({{ flavor.label }})</h4>
                                             </div>
                                             <form class="form-horizontal" method="post" role="form">{% csrf_token %}
                                                 <div class="form-group">
@@ -100,16 +99,16 @@
                                                     <div class="col-lg-6">
                                                         <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}" maxlength="14" required pattern="[a-zA-Z0-9_]+">
                                                         <input type="hidden" name="vcpu" value="{{ flavor.vcpu }}">
-                                                        <input type="hidden" name="ram" value="{{ flavor.ram }}">
-                                                        <input type="hidden" name="hdd_size" value="{{ flavor.hdd }}">
+                                                        <input type="hidden" name="ram" value="{{ flavor.memory }}">
+                                                        <input type="hidden" name="hdd_size" value="{{ flavor.disk }}">
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <label class="col-lg-4 control-label">{% trans "Storage" %}</label>
                                                     <div class="col-lg-6">
                                                         <select name="storage" class="form-control">
-                                                            {% if all_storages %}
-                                                                {% for storage in all_storages %}
+                                                            {% if storages %}
+                                                                {% for storage in storages %}
                                                                     <option value="{{ storage }}">{{ storage }}</option>
                                                                 {% endfor %}
                                                             {% else %}
@@ -122,7 +121,7 @@
                                                     <label class="col-lg-4 control-label">{% trans "Network" %}</label>
                                                     <div class="col-lg-6">
                                                         <select name="networks" class="form-control">
-                                                            {% for network in all_networks %}
+                                                            {% for network in networks %}
                                                                 <option value="{{ network }}">{{ network }}</option>
                                                             {% endfor %}
                                                         </select>
@@ -143,8 +142,8 @@
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-                                                    {% if all_storages %}
-                                                        <button type="submit" class="btn btn-primary" name="instance_add">{% trans "Create" %}</button>
+                                                    {% if storages %}
+                                                        <button type="submit" class="btn btn-primary" name="create">{% trans "Create" %}</button>
                                                     {% else %}
                                                         <button class="btn btn-primary disabled">{% trans "Create" %}</button>
                                                     {% endif %}
@@ -158,7 +157,7 @@
                             <td style="width:5px;">
                                 <form class="form-horizontal" action="" method="post">{% csrf_token %}
                                     <input type="hidden" name="flavor" value="{{ flavor.id }}">
-                                    <input type="submit" class="btn btn-danger" name="flavor_del" value="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
+                                    <input type="submit" class="btn btn-danger" name="delete_flavor" value="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
                                 </form>
                             </td>
                         </tr>
@@ -179,7 +178,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">{% trans "Add Custom Virtual Machine" %}</h4>
+                    <h4 class="modal-title">{% trans "Create Custom Virtual Machine" %}</h4>
                 </div>
                 <form class="form-horizontal" method="post" role="form">{% csrf_token %}
                     <div class="form-group">
@@ -216,8 +215,8 @@
                             </ul>
                             <input id="images" name="images" type="hidden" value=""/>
                             <select id="image-control" name="image-control" class="form-control" multiple="multiple">
-                                {% if all_img %}
-                                    {% for name in all_img %}
+                                {% if get_images %}
+                                    {% for name in get_images %}
                                         <option value="{{ name }}">{{ name }}</option>
                                     {% endfor %}
                                 {% else %}
@@ -234,7 +233,7 @@
                             </ul>
                             <input id="networks" type="hidden" name="networks" value=""/>
                             <select id="network-control" name="network-control" class="form-control" multiple="multiple">
-                                {% for network in all_networks %}
+                                {% for network in networks %}
                                     <option value="{{ network }}">{{ network }}</option>
                                 {% endfor %}
                             </select>
@@ -248,8 +247,8 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-                        {% if all_storages %}
-                            <button type="submit" class="btn btn-primary" name="instance_add" value="1">{% trans "Create" %}</button>
+                        {% if storages %}
+                            <button type="submit" class="btn btn-primary" name="create" value="1">{% trans "Create" %}</button>
                         {% else %}
                             <button class="btn btn-primary disabled" >{% trans "Create" %}</button>
                         {% endif %}
@@ -271,7 +270,7 @@
                     <div class="form-group">
                         <label class="col-lg-4 control-label">{% trans "Name" %}</label>
                         <div class="col-lg-6">
-                            <input type="text" name="name" class="form-control" placeholder="Micro" maxlength="20" required pattern="[a-zA-Z0-9]+">
+                            <input type="text" name="label" class="form-control" placeholder="Micro" maxlength="20" required pattern="[a-zA-Z0-9]+">
                         </div>
                     </div>
                     <div class="form-group">
@@ -283,20 +282,20 @@
                     <div class="form-group">
                         <label class="col-lg-4 control-label">{% trans "RAM" %}</label>
                         <div class="col-lg-6">
-                            <input type="text" class="form-control" name="ram" value="512" maxlength="5" required pattern="[0-9]+">
+                            <input type="text" class="form-control" name="memory" value="512" maxlength="5" required pattern="[0-9]+">
                         </div>
                         <label class="col-lg-1 control-label">{% trans "MB" %}</label>
                     </div>
                     <div class="form-group">
                         <label class="col-lg-4 control-label">{% trans "HDD" %}</label>
                         <div class="col-lg-6">
-                            <input type="text" class="form-control" name="hdd" value="10" maxlength="3" required pattern="[0-9]+">
+                            <input type="text" class="form-control" name="disk" value="10" maxlength="3" required pattern="[0-9]+">
                         </div>
                         <label class="col-lg-1 control-label">{% trans "GB" %}</label>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-                        <button type="submit" class="btn btn-primary" name="flavor_add">{% trans "Add" %}</button>
+                        <button type="submit" class="btn btn-primary" name="create_flavor">{% trans "Add" %}</button>
                     </div>
                 </form>
             </div><!-- /.modal-content -->

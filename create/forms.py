@@ -7,27 +7,27 @@ from create.models import Flavor
 
 
 class FlavorAddForm(forms.Form):
-    name = forms.CharField(label="Name",
-                           error_messages={'required': _('No flavor name has been entered')},
-                           max_length=20)
+    label = forms.CharField(label="Name",
+                            error_messages={'required': _('No flavor name has been entered')},
+                            max_length=20)
     vcpu = forms.IntegerField(label="VCPU",
                               error_messages={'required': _('No VCPU has been entered')},)
-    hdd = forms.IntegerField(label="HDD",
-                             error_messages={'required': _('No HDD image has been entered')},)
-    ram = forms.IntegerField(label="RAM",
-                             error_messages={'required': _('No RAM size has been entered')},)
+    disk = forms.IntegerField(label="HDD",
+                              error_messages={'required': _('No HDD image has been entered')},)
+    memory = forms.IntegerField(label="RAM",
+                                error_messages={'required': _('No RAM size has been entered')},)
 
     def clean_name(self):
-        name = self.cleaned_data['name']
-        have_symbol = re.match('[^a-zA-Z0-9._-]+', name)
+        label = self.cleaned_data['label']
+        have_symbol = re.match('[^a-zA-Z0-9._-]+', label)
         if have_symbol:
             raise forms.ValidationError(_('The flavor name must not contain any special characters'))
-        elif len(name) > 20:
+        elif len(label) > 20:
             raise forms.ValidationError(_('The flavor name must not exceed 20 characters'))
         try:
-            Flavor.objects.get(name=name)
+            Flavor.objects.get(label=label)
         except Flavor.DoesNotExist:
-            return name
+            return label
         raise forms.ValidationError(_('Flavor name is already use'))
 
 
