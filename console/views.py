@@ -28,14 +28,21 @@ def console(request, host_id, vname):
     if not conn:
         errors.append(e.message)
     else:
+        socket_port = 6080
+        socket_host = request.get_host()
+        if ':' in socket_host:
+            socket_host = re.sub(':[0-9]+', '', socket_host)
+
+        created = None
         try:
-            instance = Instance.objects.get(host=host_id, vname=vname)
-            socket_port = 6080
-            socket_host = request.get_host()
-            if ':' in socket_host:
-                socket_host = re.sub(':[0-9]+', '', socket_host)
+            vnc_passwd = conn.get_vnc_password_by_name(vname)
+            instance, created = Instance.objects.get_or_create(host=host, vname=vname)
+            instance.vnc_passwd = vnc_passwd
         except:
             instance = None
+
+        if created:
+            instance.save()
 
         conn.close()
 
