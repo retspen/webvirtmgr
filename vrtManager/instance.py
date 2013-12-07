@@ -77,6 +77,16 @@ class wvmInstance(wvmConnect):
         mem = util.get_xml_path(self._XMLDesc(0), "/domain/memory")
         return int(mem) / 1024
 
+    def get_description(self):
+        return util.get_xml_path(self._XMLDesc(0), "/domain/description")
+
+    def get_max_cpus(self):
+        """Get number of physical CPUs."""
+        hostinfo = self.wvm.getInfo()
+        pcpus = hostinfo[4] * hostinfo[5] * hostinfo[6] * hostinfo[7]
+        range_pcpus = xrange(1, int(pcpus + 1))
+        return range_pcpus
+
     def get_net_device(self):
         def networks(ctx):
             result = []
@@ -239,9 +249,9 @@ class wvmInstance(wvmConnect):
 
     def get_iso_media(self):
         iso = []
-        storages = self.storages_get_node()
+        storages = self.get_storages()
         for storage in storages:
-            stg = self.storagePool(storage)
+            stg = self.get_storage(storage)
             if stg.info()[0] != 0:
                 try:
                     stg.refresh(0)

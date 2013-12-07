@@ -7,6 +7,7 @@ from django.utils import simplejson
 from instance.models import Instance
 from servers.models import Compute
 
+from vrtManager import util
 from vrtManager.instance import wvmInstances, wvmInstance
 
 from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE
@@ -161,15 +162,15 @@ def instance(request, host_id, vname):
                            vname)
 
         status = conn.get_status()
+        vcpu = conn.get_vcpu()
+        memory = conn.get_memory()
+        description = conn.get_description()
+        disks = conn.get_disk_device()
         networks = conn.get_net_device()
-        print conn.get_disk_device()
-        # vcpu, memory, networks, description = conn.vds_get_info(vname)
-        # hdd_image = conn.vds_get_hdd(vname)
-        # iso_images = sorted(conn.get_all_media())
-        # media, media_path = conn.vds_get_media(vname)
-        # vcpu_range = util.get_phy_cpus(conn)
-        # memory_range = [128, 256, 512, 768, 1024, 2048, 4096, 8192, 16384]
-        # vnc_port = conn.vnc_get_port(vname)
+        media_iso = sorted(conn.get_iso_media())
+        vcpu_range = conn.get_max_cpus()
+        memory_range = [256, 512, 1024, 2048, 4096, 8192, 16384]
+        vnc_port = conn.get_vnc()
 
         try:
             instance = Instance.objects.get(vname=vname)

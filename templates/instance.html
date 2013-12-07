@@ -103,7 +103,7 @@
                 <div class="col-md-6">
                     <p>{{ vname }}</p>
                     <p>{{ description }}</p>
-                    <p>{% if dom.info %}
+                    <p>{% if status %}
                         <span class={% ifequal status 5 %}"text-danger">{% trans "Shuttoff" %}{% endifequal %}
                                     {% ifequal status 1 %}"text-success">{% trans "Running" %}{% endifequal %}
                                     {% ifequal status 3 %}"text-warnging">{% trans "Suspend" %}{% endifequal %}
@@ -150,13 +150,13 @@
             </div>
             <div class="row show-grid">
                 <div class="col-md-6">
-                    {% for dev_bus, hdd_dev in hdd_image.items %}
-                        <p><strong>{% trans "Disk" %} {{ dev_bus }}:</strong></p>
+                    {% for disk in disks %}
+                        <p><strong>{% trans "Disk" %} {{ disk.dev }}:</strong></p>
                     {% endfor %}
                 </div>
                 <div class="col-md-6">
-                    {% for dev_bus, hdd_dev in hdd_image.items %}
-                        <p>{{ hdd_dev.0 }} ({{ hdd_dev.1 }})</p>
+                    {% for disk in disks %}
+                        <p>{{ disk.image }} ({{ disk.storage }})</p>
                     {% endfor %}
                 </div>
             </div>
@@ -183,8 +183,8 @@
                     <label class="col-lg-1 control-label">{% trans "Images" %}:</label>
                     <div class="col-lg-5">
                         <select name="iso_img" class="form-control">
-                            {% if iso_images %}
-                                {% for iso in iso_images %}
+                            {% if media_iso %}
+                                {% for iso in media_iso %}
                                     <option value="{{ iso }}">{{ iso }}</option>
                                 {% endfor %}
                             {% else %}

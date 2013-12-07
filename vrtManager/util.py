@@ -33,12 +33,6 @@ def get_max_vcpus(conn, type=None):
         m = 32
     return m
 
-def get_phy_cpus(conn):
-    """Get number of physical CPUs."""
-    hostinfo = conn.getInfo()
-    pcpus = hostinfo[4] * hostinfo[5] * hostinfo[6] * hostinfo[7]
-    return pcpus
-
 def xml_escape(str):
     """Replaces chars ' " < > & with xml safe counterparts"""
     if str is None:
