@@ -2,6 +2,8 @@
 # Copyright (C) 2013 Webvirtmgr.
 #
 import time
+import re
+from libvirt import VIR_DOMAIN_XML_SECURE
 from vrtManager import util
 from xml.etree import ElementTree
 from vrtManager.conection import wvmConnect
@@ -59,6 +61,12 @@ class wvmInstance(wvmConnect):
     def delete(self, name):
         self.instance.undefine()
 
+    def _XMLDesc(self, flag):
+        return self.instance.XMLDesc(flag)
+
+    def _defineXML(self, xml):
+        self.wvm.defineXML(xml)
+
     def get_status(self):
         return self.instance.info()[0]
 
@@ -87,7 +95,9 @@ class wvmInstance(wvmConnect):
                 if device == 'disk':
                     dev = interface.xpathEval('target/@dev')[0].content
                     file = interface.xpathEval('source/@file')[0].content
-                    result.append({'dev': dev, 'path': file})
+                    vol = self.wvm.storageVolLookupByPath(file)
+                    stg = vol.storagePoolLookupByVolume()
+                    result.append({'dev': dev, 'image': vol.name(), 'storage': stg.name(), 'path': file})
             return result
         return util.get_xml_path(self._XMLDesc(0), func=disks)
 
@@ -97,14 +107,13 @@ class wvmInstance(wvmConnect):
             for interface in ctx.xpathEval('/domain/devices/disk'):
                 device = interface.xpathEval('@device')[0].content
                 if device == 'cdrom':
-                    dev = interface.xpathEval('targe/@dev')[0].content
+                    dev = interface.xpathEval('target/@dev')[0].content
                     file = interface.xpathEval('source/@file')[0].content
-                    result.append({'dev': dev, 'path': file})
+                    vol = self.wvm.storageVolLookupByPath(file)
+                    stg = vol.storagePoolLookupByVolume()
+                    result.append({'dev': dev, 'image': vol.name(), 'storage': stg.name(), 'path': file})
             return result
         return util.get_xml_path(self._XMLDesc(0), func=disks)
-
-    def _XMLDesc(self, flag):
-        return self.instance.XMLDesc(flag)
 
     def get_vnc(self):
         vnc = util.get_xml_path(self._XMLDesc(0),
@@ -112,49 +121,45 @@ class wvmInstance(wvmConnect):
         return vnc
 
     def mount_iso(self, image):
-        storages = self.storages_get_node()
+        storages = self.get_storages()
         for storage in storages:
             stg = self.storagePool(storage)
             for img in stg.listVolumes():
                 if image == img:
-                    if dom.info()[0] == 1:
+                    if self.get_status() == 1:
                         vol = stg.storageVolLookupByName(image)
                         xml = """<disk type='file' device='cdrom'>
                                     <driver name='qemu' type='raw'/>
                                     <target dev='sda' bus='ide'/>
                                     <source file='%s'/>
                                  </disk>""" % vol.path()
-                        dom.attachDevice(xml)
-                        xmldom = dom.XMLDesc(VIR_DOMAIN_XML_SECURE)
-                        self.wvm.defineXML(xmldom)
-                    if dom.info()[0] == 5:
+                        self.instance.attachDevice(xml)
+                        xmldom = self._XMLDesc(VIR_DOMAIN_XML_SECURE)
+                        self._defineXML(xmldom)
+                    if self.get_status() == 5:
                         vol = stg.storageVolLookupByName(image)
-                        xml = dom.XMLDesc(VIR_DOMAIN_XML_SECURE)
+                        xml = self._XMLDesc(VIR_DOMAIN_XML_SECURE)
                         newxml = """<disk type='file' device='cdrom'>
                                     <driver name='qemu' type='raw'/>
                                     <source file='%s'/>""" % vol.path()
                         xmldom = xml.replace("""<disk type='file' device='cdrom'>
                                                 <driver name='qemu' type='raw'/>""", newxml)
-                        self.wvm.defineXML(xmldom)
+                        self._defineXML(xmldom)
 
     def umount_iso(self, image):
-        """
-        Function umount iso image on vds. Changes on XML config.
-        """
-        dom = self.lookupVM(vname)
-        if dom.info()[0] == 1:
+        if self.get_status() == 1:
             xml = """<disk type='file' device='cdrom'>
                          <driver name="qemu" type='raw'/>
                          <target dev='sda' bus='ide'/>
                          <readonly/>
                       </disk>"""
-            dom.attachDevice(xml)
-            xmldom = dom.XMLDesc(VIR_DOMAIN_XML_SECURE)
-            self.wvm.defineXML(xmldom)
-        if dom.info()[0] == 5:
-            xml = dom.XMLDesc(VIR_DOMAIN_XML_SECURE)
+            self.instance.attachDevice(xml)
+            xmldom = self._XMLDesc(VIR_DOMAIN_XML_SECURE)
+            self._defineXML(xmldom)
+        if self.get_status() == 5:
+            xml = self._XMLDesc(VIR_DOMAIN_XML_SECURE)
             xmldom = xml.replace("<source file='%s'/>\n" % image, '')
-            self.wvm.defineXML(xmldom)
+            self._defineXML(xmldom)
 
     def cpu_usage(self):
         cpu_usage = {}
@@ -191,7 +196,7 @@ class wvmInstance(wvmConnect):
     def net_usage(self):
         devices=[]
         dev_usage = []
-        tree = ElementTree.fromstring(dom.XMLDesc(0))
+        tree = ElementTree.fromstring(self._XMLDesc(0))
         for target in tree.findall("devices/interface/target"):
             devices.append(target.get("dev"))
         for i, dev in enumerate(devices):
@@ -205,31 +210,8 @@ class wvmInstance(wvmConnect):
             dev_usage.append({'dev': i, 'rx': rx_diff_usage, 'tx': tx_diff_usage})
         return dev_usage
 
-    def vds_get_media(self, vname):
-        """
-        Function return vds media info.
-        """
-        dom = self.lookupVM(vname)
-        xml = dom.XMLDesc(0)
-        for num in range(1, 5):
-            hdd_dev = get_xml_path(xml, "/domain/devices/disk[%s]/@device" % (num))
-            if hdd_dev == 'cdrom':
-                media = get_xml_path(xml, "/domain/devices/disk[%s]/source/@file" % (num))
-                if media:
-                    try:
-                        vol = self.storageVolPath(media)
-                        return vol.name(), vol.path()
-                    except Exception:
-                        return media, media
-                else:
-                    return None, None
-
-    def vds_set_vnc_passwd(self, vname, passwd):
-        """
-        Function set vnc password to vds.
-        """
-        dom = self.lookupVM(vname)
-        xml = dom.XMLDesc(VIR_DOMAIN_XML_SECURE)
+    def set_vnc_passwd(self, passwd):
+        xml = self._XMLDesc(VIR_DOMAIN_XML_SECURE)
         find_tag = re.findall('<graphics.*/>', xml)
         if find_tag:
             close_tag = '/'
@@ -237,14 +219,13 @@ class wvmInstance(wvmConnect):
             close_tag = ''
         newxml = "<graphics type='vnc' passwd='%s'%s>" % (passwd, close_tag)
         xmldom = re.sub('<graphics.*>', newxml, xml)
-        self.wvm.defineXML(xmldom)
+        self._defineXML(xmldom)
 
-    def vds_edit(self, vname, description, ram, vcpu):
+    def vds_edit(self, description, ram, vcpu):
         """
         Function change ram and cpu on vds.
         """
-        dom = self.lookupVM(vname)
-        xml = dom.XMLDesc(VIR_DOMAIN_XML_SECURE)
+        xml = self._XMLDesc(VIR_DOMAIN_XML_SECURE)
         memory = int(ram) * 1024
         xml_memory = "<memory unit='KiB'>%s</memory>" % memory
         xml_memory_change = re.sub('<memory.*memory>', xml_memory, xml)
@@ -254,49 +235,39 @@ class wvmInstance(wvmConnect):
         xml_vcpu_change = re.sub('<vcpu.*vcpu>', xml_vcpu, xml_curmemory_change)
         xml_description = "<description>%s</description>" % description
         xml_description_change = re.sub('<description.*description>', xml_description, xml_vcpu_change)
-        self.wvm.defineXML(xml_description_change)
+        self._defineXML(xml_description_change)
 
-    def _defineXML(self, xml):
-        """
-        Funciton define VM config
-        """
-        self.wvm.defineXML(xml)
-
-
-    def get_all_media(self):
-        """
-        Function return all media.
-        """
+    def get_iso_media(self):
         iso = []
         storages = self.storages_get_node()
         for storage in storages:
             stg = self.storagePool(storage)
             if stg.info()[0] != 0:
-                stg.refresh(0)
+                try:
+                    stg.refresh(0)
+                except:
+                    pass
                 for img in stg.listVolumes():
-                    if re.findall(".iso", img):
+                    if img.endswith('.iso'):
                         iso.append(img)
         return iso
 
-    def vds_remove_hdd(self, vname):
-        """
-        Function delete vds hdd.
-        """
-        dom = self.lookupVM(vname)
-        img = get_xml_path(dom.XMLDesc(0), "/domain/devices/disk[1]/source/@file")
-        vol = self.storageVolPath(img)
-        vol.delete(0)
+    def vds_remove_hdd(self):
+        disks = self.get_disk_device()
+        for key, value in disks.items():
+            if key == 'path':
+                vol = self.wvm.storageVolLookupByPath(value)
+                vol.delete(0)
 
-    def vds_create_snapshot(self, vname):
-        """
-        Function create vds snapshot.
-        """
-        dom = self.lookupVM(vname)
+    def _snapshotCreateXML(self, xml, flag):
+        self.instance.snapshotCreateXML(xml, flag)
+
+    def vds_create_snapshot(self):
         xml = """<domainsnapshot>\n
                      <name>%d</name>\n
                      <state>shutoff</state>\n
                      <creationTime>%d</creationTime>\n""" % (time.time(), time.time())
-        xml += dom.XMLDesc(VIR_DOMAIN_XML_SECURE)
+        xml += self._XMLDesc(VIR_DOMAIN_XML_SECURE)
         xml += """<active>0</active>\n
                   </domainsnapshot>"""
-        dom.snapshotCreateXML(xml, 0)
+        self._snapshotCreateXML(xml, 0)
