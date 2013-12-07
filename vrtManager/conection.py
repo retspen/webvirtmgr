@@ -88,6 +88,9 @@ class wvmConnect(object):
     def get_storage(self, name):
         return self.wvm.storagePoolLookupByName(name)
 
+    def get_volume_by_path(self, path):
+        return self.wvm.storageVolLookupByPath(path)
+
     def create_storage(self, type, name, source, target):
         """
         Function create storage pool.

@@ -95,7 +95,7 @@ class wvmInstance(wvmConnect):
                 if device == 'disk':
                     dev = interface.xpathEval('target/@dev')[0].content
                     file = interface.xpathEval('source/@file')[0].content
-                    vol = self.wvm.storageVolLookupByPath(file)
+                    vol = self.get_volume_by_path(file)
                     stg = vol.storagePoolLookupByVolume()
                     result.append({'dev': dev, 'image': vol.name(), 'storage': stg.name(), 'path': file})
             return result
@@ -109,7 +109,7 @@ class wvmInstance(wvmConnect):
                 if device == 'cdrom':
                     dev = interface.xpathEval('target/@dev')[0].content
                     file = interface.xpathEval('source/@file')[0].content
-                    vol = self.wvm.storageVolLookupByPath(file)
+                    vol = self.get_volume_by_path(file)
                     stg = vol.storagePoolLookupByVolume()
                     result.append({'dev': dev, 'image': vol.name(), 'storage': stg.name(), 'path': file})
             return result
@@ -123,7 +123,7 @@ class wvmInstance(wvmConnect):
     def mount_iso(self, image):
         storages = self.get_storages()
         for storage in storages:
-            stg = self.storagePool(storage)
+            stg = self.get_storage(storage)
             for img in stg.listVolumes():
                 if image == img:
                     if self.get_status() == 1:
@@ -256,7 +256,7 @@ class wvmInstance(wvmConnect):
         disks = self.get_disk_device()
         for key, value in disks.items():
             if key == 'path':
-                vol = self.wvm.storageVolLookupByPath(value)
+                vol = self.get_volume_by_path(value)
                 vol.delete(0)
 
     def _snapshotCreateXML(self, xml, flag):

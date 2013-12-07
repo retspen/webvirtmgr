@@ -8,11 +8,12 @@ from vrtManager.conection import wvmConnect
 
 
 class wvmCreate(wvmConnect):
-    def get_storages_images(self, storages):
+    def get_storages_images(self):
         """
         Function return all images on all storages
         """
         images = []
+        storages = self.get_storages()
         for storage in storages:
             stg = self.get_storage(storage)
             try:
@@ -57,13 +58,11 @@ class wvmCreate(wvmConnect):
         return vol.path()
 
     def get_volume_type(self, path):
-        """
-        Function return volume path.
-        """
-        vol = self.wvm.storageVolLookupByPath(path)
+        vol = self.get_volume_by_path(path)
         return util.get_xml_path(vol.XMLDesc(0), "/volume/target/format/@type")
 
-    def get_volume_path(self, volume, storages):
+    def get_volume_path(self, volume):
+        storages = self.get_storages()
         for storage in storages:
             stg = self.get_storage(storage)
             if stg.info()[0] != 0:
@@ -87,18 +86,17 @@ class wvmCreate(wvmConnect):
                   <name>%s</name>
                   <uuid>%s</uuid>
                   <memory unit='KiB'>%s</memory>
-                  <vcpu>%s</vcpu>""" % (self.get_guest_cap()[1].hypervisor_type, name, uuid, memory, vcpu)
-
+                  <vcpu>%s</vcpu>""" % (self.get_guest_cap()[1].hypervisor_type,
+                                        name, uuid, memory, vcpu)
         if host_model:
             xml += """<cpu mode='host-model'/>"""
-
         xml += """<os>
                     <type arch='%s'>%s</type>
                     <boot dev='hd'/>
                     <boot dev='cdrom'/>
                     <bootmenu enable='yes'/>
-                  </os>""" % (self.get_guest_cap()[0].arch, self.get_guest_cap()[0].os_type)
-
+                  </os>""" % (self.get_guest_cap()[0].arch,
+                              self.get_guest_cap()[0].os_type)
         xml += """<features>
                     <acpi/><apic/><pae/>
                   </features>
@@ -113,12 +111,10 @@ class wvmCreate(wvmConnect):
             xml += """  <disk type='file' device='disk'>
                           <driver name='qemu' type='%s'/>
                           <source file='%s'/>""" % (type, image)
-
             if virtio:
                 xml += """<target dev='vd%s' bus='virtio'/>""" % (disk_letters.pop(0),)
             else:
                 xml += """<target dev='sd%s' bus='ide'/>""" % (disk_letters.pop(0),)
-
             xml += """</disk>"""
 
         xml += """  <disk type='file' device='cdrom'>
@@ -127,15 +123,13 @@ class wvmCreate(wvmConnect):
                       <target dev='hda' bus='ide'/>
                       <readonly/>
                     </disk>"""
-
         for net in networks.split(','):
             xml += """
                     <interface type='network'>
                         <source network='%s'/>""" % net
             if virtio:
                 xml += """<model type='virtio'/>"""
-            xml += """
-                    </interface>"""
+            xml += """</interface>"""
 
         xml += """  <input type='mouse' bus='ps2'/>
                     <graphics type='vnc' port='-1'/>

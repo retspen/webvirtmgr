@@ -34,7 +34,7 @@ def create(request, host_id):
         storages = conn.get_storages()
         networks = conn.get_networks()
         instances = conn.get_instances()
-        get_images = conn.get_storages_images(storages)
+        get_images = conn.get_storages_images()
     except libvirtError as err:
         errors.append(err.message)
 
@@ -78,9 +78,8 @@ def create(request, host_id):
                             errors.append(msg)
                         else:
                             for vol in data['images'].split(','):
-                                print vol
                                 try:
-                                    path = conn.get_volume_path(vol, storages)
+                                    path = conn.get_volume_path(vol)
                                     volumes[path] = conn.get_volume_type(path)
                                 except libvirtError as msg_error:
                                     errors.append(msg_error.message)
