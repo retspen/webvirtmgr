@@ -61,9 +61,6 @@ class wvmConnect(object):
         return self.get_cap().is_kvm_available()
 
     def get_storages(self):
-        """
-        Function return host server storages.
-        """
         storages = []
         for pool in self.wvm.listStoragePools():
             storages.append(pool)
@@ -72,9 +69,6 @@ class wvmConnect(object):
         return storages
 
     def get_networks(self):
-        """
-        Function return host server virtual networks.
-        """
         virtnet = []
         for net in self.wvm.listNetworks():
             virtnet.append(net)
@@ -82,83 +76,16 @@ class wvmConnect(object):
             virtnet.append(net)
         return virtnet
 
-    def define_storage(self, xml, flag):
-        self.wvm.storagePoolDefineXML(xml, flag)
-
     def get_storage(self, name):
         return self.wvm.storagePoolLookupByName(name)
 
     def get_volume_by_path(self, path):
         return self.wvm.storageVolLookupByPath(path)
 
-    def create_storage(self, type, name, source, target):
-        """
-        Function create storage pool.
-        """
-        xml = """
-                <pool type='%s'>
-                <name>%s</name>""" % (type, name)
-        if type == 'logical':
-            xml += """
-                  <source>
-                    <device path='%s'/>
-                    <name>%s</name>
-                    <format type='lvm2'/>
-                  </source>""" % (source, name)
-        if type == 'logical':
-            target = '/dev/' + name
-        xml += """
-                  <target>
-                       <path>%s</path>
-                  </target>
-                </pool>""" % target
-        self.define_storage(xml, 0)
-        stg = self.get_storage(name)
-        if type == 'logical':
-            stg.build(0)
-        stg.create(0)
-        stg.setAutostart(1)
-
     def get_network(self, net):
         return self.wvm.networkLookupByName(net)
 
-    def define_network(self, xml):
-        self.wvm.networkDefineXML(xml)
-
-    def create_network(self, name, forward, gateway, mask, dhcp, bridge):
-        """
-        Function create network pool.
-        """
-        xml = """
-            <network>
-                <name>%s</name>""" % name
-        if forward in ['nat', 'route', 'bridge']:
-            xml += """<forward mode='%s'/>""" % forward
-        xml += """<bridge """
-        if forward in ['nat', 'route', 'none']:
-            xml += """stp='on' delay='0'"""
-        if forward == 'bridge':
-            xml += """name='%s'""" % bridge
-        xml += """/>"""
-        if forward != 'bridge':
-            xml += """
-                        <ip address='%s' netmask='%s'>""" % (gateway, mask)
-            if dhcp:
-                xml += """<dhcp>
-                            <range start='%s' end='%s' />
-                        </dhcp>""" % (dhcp[0], dhcp[1])
-
-            xml += """</ip>"""
-        xml += """</network>"""
-        self.define_network(xml)
-        net = self.get_network(name)
-        net.create()
-        net.setAutostart(1)
-
     def get_instances(self):
-        """
-        Get all instance in host server
-        """
         instances = []
         for inst_id in self.wvm.listDomainsID():
             dom = self.wvm.lookupByID(int(inst_id))

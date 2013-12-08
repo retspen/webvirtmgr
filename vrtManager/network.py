@@ -26,6 +26,38 @@ def network_size(net, dhcp=None):
         return gateway, mask, None
 
 
+class wvmNetworks(wvmConnect):
+    def define_network(self, xml):
+        self.wvm.networkDefineXML(xml)
+
+    def create_network(self, name, forward, gateway, mask, dhcp, bridge):
+        xml = """
+            <network>
+                <name>%s</name>""" % name
+        if forward in ['nat', 'route', 'bridge']:
+            xml += """<forward mode='%s'/>""" % forward
+        xml += """<bridge """
+        if forward in ['nat', 'route', 'none']:
+            xml += """stp='on' delay='0'"""
+        if forward == 'bridge':
+            xml += """name='%s'""" % bridge
+        xml += """/>"""
+        if forward != 'bridge':
+            xml += """
+                        <ip address='%s' netmask='%s'>""" % (gateway, mask)
+            if dhcp:
+                xml += """<dhcp>
+                            <range start='%s' end='%s' />
+                        </dhcp>""" % (dhcp[0], dhcp[1])
+
+            xml += """</ip>"""
+        xml += """</network>"""
+        self.define_network(xml)
+        net = self.get_network(name)
+        net.create()
+        net.setAutostart(1)
+
+
 class wvmNetwork(wvmConnect):
     def __init__(self, host, login, passwd, conn, net):
          wvmConnect.__init__(self, host, login, passwd, conn)

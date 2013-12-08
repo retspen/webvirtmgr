@@ -6,7 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from servers.models import Compute
 from networks.forms import AddNetPool
 
-from vrtManager.network import wvmConnect, wvmNetwork
+from vrtManager.network import wvmNetwork, wvmNetworks
 from vrtManager.network import network_size
 
 from libvirt import libvirtError
@@ -23,10 +23,10 @@ def networks(request, host_id):
     compute = Compute.objects.get(id=host_id)
 
     try:
-        conn = wvmConnect(compute.hostname,
-                          compute.login,
-                          compute.password,
-                          compute.type)
+        conn = wvmNetworks(compute.hostname,
+                           compute.login,
+                           compute.password,
+                           compute.type)
         networks = conn.get_networks()
 
         if request.method == 'POST':

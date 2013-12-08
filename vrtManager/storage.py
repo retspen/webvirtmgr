@@ -6,6 +6,36 @@ from vrtManager import util
 from vrtManager.conection import wvmConnect
 
 
+class wvmStorages(wvmConnect):
+    def define_storage(self, xml, flag):
+        self.wvm.storagePoolDefineXML(xml, flag)
+
+    def create_storage(self, type, name, source, target):
+        xml = """
+                <pool type='%s'>
+                <name>%s</name>""" % (type, name)
+        if type == 'logical':
+            xml += """
+                  <source>
+                    <device path='%s'/>
+                    <name>%s</name>
+                    <format type='lvm2'/>
+                  </source>""" % (source, name)
+        if type == 'logical':
+            target = '/dev/' + name
+        xml += """
+                  <target>
+                       <path>%s</path>
+                  </target>
+                </pool>""" % target
+        self.define_storage(xml, 0)
+        stg = self.get_storage(name)
+        if type == 'logical':
+            stg.build(0)
+        stg.create(0)
+        stg.setAutostart(1)
+
+
 class wvmStorage(wvmConnect):
     def __init__(self, host, login, passwd, conn, pool):
         wvmConnect.__init__(self, host, login, passwd, conn)
