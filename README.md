@@ -34,7 +34,7 @@ Run:
     $ su -c 'yum -y install git python-pip libvirt-python libxml2-python httpd mod_wsgi python-websockify'
     $ su -c 'python-pip install Django==1.5.4'
 
-### Ubuntu 12.04 and above
+### Debian 7, Ubuntu 12.04 and above
 
 Run:
 
@@ -62,13 +62,13 @@ Enter the user information:
 
 ## 4. Setup Apache
 
-Copy the folder and change owner (Ubuntu: "www-data.", Fedora, Redhat, CentOS: "apache."):
+Copy the folder and change owner (Debian, Ubuntu: "www-data.", Fedora, Redhat, CentOS: "apache."):
 
     $ cd ..
     $ sudo cp -r webvirtmgr /var/www/
     $ sudo chown -R apache. /var/www/webvirtmgr
 
-Add file webvirtmgr.conf in conf.d directory (Ubuntu: "/etc/apache2/conf.d" or RedHat,Fedora,CentOS: "/etc/httpd/conf.d"):
+Add file webvirtmgr.conf in conf.d directory (Debian, Ubuntu: "/etc/apache2/conf.d" or RedHat,Fedora,CentOS: "/etc/httpd/conf.d"):
 
 Fedora, Redhat, CentOS:
 
@@ -95,7 +95,7 @@ Fedora, Redhat, CentOS:
         ErrorLog logs/webvirtmgr-error_log
     </VirtualHost>
 
-Ubuntu:
+Debian, Ubuntu:
 
     WSGISocketPrefix run/wsgi
     <VirtualHost *:80>
@@ -121,7 +121,7 @@ Ubuntu:
     </VirtualHost>
 
 
-Reload apache (Ubuntu: "apache2", Fedora, Redhat, CentOS: "httpd"):
+Reload apache (Debian, Ubuntu: "apache2", Fedora, Redhat, CentOS: "httpd"):
 
     $ sudo service httpd reload
 
@@ -135,12 +135,13 @@ Run:
     $ sudo service webvirtmgr-novnc start
     $ sudo chkconfig webvirtmgr-novnc on
 
-### Ubuntu
+### Debian, Ubuntu
 
 Run: 
 
     $ sudo service novnc stop
     $ sudo update-rc.d -f novnc remove
+    $ sudo rm /etc/init.d/novnc
     $ sudo cp /var/www/webvirtmgr/conf/initd/webvirtmgr-novnc-ubuntu /etc/init.d/webvirtmgr-novnc
     $ sudo service webvirtmgr-novnc start
     $ sudo update-rc.d webvirtmgr-novnc defaults
