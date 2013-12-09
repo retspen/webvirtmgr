@@ -52,13 +52,13 @@ class wvmInstance(wvmConnect):
     def force_shutdown(self):
         self.instance.destroy()
 
-    def suspend(self, name):
+    def suspend(self):
         self.instance.suspend()
 
-    def resume(self, name):
+    def resume(self):
         self.instance.resume()
 
-    def delete(self, name):
+    def delete(self):
         self.instance.undefine()
 
     def _XMLDesc(self, flag):
@@ -69,6 +69,9 @@ class wvmInstance(wvmConnect):
 
     def get_status(self):
         return self.instance.info()[0]
+
+    def get_uuid(self):
+        return self.instance.UUIDString()
 
     def get_vcpu(self):
         return util.get_xml_path(self._XMLDesc(0), "/domain/vcpu")
@@ -220,6 +223,10 @@ class wvmInstance(wvmConnect):
             dev_usage.append({'dev': i, 'rx': rx_diff_usage, 'tx': tx_diff_usage})
         return dev_usage
 
+    def get_vnc_passwd(self):
+        return util.get_xml_path(self._XMLDesc(VIR_DOMAIN_XML_SECURE),
+                                 "/domain/devices/graphics/@passwd")
+
     def set_vnc_passwd(self, passwd):
         xml = self._XMLDesc(VIR_DOMAIN_XML_SECURE)
         find_tag = re.findall('<graphics.*/>', xml)
@@ -231,12 +238,12 @@ class wvmInstance(wvmConnect):
         xmldom = re.sub('<graphics.*>', newxml, xml)
         self._defineXML(xmldom)
 
-    def vds_edit(self, description, ram, vcpu):
+    def update_xml(self, description, memory, vcpu):
         """
         Function change ram and cpu on vds.
         """
         xml = self._XMLDesc(VIR_DOMAIN_XML_SECURE)
-        memory = int(ram) * 1024
+        memory = int(memory) * 1024
         xml_memory = "<memory unit='KiB'>%s</memory>" % memory
         xml_memory_change = re.sub('<memory.*memory>', xml_memory, xml)
         xml_curmemory = "<currentMemory unit='KiB'>%s</currentMemory>" % memory
@@ -262,17 +269,16 @@ class wvmInstance(wvmConnect):
                         iso.append(img)
         return iso
 
-    def vds_remove_hdd(self):
+    def delete_disk(self):
         disks = self.get_disk_device()
-        for key, value in disks.items():
-            if key == 'path':
-                vol = self.get_volume_by_path(value)
-                vol.delete(0)
+        for disk in disks:
+            vol = self.get_volume_by_path(disk.get('path'))
+            vol.delete(0)
 
     def _snapshotCreateXML(self, xml, flag):
         self.instance.snapshotCreateXML(xml, flag)
 
-    def vds_create_snapshot(self):
+    def create_snapshot(self):
         xml = """<domainsnapshot>\n
                      <name>%d</name>\n
                      <state>shutoff</state>\n

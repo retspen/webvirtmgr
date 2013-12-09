@@ -1,3 +1,6 @@
+from string import letters, digits
+from random import choice
+
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
@@ -7,7 +10,6 @@ from django.utils import simplejson
 from instance.models import Instance
 from servers.models import Compute
 
-from vrtManager import util
 from vrtManager.instance import wvmInstances, wvmInstance
 
 from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE
@@ -58,6 +60,7 @@ def netusage(request, host_id, vname):
                             vname)
         net_usage = conn.net_usage(vname)
         data = simplejson.dumps(net_usage)
+        conn.close()
     except libvirtError as msg_error:
         data = msg_error.message
 
@@ -85,6 +88,7 @@ def cpuusage(request, host_id, vname):
 
         cpu_usage = conn.cpu_usage(vname)
         data = simplejson.dumps(cpu_usage)
+        conn.close()
     except libvirtError as msg_error:
         data = msg_error.message
 
@@ -102,7 +106,7 @@ def instances(request, host_id):
         return HttpResponseRedirect('/login')
 
     errors = []
-    instances = {}
+    instances = []
     compute = Compute.objects.get(id=host_id)
 
     try:
@@ -111,14 +115,20 @@ def instances(request, host_id):
                             compute.password,
                             compute.type)
         get_instances = conn.get_instances()
+    except libvirtError as msg_error:
+        errors.append(msg_error.message)
 
-        for instance in get_instances:
-            try:
-                instance_uuid = Instance.objects.get(compute_id=host_id, name=instance)
-            except:
-                instance_uuid = None
-            instances[instance] = (conn.get_instance_status(instance), instance_uuid)
+    for instance in get_instances:
+        try:
+            inst = Instance.objects.get(compute_id=host_id, name=instance)
+            uuid = inst.uuid
+        except Instance.DoesNotExist:
+            uuid = None
+        instances.append({'name': instance,
+                          'status': conn.get_instance_status(instance),
+                          'uuid': uuid})
 
+    try:
         if request.method == 'POST':
             name = request.POST.get('name', '')
             if 'start' in request.POST:
@@ -138,7 +148,6 @@ def instances(request, host_id):
                 return HttpResponseRedirect(request.get_full_path())
 
         conn.close()
-
     except libvirtError as msg_error:
         errors.append(msg_error.message)
 
@@ -174,83 +183,79 @@ def instance(request, host_id, vname):
         vcpu_range = conn.get_max_cpus()
         memory_range = [256, 512, 1024, 2048, 4096, 8192, 16384]
         vnc_port = conn.get_vnc()
+        vm_xml = conn._XMLDesc(VIR_DOMAIN_XML_SECURE)
 
         try:
-            instance = Instance.objects.get(vname=vname)
-        except:
-            instance = None
+            instance = Instance.objects.get(compute_id=host_id, name=vname)
+            uuid = instance.uuid
+        except Instance.DoesNotExist:
+            uuid = None
 
         if request.method == 'POST':
             if 'start' in request.POST:
-                dom.create()
+                conn.start()
                 return HttpResponseRedirect(request.get_full_path())
             if 'power' in request.POST:
                 if 'shutdown' == request.POST.get('power', ''):
-                    dom.shutdown()
+                    conn.shutdown()
                     return HttpResponseRedirect(request.get_full_path())
                 if 'destroy' == request.POST.get('power', ''):
-                    dom.destroy()
+                    conn.force_shutdown()
                     return HttpResponseRedirect(request.get_full_path())
             if 'suspend' in request.POST:
-                dom.suspend()
+                conn.suspend()
                 return HttpResponseRedirect(request.get_full_path())
             if 'resume' in request.POST:
-                dom.resume()
+                conn.resume()
                 return HttpResponseRedirect(request.get_full_path())
             if 'delete' in request.POST:
-                if dom.info()[0] == 1:
-                    dom.destroy()
-                if request.POST.get('image', ''):
-                    conn.vds_remove_hdd(vname)
+                if conn.get_status() == 1:
+                    conn.force_shutdown()
+                if request.POST.get('delete_disk', ''):
+                    conn.delete_disk()
                 try:
-                    instance = Instance.objects.get(host=host_id, vname=vname)
+                    instance = Instance.objects.get(compute_id=host_id, name=vname)
                     instance.delete()
-                except:
-                    pass
-                dom.undefine()
-                return HttpResponseRedirect('/overview/%s/' % host_id)
+                finally:
+                    conn.delete()
+                return HttpResponseRedirect('/instances/%s/' % host_id)
             if 'snapshot' in request.POST:
-                conn.vds_create_snapshot(vname)
+                conn.create_snapshot()
                 msg = _("Create snapshot for instance successful")
                 messages.append(msg)
-            if 'remove_iso' in request.POST:
-                image = request.POST.get('iso_img', '')
+            if 'mount_iso' in request.POST:
+                image = request.POST.get('iso_media', '')
                 conn.vds_umount_iso(vname, image)
                 return HttpResponseRedirect(request.get_full_path())
-            if 'add_iso' in request.POST:
-                image = request.POST.get('iso_img', '')
+            if 'umount_iso' in request.POST:
+                image = request.POST.get('iso_media', '')
                 conn.vds_mount_iso(vname, image)
                 return HttpResponseRedirect(request.get_full_path())
-            if 'edit' in request.POST:
+            if 'update_info' in request.POST:
                 description = request.POST.get('description', '')
                 vcpu = request.POST.get('vcpu', '')
-                ram = request.POST.get('ram', '')
-                conn.vds_edit(vname, description, ram, vcpu)
+                memory = request.POST.get('memory', '')
+                conn.update_info(description, memory, vcpu)
                 return HttpResponseRedirect(request.get_full_path())
-            if 'xml_edit' in request.POST:
-                xml = request.POST.get('vm_xml', '')
+            if 'update_xml' in request.POST:
+                xml = request.POST.get('instance_xml', '')
                 if xml:
-                    conn.defineXML(xml)
+                    conn._defineXML(xml)
                     return HttpResponseRedirect(request.get_full_path())
-            if 'vnc_pass' in request.POST:
+            if 'set_vnc_passwd' in request.POST:
                 if request.POST.get('auto_pass', ''):
-                    from string import letters, digits
-                    from random import choice
-                    passwd = ''.join([choice(letters + digits) for i in range(12)])
+                    passwd = ''.join([choice(letters + digits) for i in xrange(12)])
                 else:
                     passwd = request.POST.get('vnc_passwd', '')
                     if not passwd:
                         msg = _("Enter the VNC password or select Generate")
                         errors.append(msg)
                 if not errors:
-                    try:
-                        vnc_pass = Instance.objects.get(vname=vname)
-                        vnc_pass.vnc_passwd = passwd
-                    except:
-                        vnc_pass = Instance(host_id=host_id, vname=vname, vnc_passwd=passwd)
-                        conn.vds_set_vnc_passwd(vname, passwd)
-                        vnc_pass.save()
+                    conn.set_vnc_passwd(passwd)
                     return HttpResponseRedirect(request.get_full_path())
+            if 'enable_novnc' in request.POST:
+                instance = Instance(compute_id=host_id, name=vname, uuid=conn.get_uuid())
+                instance.save()
 
         conn.close()
 

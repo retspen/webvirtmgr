@@ -1,50 +1,41 @@
 import re
 
-from libvirt import libvirtError
-
 from django.shortcuts import render_to_response
-from django.http import HttpResponseRedirect
 from django.template import RequestContext
 
 from instance.models import Instance
+from vrtManager.instance import wvmInstance
+
+
+WS_PORT = 6080
+
 
 def console(request, host_id):
     """
-
-    VNC vm's block
-
+    VNC instance block
     """
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
-    errors = []
-    vnc_port = socket_host = socket_port = None
-    host = Host.objects.get(id=host_id)
+    if request.method == 'GET':
+        uuid = request.GET.get('token', '')
 
     try:
-        conn = ConnServer(host)
-    except libvirtError as e:
-        conn = None
+        instance = Instance.objects.get(uuid=uuid)
+        conn = wvmInstance(instance.compute.hostname,
+                           instance.compute.login,
+                           instance.compute.password,
+                           instance.compute.type,
+                           instance.name)
+        vnc_passwd = conn.get_vnc_passwd()
+    except:
+        vnc_passwd = None
 
-    if not conn:
-        errors.append(e.message)
-    else:
-        try:
-            instance = Instance.objects.get(host=host_id, vname=vname)
-            socket_port = 6080
-            socket_host = request.get_host()
-            if ':' in socket_host:
-                socket_host = re.sub(':[0-9]+', '', socket_host)
-        except:
-            instance = None
+    wsproxy_port = WS_PORT
+    wsproxy_host = request.get_host()
+    if ':' in wsproxy_host:
+        wsproxy_host = re.sub(':[0-9]+', '', wsproxy_host)
 
-        conn.close()
-
-    response = render_to_response('console.html', {'socket_port': socket_port,
-                                                   'socket_host': socket_host,
-                                                   'instance': instance,
-                                                   'errors': errors
-                                                   },
-                                  context_instance=RequestContext(request))
-    response.set_cookie('token', vname)
+    response = render_to_response('console.html', locals(), context_instance=RequestContext(request))
+    response.set_cookie('token', uuid)
     return response

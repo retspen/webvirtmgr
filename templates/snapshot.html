@@ -29,7 +29,7 @@
                 </div>
             {% endif %}
 
-            {% if vname and snapshots %}
+            {% if vname and vm_snapshot %}
                 <h5><strong>{% trans "Virtual Machine" %}:</strong> <a href="{% url 'instance' host_id vname %}">{{ vname }}</a></h5>
                 <table class="table table-bordered">
                     <thead>
@@ -40,14 +40,14 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {% for snapshot in snapshots %}
+                    {% for name, time in vm_snapshot.items %}
                         <tr>
                             <td><strong>{{ name }}</strong></td>
                             <td>{{ time.0|date:"M d H:i:s" }}</td>
                             <td style="width:30px;">
                                 <form action="" method="post" style="height:10px;">{% csrf_token %}
-                                    <input type="hidden" name="name" value="{{ snapshot.name }}">
-                                    {% ifnotequal snapshot.time 3 %}
+                                    <input type="hidden" name="name" value="{{ name }}">
+                                    {% ifnotequal time.1 3 %}
                                         <button type="submit" class="btn btn-primary" name="revert" value="revert" onclick="return confirm('Are you sure?')">{% trans "Revert" %}</button>
                                     {% else %}
                                         <button type="button" class="btn btn-primary disabled" name="revert" value="Revert">{% trans "Revert" %}</button>
@@ -56,7 +56,7 @@
                             </td>
                             <td style="width:30px;">
                                 <form action="" method="post">{% csrf_token %}
-                                    <input type="hidden" name="name" value="{{ snapshot.name }}">
+                                    <input type="hidden" name="name" value="{{ name }}">
                                     <button type="submit" class="btn btn-danger" name="delete" value="delete" onclick="return confirm('{% trans "Are you sure?" %}')">{% trans "Delete" %}</button>
                                 </form>
                             </td>
@@ -65,7 +65,7 @@
                     </tbody>
                 </table>
             {% endif %}
-            {% if not vname and not snaphosts %}
+            {% if not vname and not all_vm_snap %}
                 <div class="well">
                     <h4>{% trans "You do not have any snapshots" %}</h4>
                 </div>

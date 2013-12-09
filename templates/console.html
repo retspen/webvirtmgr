@@ -9,9 +9,7 @@
     -->
     <script src="{{ STATIC_URL }}js/novnc/util.js"></script>
 </head>
-
 <body style="margin: 0px;">
-{% if instance.vnc_passwd %}
 <div id="noVNC_screen">
     <div id="noVNC_status_bar" class="noVNC_status_bar" style="margin-top: 0px;">
         <table border=0 width="100%">
@@ -92,9 +90,9 @@
         WebUtil.init_logging(WebUtil.getQueryVar('logging', 'warn'));
         document.title = unescape(WebUtil.getQueryVar('title', 'noVNC'));
         // By default, use the host and port of server that served this file
-        host = '{{ socket_host }}';
-        port = '{{ socket_port }}'
-        password = '{{ instance.vnc_passwd }}';
+        host = '{{ wsproxy_host }}';
+        port = '{{ wsproxy_port }}'
+        password = '{{ vnc_passwd }}';
 
         if ((!host) || (!port)) {
             updateState('failed',
@@ -115,10 +113,5 @@
         rfb.connect(host, port, password, path);
     };
 </script>
-{% else %}
-<div style="text-align: center; margin-top: 100px; color: #ffd;">
-    <h1>Shuttoff VM and set VNC password</h1>
-</div>
-{% endif %}
 </body>
 </html>

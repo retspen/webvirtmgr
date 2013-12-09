@@ -94,18 +94,14 @@ class wvmConnect(object):
             instances.append(name)
         return instances
 
-    def snapshots_get_node(self):
-        """
-        Function return all snaphots on node.
-        """
+    def get_snapshots(self):
         vname = {}
-        for vm_id in self.wvm.listDomainsID():
-            vm_id = int(vm_id)
-            dom = self.wvm.lookupByID(vm_id)
+        for snap_id in self.wvm.listDomainsID():
+            dom = self.wvm.lookupByID(int(snap_id))
             if dom.snapshotNum(0) != 0:
                 vname[dom.name()] = dom.info()[0]
         for name in self.wvm.listDefinedDomains():
-            dom = self.lookupVM(name)
+            dom = self.wvm.lookupByName(name)
             if dom.snapshotNum(0) != 0:
                 vname[dom.name()] = dom.info()[0]
         return vname

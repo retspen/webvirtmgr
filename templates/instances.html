@@ -31,24 +31,24 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {% for inst, info in instances.items %}
+                    {% for inst in instances %}
                         <tr>
                             <td>{{ forloop.counter }}</td>
-                            <td><a href="{% url 'instance' host_id inst %}"><i class="icon-th-large"></i> {{ inst }}</a></td>
-                            <td>{% ifequal info.0 1 %}
+                            <td><a href="{% url 'instance' host_id inst.name %}"><i class="icon-th-large"></i> {{ inst.name }}</a></td>
+                            <td>{% ifequal inst.status 1 %}
                                     <span class="text-success">{% trans "Running" %}</span>
                                 {% endifequal %}
-                                {% ifequal info.0 5 %}
+                                {% ifequal inst.status 5 %}
                                     <span class="text-danger">{% trans "Shutoff" %}</span>
                                 {% endifequal %}
-                                {% ifequal info.0 3 %}
+                                {% ifequal inst.status 3 %}
                                     <span class="text-warning">{% trans "Suspend" %}</span>
                                 {% endifequal %}
                             </td>
                             <td>
                                 <form action="" method="post">{% csrf_token %}
-                                    <input type="hidden" name="name" value="{{ inst }}" />
-                                    {% ifequal info.0 5 %}
+                                    <input type="hidden" name="name" value="{{ inst.name }}" />
+                                    {% ifequal inst.status 5 %}
                                         <button class="btn btn-default" type="submit" name="start" title="Start">
                                             <span class="glyphicon glyphicon-play"></span>
                                         </button>
@@ -65,7 +65,7 @@
                                             <span class="glyphicon glyphicon-align-justify"></span>
                                         </button>
                                     {% endifequal %}
-                                    {% ifequal info.0 3 %}
+                                    {% ifequal inst.status 3 %}
                                         <button class="btn btn-default" type="submit" name="resume" title="{% trans "Resume" %}">
                                             <i class="icon-play"></i>
                                         </button>
@@ -82,7 +82,7 @@
                                             <span class="glyphicon glyphicon-align-justify"></span>
                                         </button>
                                     {% endifequal %}
-                                    {% ifequal info.0 1 %}
+                                    {% ifequal inst.status 1 %}
                                         <button class="btn btn-default disabled" title="{% trans "Start" %}">
                                             <span class="glyphicon glyphicon-play"></span>
                                         </button>
@@ -95,7 +95,7 @@
                                         <button class="btn btn-default" type="submit" name="destroy" title="{% trans "Force Shutdown" %}" onclick="return confirm('Are you sure?')">
                                             <span class="glyphicon glyphicon-stop"></span>
                                         </button>
-                                        <button class="btn btn-default" onclick="window.open('{% url 'console' host_id %}?token={{ uuid }}','','width=850,height=485')" title="{% trans "VNC" %}">
+                                        <button class="btn btn-default" onclick="window.open('{% url 'console' host_id %}?token={{ inst.uuid }}','','width=850,height=485')" title="{% trans "VNC" %}">
                                             <span class="glyphicon glyphicon-align-justify"></span>
                                         </button>
                                     {% endifequal %}

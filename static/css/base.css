@@ -24,11 +24,12 @@ body {
 .bs-sidenav {
     margin-top: 10px;
     margin-bottom: 30px;
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding-top: 20px;
+    padding-bottom: 20px;
     text-shadow: 0 1px 0 #fff;
     background-color: #f7f5fa;
     border-radius: 5px;
+    width: 210px;
 }
 .bs-sidebar .nav > li > a {
     display: block;
