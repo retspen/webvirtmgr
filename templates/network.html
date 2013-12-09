@@ -38,19 +38,19 @@
                         <p>
                             <form action="" method="post">{% csrf_token %}
                                 {% ifequal state 0 %}
-                                    <input type="submit" class="btn btn-sm btn-default" name="start" value="{% trans "Start" %}">
-                                    <input type="submit" class="btn btn-sm btn-default" name="delete" value="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
+                                    <input type="submit" class="btn btn-xs btn-primary" name="start" value="{% trans "Start" %}">
+                                    <input type="submit" class="btn btn-xs btn-danger" name="delete" value="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
                                 {% else %}
-                                    <input type="submit" class="btn btn-sm btn-default" name="stop" value="{% trans "Stop" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
+                                    <input type="submit" class="btn btn-xs btn-warning" name="stop" value="{% trans "Stop" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
                                 {% endifequal %}
                             </form>
                         </p>
                         <p>
                             <form action="" method="post">{% csrf_token %}
                                 {% ifequal autostart 0 %}
-                                    <input type="submit" class="btn btn-sm btn-default" name="set_autostart" value="{% trans "Enable" %}">
+                                    <input type="submit" class="btn btn-xs btn-primary" name="set_autostart" value="{% trans "Enable" %}">
                                 {% else %}
-                                    <input type="submit" class="btn btn-sm btn-default" name="unset_autostart" onclick="return confirm('{% trans "Are you sure?" %}')" value="{% trans "Disable" %}">
+                                    <input type="submit" class="btn btn-xs btn-danger" name="unset_autostart" onclick="return confirm('{% trans "Are you sure?" %}')" value="{% trans "Disable" %}">
                                 {% endifequal %}
                             </form>
                         </p>

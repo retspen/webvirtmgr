@@ -3,19 +3,19 @@
             <div class="bs-sidebar hidden-print affix" role="complementary">
                 <ul class="nav bs-sidenav">
                     <li>
-                        <a href="#"><span class="glyphicon glyphicon-wrench"></span> <strong>{% trans "Server" %} {{ compute.name }}</strong></a>
+                        <a href="#"><span class="glyphicon glyphicon-wrench"></span> <strong>{{ compute.name|upper }}</strong></a>
                         <ul class="nav">
                             <li>
                                 <a href="{% url 'overview' host_id %}"><span class="glyphicon glyphicon-info-sign"></span> {% trans "Overview" %}</a>
                             </li>
                             <li>
-                                <a href="{% url 'create' host_id %}"><span class="glyphicon glyphicon-plus"></span> {% trans "Create VM" %}</a>
+                                <a href="{% url 'create' host_id %}"><span class="glyphicon glyphicon-plus"></span> {% trans "Create" %}</a>
                             </li>
                             <li>
-                                <a href="{% url 'storages' host_id %}"><span class="glyphicon glyphicon-hdd"></span> {% trans "Storage pool" %}</a>
+                                <a href="{% url 'storages' host_id %}"><span class="glyphicon glyphicon-hdd"></span> {% trans "Storages" %}</a>
                             </li>
                             <li>
-                                <a href="{% url 'networks' host_id %}"><span class="glyphicon glyphicon-globe"></span> {% trans "Network pool" %}</a>
+                                <a href="{% url 'networks' host_id %}"><span class="glyphicon glyphicon-globe"></span> {% trans "Networks" %}</a>
                             </li>
                             <li>
                                 <a href="{% url 'snapshots' host_id %}"><span class="glyphicon glyphicon-camera"></span> {% trans "Snapshots" %}</a>

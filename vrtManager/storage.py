@@ -135,10 +135,14 @@ class wvmStorage(wvmConnect):
         except Exception:
             pass
         vols = self.get_volumes()
-        vol_list = {}
+        vol_list = []
 
         for volname in vols:
-            vol_list[volname] = self.get_volume_size(volname), self.get_volume_type(volname)
+            vol_list.append(
+                {'name': volname,
+                 'size': self.get_volume_size(volname),
+                 'type': self.get_volume_type(volname)}
+            )
         return vol_list
 
     def create_volume(self, name, size, format='qcow2'):

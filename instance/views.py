@@ -21,18 +21,19 @@ def diskusage(request, host_id, vname):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
-    host = Host.objects.get(id=host_id)
+    compute = Compute.objects.get(id=host_id)
 
     try:
-        conn = ConnServer(host)
-    except:
-        conn = None
-
-    if conn:
-        blk_usage = conn.vds_disk_usage(vname)
+        conn = wvmInstance(compute.hostname,
+                            compute.login,
+                            compute.password,
+                            compute.type,
+                            vname)
+        blk_usage = conn.disk_usage(vname)
         data = simplejson.dumps(blk_usage)
-    else:
-        data = None
+        conn.close()
+    except libvirtError as msg_error:
+        data = msg_error.message
 
     response = HttpResponse()
     response['Content-Type'] = "text/javascript"
@@ -47,18 +48,18 @@ def netusage(request, host_id, vname):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
-    host = Host.objects.get(id=host_id)
+    compute = Compute.objects.get(id=host_id)
 
     try:
-        conn = ConnServer(host)
-    except:
-        conn = None
-
-    if conn:
-        net_usage = conn.vds_network_usage(vname)
+        conn = wvmInstance(compute.hostname,
+                            compute.login,
+                            compute.password,
+                            compute.type,
+                            vname)
+        net_usage = conn.net_usage(vname)
         data = simplejson.dumps(net_usage)
-    else:
-        data = None
+    except libvirtError as msg_error:
+        data = msg_error.message
 
     response = HttpResponse()
     response['Content-Type'] = "text/javascript"
@@ -73,18 +74,19 @@ def cpuusage(request, host_id, vname):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
-    host = Host.objects.get(id=host_id)
+    compute = Compute.objects.get(id=host_id)
 
     try:
-        conn = ConnServer(host)
-    except:
-        conn = None
+        conn = wvmInstance(compute.hostname,
+                            compute.login,
+                            compute.password,
+                            compute.type,
+                            vname)
 
-    if conn:
-        cpu_usage = conn.vds_cpu_usage(vname)
+        cpu_usage = conn.cpu_usage(vname)
         data = simplejson.dumps(cpu_usage)
-    else:
-        data = None
+    except libvirtError as msg_error:
+        data = msg_error.message
 
     response = HttpResponse()
     response['Content-Type'] = "text/javascript"
@@ -141,6 +143,7 @@ def instances(request, host_id):
         errors.append(msg_error.message)
 
     return render_to_response('instances.html', locals(), context_instance=RequestContext(request))
+
 
 def instance(request, host_id, vname):
     """
