@@ -1,9 +1,9 @@
 #
 # Copyright (C) 2013 Webvirtmgr.
 #
-
 import random
 import libxml2
+import libvirt
 
 def randomMAC():
     """Generate a random MAC address."""

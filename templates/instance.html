@@ -80,15 +80,31 @@
                 <div class="row show-grid">
                     <div id="cpu-usage">
                         <div class="col-md-6" id="cpu-usage">
-                            <p><strong>{% trans "CPU" %}:</strong></p>
+                            <p><strong>{% trans "CPU" %}</strong></p>
                         </div>
                         <div class="col-md-6">
                             <p>{% trans "Usage" %}: <span id="cpu-data">0</span>%</p>
                         </div>
                     </div>
                     <div id="net-usage">
+                        {% for network in networks %}
+                            <div class="col-md-6">
+                                <p><strong>Eth{{ forloop.counter0 }}</strong></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p>Rx: 0.0 Mbps Tx: 0.0 Mbps</p>
+                            </div>
+                        {% endfor %}
                     </div>
                     <div id="disk-usage">
+                        {% for disk in disks %}
+                            <div class="col-md-6">
+                                <p><strong>{% trans "Disk" %} {{ disk.dev }}</strong></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p>Read: 0.0 Mb/s Write: 0.0 Mb/s</p>
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
                 <hr>
@@ -122,8 +138,8 @@
             </div>
             <div class="row show-grid">
                 <div class="col-md-6">
-                    <p><strong>{% trans "Processor" %}:</strong></p>
-                    <p><strong>{% trans "Memory" %}:</strong></p>
+                    <p><strong>{% trans "Processor" %}</strong></p>
+                    <p><strong>{% trans "Memory" %}</strong></p>
                 </div>
                 <div class="col-md-6">
                     <p>{{ vcpu }} VCPU</p>
@@ -153,7 +169,7 @@
             <div class="row show-grid">
                 <div class="col-md-6">
                     {% for disk in disks %}
-                        <p><strong>{% trans "Disk" %} {{ disk.dev }}:</strong></p>
+                        <p><strong>{% trans "Disk" %} {{ disk.dev }}</strong></p>
                     {% endfor %}
                 </div>
                 <div class="col-md-6">
@@ -169,22 +185,24 @@
             {% if media %}
                 <div class="row show-grid">
                     <div class="col-md-6">
-                        <p><strong>{% trans "Connected" %}:</strong></p>
+                        <p><strong>{% trans "Connected" %}</strong></p>
                     </div>
                     <div class="col-md-6">
-                        <p>{{ media }}</p>
+                        {% for iso in media %}
+                        <p>{{ iso.image }}</p>
+                        {% endfor %}
                     </div>
                 </div>
             {% endif %}
             <form action="" method="post">{% csrf_token %}
                 {% if media %}
-                    <input type="hidden" name="iso_img" value="{{ path }}">
-                    <button type="submit" class="btn btn-default"  name="remove_iso" onclick="return confirm('{% trans "Are you sure?" %}')">{% trans "Disconnect" %}</button>
+                    <input type="hidden" name="iso_media" value="{{ media.0.path }}">
+                    <button type="submit" class="btn btn-default"  name="umount_iso" onclick="return confirm('{% trans "Are you sure?" %}')">{% trans "Disconnect" %}</button>
                 {% else %}
                     <div class="form-group">
-                    <label class="col-lg-1 control-label">{% trans "Images" %}:</label>
+                    <label class="col-lg-1 control-label">{% trans "Images" %}</label>
                     <div class="col-lg-5">
-                        <select name="iso_img" class="form-control">
+                        <select name="iso_media" class="form-control">
                             {% if media_iso %}
                                 {% for iso in media_iso %}
                                     <option value="{{ iso }}">{{ iso }}</option>
@@ -194,8 +212,8 @@
                             {% endif %}
                         </select>
                         <br>
-                        {% if iso_images %}
-                            <button type="submit" class="btn btn-default" name="add_iso" >{% trans "Connect" %}</button>
+                        {% if media_iso %}
+                            <button type="submit" class="btn btn-default" name="mount_iso" >{% trans "Connect" %}</button>
                         {% else %}
                             <button class="btn btn-default disabled" name="connect">{% trans "Connect" %}</button>
                         {% endif %}
@@ -251,7 +269,7 @@
                 <form class="form-group" method="post" role="form">{% csrf_token %}
                     <div class="checkbox">
                         <label>
-                          <input type="checkbox" name="delete_disk" value="true"><strong>{% trans "General HDD device" %}</strong>
+                          <input type="checkbox" name="delete_disk" value="true"><strong>{% trans "Warning: if you check this box, VM's data will be lost!" %}</strong>
                         </label>
                     </div>
                     <div class="modal-footer">
@@ -278,7 +296,6 @@
                         </li>
                         <li><a href="#2" data-toggle="tab">{% trans "VNC" %}</a></li>
                         <li><a href="#3" data-toggle="tab">{% trans "XML" %}</a></li>
-                        <li><a href="#4" data-toggle="tab">{% trans "noNVC" %}</a></li>
                     </ul>
                 </div>
                 <div class="tab-content">
@@ -303,7 +320,7 @@
                             <div class="form-group">
                                 <label class="col-lg-4 control-label">{% trans "RAM" %}</label>
                                 <div class="col-lg-6">
-                                    <select name="ram" class="form-control">
+                                    <select name="memory" class="form-control">
                                         {% for mem in memory_range %}
                                             <option value="{{ mem }}" {% if mem == memory %}selected{% endif %}>{{ mem }} {% trans "MB" %}</option>
                                         {% endfor %}
@@ -312,7 +329,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-                                <button type="submit" class="btn btn-primary" name="edit">{% trans "Change" %}</button>
+                                <button type="submit" class="btn btn-primary" name="change_settings">{% trans "Change" %}</button>
                             </div>
                         </form>
                     </div>
@@ -348,18 +365,7 @@
                             <textarea class="form-control" rows="18" name="vm_xml">{{ vm_xml }}</textarea>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-                                <button type="submit" class="btn btn-danger" name="update_xml">{% trans "Save" %}</button>
-                            </div>
-                        </form>
-                    </div>
-                     <div class="tab-pane" id="4">
-                        <form class="form-horizontal" method="post" role="form">{% csrf_token %}
-                            <div class="modal-body">
-                              <p>One fine body…</p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-                                <button type="submit" class="btn btn-primary" name="enable_novnc">{% trans "Enable" %}</button>
+                                <button type="submit" class="btn btn-danger" name="change_xml">{% trans "Save" %}</button>
                             </div>
                         </form>
                     </div>
@@ -389,18 +395,18 @@
     {% ifequal status 1 %}
         <script type="text/javascript">
             function cpu_usage(){
-                $.getJSON('/info/vds/cpu/{{ host_id }}/{{ vname }}', function(data) {
+                $.getJSON('/info/inst/cpu/{{ host_id }}/{{ vname }}', function(data) {
                     $('#cpu-data').text(data.cpu);
                 });
             }
             function disk_usage(){
-                $.getJSON('/info/vds/disk/{{ host_id }}/{{ vname }}', function(data) {
+                $.getJSON('/info/inst/disk/{{ host_id }}/{{ vname }}', function(data) {
                     var disktar = document.getElementById('disk-usage');
                     var disktartext = '';
 
                     for(var i = 0; i < data.length; i++){
                         disktartext += '<div class="col-md-6">' +
-                                          '<p><strong>{% trans "Disk" %} ' +  data[i].dev  + ':</strong></p>' +
+                                          '<p><strong>{% trans "Disk" %} ' +  data[i].dev  + '</strong></p>' +
                                         '</div>' +
                                         '<div class="col-md-6">' +
                                           '<p>{% trans "Read" %}: ' + (data[i].rd/1024/1024).toFixed(1) + ' Mb/s {% trans "Write" %}: ' + (data[i].wr/1024/1024).toFixed(1) + ' Mb/s</p>' +
@@ -410,13 +416,13 @@
                 });
             }
             function net_usage(){
-                $.getJSON('/info/vds/net/{{ host_id }}/{{ vname }}', function(data) {
+                $.getJSON('/info/inst/net/{{ host_id }}/{{ vname }}', function(data) {
                     var disktar = document.getElementById('net-usage');
                     var disktartext = '';
 
                     for(var i = 0; i < data.length; i++){
                         disktartext += '<div class="col-md-6">' +
-                                          '<p><strong>{% trans "Eth" %}' +  data[i].dev  + ':</strong></p>' +
+                                          '<p><strong>{% trans "Eth" %}' +  data[i].dev  + '</strong></p>' +
                                         '</div>' +
                                         '<div class="col-md-6">' +
                                           '<p>{% trans "Rx" %}: ' + (data[i].rx/1024/1024).toFixed(1) + ' Mbps {% trans "Tx" %}: ' + (data[i].tx/1024/1024).toFixed(1) + ' Mbps</p>' +

@@ -120,11 +120,14 @@ class wvmInstance(wvmConnect):
             for interface in ctx.xpathEval('/domain/devices/disk'):
                 device = interface.xpathEval('@device')[0].content
                 if device == 'cdrom':
-                    dev = interface.xpathEval('target/@dev')[0].content
-                    file = interface.xpathEval('source/@file')[0].content
-                    vol = self.get_volume_by_path(file)
-                    stg = vol.storagePoolLookupByVolume()
-                    result.append({'dev': dev, 'image': vol.name(), 'storage': stg.name(), 'path': file})
+                    try:
+                        dev = interface.xpathEval('target/@dev')[0].content
+                        file = interface.xpathEval('source/@file')[0].content
+                        vol = self.get_volume_by_path(file)
+                        stg = vol.storagePoolLookupByVolume()
+                        result.append({'dev': dev, 'image': vol.name(), 'storage': stg.name(), 'path': file})
+                    except:
+                        pass
             return result
         return util.get_xml_path(self._XMLDesc(0), func=disks)
 
@@ -139,24 +142,23 @@ class wvmInstance(wvmConnect):
             stg = self.get_storage(storage)
             for img in stg.listVolumes():
                 if image == img:
+                    vol = stg.storageVolLookupByName(image)
                     if self.get_status() == 1:
-                        vol = stg.storageVolLookupByName(image)
                         xml = """<disk type='file' device='cdrom'>
                                     <driver name='qemu' type='raw'/>
-                                    <target dev='sda' bus='ide'/>
+                                    <target dev='hda' bus='ide'/>
                                     <source file='%s'/>
                                  </disk>""" % vol.path()
                         self.instance.attachDevice(xml)
                         xmldom = self._XMLDesc(VIR_DOMAIN_XML_SECURE)
                         self._defineXML(xmldom)
                     if self.get_status() == 5:
-                        vol = stg.storageVolLookupByName(image)
                         xml = self._XMLDesc(VIR_DOMAIN_XML_SECURE)
                         newxml = """<disk type='file' device='cdrom'>
-                                    <driver name='qemu' type='raw'/>
-                                    <source file='%s'/>""" % vol.path()
-                        xmldom = xml.replace("""<disk type='file' device='cdrom'>
-                                                <driver name='qemu' type='raw'/>""", newxml)
+                                      <driver name='qemu' type='raw'/>
+                                      <target dev='hda' bus='ide'/>
+                                      <source file='%s'/>""" % vol.path()
+                        xmldom = xml.replace("""<disk type='file' device='cdrom'>\n      <driver name='qemu' type='raw'/>""", newxml)
                         self._defineXML(xmldom)
 
     def umount_iso(self, image):
@@ -238,7 +240,7 @@ class wvmInstance(wvmConnect):
         xmldom = re.sub('<graphics.*>', newxml, xml)
         self._defineXML(xmldom)
 
-    def update_xml(self, description, memory, vcpu):
+    def change_settings(self, description, memory, vcpu):
         """
         Function change ram and cpu on vds.
         """

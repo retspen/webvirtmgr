@@ -31,7 +31,7 @@ def diskusage(request, host_id, vname):
                             compute.password,
                             compute.type,
                             vname)
-        blk_usage = conn.disk_usage(vname)
+        blk_usage = conn.disk_usage()
         data = simplejson.dumps(blk_usage)
         conn.close()
     except libvirtError as msg_error:
@@ -58,7 +58,7 @@ def netusage(request, host_id, vname):
                             compute.password,
                             compute.type,
                             vname)
-        net_usage = conn.net_usage(vname)
+        net_usage = conn.net_usage()
         data = simplejson.dumps(net_usage)
         conn.close()
     except libvirtError as msg_error:
@@ -86,7 +86,7 @@ def cpuusage(request, host_id, vname):
                             compute.type,
                             vname)
 
-        cpu_usage = conn.cpu_usage(vname)
+        cpu_usage = conn.cpu_usage()
         data = simplejson.dumps(cpu_usage)
         conn.close()
     except libvirtError as msg_error:
@@ -175,9 +175,11 @@ def instance(request, host_id, vname):
 
         status = conn.get_status()
         vcpu = conn.get_vcpu()
+        uuid = conn.get_uuid()
         memory = conn.get_memory()
         description = conn.get_description()
         disks = conn.get_disk_device()
+        media = conn.get_media_device()
         networks = conn.get_net_device()
         media_iso = sorted(conn.get_iso_media())
         vcpu_range = conn.get_max_cpus()
@@ -185,12 +187,19 @@ def instance(request, host_id, vname):
         vnc_port = conn.get_vnc()
         vm_xml = conn._XMLDesc(VIR_DOMAIN_XML_SECURE)
 
+    except libvirtError as msg_error:
+        errors.append(msg_error.message)
+
         try:
             instance = Instance.objects.get(compute_id=host_id, name=vname)
-            uuid = instance.uuid
+            if instance.uuid != uuid:
+                instance.uuid = uuid
+                instance.save()
         except Instance.DoesNotExist:
-            uuid = None
+            instance = Instance(compute_id=host_id, name=vname, uuid=uuid)
+            instance.save()
 
+    try:
         if request.method == 'POST':
             if 'start' in request.POST:
                 conn.start()
@@ -223,22 +232,22 @@ def instance(request, host_id, vname):
                 conn.create_snapshot()
                 msg = _("Create snapshot for instance successful")
                 messages.append(msg)
-            if 'mount_iso' in request.POST:
-                image = request.POST.get('iso_media', '')
-                conn.vds_umount_iso(vname, image)
-                return HttpResponseRedirect(request.get_full_path())
             if 'umount_iso' in request.POST:
                 image = request.POST.get('iso_media', '')
-                conn.vds_mount_iso(vname, image)
+                conn.umount_iso(image)
                 return HttpResponseRedirect(request.get_full_path())
-            if 'update_info' in request.POST:
+            if 'mount_iso' in request.POST:
+                image = request.POST.get('iso_media', '')
+                conn.mount_iso(image)
+                return HttpResponseRedirect(request.get_full_path())
+            if 'change_settings' in request.POST:
                 description = request.POST.get('description', '')
                 vcpu = request.POST.get('vcpu', '')
                 memory = request.POST.get('memory', '')
-                conn.update_info(description, memory, vcpu)
+                conn.change_settings(description, memory, vcpu)
                 return HttpResponseRedirect(request.get_full_path())
-            if 'update_xml' in request.POST:
-                xml = request.POST.get('instance_xml', '')
+            if 'change_xml' in request.POST:
+                xml = request.POST.get('change_xml', '')
                 if xml:
                     conn._defineXML(xml)
                     return HttpResponseRedirect(request.get_full_path())
@@ -253,10 +262,6 @@ def instance(request, host_id, vname):
                 if not errors:
                     conn.set_vnc_passwd(passwd)
                     return HttpResponseRedirect(request.get_full_path())
-            if 'enable_novnc' in request.POST:
-                instance = Instance(compute_id=host_id, name=vname, uuid=conn.get_uuid())
-                instance.save()
-
         conn.close()
 
     except libvirtError as msg_error:

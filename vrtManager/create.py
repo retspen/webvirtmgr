@@ -84,6 +84,7 @@ class wvmCreate(wvmConnect):
         xml = """
                 <domain type='%s'>
                   <name>%s</name>
+                  <description>None</description>
                   <uuid>%s</uuid>
                   <memory unit='KiB'>%s</memory>
                   <vcpu>%s</vcpu>""" % (self.get_guest_cap()[1].hypervisor_type,
