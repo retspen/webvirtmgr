@@ -68,11 +68,14 @@
                             </td>
                             <td style="width:280px">
                                 {% ifequal info.2 1 %}
-                                    <a href="{% url 'overview' host_id %}" class="btn btn-primary">
-                                        <span class="glyphicon glyphicon-info-sign"></span>
+                                    <a href="{% url 'instances' host_id %}" class="btn btn-primary">
+                                        <span class="glyphicon glyphicon-th-large"></span>
                                     </a>
                                     <a href="{% url 'create' host_id %}" class="btn btn-primary">
                                         <span class="glyphicon glyphicon-plus"></span>
+                                    </a>
+                                    <a href="{% url 'overview' host_id %}" class="btn btn-primary">
+                                        <span class="glyphicon glyphicon-info-sign"></span>
                                     </a>
                                     <a href="{% url 'storages' host_id %}" class="btn btn-primary">
                                         <span class="glyphicon glyphicon-hdd"></span>
@@ -84,19 +87,22 @@
                                         <span class="glyphicon glyphicon-camera"></span>
                                     </a>
                                 {% else %}
-                                    <a href="#" class="btn btn-primary disabled">
-                                        <span class="glyphicon glyphicon-eye-open"></span>
+                                    <a href="#" class="btn btn-primary">
+                                        <span class="glyphicon glyphicon-th-large"></span>
                                     </a>
-                                    <a href="#" class="btn btn-primary disabled">
+                                    <a href="#" class="btn btn-primary">
                                         <span class="glyphicon glyphicon-plus"></span>
                                     </a>
-                                    <a href="#" class="btn btn-primary disabled">
+                                    <a href="#" class="btn btn-primary">
+                                        <span class="glyphicon glyphicon-info-sign"></span>
+                                    </a>
+                                    <a href="#" class="btn btn-primary">
                                         <span class="glyphicon glyphicon-hdd"></span>
                                     </a>
-                                    <a href="#" class="btn btn-primary disabled">
+                                    <a href="#" class="btn btn-primary">
                                         <span class="glyphicon glyphicon-globe"></span>
                                     </a>
-                                    <a href="#" class="btn btn-primary disabled">
+                                    <a href="#" class="btn btn-primary">
                                         <span class="glyphicon glyphicon-camera"></span>
                                     </a>
                                 {% endifequal %}

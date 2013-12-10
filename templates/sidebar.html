@@ -6,10 +6,13 @@
                         <a href="#"><span class="glyphicon glyphicon-wrench"></span> <strong>{{ compute.name|upper }}</strong></a>
                         <ul class="nav">
                             <li>
-                                <a href="{% url 'overview' host_id %}"><span class="glyphicon glyphicon-info-sign"></span> {% trans "Overview" %}</a>
+                                <a href="{% url 'instances' host_id %}"><span class="glyphicon glyphicon-th-large"></span> {% trans "Instances" %}</a>
                             </li>
                             <li>
                                 <a href="{% url 'create' host_id %}"><span class="glyphicon glyphicon-plus"></span> {% trans "Create" %}</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'overview' host_id %}"><span class="glyphicon glyphicon-info-sign"></span> {% trans "Overview" %}</a>
                             </li>
                             <li>
                                 <a href="{% url 'storages' host_id %}"><span class="glyphicon glyphicon-hdd"></span> {% trans "Storages" %}</a>
@@ -19,9 +22,6 @@
                             </li>
                             <li>
                                 <a href="{% url 'snapshots' host_id %}"><span class="glyphicon glyphicon-camera"></span> {% trans "Snapshots" %}</a>
-                            </li>
-                            <li>
-                                <a href="{% url 'instances' host_id %}"><span class="glyphicon glyphicon-list"></span> {% trans "Instances" %}</a>
                             </li>
                         </ul>
                     </li>
