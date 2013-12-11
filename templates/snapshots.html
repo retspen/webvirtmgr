@@ -16,56 +16,24 @@
                     </div>
                 {% endfor %}
             {% endif %}
-            {% if message %}
-                <div class="alert alert-success">
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                    {{ message }}
-                </div>
-            {% endif %}
-
-            {% if vname and not vm_snapshot %}
-                <div class="well">
-                    <h4>{% trans "You do not have any snapshots for" %} - <a href="{% url 'instance' host_id vname %}">{{ vname }}</a></h4>
-                </div>
-            {% endif %}
-
-            {% if vname and snapshots %}
-                <h5><strong>{% trans "Virtual Machine" %}:</strong> <a href="{% url 'instance' host_id vname %}">{{ vname }}</a></h5>
+            {% if snapshots %}
                 <table class="table table-bordered">
                     <thead>
                     <tr>
                         <th>{% trans "Name" %}</th>
-                        <th>{% trans "Date" %}</th>
-                        <th colspan="2">{% trans "Action" %}</th>
+                        <th style="width: 70px;">{% trans "Counts" %}</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {% for snapshot in snapshots %}
+                    {% for instance, counts in snapshots.items %}
                         <tr>
-                            <td><strong>{{ name }}</strong></td>
-                            <td>{{ time.0|date:"M d H:i:s" }}</td>
-                            <td style="width:30px;">
-                                <form action="" method="post" style="height:10px;">{% csrf_token %}
-                                    <input type="hidden" name="name" value="{{ snapshot.name }}">
-                                    {% ifnotequal snapshot.time 3 %}
-                                        <button type="submit" class="btn btn-primary" name="revert" value="revert" onclick="return confirm('Are you sure?')">{% trans "Revert" %}</button>
-                                    {% else %}
-                                        <button type="button" class="btn btn-primary disabled" name="revert" value="Revert">{% trans "Revert" %}</button>
-                                    {% endifnotequal %}
-                                </form>
-                            </td>
-                            <td style="width:30px;">
-                                <form action="" method="post">{% csrf_token %}
-                                    <input type="hidden" name="name" value="{{ snapshot.name }}">
-                                    <button type="submit" class="btn btn-danger" name="delete" value="delete" onclick="return confirm('{% trans "Are you sure?" %}')">{% trans "Delete" %}</button>
-                                </form>
-                            </td>
+                            <td><a href="{% url 'snapshot' host_id instance %}">{{ instance }}</strong></td>
+                            <td><p>{{ counts }}</p></td>
                         </tr>
                     {% endfor %}
                     </tbody>
                 </table>
-            {% endif %}
-            {% if not vname and not snaphosts %}
+            {% else %}
                 <div class="well">
                     <h4>{% trans "You do not have any snapshots" %}</h4>
                 </div>

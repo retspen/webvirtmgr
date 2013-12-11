@@ -24,7 +24,7 @@ def snapshots(request, host_id):
                           compute.login,
                           compute.password,
                           compute.type)
-        get_snapshots = conn.get_snapshots()
+        snapshots = conn.get_snapshots()
         conn.close()
     except libvirtError as msg_error:
         errors.append(msg_error.message)
@@ -49,7 +49,6 @@ def snapshot(request, host_id, vname):
                           compute.login,
                           compute.password,
                           compute.type)
-        all_vm_snap = conn.snapshots_get_node()
         vm_snapshot = conn.snapshots_get_vds(vname)
         conn.close()
 

@@ -4,9 +4,9 @@
 
 import re
 import string
-
 import libvirt
 import virtinst
+from datetime import datetime
 
 from libvirt import VIR_DOMAIN_XML_SECURE, libvirtError
 
@@ -85,6 +85,9 @@ class wvmConnect(object):
     def get_network(self, net):
         return self.wvm.networkLookupByName(net)
 
+    def get_instance(self, name):
+        return self.wvm.lookupByName(name)
+
     def get_instances(self):
         instances = []
         for inst_id in self.wvm.listDomainsID():
@@ -111,26 +114,26 @@ class wvmConnect(object):
         Function return all vds snaphots.
         """
         snapshots = {}
-        dom = self.lookupVM(vname)
+        dom = self.get_instance(vname)
         all_snapshot = dom.snapshotListNames(0)
         for snapshot in all_snapshot:
             snapshots[snapshot] = (datetime.fromtimestamp(int(snapshot)), dom.info()[0])
         return snapshots
 
-    def snapshot_delete(self, vname, name_snap):
+    def snapshot_delete(self, vname, snap):
         """
         Function delete vds snaphots.
         """
-        dom = self.lookupVM(vname)
-        snap = dom.snapshotLookupByName(name_snap, 0)
+        dom = self.get_instance(vname)
+        snap = dom.snapshotLookupByName(snap, 0)
         snap.delete(0)
 
-    def snapshot_revert(self, vname, name_snap):
+    def snapshot_revert(self, vname, snap):
         """
         Function revert vds snaphots.
         """
-        dom = self.lookupVM(vname)
-        snap = dom.snapshotLookupByName(name_snap, 0)
+        dom = self.get_instance(vname)
+        snap = dom.snapshotLookupByName(snap, 0)
         dom.revertToSnapshot(snap, 0)
 
 
