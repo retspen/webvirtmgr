@@ -118,11 +118,21 @@
                 <div class="col-md-6">
                     <p><strong>{% trans "Name" %}:</strong></p>
                     <p><strong>{% trans "Description" %}:</strong></p>
+                    <p><strong>{% trans "Autostart" %}:</strong></p>
                     <p><strong>{% trans "Status" %}:</strong></p>
                 </div>
                 <div class="col-md-6">
                     <p>{{ vname }}</p>
                     <p>{{ description }}</p>
+                    <p>
+                        <form action="" method="post">{% csrf_token %}
+                            {% ifequal autostart 0 %}
+                                <input type="submit" class="btn btn-xs btn-primary" name="set_autostart" value="{% trans "Enable" %}">
+                            {% else %}
+                                <input type="submit" class="btn btn-xs btn-danger" name="unset_autostart" onclick="return confirm('{% trans "Are you sure?" %}')" value="{% trans "Disable" %}">
+                            {% endifequal %}
+                        </form>
+                    </p>
                     <p>{% if status %}
                         <span class={% ifequal status 5 %}"text-danger">{% trans "Shuttoff" %}{% endifequal %}
                                     {% ifequal status 1 %}"text-success">{% trans "Running" %}{% endifequal %}

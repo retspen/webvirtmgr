@@ -173,6 +173,7 @@ def instance(request, host_id, vname):
                            vname)
 
         status = conn.get_status()
+        autostart = conn.get_autostart()
         vcpu = conn.get_vcpu()
         uuid = conn.get_uuid()
         memory = conn.get_memory()
@@ -238,6 +239,12 @@ def instance(request, host_id, vname):
             if 'mount_iso' in request.POST:
                 image = request.POST.get('iso_media', '')
                 conn.mount_iso(image)
+                return HttpResponseRedirect(request.get_full_path())
+            if 'set_autostart' in request.POST:
+                conn.set_autostart(1)
+                return HttpResponseRedirect(request.get_full_path())
+            if 'unset_autostart' in request.POST:
+                conn.set_autostart(0)
                 return HttpResponseRedirect(request.get_full_path())
             if 'change_settings' in request.POST:
                 description = request.POST.get('description', '')

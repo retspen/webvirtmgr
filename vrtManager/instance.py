@@ -10,9 +10,6 @@ from vrtManager.conection import wvmConnect
 
 
 class wvmInstances(wvmConnect):
-    def get_instance(self, name):
-        return self.wvm.lookupByName(name)
-
     def get_instance_status(self, name):
         inst = self.get_instance(name)
         return inst.info()[0]
@@ -69,6 +66,12 @@ class wvmInstance(wvmConnect):
 
     def get_status(self):
         return self.instance.info()[0]
+
+    def get_autostart(self):
+        return self.instance.autostart()
+
+    def set_autostart(self, flag):
+        return self.instance.setAutostart(flag)
 
     def get_uuid(self):
         return self.instance.UUIDString()

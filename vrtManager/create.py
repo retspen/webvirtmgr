@@ -133,6 +133,7 @@ class wvmCreate(wvmConnect):
             xml += """</interface>"""
 
         xml += """  <input type='mouse' bus='ps2'/>
+                    <input type='tablet' bus='usb'/>
                     <graphics type='vnc' port='-1' autoport='yes' listen='0.0.0.0'>
                       <listen type='address' address='0.0.0.0'/>
                     </graphics>
