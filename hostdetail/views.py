@@ -1,7 +1,7 @@
 from libvirt import libvirtError
 
 from django.shortcuts import render_to_response
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
 from django.utils import simplejson
 
@@ -21,8 +21,11 @@ def cpuusage(request, host_id):
     compute = Compute.objects.get(id=host_id)
 
     try:
-        conn = wvmHostDetails(compute.hostname, compute.login, compute.password, compute.type)
-        cpu_usage = conn.cpu_get_usage()
+        conn = wvmHostDetails(compute.hostname,
+                              compute.login,
+                              compute.password,
+                              compute.type)
+        cpu_usage = conn.get_cpu_usage()
         data = simplejson.dumps(cpu_usage)
         conn.close()
     except libvirtError:
@@ -31,6 +34,7 @@ def cpuusage(request, host_id):
     response['Content-Type'] = "text/javascript"
     response.write(data)
     return response
+
 
 def memusage(request, host_id):
     """
@@ -43,8 +47,11 @@ def memusage(request, host_id):
     compute = Compute.objects.get(id=host_id)
 
     try:
-        conn = wvmHostDetails(compute.hostname, compute.login, compute.password, compute.type)
-        mem_usage = conn.memory_get_usage()
+        conn = wvmHostDetails(compute.hostname,
+                              compute.login,
+                              compute.password,
+                              compute.type)
+        mem_usage = conn.get_memory_usage()
         data = simplejson.dumps(mem_usage)
         conn.close()
     except libvirtError:
@@ -53,6 +60,7 @@ def memusage(request, host_id):
     response['Content-Type'] = "text/javascript"
     response.write(data)
     return response
+
 
 def overview(request, host_id):
     """
@@ -67,10 +75,13 @@ def overview(request, host_id):
     compute = Compute.objects.get(id=host_id)
 
     try:
-        conn = wvmHostDetails(compute.hostname, compute.login, compute.password, compute.type)
+        conn = wvmHostDetails(compute.hostname,
+                              compute.login,
+                              compute.password,
+                              compute.type)
         hostname, host_arch, host_memory, logical_cpu, model_cpu, uri_conn = conn.get_node_info()
         hypervisor = conn.hypervisor_type()
-        mem_usage = conn.memory_get_usage()
+        mem_usage = conn.get_memory_usage()
         conn.close()
     except libvirtError as err:
         errors.append(err.message)

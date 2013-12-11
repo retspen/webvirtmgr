@@ -158,14 +158,15 @@ class wvmInstance(wvmConnect):
                                       <driver name='qemu' type='raw'/>
                                       <target dev='hda' bus='ide'/>
                                       <source file='%s'/>""" % vol.path()
-                        xmldom = xml.replace("""<disk type='file' device='cdrom'>\n      <driver name='qemu' type='raw'/>""", newxml)
+                        xml_string = "<disk type='file' device='cdrom'>\n      <driver name='qemu' type='raw'/>"
+                        xmldom = xml.replace(xml_string, newxml)
                         self._defineXML(xmldom)
 
     def umount_iso(self, image):
         if self.get_status() == 1:
             xml = """<disk type='file' device='cdrom'>
                          <driver name="qemu" type='raw'/>
-                         <target dev='sda' bus='ide'/>
+                         <target dev='hda' bus='ide'/>
                          <readonly/>
                       </disk>"""
             self.instance.attachDevice(xml)

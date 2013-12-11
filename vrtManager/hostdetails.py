@@ -8,7 +8,7 @@ from vrtManager.util import get_xml_path
 
 
 class wvmHostDetails(wvmConnect):
-    def memory_get_usage(self):
+    def get_memory_usage(self):
         """
         Function return memory usage on node.
         """
@@ -25,7 +25,7 @@ class wvmHostDetails(wvmConnect):
             mem_usage = {'usage': None, 'percent': None}
         return mem_usage
 
-    def cpu_get_usage(self):
+    def get_cpu_usage(self):
         """
         Function return cpu usage on node.
         """

@@ -189,14 +189,14 @@ def instance(request, host_id, vname):
     except libvirtError as msg_error:
         errors.append(msg_error.message)
 
-        try:
-            instance = Instance.objects.get(compute_id=host_id, name=vname)
-            if instance.uuid != uuid:
-                instance.uuid = uuid
-                instance.save()
-        except Instance.DoesNotExist:
-            instance = Instance(compute_id=host_id, name=vname, uuid=uuid)
+    try:
+        instance = Instance.objects.get(compute_id=host_id, name=vname)
+        if instance.uuid != uuid:
+            instance.uuid = uuid
             instance.save()
+    except Instance.DoesNotExist:
+        instance = Instance(compute_id=host_id, name=vname, uuid=uuid)
+        instance.save()
 
     try:
         if request.method == 'POST':

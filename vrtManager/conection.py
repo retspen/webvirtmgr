@@ -137,22 +137,14 @@ class wvmConnect(object):
         snap = dom.snapshotLookupByName(snapshot, 0)
         dom.revertToSnapshot(snap, 0)
 
-    def infrastructure(self):
+    def get_host_instances(self):
         vname = {}
-        host_mem = self.wvm.getInfo()[1] * 1048576
-        for vm_id in self.wvm.listDomainsID():
-            vm_id = int(vm_id)
-            dom = self.wvm.lookupByID(vm_id)
-            mem = util.get_xml_path(dom.XMLDesc(0), "/domain/memory")
-            mem = int(mem) * 1024
-            mem_usage = (mem * 100) / host_mem
-            vcpu = uitl.get_xml_path(dom.XMLDesc(0), "/domain/vcpu")
-            vname[dom.name()] = (dom.info()[0], vcpu, mem, mem_usage)
-        for name in self.wvm.listDefinedDomains():
+        memory = self.wvm.getInfo()[1] * 1048576
+        for name in self.get_instances():
             dom = self.get_instance(name)
             mem = util.get_xml_path(dom.XMLDesc(0), "/domain/memory")
             mem = int(mem) * 1024
-            mem_usage = (mem * 100) / host_mem
+            mem_usage = (mem * 100) / memory
             vcpu = util.get_xml_path(dom.XMLDesc(0), "/domain/vcpu")
             vname[dom.name()] = (dom.info()[0], vcpu, mem, mem_usage)
         return vname
