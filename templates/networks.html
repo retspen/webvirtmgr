@@ -6,6 +6,7 @@
         {% include 'sidebar.html' %}
         <div class="col-md-9" role="main">
             <div class="page-header">
+                <a href="#AddNetPool" class="btn btn-lg btn-success pull-right" data-toggle="modal">{% trans "Create" %}</a>
                 <h1>{% trans "Network Pool" %}</h1>
             </div>
             {% if errors %}
@@ -40,20 +41,22 @@
                     {% endfor %}
                 </div>
             {% endif %}
-            <div class="block-btn">
-                <a href="#AddNetPool" class="btn btn-lg btn-success" data-toggle="modal">{% trans "Create" %}</a>
-            </div>
             {% if not networks %}
                 <div class="well">
                     <h4>{% trans "You do not have any virtual networks" %}</h4>
                 </div>
             {% else %}
-                <hr>
-                <div class="btn-group">
-                    {% for pool in networks %}
-                        <a style="width: 100px;" class="btn btn-default" type="buttons" href="{% url 'network' host_id pool %}"><h4>{{ pool }}</h4></a>
-                    {% endfor %}
-                </ul>
+                {% for pool in networks %}
+                    <div class="panel {% if pool.status %}panel-success{% else %}panel-danger{% endif %}">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><a href="{% url 'network' host_id pool.name %}">{{ pool.name }}</a></h3>
+                        </div>
+                        <div class="panel-body">
+                            <p>{% trans "Deivce" %}: {{ pool.device }}</p>
+                            <p>{% trans "Forward" %}: {{ pool.forward|upper }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
             {% endif %}
         </div>
     </div>

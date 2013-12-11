@@ -6,6 +6,7 @@
         {% include 'sidebar.html' %}
         <div class="col-md-9" role="main">
             <div class="page-header">
+                <a href="#AddStgPool" class="btn btn-lg btn-success pull-right" data-toggle="modal">{% trans "Create" %}</a>
                 <h1>{% trans "Storages" %}</h1>
             </div>
             {% if errors %}
@@ -40,15 +41,11 @@
                     {% endfor %}
                 </div>
             {% endif %}
-            <div class="block-btn">
-                <a href="#AddStgPool" class="btn btn-lg btn-success" data-toggle="modal">{% trans "Create" %}</a>
-            </div>
             {% if not storages %}
                 <div class="well">
                     <h4>{% trans "You do not have any storages" %}</h4>
                 </div>
             {% else %}
-                <hr>
                 {% for pool in storages %}
                     <div class="panel {% if pool.status %}panel-success{% else %}panel-danger{% endif %}">
                         <div class="panel-heading">

@@ -27,7 +27,9 @@ def networks(request, host_id):
                            compute.login,
                            compute.password,
                            compute.type)
-        networks = conn.get_networks()
+        networks = conn.get_networks_info()
+
+        print networks
 
         if request.method == 'POST':
             if 'create' in request.POST:

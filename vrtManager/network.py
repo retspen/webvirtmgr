@@ -27,6 +27,18 @@ def network_size(net, dhcp=None):
 
 
 class wvmNetworks(wvmConnect):
+    def get_networks_info(self):
+        get_networks = self.get_networks()
+        networks = []
+        for network in get_networks:
+            net = self.get_network(network)
+            net_status = net.isActive()
+            net_bridge = net.bridgeName()
+            net_forwd = util.get_xml_path(net.XMLDesc(0), "/network/forward/@mode")
+            networks.append({'name': network, 'status': net_status,
+                             'device': net_bridge, 'forward': net_forwd})
+        return networks
+
     def define_network(self, xml):
         self.wvm.networkDefineXML(xml)
 

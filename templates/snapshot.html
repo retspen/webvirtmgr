@@ -6,7 +6,7 @@
         {% include 'sidebar.html' %}
         <div class="col-md-9" role="main">
             <div class="page-header">
-                <h1>{% trans "Snapshots" %}</h1>
+                <h1><a href="{% url 'instance' host_id vname %}">{{ vname }}</a> - {% trans "Snapshots" %}</h1>
             </div>
             {% if errors %}
                 {% for error in errors %}
@@ -22,15 +22,12 @@
                     {{ message }}
                 </div>
             {% endif %}
-
             {% if vname and not vm_snapshot %}
                 <div class="well">
                     <h4>{% trans "You do not have any snapshots for" %} - <a href="{% url 'instance' host_id vname %}">{{ vname }}</a></h4>
                 </div>
             {% endif %}
-
-            {% if vname and vm_snapshot %}
-                <h4><strong>{% trans "Virtual Machine" %}:</strong> <a href="{% url 'instance' host_id vname %}">{{ vname }}</a></h4>
+            {% if vm_snapshot %}
                 <table class="table table-bordered">
                     <thead>
                     <tr>
