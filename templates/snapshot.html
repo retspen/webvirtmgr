@@ -30,7 +30,7 @@
             {% endif %}
 
             {% if vname and vm_snapshot %}
-                <h5><strong>{% trans "Virtual Machine" %}:</strong> <a href="{% url 'instance' host_id vname %}">{{ vname }}</a></h5>
+                <h4><strong>{% trans "Virtual Machine" %}:</strong> <a href="{% url 'instance' host_id vname %}">{{ vname }}</a></h4>
                 <table class="table table-bordered">
                     <thead>
                     <tr>
@@ -64,11 +64,6 @@
                     {% endfor %}
                     </tbody>
                 </table>
-            {% endif %}
-            {% if not vname and not all_vm_snap %}
-                <div class="well">
-                    <h4>{% trans "You do not have any snapshots" %}</h4>
-                </div>
             {% endif %}
         </div>
     </div>

@@ -49,8 +49,7 @@ def snapshot(request, host_id, vname):
                           compute.login,
                           compute.password,
                           compute.type)
-        vm_snapshot = conn.snapshots_get_vds(vname)
-        conn.close()
+        vm_snapshot = conn.get_snapshot(vname)
 
         if request.method == 'POST':
             if 'delete' in request.POST:
@@ -62,6 +61,8 @@ def snapshot(request, host_id, vname):
                 conn.snapshot_revert(vname, snap_name)
                 message = _("Successful revert snapshot: ")
                 message += snap_name
+
+        conn.close()
     except libvirtError as msg_error:
         errors.append(msg_error.message)
 

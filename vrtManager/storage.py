@@ -7,6 +7,23 @@ from vrtManager.conection import wvmConnect
 
 
 class wvmStorages(wvmConnect):
+    def get_storages_info(self):
+        get_storages = self.get_storages()
+        storages = []
+        for pool in get_storages:
+            stg = self.get_storage(pool)
+            stg_status = stg.isActive()
+            stg_type = util.get_xml_path(stg.XMLDesc(0), "/pool/@type")
+            if stg_status:
+                stg_vol = len(stg.listVolumes())
+            else:
+                stg_vol = None
+            stg_size = stg.info()[1]
+            storages.append({'name': pool, 'status': stg_status,
+                             'type': stg_type, 'volumes': stg_vol,
+                             'size': stg_size})
+        return storages
+
     def define_storage(self, xml, flag):
         self.wvm.storagePoolDefineXML(xml, flag)
 

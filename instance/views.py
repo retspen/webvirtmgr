@@ -27,10 +27,10 @@ def diskusage(request, host_id, vname):
 
     try:
         conn = wvmInstance(compute.hostname,
-                            compute.login,
-                            compute.password,
-                            compute.type,
-                            vname)
+                           compute.login,
+                           compute.password,
+                           compute.type,
+                           vname)
         blk_usage = conn.disk_usage()
         data = simplejson.dumps(blk_usage)
         conn.close()
@@ -54,10 +54,10 @@ def netusage(request, host_id, vname):
 
     try:
         conn = wvmInstance(compute.hostname,
-                            compute.login,
-                            compute.password,
-                            compute.type,
-                            vname)
+                           compute.login,
+                           compute.password,
+                           compute.type,
+                           vname)
         net_usage = conn.net_usage()
         data = simplejson.dumps(net_usage)
         conn.close()
@@ -81,11 +81,10 @@ def cpuusage(request, host_id, vname):
 
     try:
         conn = wvmInstance(compute.hostname,
-                            compute.login,
-                            compute.password,
-                            compute.type,
-                            vname)
-
+                           compute.login,
+                           compute.password,
+                           compute.type,
+                           vname)
         cpu_usage = conn.cpu_usage()
         data = simplejson.dumps(cpu_usage)
         conn.close()
@@ -162,8 +161,8 @@ def instance(request, host_id, vname):
         return HttpResponseRedirect('/login')
 
     errors = []
-    time_refresh = TIME_JS_REFRESH
     messages = []
+    time_refresh = TIME_JS_REFRESH
     compute = Compute.objects.get(id=host_id)
 
     try:

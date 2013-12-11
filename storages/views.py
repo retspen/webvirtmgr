@@ -6,7 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from servers.models import Compute
 from storages.forms import AddStgPool, AddImage, CloneImage
 
-from vrtManager.storage import wvmStorage, wvmConnect
+from vrtManager.storage import wvmStorage, wvmStorages
 
 from libvirt import libvirtError
 
@@ -22,11 +22,11 @@ def storages(request, host_id):
     compute = Compute.objects.get(id=host_id)
 
     try:
-        conn = wvmConnect(compute.hostname,
-                          compute.login,
-                          compute.password,
-                          compute.type)
-        storages = conn.get_storages()
+        conn = wvmStorages(compute.hostname,
+                           compute.login,
+                           compute.password,
+                           compute.type)
+        storages = conn.get_storages_info()
 
         if request.method == 'POST':
             if 'create' in request.POST:

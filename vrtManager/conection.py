@@ -7,6 +7,7 @@ import string
 import libvirt
 import virtinst
 from datetime import datetime
+from vrtManager import util
 
 from libvirt import VIR_DOMAIN_XML_SECURE, libvirtError
 
@@ -98,65 +99,61 @@ class wvmConnect(object):
         return instances
 
     def get_snapshots(self):
-        vname = {}
+        instance = []
         for snap_id in self.wvm.listDomainsID():
             dom = self.wvm.lookupByID(int(snap_id))
             if dom.snapshotNum(0) != 0:
-                vname[dom.name()] = dom.info()[0]
+                instance.append(dom.name())
         for name in self.wvm.listDefinedDomains():
             dom = self.wvm.lookupByName(name)
             if dom.snapshotNum(0) != 0:
-                vname[dom.name()] = dom.info()[0]
-        return vname
+                instance.append(dom.name())
+        return instance
 
-    def snapshots_get_vds(self, vname):
+    def get_snapshot(self, name):
         """
         Function return all vds snaphots.
         """
         snapshots = {}
-        dom = self.get_instance(vname)
-        all_snapshot = dom.snapshotListNames(0)
-        for snapshot in all_snapshot:
+        dom = self.get_instance(name)
+        snapshot_list = dom.snapshotListNames(0)
+        for snapshot in snapshot_list:
             snapshots[snapshot] = (datetime.fromtimestamp(int(snapshot)), dom.info()[0])
         return snapshots
 
-    def snapshot_delete(self, vname, snap):
+    def snapshot_delete(self, name, snapshot):
         """
         Function delete vds snaphots.
         """
-        dom = self.get_instance(vname)
-        snap = dom.snapshotLookupByName(snap, 0)
+        dom = self.get_instance(name)
+        snap = dom.snapshotLookupByName(snapshot, 0)
         snap.delete(0)
 
-    def snapshot_revert(self, vname, snap):
+    def snapshot_revert(self, name, snapshot):
         """
         Function revert vds snaphots.
         """
-        dom = self.get_instance(vname)
-        snap = dom.snapshotLookupByName(snap, 0)
+        dom = self.get_instance(name)
+        snap = dom.snapshotLookupByName(snapshot, 0)
         dom.revertToSnapshot(snap, 0)
 
-
-    def vds_on_cluster(self):
-        """
-        Function show all host and vds
-        """
+    def infrastructure(self):
         vname = {}
         host_mem = self.wvm.getInfo()[1] * 1048576
         for vm_id in self.wvm.listDomainsID():
             vm_id = int(vm_id)
             dom = self.wvm.lookupByID(vm_id)
-            mem = get_xml_path(dom.XMLDesc(0), "/domain/memory")
+            mem = util.get_xml_path(dom.XMLDesc(0), "/domain/memory")
             mem = int(mem) * 1024
             mem_usage = (mem * 100) / host_mem
-            vcpu = get_xml_path(dom.XMLDesc(0), "/domain/vcpu")
+            vcpu = uitl.get_xml_path(dom.XMLDesc(0), "/domain/vcpu")
             vname[dom.name()] = (dom.info()[0], vcpu, mem, mem_usage)
         for name in self.wvm.listDefinedDomains():
-            dom = self.lookupVM(name)
-            mem = get_xml_path(dom.XMLDesc(0), "/domain/memory")
+            dom = self.get_instance(name)
+            mem = util.get_xml_path(dom.XMLDesc(0), "/domain/memory")
             mem = int(mem) * 1024
             mem_usage = (mem * 100) / host_mem
-            vcpu = get_xml_path(dom.XMLDesc(0), "/domain/vcpu")
+            vcpu = util.get_xml_path(dom.XMLDesc(0), "/domain/vcpu")
             vname[dom.name()] = (dom.info()[0], vcpu, mem, mem_usage)
         return vname
 

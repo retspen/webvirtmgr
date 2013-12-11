@@ -17,22 +17,9 @@
                 {% endfor %}
             {% endif %}
             {% if snapshots %}
-                <table class="table table-bordered">
-                    <thead>
-                    <tr>
-                        <th>{% trans "Name" %}</th>
-                        <th style="width: 70px;">{% trans "Counts" %}</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for instance, counts in snapshots.items %}
-                        <tr>
-                            <td><a href="{% url 'snapshot' host_id instance %}">{{ instance }}</strong></td>
-                            <td><p>{{ counts }}</p></td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+                {% for instance in snapshots %}
+                    <a href="{% url 'snapshot' host_id instance %}">{{ instance }}</a>
+                {% endfor %}
             {% else %}
                 <div class="well">
                     <h4>{% trans "You do not have any snapshots" %}</h4>
