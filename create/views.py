@@ -34,7 +34,7 @@ def create(request, host_id):
         storages = conn.get_storages()
         networks = conn.get_networks()
         instances = conn.get_instances()
-        get_images = conn.get_storages_images()
+        get_images = sorted(conn.get_storages_images())
     except libvirtError as err:
         errors.append(err.message)
 
