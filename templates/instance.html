@@ -127,9 +127,9 @@
                     <p>
                         <form action="" method="post">{% csrf_token %}
                             {% ifequal autostart 0 %}
-                                <input type="submit" class="btn btn-xs btn-primary" name="set_autostart" value="{% trans "Enable" %}">
+                                <input type="submit" class="btn btn-xs btn-default" name="set_autostart" value="{% trans "Enable" %}">
                             {% else %}
-                                <input type="submit" class="btn btn-xs btn-danger" name="unset_autostart" onclick="return confirm('{% trans "Are you sure?" %}')" value="{% trans "Disable" %}">
+                                <input type="submit" class="btn btn-xs btn-default" name="unset_autostart" onclick="return confirm('{% trans "Are you sure?" %}')" value="{% trans "Disable" %}">
                             {% endifequal %}
                         </form>
                     </p>

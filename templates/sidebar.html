@@ -5,13 +5,14 @@
                     <li>
                         <ul class="nav">
                             <li>
+                                <a href="{% url 'overview' host_id %}"><span class="glyphicon glyphicon-tasks"></span> {{ compute.name|upper }}</a>
+                            </li>
+                            <hr style="margin:10px;">
+                            <li>
                                 <a href="{% url 'instances' host_id %}"><span class="glyphicon glyphicon-th-large"></span> {% trans "Instances" %}</a>
                             </li>
                             <li>
                                 <a href="{% url 'create' host_id %}"><span class="glyphicon glyphicon-plus"></span> {% trans "Create" %}</a>
-                            </li>
-                            <li>
-                                <a href="{% url 'overview' host_id %}"><span class="glyphicon glyphicon-info-sign"></span> {% trans "Overview" %}</a>
                             </li>
                             <li>
                                 <a href="{% url 'storages' host_id %}"><span class="glyphicon glyphicon-hdd"></span> {% trans "Storages" %}</a>
