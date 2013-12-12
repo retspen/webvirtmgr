@@ -8,9 +8,7 @@ from vrtManager.conection import wvmConnect
 
 def network_size(net, dhcp=None):
     """
-
     Func return gateway, mask and dhcp pool.
-
     """
     mask = IP(net).strNetmask()
     addr = IP(net)

@@ -147,7 +147,6 @@ def storage(request, host_id, pool):
                 return HttpResponseRedirect(request.get_full_path())
         if 'cln_volume' in request.POST:
             form = CloneImage(request.POST)
-            print form.errors
             if form.is_valid():
                 data = form.cleaned_data
                 img_name = data['name'] + '.img'

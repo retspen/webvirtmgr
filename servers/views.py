@@ -72,7 +72,6 @@ def servers_list(request):
             return HttpResponseRedirect(request.get_full_path())
         if 'host_tcp_add' in request.POST:
             form = ComputeAddTcpForm(request.POST)
-            print form.errors
             if form.is_valid():
                 data = form.cleaned_data
                 new_tcp_host = Compute(name=data['name'],
