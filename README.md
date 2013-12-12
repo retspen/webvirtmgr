@@ -18,7 +18,7 @@ The application logic is written in Python & Django. The LIBVIRT Python bindings
 
 ## Setup host server (Server for VM's)
 
-<a href="https://github.com/retspen/webvirtmgr/wiki/Setup-Host-Server">Setup Host Server</a>
+### <a href="https://github.com/retspen/webvirtmgr/wiki/Setup-Host-Server">Setup Host Server</a>
 
 ### License
 
