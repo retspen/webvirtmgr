@@ -24,8 +24,6 @@ The application logic is written in Python & Django. The LIBVIRT Python bindings
 
 WebVirtMgr is licensed under the Apache Licence, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0.html).
 
-Support: <a href="https://github.com/retspen/webvirtmgr/issues">GitHub Issues</a>
-
 Powered by
 
 <img src=http://www.jetbrains.com/img/logos/pycharm_logo.gif>
