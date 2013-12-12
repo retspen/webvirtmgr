@@ -26,7 +26,7 @@ class Flavor(models.Model):
 class Instance(models.Model):
     host = models.ForeignKey(Host)
     vname = models.CharField(max_length=255)
-    vnc_passwd = models.CharField(max_length=255)
+    vnc_passwd = models.CharField(max_length=255, null=True)
 
     def __unicode__(self):
         return self.vname
