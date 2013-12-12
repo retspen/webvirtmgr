@@ -70,9 +70,12 @@ def storage(request, host_id, pool):
                           pool)
 
         storages = conn.get_storages()
-        size, free, usage = conn.get_size()
-        percent = (free * 100) / size
         state = conn.is_active()
+        size, free, usage = conn.get_size()
+        if state:
+            percent = (free * 100) / size
+        else:
+            percent = 0
         path = conn.get_target_path()
         type = conn.get_type()
         autostart = conn.get_autostart()

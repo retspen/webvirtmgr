@@ -98,7 +98,7 @@
                             <div class="form-group">
                                 <label class="col-lg-4 control-label">{% trans "Path" %}</label>
                                 <div class="col-lg-6">
-                                    <input type="text" name="target" class="form-control" value="/var/lib/libvirt/images">
+                                    <input type="text" name="target" class="form-control" value="/var/lib/libvirt/images" required pattern="[a-zA-Z0-9\/]+">
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -147,7 +147,7 @@
                             <div class="form-group">
                                 <label class="col-lg-4 control-label">{% trans "Path" %}</label>
                                 <div class="col-lg-6">
-                                    <input type="text" class="form-control" name="target" value="/var/www/webvirtmgr/images" required pattern="[a-z0-9\/]+">
+                                    <input type="text" class="form-control" name="target" value="/var/www/webvirtmgr/images" required pattern="[a-zA-Z0-9\/]+">
                                 </div>
                             </div>
                             <div class="modal-footer">
