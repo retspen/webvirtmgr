@@ -98,7 +98,7 @@ class wvmInstance(wvmConnect):
             result = []
             for interface in ctx.xpathEval('/domain/devices/interface'):
                 mac = interface.xpathEval('mac/@address')[0].content
-                nic = interface.xpathEval('source/@network|source/@bridge')[0].content
+                nic = interface.xpathEval('source/@network|source/@bridge|source/@dev')[0].content
                 result.append({'mac': mac, 'nic': nic})
             return result
         return util.get_xml_path(self._XMLDesc(0), func=networks)
