@@ -123,6 +123,7 @@ class wvmCreate(wvmConnect):
                       <source file=''/>
                       <target dev='hda' bus='ide'/>
                       <readonly/>
+                      <address type='drive' controller='0' bus='1' target='0' unit='1'/>
                     </disk>"""
         for net in networks.split(','):
             xml += """
