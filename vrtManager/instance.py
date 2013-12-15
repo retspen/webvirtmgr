@@ -110,7 +110,7 @@ class wvmInstance(wvmConnect):
                 device = interface.xpathEval('@device')[0].content
                 if device == 'disk':
                     dev = interface.xpathEval('target/@dev')[0].content
-                    file = interface.xpathEval('source/@file')[0].content
+                    file = interface.xpathEval('source/@file|source/@dev')[0].content
                     vol = self.get_volume_by_path(file)
                     stg = vol.storagePoolLookupByVolume()
                     result.append({'dev': dev, 'image': vol.name(), 'storage': stg.name(), 'path': file})
