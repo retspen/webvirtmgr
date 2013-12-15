@@ -185,7 +185,7 @@ def instance(request, host_id, vname):
         vcpu_range = conn.get_max_cpus()
         memory_range = [256, 512, 1024, 2048, 4096, 8192, 16384]
         vnc_port = conn.get_vnc()
-        vm_xml = conn._XMLDesc(VIR_DOMAIN_XML_SECURE)
+        inst_xml = conn._XMLDesc(VIR_DOMAIN_XML_SECURE)
 
     except libvirtError as msg_error:
         errors.append(msg_error.message)
@@ -253,7 +253,7 @@ def instance(request, host_id, vname):
                 conn.change_settings(description, memory, vcpu)
                 return HttpResponseRedirect(request.get_full_path())
             if 'change_xml' in request.POST:
-                xml = request.POST.get('change_xml', '')
+                xml = request.POST.get('inst_xml', '')
                 if xml:
                     conn._defineXML(xml)
                     return HttpResponseRedirect(request.get_full_path())
