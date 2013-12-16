@@ -93,9 +93,14 @@ TEMPLATE_LOADERS = (
     # 'django.template.loaders.eggs.Loader',
 )
 
+LOCALE_PATHS = (
+    os.path.join(os.path.dirname(__file__), '..', 'locale'),
+)
+
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -134,15 +139,15 @@ JENKINS_TASKS = (
 )
 
 PROJECT_APPS = (
-    'dashboard',
-    'overview',
-    'newvm',
-    'storage',
-    'network',
-    'snapshot',
-    'instance',
     'console',
-    'webvirtmgr',
+    'create',
+    'hostdetail',
+    'instance',
+    'networks',
+    'servers',
+    'snapshots',
+    'storages',
+    'vrtManager',
 )
 
 # A sample logging configuration. The only tangible logging
