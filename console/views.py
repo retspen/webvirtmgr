@@ -11,7 +11,7 @@ from vrtManager.instance import wvmInstance
 WS_PORT = 6080
 
 
-def console(request, host_id):
+def console(request):
     """
     VNC instance block
     """
