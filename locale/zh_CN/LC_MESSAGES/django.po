@@ -546,7 +546,7 @@ msgstr "编辑"
 
 #: templates/instance.html:80
 msgid "Usage Statistics"
-msgstr "用量统计"
+msgstr "资源用量统计"
 
 #: templates/instance.html:104 templates/instance.html.py:184
 #: templates/instance.html:421
@@ -606,7 +606,7 @@ msgstr "已断开"
 
 #: templates/instance.html:215 templates/storage.html:72
 msgid "Images"
-msgstr "镜像"
+msgstr "光盘镜像"
 
 #: templates/instance.html:228 templates/instance.html.py:230
 msgid "Connect"
@@ -621,7 +621,7 @@ msgid ""
 "Shutdown sends ACPI shutdown signal to guest system. Force shutdown is lost "
 "immediately."
 msgstr ""
-"关机选项执行指令发送ACPI关闭信号给虚拟机，而强制关机选项则相当于立即断电。"
+"关机选项执行指令发送ACPI软件关闭信号给虚拟机关机，而强制关机选项则相当于立即关闭电源关闭虚拟机。"
 
 #: templates/instance.html:257 templates/instances.html:61
 #: templates/instances.html.py:78 templates/instances.html:95
@@ -642,7 +642,7 @@ msgstr "确认删除磁盘镜像？"
 
 #: templates/instance.html:284
 msgid "Warning: if you check this box, VM's data will be lost!"
-msgstr ""
+msgstr "警告：勾选此选项，该虚拟机虚拟磁盘数据将被删除！"
 
 #: templates/instance.html:302
 msgid "Change Virtual Machine Settings"
@@ -701,7 +701,7 @@ msgstr "发送"
 #: templates/instances.html:4 templates/instances.html.py:13
 #: templates/sidebar.html:12
 msgid "Instances"
-msgstr "实例"
+msgstr "虚机实例"
 
 #: templates/instances.html:55 templates/instances.html.py:72
 #: templates/instances.html:89
@@ -767,19 +767,19 @@ msgstr "结束"
 
 #: templates/network.html:74 templates/networks.html:95
 msgid "NAT"
-msgstr "网络地址转换"
+msgstr "NAT"
 
 #: templates/network.html:77 templates/networks.html:96
 msgid "ROUTE"
-msgstr "路由"
+msgstr "ROUTE"
 
 #: templates/network.html:80 templates/networks.html:98
 msgid "BRIDGE"
-msgstr "桥接"
+msgstr "BRIDGE"
 
 #: templates/network.html:83 templates/networks.html:97
 msgid "ISOLATE"
-msgstr "隔离"
+msgstr "ISOLATE"
 
 #: templates/network.html:89
 msgid "ON"
@@ -815,7 +815,7 @@ msgstr "子网池"
 
 #: templates/networks.html:92
 msgid "Type forwarding"
-msgstr "转发类型"
+msgstr "网络类型"
 
 #: templates/networks.html:103
 msgid "Bridge Name"
