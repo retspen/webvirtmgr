@@ -9,6 +9,7 @@ from servers.models import Compute
 from instance.models import Instance
 from servers.forms import ComputeAddTcpForm, ComputeAddSshForm
 from vrtManager.hostdetails import wvmHostDetails
+import libvirt
 
 
 CONN_SSH = 2
@@ -115,17 +116,19 @@ def infrastructure(request):
                 socket_host.connect((host.hostname, TCP_PORT))
             socket_host.close()
             status = 1
-        except Exeption:
+        except Exception:
             status = 2
 
         if status == 1:
-            conn = wvmHostDetails(compute.hostname,
-                                  compute.login,
-                                  compute.password,
-                                  compute.type)
-            host_info = conn.node_get_info()
-            host_mem = conn.memory_get_usage()
-            hosts_vms[host.id, host.name, status, host_info[2], host_mem[0], host_mem[2]] = conn.get_host_instances()
+            conn = ''
+            try:
+                conn = wvmHostDetails(host, host.login, host.password, host.type)
+            except libvirt.libvirtError as e:
+                hosts_vms[host.id, host.name, 3, 0, 0, 0] = None
+                continue
+            host_info = conn.get_node_info()
+            host_mem = conn.get_memory_usage()
+            hosts_vms[host.id, host.name, status, host_info[3], host_info[2], host_mem['percent']] = conn.get_host_instances()
         else:
             hosts_vms[host.id, host.name, status, None, None, None] = None
 
