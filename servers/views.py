@@ -116,11 +116,7 @@ def infrastructure(request):
                 socket_host.connect((host.hostname, TCP_PORT))
             socket_host.close()
             status = 1
-<<<<<<< HEAD
         except Exception:
-=======
-        except Exception as e:
->>>>>>> 883f955b8da42ca4ec2fb8c58e14d702e813ddd5
             status = 2
 
         if status == 1:
