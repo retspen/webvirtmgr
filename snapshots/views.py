@@ -4,7 +4,7 @@ from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 
 from servers.models import Compute
-from vrtManager.conection import wvmConnect
+from vrtManager.connection import wvmConnect
 
 from libvirt import libvirtError
 

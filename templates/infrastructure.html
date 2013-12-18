@@ -23,9 +23,10 @@
                     {% for host, vms in hosts_vms.items %}
                         <tr>
                             <td>{{ forloop.counter }}</td>
-                            <td><a href="{% url 'overview' host.0 %}"><strong>{{ host.1 }}</strong></a></td>
+                            <td><a href="{% url 'instances' host.0 %}"><strong>{{ host.1 }}</strong></a></td>
                             <td>{% ifequal host.2 1 %}<span class="text-success">{% trans "Active" %}</span>{% endifequal %}
                                 {% ifequal host.2 2 %}<span class="text-danger">{% trans "Not Active" %}</span>{% endifequal %}
+                                {% ifequal host.2 3 %}<span class="text-danger">{% trans "Connection Failed" %}</span>{% endifequal %}
                             </td>
                             <td>{{ host.3 }}</td>
                             <td>{{ host.4|filesizeformat }}</td>
