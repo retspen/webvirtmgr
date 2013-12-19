@@ -13,6 +13,8 @@ from libvirt import VIR_DOMAIN_XML_SECURE, libvirtError
 
 CONN_SSH = 2
 CONN_TCP = 1
+SSH_PORT = 22
+TCP_PORT = 16509
 
 class wvmConnect(object):
     def __init__(self, host, login, passwd, conn):
