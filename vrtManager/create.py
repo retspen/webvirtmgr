@@ -4,7 +4,7 @@
 import virtinst
 import string
 from vrtManager import util
-from vrtManager.conection import wvmConnect
+from vrtManager.connection import wvmConnect
 
 
 class wvmCreate(wvmConnect):

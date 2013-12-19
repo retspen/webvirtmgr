@@ -9,12 +9,8 @@ from servers.models import Compute
 from instance.models import Instance
 from servers.forms import ComputeAddTcpForm, ComputeAddSshForm
 from vrtManager.hostdetails import wvmHostDetails
-
-
-CONN_SSH = 2
-CONN_TCP = 1
-SSH_PORT = 22
-TCP_PORT = 16509
+from vrtManager.connection import CONN_SSH, CONN_TCP, SSH_PORT, TCP_PORT
+from libvirt import libvirtError
 
 
 def index(request):
@@ -102,7 +98,7 @@ def infrastructure(request):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
-    compute = Compute.objects.filter().order_by('id')
+    compute = Compute.objects.filter()
     hosts_vms = {}
 
     for host in compute:
@@ -115,18 +111,19 @@ def infrastructure(request):
                 socket_host.connect((host.hostname, TCP_PORT))
             socket_host.close()
             status = 1
-        except Exeption:
+        except Exception:
             status = 2
 
         if status == 1:
-            conn = wvmHostDetails(compute.hostname,
-                                  compute.login,
-                                  compute.password,
-                                  compute.type)
-            host_info = conn.node_get_info()
-            host_mem = conn.memory_get_usage()
-            hosts_vms[host.id, host.name, status, host_info[2], host_mem[0], host_mem[2]] = conn.get_host_instances()
+            try:
+                conn = wvmHostDetails(host, host.login, host.password, host.type)
+                host_info = conn.get_node_info()
+                host_mem = conn.get_memory_usage()
+                hosts_vms[host.id, host.name, status, host_info[3], host_info[2], \
+                          host_mem['percent']] = conn.get_host_instances()
+            except libvirtError as e:
+                hosts_vms[host.id, host.name, 3, 0, 0, 0] = None
         else:
-            hosts_vms[host.id, host.name, status, None, None, None] = None
+            hosts_vms[host.id, host.name, status, 0, 0, 0] = None
 
     return render_to_response('infrastructure.html', locals(), context_instance=RequestContext(request))

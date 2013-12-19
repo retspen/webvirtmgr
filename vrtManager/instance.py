@@ -6,7 +6,7 @@ import re
 from libvirt import VIR_DOMAIN_XML_SECURE
 from vrtManager import util
 from xml.etree import ElementTree
-from vrtManager.conection import wvmConnect
+from vrtManager.connection import wvmConnect
 
 
 class wvmInstances(wvmConnect):
