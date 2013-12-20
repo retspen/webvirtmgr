@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-12-15 14:41+0200\n"
+"POT-Creation-Date: 2013-12-20 07:32+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -154,10 +154,9 @@ msgid "This host is already connected"
 msgstr "主机已连接"
 
 #: servers/forms.py:37 servers/forms.py:73
-msgid "" 
+msgid ""
 "Hostname must contain only numbers, or the domain name separated by \".\""
-msgstr "" 
-"主机名称能包含数字或以\".\"分隔的域名格式"
+msgstr "主机名称能包含数字或以\".\"分隔的域名格式"
 
 #: servers/forms.py:39 servers/forms.py:75
 msgid "Wrong IP address"
@@ -235,15 +234,22 @@ msgstr "500 服务器内部错误"
 msgid ""
 "The server encountered an internal error or misconfiguration and was unable "
 "to complete you request."
-msgstr ""
-"服务器出现内部或配置错误"
-"无法处理该请求。"
+msgstr "服务器出现内部或配置错误无法处理该请求。"
 
-#: templates/base.html:25 templates/base_auth.html:28
+#: templates/base.html:24
+msgid "Show all host and vm's"
+msgstr "显示所有物理和虚拟机"
+
+#: templates/base.html:24 templates/infrastructure.html:3
+#: templates/infrastructure.html.py:15
+msgid "Infrastructure"
+msgstr "基础架构"
+
+#: templates/base.html:31 templates/base_auth.html:28
 msgid "Sign out"
 msgstr "退出"
 
-#: templates/base.html:29 templates/base_auth.html:32
+#: templates/base.html:35 templates/base_auth.html:32
 msgid "Sign in"
 msgstr "登录"
 
@@ -285,7 +291,7 @@ msgstr "添加收藏"
 msgid "Name"
 msgstr "名称"
 
-#: templates/create.html:74 templates/infrastructure.html:17
+#: templates/create.html:74 templates/infrastructure.html:24
 msgid "VCPU's"
 msgstr "虚拟CPU"
 
@@ -418,8 +424,8 @@ msgstr "基本信息"
 msgid "Connection"
 msgstr "连接"
 
-#: templates/hostdeatil.html:27 templates/infrastructure.html:15
-#: templates/servers.html:149 templates/servers.html.py:182
+#: templates/hostdeatil.html:27 templates/servers.html:149
+#: templates/servers.html.py:182
 msgid "Hostname"
 msgstr "主机名"
 
@@ -427,7 +433,7 @@ msgstr "主机名"
 msgid "Hypervisor"
 msgstr "虚拟化层"
 
-#: templates/hostdeatil.html:29 templates/infrastructure.html:18
+#: templates/hostdeatil.html:29 templates/infrastructure.html:25
 #: templates/instance.html:154
 msgid "Memory"
 msgstr "内存"
@@ -456,44 +462,50 @@ msgstr "CPU占用"
 msgid "Memory usage"
 msgstr "内存占用"
 
-#: templates/infrastructure.html:3 templates/infrastructure.html.py:8
-msgid "Infrastructure"
-msgstr "基础架构"
+#: templates/infrastructure.html:22
+#, fuzzy
+msgid "Hostname / VM's"
+msgstr "主机/虚机名"
 
-#: templates/infrastructure.html:16 templates/instance.html:122
+#: templates/infrastructure.html:23 templates/instance.html:122
 #: templates/instances.html:29 templates/servers.html:53
 msgid "Status"
 msgstr "状态"
 
-#: templates/infrastructure.html:19 templates/instance.html:88
+#: templates/infrastructure.html:26 templates/instance.html:88
 #: templates/storage.html:48
 msgid "Usage"
 msgstr "用量"
 
-#: templates/infrastructure.html:27
+#: templates/infrastructure.html:34
 msgid "Active"
 msgstr "已激活"
 
-#: templates/infrastructure.html:28
+#: templates/infrastructure.html:35
 msgid "Not Active"
 msgstr "未激活"
 
-#: templates/infrastructure.html:39 templates/instance.html:138
+#: templates/infrastructure.html:36
+#, fuzzy
+msgid "Connection Failed"
+msgstr "连接失败"
+
+#: templates/infrastructure.html:47 templates/instance.html:138
 #: templates/instances.html:39
 msgid "Running"
 msgstr "运行"
 
-#: templates/infrastructure.html:40 templates/instance.html:59
+#: templates/infrastructure.html:48 templates/instance.html:59
 #: templates/instance.html.py:64 templates/instance.html:139
 #: templates/instances.html:45
 msgid "Suspend"
 msgstr "暂停"
 
-#: templates/infrastructure.html:41 templates/instances.html:42
+#: templates/infrastructure.html:49 templates/instances.html:42
 msgid "Shutoff"
 msgstr "关闭"
 
-#: templates/infrastructure.html:54 templates/servers.html:124
+#: templates/infrastructure.html:62 templates/servers.html:124
 msgid "You have no connection"
 msgstr "无连接"
 
@@ -621,7 +633,8 @@ msgid ""
 "Shutdown sends ACPI shutdown signal to guest system. Force shutdown is lost "
 "immediately."
 msgstr ""
-"关机选项执行指令发送ACPI软件关闭信号给虚拟机关机，而强制关机选项则相当于立即关闭电源关闭虚拟机。"
+"关机选项执行指令发送ACPI软件关闭信号给虚拟机关机，而强制关机选项则相当于立即"
+"关闭电源关闭虚拟机。"
 
 #: templates/instance.html:257 templates/instances.html:61
 #: templates/instances.html.py:78 templates/instances.html:95
