@@ -1,0 +1,1024 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-12-16 12:11+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: create/forms.py:11
+msgid "No flavor name has been entered"
+msgstr ""
+
+#: create/forms.py:14 create/forms.py:37
+msgid "No VCPU has been entered"
+msgstr ""
+
+#: create/forms.py:16
+msgid "No HDD image has been entered"
+msgstr ""
+
+#: create/forms.py:18 create/forms.py:40
+msgid "No RAM size has been entered"
+msgstr ""
+
+#: create/forms.py:24
+msgid "The flavor name must not contain any special characters"
+msgstr ""
+
+#: create/forms.py:26
+msgid "The flavor name must not exceed 20 characters"
+msgstr ""
+
+#: create/forms.py:31
+msgid "Flavor name is already use"
+msgstr ""
+
+#: create/forms.py:35
+msgid "No Virtual Machine name has been entered"
+msgstr ""
+
+#: create/forms.py:41
+msgid "No Network pool has been choice"
+msgstr ""
+
+#: create/forms.py:51
+msgid "The name of the virtual machine must not contain any special characters"
+msgstr ""
+
+#: create/forms.py:53
+msgid "The name of the virtual machine must not exceed 20 characters"
+msgstr ""
+
+#: create/views.py:42
+msgid "You haven't defined have any storage pools"
+msgstr ""
+
+#: create/views.py:45
+msgid "You haven't defined have any network pools"
+msgstr ""
+
+#: create/views.py:72
+msgid "A virtual machine with this name already exists"
+msgstr ""
+
+#: create/views.py:77
+msgid "First you need to create or select an image"
+msgstr ""
+
+#: instance/views.py:233
+msgid "Create snapshot for instance successful"
+msgstr ""
+
+#: instance/views.py:266
+msgid "Enter the VNC password or select Generate"
+msgstr ""
+
+#: networks/forms.py:7 storages/forms.py:7
+msgid "No pool name has been entered"
+msgstr ""
+
+#: networks/forms.py:9
+msgid "No subnet has been entered"
+msgstr ""
+
+#: networks/forms.py:19 storages/forms.py:21
+msgid "The pool name must not contain any special characters"
+msgstr ""
+
+#: networks/forms.py:21 storages/forms.py:23
+msgid "The pool name must not exceed 20 characters"
+msgstr ""
+
+#: networks/forms.py:28
+msgid "The pool subnet must not contain any special characters"
+msgstr ""
+
+#: networks/forms.py:30
+msgid "The pool subnet must not exceed 20 characters"
+msgstr ""
+
+#: networks/forms.py:37
+msgid "The pool bridge name must not contain any special characters"
+msgstr ""
+
+#: networks/forms.py:39
+msgid "The pool bridge name must not exceed 20 characters"
+msgstr ""
+
+#: networks/views.py:38
+msgid "Pool name already in use"
+msgstr ""
+
+#: networks/views.py:45
+msgid "Input subnet pool error"
+msgstr ""
+
+#: servers/forms.py:10 servers/forms.py:48
+msgid "No hostname has been entered"
+msgstr ""
+
+#: servers/forms.py:12 servers/forms.py:50
+msgid "No IP / Domain name has been entered"
+msgstr ""
+
+#: servers/forms.py:14 servers/forms.py:52
+msgid "No login has been entered"
+msgstr ""
+
+#: servers/forms.py:16
+msgid "No password has been entered"
+msgstr ""
+
+#: servers/forms.py:23
+msgid "The host name must not contain any special characters"
+msgstr ""
+
+#: servers/forms.py:25
+msgid "The host name must not exceed 20 characters"
+msgstr ""
+
+#: servers/forms.py:30 servers/forms.py:44 servers/forms.py:66
+#: servers/forms.py:80
+msgid "This host is already connected"
+msgstr ""
+
+#: servers/forms.py:37 servers/forms.py:73
+msgid ""
+"Hostname must contain only numbers, or the domain name separated by \".\""
+msgstr ""
+
+#: servers/forms.py:39 servers/forms.py:75
+msgid "Wrong IP address"
+msgstr ""
+
+#: servers/forms.py:59
+msgid "The name of the host must not contain any special characters"
+msgstr ""
+
+#: servers/forms.py:61
+msgid "The name of the host must not exceed 20 characters"
+msgstr ""
+
+#: snapshots/views.py:62
+msgid "Successful revert snapshot: "
+msgstr ""
+
+#: storages/forms.py:10 storages/forms.py:34
+msgid "No path has been entered"
+msgstr ""
+
+#: storages/forms.py:13 storages/forms.py:45
+msgid "No device has been entered"
+msgstr ""
+
+#: storages/forms.py:31 storages/forms.py:42
+msgid "The type must not contain any special characters"
+msgstr ""
+
+#: storages/forms.py:58 storages/forms.py:74
+msgid "The image name must not contain any special characters"
+msgstr ""
+
+#: storages/forms.py:60 storages/forms.py:76
+msgid "The image name must not exceed 20 characters"
+msgstr ""
+
+#: storages/views.py:37
+msgid "Pool name already use"
+msgstr ""
+
+#: storages/views.py:128
+msgid "Volume name already use"
+msgstr ""
+
+#: storages/views.py:143
+msgid "ISO image already exist"
+msgstr ""
+
+#: storages/views.py:154
+msgid "Name of volume name already use"
+msgstr ""
+
+#: templates/404.html:4
+msgid "404"
+msgstr ""
+
+#: templates/404.html:9
+msgid "404 Not Found"
+msgstr ""
+
+#: templates/404.html:10
+msgid "The requested page was not found on this server."
+msgstr ""
+
+#: templates/500.html:4
+msgid "500"
+msgstr ""
+
+#: templates/500.html:9
+msgid "500 Internal Server Error"
+msgstr ""
+
+#: templates/500.html:10
+msgid ""
+"The server encountered an internal error or misconfiguration and was unable "
+"to complete you request."
+msgstr ""
+
+#: templates/base.html:25 templates/base_auth.html:28
+msgid "Sign out"
+msgstr ""
+
+#: templates/base.html:29 templates/base_auth.html:32
+msgid "Sign in"
+msgstr ""
+
+#: templates/console.html:18
+msgid "Loading..."
+msgstr ""
+
+#: templates/console.html:29
+msgid "Canvas not supported."
+msgstr ""
+
+#: templates/create.html:4
+msgid "Create VM"
+msgstr ""
+
+#: templates/create.html:14 templates/create.html.py:94
+msgid "Create Virtual Machine"
+msgstr ""
+
+#: templates/create.html:65
+msgid "Custom VM"
+msgstr ""
+
+#: templates/create.html:66
+msgid "Add Flavor"
+msgstr ""
+
+#: templates/create.html:73 templates/create.html.py:98
+#: templates/create.html:100 templates/create.html.py:185
+#: templates/create.html:187 templates/create.html.py:271
+#: templates/instance.html:119 templates/instances.html:28
+#: templates/networks.html:74 templates/servers.html:163
+#: templates/servers.html.py:196 templates/snapshot.html:34
+#: templates/storage.html:83 templates/storage.html.py:123
+#: templates/storage.html:146 templates/storage.html.py:148
+#: templates/storage.html:213 templates/storage.html.py:215
+#: templates/storage.html:254 templates/storages.html:93
+#: templates/storages.html.py:120 templates/storages.html:140
+msgid "Name"
+msgstr ""
+
+#: templates/create.html:74 templates/infrastructure.html:17
+msgid "VCPU's"
+msgstr ""
+
+#: templates/create.html:75 templates/create.html.py:204
+#: templates/create.html:283 templates/instance.html:333
+msgid "RAM"
+msgstr ""
+
+#: templates/create.html:76 templates/create.html.py:211
+#: templates/create.html:290
+msgid "HDD"
+msgstr ""
+
+#: templates/create.html:77 templates/instance.html:251
+#: templates/instances.html:30 templates/servers.html:54
+#: templates/snapshot.html:36 templates/storage.html:86
+#: templates/storage.html.py:126
+msgid "Action"
+msgstr ""
+
+#: templates/create.html:86 templates/create.html.py:208
+#: templates/create.html:287 templates/instance.html:158
+#: templates/instance.html.py:337
+msgid "MB"
+msgstr ""
+
+#: templates/create.html:87 templates/create.html.py:294
+#: templates/storage.html:233
+msgid "GB"
+msgstr ""
+
+#: templates/create.html:107
+msgid "Storage"
+msgstr ""
+
+#: templates/create.html:115 templates/create.html.py:223
+#: templates/instance.html:142 templates/instance.html.py:223
+#: templates/storage.html:46 templates/storage.html.py:47
+msgid "None"
+msgstr ""
+
+#: templates/create.html:121 templates/create.html.py:229
+#: templates/network.html:64
+msgid "Network"
+msgstr ""
+
+#: templates/create.html:131 templates/create.html.py:197
+msgid "Host-Model"
+msgstr ""
+
+#: templates/create.html:135 templates/create.html.py:201
+#: templates/instance.html:85
+msgid "CPU"
+msgstr ""
+
+#: templates/create.html:138 templates/create.html.py:243
+msgid "VirtIO"
+msgstr ""
+
+#: templates/create.html:144 templates/create.html.py:249
+#: templates/create.html:297 templates/instance.html:262
+#: templates/instance.html.py:288 templates/instance.html:343
+#: templates/instance.html.py:363 templates/instance.html:372
+#: templates/instance.html.py:379 templates/networks.html:109
+#: templates/servers.html:173 templates/servers.html.py:200
+#: templates/storage.html:170 templates/storage.html.py:236
+#: templates/storage.html:260 templates/storages.html:105
+#: templates/storages.html.py:132 templates/storages.html:154
+msgid "Close"
+msgstr ""
+
+#: templates/create.html:146 templates/create.html.py:148
+#: templates/create.html:155 templates/create.html.py:251
+#: templates/create.html:253 templates/networks.html:9
+#: templates/networks.html.py:110 templates/sidebar.html:15
+#: templates/storage.html:237 templates/storages.html:9
+#: templates/storages.html.py:106 templates/storages.html:133
+#: templates/storages.html.py:155
+msgid "Create"
+msgstr ""
+
+#: templates/create.html:160 templates/instance.html:52
+#: templates/instance.html.py:289 templates/network.html:42
+#: templates/snapshot.html:57 templates/storage.html:53
+#: templates/storage.html.py:99 templates/storage.html:186
+msgid "Delete"
+msgstr ""
+
+#: templates/create.html:160 templates/instance.html:132
+#: templates/instance.html.py:212 templates/network.html:42
+#: templates/network.html.py:44 templates/network.html:53
+#: templates/servers.html:113 templates/snapshot.html:57
+#: templates/storage.html:53 templates/storage.html.py:55
+#: templates/storage.html:64 templates/storage.html.py:99
+#: templates/storage.html:186
+msgid "Are you sure?"
+msgstr ""
+
+#: templates/create.html:169
+msgid "You do not have any flavors"
+msgstr ""
+
+#: templates/create.html:181
+msgid "Create Custom Virtual Machine"
+msgstr ""
+
+#: templates/create.html:191 templates/create.html.py:277
+#: templates/instance.html:323
+msgid "VCPU"
+msgstr ""
+
+#: templates/create.html:267
+msgid "Add New Flavor"
+msgstr ""
+
+#: templates/create.html:298 templates/servers.html:174
+#: templates/servers.html.py:201
+msgid "Add"
+msgstr ""
+
+#: templates/hostdeatil.html:4 templates/hostdeatil.html.py:21
+msgid "Overview"
+msgstr ""
+
+#: templates/hostdeatil.html:23
+msgid "Basic details"
+msgstr ""
+
+#: templates/hostdeatil.html:26
+msgid "Connection"
+msgstr ""
+
+#: templates/hostdeatil.html:27 templates/infrastructure.html:15
+#: templates/servers.html:149 templates/servers.html.py:182
+msgid "Hostname"
+msgstr ""
+
+#: templates/hostdeatil.html:28
+msgid "Hypervisor"
+msgstr ""
+
+#: templates/hostdeatil.html:29 templates/infrastructure.html:18
+#: templates/instance.html:154
+msgid "Memory"
+msgstr ""
+
+#: templates/hostdeatil.html:30
+msgid "Logical CPUs"
+msgstr ""
+
+#: templates/hostdeatil.html:31 templates/instance.html:153
+msgid "Processor"
+msgstr ""
+
+#: templates/hostdeatil.html:32
+msgid "Architecture"
+msgstr ""
+
+#: templates/hostdeatil.html:44
+msgid "Performance"
+msgstr ""
+
+#: templates/hostdeatil.html:47
+msgid "CPU usage"
+msgstr ""
+
+#: templates/hostdeatil.html:48
+msgid "Memory usage"
+msgstr ""
+
+#: templates/infrastructure.html:3 templates/infrastructure.html.py:8
+msgid "Infrastructure"
+msgstr ""
+
+#: templates/infrastructure.html:16 templates/instance.html:122
+#: templates/instances.html:29 templates/servers.html:53
+msgid "Status"
+msgstr ""
+
+#: templates/infrastructure.html:19 templates/instance.html:88
+#: templates/storage.html:48
+msgid "Usage"
+msgstr ""
+
+#: templates/infrastructure.html:27
+msgid "Active"
+msgstr ""
+
+#: templates/infrastructure.html:28
+msgid "Not Active"
+msgstr ""
+
+#: templates/infrastructure.html:39 templates/instance.html:138
+#: templates/instances.html:39
+msgid "Running"
+msgstr ""
+
+#: templates/infrastructure.html:40 templates/instance.html:59
+#: templates/instance.html.py:64 templates/instance.html:139
+#: templates/instances.html:45
+msgid "Suspend"
+msgstr ""
+
+#: templates/infrastructure.html:41 templates/instances.html:42
+msgid "Shutoff"
+msgstr ""
+
+#: templates/infrastructure.html:54 templates/servers.html:124
+msgid "You have no connection"
+msgstr ""
+
+#: templates/instance.html:4
+msgid "VM's"
+msgstr ""
+
+#: templates/instance.html:13
+msgid "Virtual Machine"
+msgstr ""
+
+#: templates/instance.html:32
+msgid "Action For This Server"
+msgstr ""
+
+#: templates/instance.html:37 templates/instance.html.py:40
+msgid "Console"
+msgstr ""
+
+#: templates/instance.html:44 templates/instances.html:86
+#: templates/network.html:41 templates/network.html.py:67
+#: templates/storage.html:52
+msgid "Start"
+msgstr ""
+
+#: templates/instance.html:47 templates/instance.html.py:50
+#: templates/instance.html:254 templates/instances.html:58
+#: templates/instances.html.py:75 templates/instances.html:92
+msgid "Shutdown"
+msgstr ""
+
+#: templates/instance.html:54 templates/instances.html:69
+msgid "Resume"
+msgstr ""
+
+#: templates/instance.html:55 templates/instance.html.py:60
+#: templates/instance.html:65
+msgid "Snapshot"
+msgstr ""
+
+#: templates/instance.html:56 templates/instance.html.py:61
+#: templates/instance.html:68
+msgid "Statistics"
+msgstr ""
+
+#: templates/instance.html:71 templates/instance.html.py:73
+#: templates/instance.html:373
+msgid "Edit"
+msgstr ""
+
+#: templates/instance.html:80
+msgid "Usage Statistics"
+msgstr ""
+
+#: templates/instance.html:104 templates/instance.html.py:184
+#: templates/instance.html:421
+msgid "Disk"
+msgstr ""
+
+#: templates/instance.html:115
+msgid "Name & Status"
+msgstr ""
+
+#: templates/instance.html:120 templates/instance.html.py:317
+msgid "Description"
+msgstr ""
+
+#: templates/instance.html:121 templates/network.html:25
+#: templates/storage.html:34
+msgid "Autostart"
+msgstr ""
+
+#: templates/instance.html:130 templates/network.html:51
+#: templates/storage.html:62
+msgid "Enable"
+msgstr ""
+
+#: templates/instance.html:132 templates/network.html:53
+#: templates/storage.html:64
+msgid "Disable"
+msgstr ""
+
+#: templates/instance.html:137
+msgid "Shuttoff"
+msgstr ""
+
+#: templates/instance.html:149
+msgid "Technical Details"
+msgstr ""
+
+#: templates/instance.html:163
+msgid "Network Details"
+msgstr ""
+
+#: templates/instance.html:179
+msgid "Storage Details"
+msgstr ""
+
+#: templates/instance.html:195
+msgid "Media Details"
+msgstr ""
+
+#: templates/instance.html:200
+msgid "Connected"
+msgstr ""
+
+#: templates/instance.html:212
+msgid "Disconnect"
+msgstr ""
+
+#: templates/instance.html:215 templates/storage.html:72
+msgid "Images"
+msgstr ""
+
+#: templates/instance.html:228 templates/instance.html.py:230
+msgid "Connect"
+msgstr ""
+
+#: templates/instance.html:244
+msgid "Power On Server"
+msgstr ""
+
+#: templates/instance.html:247
+msgid ""
+"Shutdown sends ACPI shutdown signal to guest system. Force shutdown is lost "
+"immediately."
+msgstr ""
+
+#: templates/instance.html:257 templates/instances.html:61
+#: templates/instances.html.py:78 templates/instances.html:95
+msgid "Force Shutdown"
+msgstr ""
+
+#: templates/instance.html:263
+msgid "Send"
+msgstr ""
+
+#: templates/instance.html:276
+msgid "Undefined Server"
+msgstr ""
+
+#: templates/instance.html:279
+msgid "Delete HDD image?"
+msgstr ""
+
+#: templates/instance.html:284
+msgid "Warning: if you check this box, VM's data will be lost!"
+msgstr ""
+
+#: templates/instance.html:302
+msgid "Change Virtual Machine Settings"
+msgstr ""
+
+#: templates/instance.html:307
+msgid "Settings"
+msgstr ""
+
+#: templates/instance.html:309 templates/instances.html:64
+#: templates/instances.html.py:81 templates/instances.html:98
+msgid "VNC"
+msgstr ""
+
+#: templates/instance.html:310
+msgid "XML"
+msgstr ""
+
+#: templates/instance.html:344 templates/instance.html.py:364
+msgid "Change"
+msgstr ""
+
+#: templates/instance.html:351
+msgid "Generate"
+msgstr ""
+
+#: templates/instance.html:357 templates/instance.html.py:359
+#: templates/servers.html:167
+msgid "Password"
+msgstr ""
+
+#: templates/instance.html:380
+msgid "Save"
+msgstr ""
+
+#: templates/instance.html:424
+msgid "Read"
+msgstr ""
+
+#: templates/instance.html:424
+msgid "Write"
+msgstr ""
+
+#: templates/instance.html:437
+msgid "Eth"
+msgstr ""
+
+#: templates/instance.html:440
+msgid "Rx"
+msgstr ""
+
+#: templates/instance.html:440
+msgid "Tx"
+msgstr ""
+
+#: templates/instances.html:4 templates/instances.html.py:13
+#: templates/sidebar.html:12
+msgid "Instances"
+msgstr ""
+
+#: templates/instances.html:55 templates/instances.html.py:72
+#: templates/instances.html:89
+msgid "Pause"
+msgstr ""
+
+#: templates/instances.html:110
+msgid "You do not have any Virtual Machines"
+msgstr ""
+
+#: templates/login.html:3 templates/login.html.py:12 templates/login.html:16
+msgid "Sign In"
+msgstr "Вход"
+
+#: templates/login.html:8
+msgid "Incorrect username or password."
+msgstr ""
+
+#: templates/logout.html:3
+msgid "Sign Out"
+msgstr "Выход"
+
+#: templates/logout.html:6
+msgid "Successful log out"
+msgstr ""
+
+#: templates/network.html:3 templates/network.html.py:9
+#: templates/networks.html:10
+msgid "Network Pool"
+msgstr ""
+
+#: templates/network.html:22 templates/storage.html:29
+msgid "Pool name"
+msgstr ""
+
+#: templates/network.html:23
+msgid "Device pool"
+msgstr ""
+
+#: templates/network.html:24 templates/storage.html:33
+msgid "State"
+msgstr ""
+
+#: templates/network.html:44 templates/storage.html:55
+msgid "Stop"
+msgstr ""
+
+#: templates/network.html:59
+msgid "IPv4 configuration"
+msgstr ""
+
+#: templates/network.html:63
+msgid "IPv4 Forwarding"
+msgstr ""
+
+#: templates/network.html:65 templates/networks.html:86
+msgid "DHCP"
+msgstr ""
+
+#: templates/network.html:68
+msgid "End"
+msgstr ""
+
+#: templates/network.html:74 templates/networks.html:95
+msgid "NAT"
+msgstr ""
+
+#: templates/network.html:77 templates/networks.html:96
+msgid "ROUTE"
+msgstr ""
+
+#: templates/network.html:80 templates/networks.html:98
+msgid "BRIDGE"
+msgstr ""
+
+#: templates/network.html:83 templates/networks.html:97
+msgid "ISOLATE"
+msgstr ""
+
+#: templates/network.html:89
+msgid "ON"
+msgstr ""
+
+#: templates/network.html:91
+msgid "OFF"
+msgstr ""
+
+#: templates/networks.html:3
+msgid "Virtual Networks"
+msgstr ""
+
+#: templates/networks.html:46
+msgid "You do not have any virtual networks"
+msgstr ""
+
+#: templates/networks.html:55
+msgid "Deivce"
+msgstr ""
+
+#: templates/networks.html:56
+msgid "Forward"
+msgstr ""
+
+#: templates/networks.html:70
+msgid "Add New Network Pool"
+msgstr ""
+
+#: templates/networks.html:80
+msgid "Subnet pool"
+msgstr ""
+
+#: templates/networks.html:92
+msgid "Type forwarding"
+msgstr ""
+
+#: templates/networks.html:103
+msgid "Bridge Name"
+msgstr ""
+
+#: templates/servers.html:4
+msgid "Dashboard"
+msgstr ""
+
+#: templates/servers.html:44
+msgid "Add Host"
+msgstr ""
+
+#: templates/servers.html:45
+msgid "Servers List"
+msgstr ""
+
+#: templates/servers.html:52
+msgid "Server"
+msgstr ""
+
+#: templates/servers.html:64
+msgid "connected"
+msgstr ""
+
+#: templates/servers.html:66
+msgid "not connected"
+msgstr ""
+
+#: templates/servers.html:135
+msgid "Add Host Server"
+msgstr ""
+
+#: templates/servers.html:140
+msgid "TCP Connections"
+msgstr ""
+
+#: templates/servers.html:142
+msgid "SSH Connections"
+msgstr ""
+
+#: templates/servers.html:155 templates/servers.html.py:188
+msgid "IP / Domain"
+msgstr ""
+
+#: templates/servers.html:157 templates/servers.html.py:190
+msgid "IP or domain"
+msgstr ""
+
+#: templates/servers.html:161 templates/servers.html.py:194
+msgid "Username"
+msgstr ""
+
+#: templates/servers.html:169
+msgid "********"
+msgstr ""
+
+#: templates/servers.html:180
+msgid "Need create ssh authorization key"
+msgstr ""
+
+#: templates/sidebar.html:18 templates/storages.html:3
+#: templates/storages.html.py:10
+msgid "Storages"
+msgstr ""
+
+#: templates/sidebar.html:21
+msgid "Networks"
+msgstr ""
+
+#: templates/sidebar.html:24 templates/snapshot.html:3
+#: templates/snapshot.html.py:9
+msgid "Snapshots"
+msgstr ""
+
+#: templates/snapshot.html:27
+msgid "You do not have any snapshots for"
+msgstr ""
+
+#: templates/snapshot.html:35
+msgid "Date"
+msgstr ""
+
+#: templates/snapshot.html:48 templates/snapshot.html.py:50
+msgid "Revert"
+msgstr ""
+
+#: templates/snapshots.html:3 templates/snapshots.html.py:9
+msgid "Instances Snapshots"
+msgstr ""
+
+#: templates/snapshots.html:28
+msgid "You do not have any snapshots"
+msgstr ""
+
+#: templates/storage.html:3 templates/storage.html.py:9
+msgid "Storage Pool"
+msgstr ""
+
+#: templates/storage.html:30
+msgid "Pool type"
+msgstr ""
+
+#: templates/storage.html:31
+msgid "Pool path"
+msgstr ""
+
+#: templates/storage.html:32 templates/storage.html.py:84
+#: templates/storage.html:124 templates/storage.html.py:229
+#: templates/storages.html:56
+msgid "Size"
+msgstr ""
+
+#: templates/storage.html:75
+msgid "Upload ISO"
+msgstr ""
+
+#: templates/storage.html:85 templates/storage.html.py:125
+#: templates/storage.html:160 templates/storage.html.py:219
+msgid "Format"
+msgstr ""
+
+#: templates/storage.html:108
+msgid "You do not have any ISO images or storage pool not active"
+msgstr ""
+
+#: templates/storage.html:112 templates/storages.html:57
+msgid "Volumes"
+msgstr ""
+
+#: templates/storage.html:115
+msgid "Add Image"
+msgstr ""
+
+#: templates/storage.html:142
+msgid "Clone image"
+msgstr ""
+
+#: templates/storage.html:154
+msgid "Convert"
+msgstr ""
+
+#: templates/storage.html:163 templates/storage.html.py:224
+msgid "raw"
+msgstr ""
+
+#: templates/storage.html:164 templates/storage.html.py:223
+msgid "qcow"
+msgstr ""
+
+#: templates/storage.html:165 templates/storage.html.py:222
+msgid "qcow2"
+msgstr ""
+
+#: templates/storage.html:171 templates/storage.html.py:178
+#: templates/storage.html:180
+msgid "Clone"
+msgstr ""
+
+#: templates/storage.html:195
+msgid "You do not have any volumes or storage pools active"
+msgstr ""
+
+#: templates/storage.html:209
+msgid "Add New Image"
+msgstr ""
+
+#: templates/storage.html:250
+msgid "Upload ISO Image"
+msgstr ""
+
+#: templates/storage.html:261
+msgid "Upload"
+msgstr ""
+
+#: templates/storages.html:46
+msgid "You do not have any storages"
+msgstr ""
+
+#: templates/storages.html:55 templates/storages.html.py:86
+#: templates/storages.html:113
+msgid "Type"
+msgstr ""
+
+#: templates/storages.html:71
+msgid "Create Storage Pool"
+msgstr ""
+
+#: templates/storages.html:76
+msgid "DIR"
+msgstr ""
+
+#: templates/storages.html:78
+msgid "LVM"
+msgstr ""
+
+#: templates/storages.html:79
+msgid "ISO"
+msgstr ""
+
+#: templates/storages.html:99 templates/storages.html.py:148
+msgid "Path"
+msgstr ""
+
+#: templates/storages.html:126
+msgid "Device"
+msgstr ""

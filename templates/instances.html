@@ -95,7 +95,7 @@
                                         <button class="btn btn-default" type="submit" name="destroy" title="{% trans "Force Shutdown" %}" onclick="return confirm('Are you sure?')">
                                             <span class="glyphicon glyphicon-stop"></span>
                                         </button>
-                                        <button class="btn btn-default" onclick="window.open('{% url 'console' host_id %}?token={{ inst.uuid }}','','width=850,height=485')" title="{% trans "VNC" %}">
+                                        <button class="btn btn-default" onclick="window.open('{% url 'console' %}?token={{ inst.uuid }}','','width=850,height=485')" title="{% trans "VNC" %}">
                                             <span class="glyphicon glyphicon-align-justify"></span>
                                         </button>
                                     {% endifequal %}

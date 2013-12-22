@@ -1,6 +1,6 @@
 # WebVirtMgr panel - v4.0.1
 
-* Upgrade from v2 or v3 - NOT SUPPORTED!
+* <a href="https://github.com/retspen/webvirtmgr/wiki/Upgrade-from-v3">Upgrade from v3</a>
 
 ### <a href="https://github.com/retspen/webvirtmgr/wiki/Screenshots">Screenshots</a>
 

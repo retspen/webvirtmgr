@@ -367,14 +367,14 @@
                     </div>
                     <div class="tab-pane" id="3">
                         <div id="viewXMLpre">
-                            <pre class="pre-scrollable">{{ vm_xml }}</pre>
+                            <pre class="pre-scrollable">{{ inst_xml }}</pre>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
                                 <button type="button" class="btn btn-primary" onclick="javascript:$('#viewXMLpre').hide();$('#viewXMLform').show();">{% trans "Edit" %}</button>
                             </div>
                         </div>
                         <form id="viewXMLform" class="form-horizontal" method="post" role="form" style="display: none;">{% csrf_token %}
-                            <textarea class="form-control" rows="18" name="vm_xml">{{ vm_xml }}</textarea>
+                            <textarea class="form-control" rows="18" name="inst_xml">{{ inst_xml }}</textarea>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
                                 <button type="submit" class="btn btn-danger" name="change_xml">{% trans "Save" %}</button>
@@ -388,7 +388,7 @@
 {% endblock %}
 {% block script %}
     <script type="text/javascript">
-        function open_vnc() { window.open('{% url 'console' host_id %}?token={{ uuid }}','','width=850,height=485') }
+        function open_vnc() { window.open('{% url 'console' %}?token={{ uuid }}','','width=850,height=485') }
     </script>
     <script type="text/javascript">
         $(document).on('change','#vnc_passwd_gen',function(){

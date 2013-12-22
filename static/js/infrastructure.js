@@ -5,19 +5,6 @@ $.expr[':'].Contains = $.expr.createPseudo(function(arg) {
 });
 
 $(document).ready(function() {
-    var filter_html = [
-        '<div class="input-append form-inline pull-right" style="margin-right: 20px;">',
-        '<div class="form-group" style="margin-bottom: 25px;">',
-        '<input type="text" class="form-control" id="filter_input" />',
-        '</div>',
-        '<input type="button" class="btn btn-default" id="filter_button" value="Filter" />',
-        '<button type="button" class="btn btn-default" id="filter_clear">Clear</button>',
-        '</div>'
-    ].join('');
-
-    // add html to div as first child
-    $('div.row').prepend(filter_html);
-
     // add event button labeled "filter"
     $('#filter_button').click(function(event) {
         // get value

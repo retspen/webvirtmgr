@@ -4,7 +4,7 @@
 import virtinst
 import string
 from vrtManager import util
-from vrtManager.conection import wvmConnect
+from vrtManager.connection import wvmConnect
 
 
 class wvmCreate(wvmConnect):
@@ -81,14 +81,18 @@ class wvmCreate(wvmConnect):
         """
         memory = int(memory) * 1024
 
+        if self.is_kvm_supported():
+            hypervisor_type = 'kvm'
+        else:
+            hypervisor_type = 'qemu'
+
         xml = """
                 <domain type='%s'>
                   <name>%s</name>
                   <description>None</description>
                   <uuid>%s</uuid>
                   <memory unit='KiB'>%s</memory>
-                  <vcpu>%s</vcpu>""" % (self.get_guest_cap()[1].hypervisor_type,
-                                        name, uuid, memory, vcpu)
+                  <vcpu>%s</vcpu>""" % (hypervisor_type, name, uuid, memory, vcpu)
         if host_model:
             xml += """<cpu mode='host-model'/>"""
         xml += """<os>
@@ -123,6 +127,7 @@ class wvmCreate(wvmConnect):
                       <source file=''/>
                       <target dev='hda' bus='ide'/>
                       <readonly/>
+                      <address type='drive' controller='0' bus='1' target='0' unit='1'/>
                     </disk>"""
         for net in networks.split(','):
             xml += """

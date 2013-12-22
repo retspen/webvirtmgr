@@ -4,13 +4,11 @@
 
 from vrtManager import util
 from vrtManager.IPy import IP
-from vrtManager.conection import wvmConnect
+from vrtManager.connection import wvmConnect
 
 def network_size(net, dhcp=None):
     """
-
     Func return gateway, mask and dhcp pool.
-
     """
     mask = IP(net).strNetmask()
     addr = IP(net)

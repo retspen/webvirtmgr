@@ -6,7 +6,7 @@ import re
 from libvirt import VIR_DOMAIN_XML_SECURE
 from vrtManager import util
 from xml.etree import ElementTree
-from vrtManager.conection import wvmConnect
+from vrtManager.connection import wvmConnect
 
 
 class wvmInstances(wvmConnect):
@@ -98,7 +98,7 @@ class wvmInstance(wvmConnect):
             result = []
             for interface in ctx.xpathEval('/domain/devices/interface'):
                 mac = interface.xpathEval('mac/@address')[0].content
-                nic = interface.xpathEval('source/@network|source/@bridge')[0].content
+                nic = interface.xpathEval('source/@network|source/@bridge|source/@dev')[0].content
                 result.append({'mac': mac, 'nic': nic})
             return result
         return util.get_xml_path(self._XMLDesc(0), func=networks)
@@ -110,7 +110,7 @@ class wvmInstance(wvmConnect):
                 device = interface.xpathEval('@device')[0].content
                 if device == 'disk':
                     dev = interface.xpathEval('target/@dev')[0].content
-                    file = interface.xpathEval('source/@file')[0].content
+                    file = interface.xpathEval('source/@file|source/@dev')[0].content
                     vol = self.get_volume_by_path(file)
                     stg = vol.storagePoolLookupByVolume()
                     result.append({'dev': dev, 'image': vol.name(), 'storage': stg.name(), 'path': file})
