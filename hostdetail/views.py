@@ -51,9 +51,9 @@ def cpuusage(request, host_id):
         'labels': [""] * 10,
         'datasets': [
             {
-                "fillColor": "rgba(83,191,189,0.5)",
-                "strokeColor": "rgba(83,191,189,1)",
-                "pointColor": "rgba(83,191,189,1)",
+                "fillColor": "rgba(241,72,70,0.5)",
+                "strokeColor": "rgba(241,72,70,1)",
+                "pointColor": "rgba(241,72,70,1)",
                 "pointStrokeColor": "#fff",
                 "data": datasets
             }
