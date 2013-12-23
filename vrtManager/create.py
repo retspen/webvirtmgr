@@ -1,7 +1,6 @@
 #
 # Copyright (C) 2013 Webvirtmgr.
 #
-import virtinst
 import string
 from vrtManager import util
 from vrtManager.connection import wvmConnect
