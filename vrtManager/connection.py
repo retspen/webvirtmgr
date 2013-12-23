@@ -53,7 +53,7 @@ class wvmConnect(object):
 
     def is_kvm_supported(self):
         """Return KVM capabilities."""
-        return util.is_kvm_available(self.get_cap_xml)
+        return util.is_kvm_available(self.get_cap_xml())
 
     def get_storages(self):
         storages = []

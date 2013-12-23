@@ -78,6 +78,9 @@ class wvmCreate(wvmConnect):
     def _defineXML(self, xml):
         self.wvm.defineXML(xml)
 
+    def delete_volume(volume):
+        pass
+
     def create_instance(self, name, memory, vcpu, host_model, uuid, images, networks, virtio):
         """
         Create VM function
@@ -103,7 +106,7 @@ class wvmCreate(wvmConnect):
                     <boot dev='hd'/>
                     <boot dev='cdrom'/>
                     <bootmenu enable='yes'/>
-                  </os>""" % (self.get_host_arch, self.get_os_type)
+                  </os>""" % (self.get_host_arch(), self.get_os_type())
         xml += """<features>
                     <acpi/><apic/><pae/>
                   </features>
