@@ -2,7 +2,6 @@
 # Copyright (C) 2013 Webvirtmgr.
 #
 import time
-import virtinst
 from vrtManager.connection import wvmConnect
 from vrtManager.util import get_xml_path
 
@@ -67,10 +66,6 @@ class wvmHostDetails(wvmConnect):
         info.append(self.wvm.getURI())
         return info
 
-    def get_guest_cap(self):
-        """Get guest capabilities"""
-        return virtinst.CapabilitiesParser.guest_lookup(self.wvm)
-
     def hypervisor_type(self):
         """Return hypervisor type"""
-        return self.get_guest_cap()[1].hypervisor_type
+        return get_xml_path(self.get_cap_xml(), "/capabilities/guest/arch/domain/@type")

@@ -1,11 +1,7 @@
 #
 # Copyright (C) 2013 Webvirtmgr.
 #
-
-import re
-import string
 import libvirt
-import virtinst
 from datetime import datetime
 from vrtManager import util
 
@@ -55,13 +51,9 @@ class wvmConnect(object):
         """Return xml capabilities"""
         return self.wvm.getCapabilities()
 
-    def get_cap(self):
-        """Return parse capabilities"""
-        return virtinst.CapabilitiesParser.parse(self.get_cap_xml())
-
     def is_kvm_supported(self):
         """Return KVM capabilities."""
-        return self.get_cap().is_kvm_available()
+        return util.is_kvm_available(self.get_cap_xml)
 
     def get_storages(self):
         storages = []

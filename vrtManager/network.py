@@ -1,7 +1,6 @@
 #
 # Copyright (C) 2013 Webvirtmgr.
 #
-
 from vrtManager import util
 from vrtManager.IPy import IP
 from vrtManager.connection import wvmConnect

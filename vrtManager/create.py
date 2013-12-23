@@ -27,9 +27,13 @@ class wvmCreate(wvmConnect):
                     images.append(img)
         return images
 
-    def get_guest_cap(self):
+    def get_os_type(self):
         """Get guest capabilities"""
-        return virtinst.CapabilitiesParser.guest_lookup(self.wvm)
+        return util.get_xml_path(self.get_cap_xml(), "/capabilities/guest/os_type")
+
+    def get_host_arch(self):
+        """Get guest capabilities"""
+        return util.get_xml_path(self.get_cap_xml(), "/capabilities/host/cpu/arch")
 
     def create_volume(self, storage, name, size, format='qcow2'):
         size = int(size) * 1073741824
@@ -100,8 +104,7 @@ class wvmCreate(wvmConnect):
                     <boot dev='hd'/>
                     <boot dev='cdrom'/>
                     <bootmenu enable='yes'/>
-                  </os>""" % (self.get_guest_cap()[0].arch,
-                              self.get_guest_cap()[0].os_type)
+                  </os>""" % (self.get_host_arch, self.get_os_type)
         xml += """<features>
                     <acpi/><apic/><pae/>
                   </features>
