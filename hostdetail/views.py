@@ -115,9 +115,9 @@ def memusage(request, host_id):
         'labels': [""] * 10,
         'datasets': [
             {
-                "fillColor": "rgba(83,191,189,0.5)",
-                "strokeColor": "rgba(83,191,189,1)",
-                "pointColor": "rgba(83,191,189,1)",
+                "fillColor": "rgba(249,134,33,0.5)",
+                "strokeColor": "rgba(249,134,33,1)",
+                "pointColor": "rgba(249,134,33,1)",
                 "pointStrokeColor": "#fff",
                 "data": datasets
             }
