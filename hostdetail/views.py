@@ -30,7 +30,10 @@ def cpuusage(request, host_id):
     except libvirtError:
         cpu_usage = 0
 
-    cookies = request._cookies['cpu_usage']
+    try:
+        cookies = request._cookies['cpu_usage']
+    except KeyError:
+        cookies = None
 
     if not cookies:
         datasets.append(0)
@@ -88,7 +91,10 @@ def memusage(request, host_id):
     except libvirtError:
         mem_usage = 0
 
-    cookies = request._cookies['memory_usage']
+    try:
+        cookies = request._cookies['memory_usage']
+    except KeyError:
+        cookies = None
 
     if not cookies:
         datasets.append(0)
