@@ -78,8 +78,9 @@ class wvmCreate(wvmConnect):
     def _defineXML(self, xml):
         self.wvm.defineXML(xml)
 
-    def delete_volume(volume):
-        pass
+    def delete_volume(self, path):
+        vol = self.get_volume_by_path(path)
+        vol.delete()
 
     def create_instance(self, name, memory, vcpu, host_model, uuid, images, networks, virtio):
         """

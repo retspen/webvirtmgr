@@ -99,7 +99,7 @@ def create(request, host_id):
                             return HttpResponseRedirect('/instance/%s/%s/' % (host_id, data['name']))
                         except libvirtError as msg_error:
                             if data['hdd_size']:
-                                conn.delete_volume(volumes[0])
+                                conn.delete_volume(volumes.keys()[0])
                             errors.append(msg_error.message)
     conn.close()
 
