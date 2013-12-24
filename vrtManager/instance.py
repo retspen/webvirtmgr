@@ -3,7 +3,7 @@
 #
 import time
 import re
-from libvirt import VIR_DOMAIN_XML_SECURE
+from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE
 from vrtManager import util
 from xml.etree import ElementTree
 from vrtManager.connection import wvmConnect
@@ -112,8 +112,10 @@ class wvmInstance(wvmConnect):
                     dev = interface.xpathEval('target/@dev')[0].content
                     file = interface.xpathEval('source/@file|source/@dev')[0].content
                     vol = self.get_volume_by_path(file)
+                    volume = vol.name()
                     stg = vol.storagePoolLookupByVolume()
-                    result.append({'dev': dev, 'image': vol.name(), 'storage': stg.name(), 'path': file})
+                    storage = stg.name()
+                    result.append({'dev': dev, 'image': volume, 'storage': storage, 'path': file})
             return result
         return util.get_xml_path(self._XMLDesc(0), func=disks)
 
@@ -126,9 +128,15 @@ class wvmInstance(wvmConnect):
                     try:
                         dev = interface.xpathEval('target/@dev')[0].content
                         file = interface.xpathEval('source/@file')[0].content
-                        vol = self.get_volume_by_path(file)
-                        stg = vol.storagePoolLookupByVolume()
-                        result.append({'dev': dev, 'image': vol.name(), 'storage': stg.name(), 'path': file})
+                        try:
+                            vol = self.get_volume_by_path(file)
+                            volume = vol.name()
+                            stg = vol.storagePoolLookupByVolume()
+                            storage = stg.name()
+                        except libvirtError:
+                            volume = file
+                            storage = None
+                        result.append({'dev': dev, 'image': volume, 'storage': storage, 'path': file})
                     except:
                         pass
             return result
