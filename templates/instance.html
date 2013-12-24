@@ -86,7 +86,7 @@
                     </div>
                     <div id="net-usage">
                         {% for network in networks %}
-                           <p style="margin-left: 25px">{% trans "Bandwidth" %} - Ethv{{ forloop.counter0 }}</p>
+                           <p style="margin-left: 25px">{% trans "Bandwidth" %} - Eth{{ forloop.counter0 }}</p>
                            <canvas style="margin-left: 25px" id="netEth{{ forloop.counter0 }}Chart" width="700" height="125"></canvas>
                         {% endfor %}
                     </div>
