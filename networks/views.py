@@ -77,6 +77,7 @@ def network(request, host_id, pool):
         ipv4_forward = conn.get_ipv4_forward()
         ipv4_dhcp_range = conn.get_ipv4_dhcp_range()
         ipv4_network = conn.get_ipv4_network()
+        fixed_address = conn.get_mac_ipaddr()
     except libvirtError as err:
         errors.append(err.message)
 

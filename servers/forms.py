@@ -60,8 +60,8 @@ class ComputeAddSshForm(forms.Form):
         elif len(name) > 20:
             raise forms.ValidationError(_('The name of the host must not exceed 20 characters'))
         try:
-            Host.objects.get(name=name)
-        except Host.DoesNotExist:
+            Compute.objects.get(name=name)
+        except Compute.DoesNotExist:
             return name
         raise forms.ValidationError(_('This host is already connected'))
 

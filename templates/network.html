@@ -98,6 +98,33 @@
                         {% endif %}
                     </div>
                 </div>
+                {% if fixed_address %}
+                    <h3>{% trans "Fixed Address" %}</h3>
+                    <hr>
+                    <div class="panel-group" id="accordion">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                                    Show
+                                </a>
+                            </div>
+                        <div id="collapseOne" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="col-md-6">
+                                    {% for fix in fixed_address %}
+                                        <p>{% trans "Address" %}: {{ fix.host }}</p>
+                                    {% endfor %}
+                                </div>
+                                <div class="col-md-6">
+                                {% for fix in fixed_address %}
+                                    <p>{% trans "MAC" %}: {{ fix.mac }}</p>
+                                {% endfor %}
+                                 </div>
+                            </div>
+                        </div>
+                      </div>
+                    </div>
+                {% endif %}
             {% endif %}
         </div>
     </div>

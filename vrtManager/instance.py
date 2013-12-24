@@ -96,9 +96,9 @@ class wvmInstance(wvmConnect):
     def get_net_device(self):
         def networks(ctx):
             result = []
-            for interface in ctx.xpathEval('/domain/devices/interface'):
-                mac = interface.xpathEval('mac/@address')[0].content
-                nic = interface.xpathEval('source/@network|source/@bridge|source/@dev')[0].content
+            for net in ctx.xpathEval('/domain/devices/interface'):
+                mac = net.xpathEval('mac/@address')[0].content
+                nic = net.xpathEval('source/@network|source/@bridge|source/@dev')[0].content
                 result.append({'mac': mac, 'nic': nic})
             return result
         return util.get_xml_path(self._XMLDesc(0), func=networks)
@@ -106,11 +106,11 @@ class wvmInstance(wvmConnect):
     def get_disk_device(self):
         def disks(ctx):
             result = []
-            for interface in ctx.xpathEval('/domain/devices/disk'):
-                device = interface.xpathEval('@device')[0].content
+            for disk in ctx.xpathEval('/domain/devices/disk'):
+                device = disk.xpathEval('@device')[0].content
                 if device == 'disk':
-                    dev = interface.xpathEval('target/@dev')[0].content
-                    file = interface.xpathEval('source/@file|source/@dev')[0].content
+                    dev = disk.xpathEval('target/@dev')[0].content
+                    file = disk.xpathEval('source/@file|source/@dev')[0].content
                     vol = self.get_volume_by_path(file)
                     volume = vol.name()
                     stg = vol.storagePoolLookupByVolume()
@@ -122,12 +122,12 @@ class wvmInstance(wvmConnect):
     def get_media_device(self):
         def disks(ctx):
             result = []
-            for interface in ctx.xpathEval('/domain/devices/disk'):
-                device = interface.xpathEval('@device')[0].content
+            for media in ctx.xpathEval('/domain/devices/disk'):
+                device = media.xpathEval('@device')[0].content
                 if device == 'cdrom':
                     try:
-                        dev = interface.xpathEval('target/@dev')[0].content
-                        file = interface.xpathEval('source/@file')[0].content
+                        dev = media.xpathEval('target/@dev')[0].content
+                        file = media.xpathEval('source/@file')[0].content
                         try:
                             vol = self.get_volume_by_path(file)
                             volume = vol.name()
