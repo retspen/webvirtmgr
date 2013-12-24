@@ -39,7 +39,7 @@ class wvmNetworks(wvmConnect):
     def define_network(self, xml):
         self.wvm.networkDefineXML(xml)
 
-    def create_network(self, name, forward, gateway, mask, dhcp, bridge):
+    def create_network(self, name, forward, gateway, mask, dhcp, bridge, fixed=False):
         xml = """
             <network>
                 <name>%s</name>""" % name
@@ -56,8 +56,13 @@ class wvmNetworks(wvmConnect):
                         <ip address='%s' netmask='%s'>""" % (gateway, mask)
             if dhcp:
                 xml += """<dhcp>
-                            <range start='%s' end='%s' />
-                        </dhcp>""" % (dhcp[0], dhcp[1])
+                            <range start='%s' end='%s' />""" % (dhcp[0], dhcp[1])
+                if fixed:
+                    fist_oct = int(dhcp[0].strip().split('.')[3])
+                    last_oct = int(dhcp[1].strip().split('.')[3])
+                    for ip in range(fist_oct, last_oct + 1):
+                        xml += """<host mac='%s' ip='%s.%s' />""" % (util.randomMAC(), gateway[:-2], ip)
+                xml += """</dhcp>"""
 
             xml += """</ip>"""
         xml += """</network>"""

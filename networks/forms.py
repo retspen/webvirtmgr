@@ -10,6 +10,7 @@ class AddNetPool(forms.Form):
                              max_length=20)
     forward = forms.CharField(max_length=100)
     dhcp = forms.BooleanField(required=False)
+    fixed = forms.BooleanField(required=False)
     bridge_name = forms.CharField(max_length=20, required=False)
 
     def clean_name(self):

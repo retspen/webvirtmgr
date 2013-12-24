@@ -45,7 +45,8 @@ def networks(request, host_id):
                         msg = _("Input subnet pool error")
                         errors.append(msg)
                     if not errors:
-                        conn.create_network(data['name'], data['forward'], gateway, netmask, dhcp, data['bridge_name'])
+                        conn.create_network(data['name'], data['forward'], gateway, netmask,
+                                            dhcp, data['bridge_name'], data['fixed'])
                         return HttpResponseRedirect('/network/%s/%s/' % (host_id, data['name']))
         conn.close()
     except libvirtError as err:
