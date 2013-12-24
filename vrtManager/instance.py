@@ -94,12 +94,26 @@ class wvmInstance(wvmConnect):
         return range_pcpus
 
     def get_net_device(self):
+        def get_mac_ipaddr(net, mac_host):
+            def fixed(ctx):
+                for net in ctx.xpathEval('/network/ip/dhcp/host'):
+                    mac = net.xpathEval('@mac')[0].content
+                    host = net.xpathEval('@ip')[0].content
+                    if mac == mac_host:
+                        return host
+                return None
+            return util.get_xml_path(net.XMLDesc(0), func=fixed)
         def networks(ctx):
             result = []
             for net in ctx.xpathEval('/domain/devices/interface'):
-                mac = net.xpathEval('mac/@address')[0].content
-                nic = net.xpathEval('source/@network|source/@bridge|source/@dev')[0].content
-                result.append({'mac': mac, 'nic': nic})
+                mac_host = net.xpathEval('mac/@address')[0].content
+                nic_host = net.xpathEval('source/@network|source/@bridge|source/@dev')[0].content
+                try:
+                    net = self.get_network(nic_host)
+                    ip = get_mac_ipaddr(net, mac_host)
+                except:
+                    ip = None
+                result.append({'mac': mac_host, 'nic': nic_host, 'ip': ip})
             return result
         return util.get_xml_path(self._XMLDesc(0), func=networks)
 

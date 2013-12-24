@@ -82,7 +82,7 @@ class wvmCreate(wvmConnect):
         vol = self.get_volume_by_path(path)
         vol.delete()
 
-    def create_instance(self, name, memory, vcpu, host_model, uuid, images, networks, virtio):
+    def create_instance(self, name, memory, vcpu, host_model, uuid, images, networks, virtio, mac=None):
         """
         Create VM function
         """
@@ -136,9 +136,10 @@ class wvmCreate(wvmConnect):
                       <address type='drive' controller='0' bus='1' target='0' unit='1'/>
                     </disk>"""
         for net in networks.split(','):
-            xml += """
-                    <interface type='network'>
-                        <source network='%s'/>""" % net
+            xml += """<interface type='network'>"""
+            if mac:
+                xml += """<mac address='%s'/>""" % mac
+            xml += """<source network='%s'/>""" % net
             if virtio:
                 xml += """<model type='virtio'/>"""
             xml += """</interface>"""

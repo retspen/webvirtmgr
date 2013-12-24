@@ -158,7 +158,11 @@
                 </div>
                 <div class="col-md-6">
                     {% for network in networks %}
-                        <p>{{ network.mac }} ({{ network.nic }})</p>
+                        {% if network.ip %}
+                            <p>{{ network.ip }} ({{ network.nic }})</p>
+                        {% else %}
+                            <p>{{ network.mac }} ({{ network.nic }})</p>
+                        {% endif %}
                     {% endfor %}
                 </div>
             </div>

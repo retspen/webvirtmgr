@@ -128,6 +128,12 @@
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
+                                                    <label class="col-lg-4 control-label">{% trans "MAC" %}</label>
+                                                    <div class="col-lg-6">
+                                                        <input type="text" class="form-control" name="mac" maxlength="17" value="{{ mac_auto }}" required pattern="[a-zA-Z0-9:]+">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
                                                     <label class="col-lg-4 control-label">{% trans "Host-Model" %}</label>
                                                     <div class="col-lg-6">
                                                         <input type="checkbox" name="host_model" value="true" checked>

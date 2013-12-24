@@ -349,7 +349,6 @@ def instance(request, host_id, vname):
         memory_range = [256, 512, 1024, 2048, 4096, 8192, 16384]
         vnc_port = conn.get_vnc()
         inst_xml = conn._XMLDesc(VIR_DOMAIN_XML_SECURE)
-
     except libvirtError as msg_error:
         errors.append(msg_error.message)
 

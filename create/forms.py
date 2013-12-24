@@ -43,6 +43,7 @@ class NewVMForm(forms.Form):
     images = forms.CharField(required=False)
     hdd_size = forms.IntegerField(required=False)
     virtio = forms.BooleanField(required=False)
+    mac = forms.CharField(required=False)
 
     def clean_name(self):
         name = self.cleaned_data['name']
