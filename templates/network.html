@@ -110,15 +110,29 @@
                             </div>
                         <div id="collapseOne" class="panel-collapse collapse">
                             <div class="panel-body">
-                                <div class="col-md-6">
-                                    {% for fix in fixed_address %}
-                                        <p>{% trans "Address" %}: {{ fix.host }}</p>
-                                    {% endfor %}
+                                <div class="input-append form-inline pull-right" style="">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" id="filter_input" style="margin-top:-28px;">
+                                    </div>
+                                    <input type="button" class="btn btn-default" id="filter_button" value="Filter">
+                                    <button type="button" class="btn btn-default" id="filter_clear">Clear</button>
                                 </div>
-                                <div class="col-md-6">
-                                {% for fix in fixed_address %}
-                                    <p>{% trans "MAC" %}: {{ fix.mac }}</p>
-                                {% endfor %}
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align: center">{% trans "Address" %}</th>
+                                            <th style="text-align: center">{% trans "MAC" %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody style="text-align: center">
+                                        {% for fix in fixed_address %}
+                                            <tr>
+                                                <td>{{ fix.host }}</td>
+                                                <td>{{ fix.mac }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
                                  </div>
                             </div>
                         </div>
@@ -128,4 +142,43 @@
             {% endif %}
         </div>
     </div>
+{% endblock %}
+{% block script %}
+    <script type="text/javascript">
+        $.expr[':'].Contains = $.expr.createPseudo(function(arg) {
+        return function( elem ) {
+            return $(elem).text().toUpperCase().indexOf(arg.toUpperCase()) >= 0;
+        };
+        });
+
+        $(document).ready(function() {
+            // add event button labeled "filter"
+            $('#filter_button').click(function(event) {
+                // get value
+                var filter_val = $('#filter_input').val();
+                if(filter_val == '') {
+                    // show all
+                    $('tbody tr').show();
+                } else {
+                    // show only matches
+                    $('tbody tr:Contains(\'' + filter_val + '\')').show();
+                    // hide non-matching items
+                    $('tbody tr:not(:Contains(\'' + filter_val + '\'))').hide();
+                }
+            });
+
+            // add event button labeled "clear"
+            $('#filter_clear').click(function(event) {
+                $('#filter_input').val('');
+                $('#filter_button').click();
+            });
+
+            // trigger filter when enter key pressed
+            $('#filter_input').keyup(function(event){
+                if(event.keyCode == 13){
+                    $('#filter_button').click();
+                }
+            });
+        });
+    </script>
 {% endblock %}
