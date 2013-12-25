@@ -96,7 +96,7 @@
                                     <td style="width:30px;">
                                         <form action="" method="post">{% csrf_token %}
                                             <input type="hidden" name="volname" value="{{ volume.name }}">
-                                            <input type="submit" class="btn btn-danger" name="del_volume" value="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
+                                            <input type="submit" class="btn btn-sm btn-danger" name="del_volume" value="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
                                         </form>
                                     </td>
                                 </tr>
@@ -175,15 +175,15 @@
                                             </div><!-- /.modal-dialog -->
                                         </div><!-- /.modal -->
                                         {% ifnotequal volume.type "iso" %}
-                                            <a data-toggle="modal" href="#Clone{{ forloop.counter }}" class="btn btn-primary">{% trans "Clone" %}</a>
+                                            <a data-toggle="modal" href="#Clone{{ forloop.counter }}" class="btn btn-sm btn-primary">{% trans "Clone" %}</a>
                                         {% else %}
-                                            <a class="btn btn-primary disabled">{% trans "Clone" %}</a>
+                                            <a class="btn btn-sm btn-primary disabled">{% trans "Clone" %}</a>
                                         {% endifnotequal %}
                                     </td>
                                     <td style="width:30px;">
                                         <form action="" method="post" style="height:10px;">{% csrf_token %}
                                             <input type="hidden" name="volname" value="{{ volume.name }}">
-                                            <input type="submit" class="btn btn-danger" name="del_volume" value="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
+                                            <input type="submit" class="btn btn-sm btn-danger" name="del_volume" value="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
                                         </form>
                                     </td>
                                 </tr>
