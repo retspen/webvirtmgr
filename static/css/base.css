@@ -83,6 +83,42 @@ body {
 #vm-stat {
     display: none;
 }
+#lineLegend {
+    margin-bottom: 20px;
+    padding-left: 25px
+}
+.netIN {
+    border-color: rgb(83,191,189);
+    margin: 0.5em;
+    border-style: solid;
+    border-width: 0 0 0 1em;
+    padding: 0 0.3em;
+    border-style: solid;
+}
+.netOUT {
+    border-color: rgb(151,187,205);
+    margin: 0.5em;
+    border-style: solid;
+    border-width: 0 0 0 1em;
+    padding: 0 0.3em;
+    border-style: solid;
+}
+.diskRD {
+    border-color: rgb(83,191,189);
+    margin: 0.5em;
+    border-style: solid;
+    border-width: 0 0 0 1em;
+    padding: 0 0.3em;
+    border-style: solid;
+}
+.diskWR {
+    border-color: rgb(249,134,33);
+    margin: 0.5em;
+    border-style: solid;
+    border-width: 0 0 0 1em;
+    padding: 0 0.3em;
+    border-style: solid;
+}
 @media (max-width: 1200px) {
     form .form-group {
      padding-left: 15px;
