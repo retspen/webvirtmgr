@@ -795,7 +795,7 @@ msgid "You do not have any virtual networks"
 msgstr ""
 
 #: templates/networks.html:55
-msgid "Deivce"
+msgid "Device"
 msgstr ""
 
 #: templates/networks.html:56
