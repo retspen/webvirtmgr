@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Instances Snapshots" %}{% endblock %}
+{% block content %}
+    <div class="row" xmlns="http://www.w3.org/1999/html">
+        {% include 'sidebar.html' %}
+        <div class="col-md-9" role="main">
+            <div class="page-header">
+                <h1>{% trans "Instances Snapshots" %}</h1>
+            </div>
+            {% if errors %}
+                {% for error in errors %}
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            {% if snapshots %}
+                {% for instance in snapshots %}
+                    <div class="alert alert-info">
+                        <strong><a href="{% url 'snapshot' host_id instance %}">{{ instance }}</a></strong>
+                    </div>
+
+                {% endfor %}
+            {% else %}
+                <div class="well">
+                    <h4>{% trans "You do not have any snapshots" %}</h4>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

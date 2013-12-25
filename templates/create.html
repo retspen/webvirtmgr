@@ -1,0 +1,376 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% block title %}{% trans "Create VM" %}{% endblock %}
+{% block style %}
+    <link href="{% static "css/progressbar.css" %}" rel="stylesheet">
+    <link href="{% static "css/bootstrap-multiselect.css" %}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+    <div class="row">
+        {% include 'sidebar.html' %}
+        <div class="col-md-9" role="main">
+            <div class="page-header">
+                <h1>{% trans "Create Virtual Machine" %}</h1>
+            </div>
+            {% if errors %}
+                {% for error in errors %}
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            {% if form.label.errors %}
+                <div class="alert alert-danger">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    {% for error in form.label.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% if form.vcpu.errors %}
+                <div class="alert alert-danger">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    {% for error in form.vcpu.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% if form.memory.errors %}
+                <div class="alert alert-danger">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    {% for error in form.memory.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% if form.disk.errors %}
+                <div class="alert alert-danger">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    {% for error in form.disk.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% if form.networks.errors %}
+                <div class="alert alert-danger">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    {% for error in form.networks.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <div class="block-btn">
+                <a data-toggle="modal" href="#addCustom" class="btn btn-success">{% trans "Custom VM" %}</a>
+                <a data-toggle="modal" href="#addFlavor" class="btn btn-success">{% trans "Add Flavor" %}</a>
+            </div>
+            {% if flavors %}
+                <table class="table table-striped table-bordered">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>{% trans "Name" %}</th>
+                        <th>{% trans "VCPU's" %}</th>
+                        <th>{% trans "RAM" %}</th>
+                        <th>{% trans "HDD" %}</th>
+                        <th colspan="2">{% trans "Action" %}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for flavor in flavors %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ flavor.label }}</td>
+                            <td>{{ flavor.vcpu }}</td>
+                            <td>{{ flavor.memory }} {% trans "MB" %}</td>
+                            <td>{{ flavor.disk }} {% trans "GB" %}</td>
+                            <td style="width:5px;">
+                                <div class="modal fade" id="addVMflavor{{ forloop.counter }}" tabindex="-1" role="dialog" aria-labelledby="addVMFlavorLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                <h4 class="modal-title">{% trans "Create Virtual Machine" %} ({{ flavor.label }})</h4>
+                                            </div>
+                                            <form class="form-horizontal" method="post" role="form">{% csrf_token %}
+                                                <div class="form-group">
+                                                    <label class="col-lg-4 control-label">{% trans "Name" %}</label>
+                                                    <div class="col-lg-6">
+                                                        <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}" maxlength="14" required pattern="[a-zA-Z0-9_]+">
+                                                        <input type="hidden" name="vcpu" value="{{ flavor.vcpu }}">
+                                                        <input type="hidden" name="memory" value="{{ flavor.memory }}">
+                                                        <input type="hidden" name="hdd_size" value="{{ flavor.disk }}">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-lg-4 control-label">{% trans "Storage" %}</label>
+                                                    <div class="col-lg-6">
+                                                        <select name="storage" class="form-control">
+                                                            {% if storages %}
+                                                                {% for storage in storages %}
+                                                                    <option value="{{ storage }}">{{ storage }}</option>
+                                                                {% endfor %}
+                                                            {% else %}
+                                                                <option value="">{% trans "None" %}</option>
+                                                            {% endif %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-lg-4 control-label">{% trans "Network" %}</label>
+                                                    <div class="col-lg-6">
+                                                        <select name="networks" class="form-control">
+                                                            {% for network in networks %}
+                                                                <option value="{{ network }}">{{ network }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-lg-4 control-label">{% trans "MAC" %}</label>
+                                                    <div class="col-lg-6">
+                                                        <input type="text" class="form-control" name="mac" maxlength="17" value="{{ mac_auto }}" required pattern="[a-zA-Z0-9:]+">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-lg-4 control-label">{% trans "Host-Model" %}</label>
+                                                    <div class="col-lg-6">
+                                                        <input type="checkbox" name="host_model" value="true" checked>
+                                                    </div>
+                                                    <label class="col-lg-1 control-label">{% trans "CPU" %}</label>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-lg-4 control-label">{% trans "VirtIO" %}</label>
+                                                    <div class="col-lg-6">
+                                                        <input type="checkbox" name="virtio" value="true" checked>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+                                                    {% if storages %}
+                                                        <button type="submit" class="btn btn-primary" name="create">{% trans "Create" %}</button>
+                                                    {% else %}
+                                                        <button class="btn btn-primary disabled">{% trans "Create" %}</button>
+                                                    {% endif %}
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <a data-toggle="modal" href="#addVMflavor{{ forloop.counter }}" class="btn btn-success">{% trans "Create" %}</a>
+                            </td>
+                            <td style="width:5px;">
+                                <form class="form-horizontal" action="" method="post">{% csrf_token %}
+                                    <input type="hidden" name="flavor" value="{{ flavor.id }}">
+                                    <input type="submit" class="btn btn-danger" name="delete_flavor" value="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="well">
+                    <h4>{% trans "You do not have any flavors" %}</h4>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Modal Create VM -->
+    <div class="modal fade" id="addCustom" tabindex="-1" role="dialog" aria-labelledby="addCustomLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">{% trans "Create Custom Virtual Machine" %}</h4>
+                </div>
+                <form class="form-horizontal" method="post" role="form">{% csrf_token %}
+                    <div class="form-group">
+                        <label class="col-lg-4 control-label">{% trans "Name" %}</label>
+                        <div class="col-lg-6">
+                            <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}" maxlength="14" required pattern="[a-zA-Z0-9_]+">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-4 control-label">{% trans "VCPU" %}</label>
+                        <div class="col-lg-6">
+                            <input type="text" class="form-control" name="vcpu" value="1" maxlength="1" required pattern="[0-9]">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-4 control-label">{% trans "Host-Model" %}</label>
+                        <div class="col-lg-6">
+                            <input type="checkbox" name="host_model" value="true" checked>
+                        </div>
+                        <label class="col-lg-1 control-label">{% trans "CPU" %}</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-4 control-label">{% trans "RAM" %}</label>
+                        <div class="col-lg-6">
+                            <input type="text" class="form-control" name="memory" value="512" maxlength="5" required pattern="[0-9]+">
+                        </div>
+                        <label class="col-lg-1 control-label">{% trans "MB" %}</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-4 control-label">{% trans "HDD" %}</label>
+                        <div class="col-lg-6">
+                            <ul id="img-list">
+                                <!-- populated from javascript -->
+                            </ul>
+                            <input id="images" name="images" type="hidden" value=""/>
+                            <select id="image-control" name="image-control" class="form-control" multiple="multiple">
+                                {% if get_images %}
+                                    {% for name in get_images %}
+                                        <option value="{{ name }}">{{ name }}</option>
+                                    {% endfor %}
+                                {% else %}
+                                    <option value="">{% trans "None" %}</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-4 control-label">{% trans "Network" %}</label>
+                        <div class="col-lg-6">
+                            <ul id="net-list">
+                                <!-- populated from javascript -->
+                            </ul>
+                            <input id="networks" type="hidden" name="networks" value=""/>
+                            <select id="network-control" name="network-control" class="form-control" multiple="multiple">
+                                {% for network in networks %}
+                                    <option value="{{ network }}">{{ network }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-4 control-label">{% trans "VirtIO" %}</label>
+                        <div class="col-lg-6">
+                            <input type="checkbox" name="virtio" value="true" checked>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+                        {% if storages %}
+                            <button type="submit" class="btn btn-primary" name="create" value="1">{% trans "Create" %}</button>
+                        {% else %}
+                            <button class="btn btn-primary disabled" >{% trans "Create" %}</button>
+                        {% endif %}
+                    </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <!-- Modal Flavor -->
+    <div class="modal fade" id="addFlavor" tabindex="-1" role="dialog" aria-labelledby="addFlavorLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">{% trans "Add New Flavor" %}</h4>
+                </div>
+                <form class="form-horizontal" method="post" role="form">{% csrf_token %}
+                    <div class="form-group">
+                        <label class="col-lg-4 control-label">{% trans "Name" %}</label>
+                        <div class="col-lg-6">
+                            <input type="text" name="label" class="form-control" placeholder="Micro" maxlength="20" required pattern="[a-zA-Z0-9]+">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-4 control-label">{% trans "VCPU" %}</label>
+                        <div class="col-lg-6">
+                            <input type="text" class="form-control" name="vcpu" value="1" maxlength="1" required pattern="[0-9]">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-4 control-label">{% trans "RAM" %}</label>
+                        <div class="col-lg-6">
+                            <input type="text" class="form-control" name="memory" value="512" maxlength="5" required pattern="[0-9]+">
+                        </div>
+                        <label class="col-lg-1 control-label">{% trans "MB" %}</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-4 control-label">{% trans "HDD" %}</label>
+                        <div class="col-lg-6">
+                            <input type="text" class="form-control" name="disk" value="10" maxlength="3" required pattern="[0-9]+">
+                        </div>
+                        <label class="col-lg-1 control-label">{% trans "GB" %}</label>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+                        <button type="submit" class="btn btn-primary" name="create_flavor">{% trans "Add" %}</button>
+                    </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+{% endblock %}
+
+{% block script %}
+    <script src="{% static "js/bootstrap-multiselect.js" %}"></script>
+
+    <script>
+        function toggleValue(string, updated_value, checked) {
+            var result = '';
+            if(checked) {
+                result = string;
+                if(result != '') result += ',';
+                result += updated_value;
+            } else {
+                $.each(string.split(','), function(index, value) {
+                    if(value == updated_value) return;
+                    if(result != '') result += ',';
+                    result += value;
+                });
+            }
+            return result;
+        }
+
+        $(document).ready(function() {
+            $('#image-control').multiselect({
+                buttonText: function(options, select) { return 'Add image <b class="caret"></b>'; },
+                buttonTitle: function(options, select) { return ''; },
+                onChange:function(element, checked){
+                    var input_value = toggleValue($('#images').val(), element.val(), checked);
+                    $('#images').val(input_value);
+                    var selected_list_html = '';
+                    var counter = 0;
+                    if(input_value != '') {
+                        $.each(input_value.split(','),function(index, value) {
+                            var li = '<li>hdd'+counter +
+                                    ' -> '+value + ' ' +
+                                    '<a class="btn-link" onclick="javascript:$(\'#image-control\').multiselect(\'deselect\', \'' + value + '\')">x</a></li>';
+                            selected_list_html += li;
+                            counter++;
+                        });
+                    }
+                    $('#img-list').html(selected_list_html);
+                }
+            });
+
+            $('#network-control').multiselect({
+                buttonText: function(options, select) { return 'Add network <b class="caret"></b>'; },
+                buttonTitle: function(options, select) { return ''; },
+                onChange:function(element, checked){
+                    var input_value = toggleValue($('#networks').val(), element.val(), checked);
+                    $('#networks').val(input_value);
+                    var selected_list_html = '';
+                    var counter = 0;
+                    if(input_value != '') {
+                        $.each(input_value.split(','),function(index, value) {
+                            var li = '<li>eth'+counter +
+                                    ' -> '+value + ' ' +
+                                    '<a class="btn-link" onclick="javascript:$(\'#network-control\').multiselect(\'deselect\', \'' + value + '\')">x</a></li>';
+                            selected_list_html += li;
+                            counter++;
+                        });
+                    }
+                    $('#net-list').html(selected_list_html);
+                }
+            });
+        });
+    </script>
+{% endblock %}

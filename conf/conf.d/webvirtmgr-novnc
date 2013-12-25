@@ -1,0 +1,4 @@
+WEBVIRTMGR_DAEMON="/var/www/webvirtmgr/concole/webvirtmgr-novnc"
+WEBVIRTMGR_LOCK_DIR="/var/lock/webvirtmgr"
+WEBVIRTMGR_USER="apache"
+WEBVIRTMGR_GROUP="apache"

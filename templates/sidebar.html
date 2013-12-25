@@ -1,44 +1,36 @@
 {% load i18n %}
-{% load tags_active %}
-<div class="span3">
-            <div class="well sidebar-nav">
-              <ul class="nav nav-list">
-                <li class="nav-header">{% trans "Server Settings" %}</li>
-                <li {% active request "^/overview" %}>
-                  <a href="{% url overview host_id %}"><i class="icon-info-sign"></i> {% trans "Overview" %}</a>
-                </li>
-                <li {% active request "^/newvm" %}>
-                  <a href="{% url newvm host_id %}"><i class="icon-plus"></i> {% trans "Create VM" %}</a>
-                </li>
-                <li {% active request "^/storage" %}>
-                  <a href="{% url storage host_id %}"><i class="icon-folder-open"></i> {% trans "Storage pool" %}</a>
-                </li>
-                <li {% active request "^/network" %}>
-                  <a href="{% url network host_id %}"><i class="icon-signal"></i> {% trans "Network pool" %}</a>
-                </li>
-                <li {% active request "^/snapshot" %}>
-                  <a href="{% url snapshot host_id %}"><i class="icon-download-alt"></i> {% trans "Snapshots" %}</a>
-                </li>
-                <li class="nav-header">{% trans "Virtual Machines" %}</li>
-                {% if not all_vm %}
-                <li>
-                  <a href="{% url newvm host_id %}"><i class="icon-plus"></i> {% trans "Create VM" %}</a>
-                </li>
-                {% else %}
-                  {% if not snapshot_page %}
-                    {% for vm in all_vm %}
-                    <li {% ifequal vm vname %}class="active"{% endifequal %}>
-                      <a href="{% url vds host_id vm %}"><i class="icon-th-large"></i> {{ vm }}</a>
+        <div class="col-md-3">
+            <div class="bs-sidebar hidden-print affix" role="complementary">
+                <ul class="nav bs-sidenav">
+                    <li>
+                        <ul class="nav">
+                            <li>
+                                <a href="{% url 'overview' host_id %}"><span class="glyphicon glyphicon-tasks"></span> {{ compute.name|upper }}</a>
+                            </li>
+                            <hr style="margin:10px;">
+                            <li>
+                                <a href="{% url 'instances' host_id %}"><span class="glyphicon glyphicon-th-large"></span> {% trans "Instances" %}</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'create' host_id %}"><span class="glyphicon glyphicon-plus"></span> {% trans "Create" %}</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'storages' host_id %}"><span class="glyphicon glyphicon-hdd"></span> {% trans "Storages" %}</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'networks' host_id %}"><span class="glyphicon glyphicon-globe"></span> {% trans "Networks" %}</a>
+                            </li>
+                            {% if vname %}
+                            <li>
+                                <a href="{% url 'snapshot' host_id vname %}"><span class="glyphicon glyphicon-camera"></span> {% trans "Snapshots" %}</a>
+                            </li>
+                            {% else %}
+                            <li>
+                                <a href="{% url 'snapshots' host_id %}"><span class="glyphicon glyphicon-camera"></span> {% trans "Snapshots" %}</a>
+                            </li>
+                            {% endif %}
+                        </ul>
                     </li>
-                    {% endfor %}
-                  {% else %}
-                    {% for vm in all_vm %}
-                    <li {% ifequal vm vname %}class="active"{% endifequal %}>
-                      <a href="{% url dom_snapshot host_id vm %}"><i class="icon-th-large"></i> {{ vm }}</a>
-                    </li>
-                    {% endfor %}
-                  {% endif %}
-              {% endif %}
-              </ul>
-            </div><!--/.well -->
-          </div><!--/span-->
+                </ul>
+            </div>
+        </div>

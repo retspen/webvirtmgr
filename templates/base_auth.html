@@ -1,98 +1,45 @@
-{% load i18n %}
-{% load staticfiles %}
-<!DOCTYPE html>
+{% load i18n %}{% load staticfiles %}<!DOCTYPE html>
 <html>
-  <head>
+<head>
     <meta charset="utf-8">
-    <title>{% block title %}{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <link href="{% static "css/bootstrap.css" %}" rel="stylesheet">
-    <style type="text/css">
-      body {
-        padding-top: 60px;
-        padding-bottom: 40px;
-        background-color: #f5f5f5;
-      }
-
-      .form-signin {
-        max-width: 300px;
-        padding: 9px 29px 29px;
-        margin: 20px auto 20px;
-        background-color: #fff;
-        border: 1px solid #e5e5e5;
-        -webkit-border-radius: 5px;
-           -moz-border-radius: 5px;
-                border-radius: 5px;
-        -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
-           -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
-                box-shadow: 0 1px 2px rgba(0,0,0,.05);
-      }
-      .form-signin .form-signin-heading,
-      .form-signin .checkbox {
-        margin-bottom: 10px;
-      }
-      .form-signin input[type="text"],
-      .form-signin input[type="password"] {
-        font-size: 16px;
-        height: auto;
-        margin-bottom: 15px;
-        padding: 7px 9px;
-      }
-      /* Custom container */
-      .container-narrow {
-        margin: 0 auto;
-        max-width: 990px;
-      }
-      ul.errorlist {
-        list-style: none outside none;
-        margin:0;
-        padding:0;
-      }
-      .alert-danger, .alert-error {
-        box-sizing: border-box;
-        -moz-box-sizing: border-box;
-        -o-box-sizing: border-box;
-        -webkit-box-sizing: border-box;
-        background-color: #F2DEDE;
-        border-color: #EED3D7;
-        color: #B94A48;
-        width: 290px;
-      }
-    </style>
-    <link href="{% static "css/bootstrap-responsive.css" %}" rel="stylesheet">
-
-    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-
     <link rel="shortcut icon" href="{% static "img/favicon.ico" %}">
-  </head>
-  <body>
-   <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-          <a class="brand" href="/">WebVirtMgr</a>
-          <ul class="nav pull-right">
-            {% if request.user.is_authenticated or user.is_authenticated %}
-            <li class="">
-              <a href="/logout"><b>{% trans "Sign out" %}</b></a>
-            </li>
-            {% else %}
-            <li class="">
-              <a href="/login"><b>{% trans "Sign in" %}</b></a>
-            </li>
-            {% endif %}
-          </ul>
-        </div><!--/.container -->
-      </div><!--/.navbar-inner -->
-    </div><!--/.navbar -->      
-    <div class="container-narrow">
+    <title>{% block title %}{% endblock %}</title>
+    <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static "css/base.css" %}" rel="stylesheet">
+    <link href="{% static "css/signin.css" %}" rel="stylesheet">
+</head>
+<body>
+<!-- Static navbar -->
+<div class="navbar navbar-inverse navbar-static-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">WebVirtMgr</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                {% if request.user.is_authenticated %}
+                    <li class="">
+                        <a href="{% url 'logout' %}">{% trans "Sign out" %}</a>
+                    </li>
+                {% else %}
+                    <li class="">
+                        <a href="{% url 'login' %}">{% trans "Sign in" %}</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div><!--/.nav-collapse -->
+    </div>
+</div>
+<div class="container">
     {% block content %}{% endblock %}
-    </div> <!-- /container-narrow -->
-    <script src="{% static "js/jquery-migrate.min.js" %}"></script>
-    <script src="{% static "js/jquery.min.js" %}"></script>
-    <script src="{% static "js/bootstrap.min.js" %}"></script>
-  </body>
+</div>
+<script src="{% static "js/jquery-1.10.2.js" %}"></script>
+<script src="{% static "js/bootstrap.min.js" %}"></script>
+</body>
 </html>

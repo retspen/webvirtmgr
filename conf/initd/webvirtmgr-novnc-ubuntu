@@ -14,7 +14,7 @@
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="WebVirtMgr NoVNC proxy"
 NAME=webvirtmgr-novnc
-DAEMON=/var/www/webvirtmgr/vnc/webvirtmgr-novnc
+DAEMON=/var/www/webvirtmgr/console/webvirtmgr-novnc
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
 LOCK_DIR=/var/lock/webvirtmgr/

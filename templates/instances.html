@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% block title %}{% trans "Instances" %}{% endblock %}
+{% block style %}
+    <link href="{% static "css/progressbar.css" %}" rel="stylesheet" xmlns="http://www.w3.org/1999/html">
+{% endblock %}
+{% block content %}
+    <div class="row" xmlns="http://www.w3.org/1999/html">
+        {% include 'sidebar.html' %}
+        <div class="col-md-9" role="main">
+            <div class="page-header">
+                <h1>{% trans "Instances" %}</h1>
+            </div>
+            {% if errors %}
+                {% for error in errors %}
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            {% if instances %}
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th style="width:20px;">#</th>
+                        <th>{% trans "Name" %}</th>
+                        <th>{% trans "Status" %}</th>
+                        <th style="width:250px;">{% trans "Action" %}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for inst in instances %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td><a href="{% url 'instance' host_id inst.name %}"><i class="icon-th-large"></i> {{ inst.name }}</a></td>
+                            <td>{% ifequal inst.status 1 %}
+                                    <span class="text-success">{% trans "Running" %}</span>
+                                {% endifequal %}
+                                {% ifequal inst.status 5 %}
+                                    <span class="text-danger">{% trans "Shutoff" %}</span>
+                                {% endifequal %}
+                                {% ifequal inst.status 3 %}
+                                    <span class="text-warning">{% trans "Suspend" %}</span>
+                                {% endifequal %}
+                            </td>
+                            <td>
+                                <form action="" method="post">{% csrf_token %}
+                                    <input type="hidden" name="name" value="{{ inst.name }}" />
+                                    {% ifequal inst.status 5 %}
+                                        <button class="btn btn-default" type="submit" name="start" title="Start">
+                                            <span class="glyphicon glyphicon-play"></span>
+                                        </button>
+                                        <button class="btn btn-default disabled" title="{% trans "Pause" %}">
+                                            <span class="glyphicon glyphicon-pause"></span>
+                                        </button>
+                                        <button class="btn btn-default disabled" title="{% trans "Shutdown" %}">
+                                            <span class="glyphicon glyphicon-off"></span>
+                                        </button>
+                                        <button class="btn btn-default disabled" title="{% trans "Force Shutdown" %}">
+                                            <span class="glyphicon glyphicon-stop"></span>
+                                        </button>
+                                        <button class="btn btn-default disabled" title="{% trans "VNC" %}">
+                                            <span class="glyphicon glyphicon-align-justify"></span>
+                                        </button>
+                                    {% endifequal %}
+                                    {% ifequal inst.status 3 %}
+                                        <button class="btn btn-default" type="submit" name="resume" title="{% trans "Resume" %}">
+                                            <i class="icon-play"></i>
+                                        </button>
+                                        <button class="btn btn-default disabled" title="{% trans "Pause" %}">
+                                            <i class="icon-pause"></i>
+                                        </button>
+                                        <button class="btn btn-default disabled" title="{% trans "Shutdown" %}">
+                                            <span class="glyphicon glyphicon-off"></span>
+                                        </button>
+                                        <button class="btn btn-default disabled" title="{% trans "Force Shutdown" %}">
+                                            <span class="glyphicon glyphicon-stop"></span>
+                                        </button>
+                                        <button class="btn btn-default disabled" title="{% trans "VNC" %}">
+                                            <span class="glyphicon glyphicon-align-justify"></span>
+                                        </button>
+                                    {% endifequal %}
+                                    {% ifequal inst.status 1 %}
+                                        <button class="btn btn-default disabled" title="{% trans "Start" %}">
+                                            <span class="glyphicon glyphicon-play"></span>
+                                        </button>
+                                        <button class="btn btn-default" type="submit" name="suspend" title="{% trans "Pause" %}">
+                                            <span class="glyphicon glyphicon-pause"></span>
+                                        </button>
+                                        <button class="btn btn-default" type="submit" name="shutdown" title="{% trans "Shutdown" %}">
+                                            <span class="glyphicon glyphicon-off"></span>
+                                        </button>
+                                        <button class="btn btn-default" type="submit" name="destroy" title="{% trans "Force Shutdown" %}" onclick="return confirm('Are you sure?')">
+                                            <span class="glyphicon glyphicon-stop"></span>
+                                        </button>
+                                        <button class="btn btn-default" onclick="window.open('{% url 'console' %}?token={{ inst.uuid }}','','width=850,height=485')" title="{% trans "VNC" %}">
+                                            <span class="glyphicon glyphicon-align-justify"></span>
+                                        </button>
+                                    {% endifequal %}
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="well">
+                    <h4>{% trans "You do not have any Virtual Machines" %}</h4>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

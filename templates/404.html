@@ -1,89 +1,14 @@
+{% extends "base.html" %}
 {% load i18n %}
 {% load staticfiles %}
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>{% trans "404 Not Found" %}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-
-    <!-- Le styles -->
-    <link href="{% static "css/bootstrap.css" %}" rel="stylesheet">
-    <style type="text/css">
-      body {
-        padding-top: 60px;
-        padding-bottom: 40px;
-        background-color: #f5f5f5;
-      }
-      /* Custom container */
-      .container-narrow {
-        margin: 0 auto;
-        max-width: 990px;
-      }
-      /* Main marketing message and sign up button */
-      .jumbotron {
-        margin: 80px 0;
-        text-align: center;
-      }
-      .jumbotron h1 {
-        font-size: 100px;
-        line-height: 1;
-      }
-      .jumbotron .lead {
-        margin-top: 30px;
-        font-size: 24px;
-        line-height: 1.25;
-      }
-      .jumbotron .btn {
-        margin-top: 10px;
-        font-size: 21px;
-        padding: 14px 24px;
-      }
-    </style>
-    <link href="{% static "css/bootstrap-responsive.css" %}" rel="stylesheet">
-
-    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-
-    <!-- Fav and touch icons -->
-    <link rel="shortcut icon" href="{% static "img/favicon.ico" %}">
-  </head>
-  <body>
-   <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-          <a class="brand" href="/">WebVirtMgr</a>
-          <ul class="nav pull-right">
-            {% if request.user.is_authenticated or user.is_authenticated %}
-            <li class="">
-              <a href="/logout"><b>{% trans "Sign out" %}</b></a>
-            </li>
-            {% else %}
-            <li class="">
-              <a href="/login"><b>{% trans "Sign in" %}</b></a>
-            </li>
-            {% endif %}
-          </ul>
-        </div><!--/.container -->
-      </div><!--/.navbar-inner -->
-    </div><!--/.navbar -->      
-    <div class="container-narrow">
-      <div class="jumbotron">
-        <h1>Oops!</h1>
-        <p class="lead">{% trans "404 Not Found" %}</p>
-        <p>{% trans "The requested page was not found on this server." %}</p>
-        <a class="btn btn-medium btn-success" href="javascript:history.back()">&larr; Back</a>
-      </div>
-    </div> <!-- /container-narrow -->
-
-    <!-- Le javascript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="{% static "js/jquery.js" %}"></script>
-    <script src="{% static "js/bootstrap.js" %}"></script>
-
-  </body>
-</html>
+{% block title %}{% trans "404" %}{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-12" id="error">
+            <h1>Oops!</h1>
+            <p class="lead">{% trans "404 Not Found" %}</p>
+            <p>{% trans "The requested page was not found on this server." %}</p>
+            <a class="btn btn-medium btn-success" href="javascript:history.back()">&larr; Back</a>
+        </div>
+    </div>
+{% endblock %}

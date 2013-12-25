@@ -2,43 +2,17 @@
 {% load i18n %}
 {% block title %}{% trans "Sign In" %}{% endblock %}
 {% block content %}
-      <form class="form-signin" method="post" action="{% url login %}">{% csrf_token %}
-        <h3>{% trans "Sign In" %}</h3>
-        <fieldset>
-          {% if form.errors and not form.username.errors and not form.password.errors %}
-          <div class="alert alert-error">
-              <button type="button" class="close" data-dismiss="alert">×</button>
-            <p>{{ form.non_field_errors }}</p>
-          </div>
-          {% endif %}
-          <div class="control-group">
-            <label class="control-label" for="username">{% trans "Username" %}</label>
-            <div class="controls">
-              <input class="input-xlarge" id="id_username" type="text" name="username" maxlength="30" tabindex="1">
-            </div>
-            {% if form.username.errors %}
-            <div class="alert alert-error">
-                <button type="button" class="close" data-dismiss="alert">×</button>
-                {{ form.username.errors }}
-            </div>
-            {% endif %}
-          </div>
-          <div class="control-group">
-            <label class="control-label" for="password">{% trans "Password" %}</label>
-            <div class="controls">
-              <input class="input-xlarge" type="password" name="password" id="id_password" tabindex="2">
-              <input name="next" id="next" type="hidden" value="/dashboard/">
-            </div>
-            {% if form.password.errors %}
-            <div class="alert alert-error">
-                <button type="button" class="close" data-dismiss="alert">×</button>
-                {{ form.password.errors }}
-            </div>
-            {% endif %}
-          </div>
-        </fieldset>
-        <div>
-          <button type="submit" class="btn btn-success btn-large">{% trans "Sign In" %}</button>
+    {% if form.errors %}
+        <div class="alert alert-danger">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            {% trans "Incorrect username or password." %}
         </div>
-      </form>
+    {% endif %}
+    <form class="form-signin" method="post">{% csrf_token %}
+        <h2 class="form-signin-heading">{% trans "Sign In" %}</h2>
+        <input type="text" class="form-control" name="username" placeholder="Login" autofocus>
+        <input type="password" class="form-control" name="password" placeholder="Password">
+        <input name="next" id="next" type="hidden" value="/servers/">
+        <button class="btn btn-lg btn-success btn-block" type="submit">{% trans "Sign In" %}</button>
+    </form>
 {% endblock %}

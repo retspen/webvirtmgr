@@ -1,0 +1,90 @@
+#!/usr/bin/env python
+
+import os
+import sys
+
+DIR_PATH = os.path.dirname(os.path.abspath(__file__))
+ROOT_PATH = os.path.abspath(os.path.join(DIR_PATH, '..', ''))
+# VENV_PATH = ROOT_PATH + '/venv/lib/python2.7/site-packages'
+LISTEN_HOST = '0.0.0.0'
+LISTEN_PORT = '6080'
+
+if ROOT_PATH not in sys.path:
+    sys.path.append(ROOT_PATH)
+# if VENV_PATH not in sys.path:
+#     sys.path.append(VENV_PATH)
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "webvirtmgr.settings")
+
+import Cookie
+import socket
+import django
+try:
+    import websockify as wsproxy
+except:
+    from novnc import wsproxy
+
+
+class NovaWebSocketProxy(wsproxy.WebSocketProxy):
+    def __init__(self, *args, **kwargs):
+        wsproxy.WebSocketProxy.__init__(self, *args, **kwargs)
+
+    def new_client(self):
+        """
+        Called after a new WebSocket connection has been established.
+        """
+
+        cookie = Cookie.SimpleCookie()
+        cookie.load(self.headers.getheader('cookie'))
+        token = cookie['token'].value
+
+        from instance.models import Instance
+        from vrtManager.instance import wvmInstance
+
+        try:
+            instance = Instance.objects.get(uuid=token)
+            conn = wvmInstance(instance.compute.hostname,
+                               instance.compute.login,
+                               instance.compute.password,
+                               instance.compute.type,
+                               instance.name)
+            port = conn.get_vnc()
+            host = instance.compute.hostname
+        except:
+            port = None
+            host = None
+
+        # Connect to the target
+        self.msg("connecting to: %s:%s" % (host, port))
+        tsock = self.socket(host, port, connect=True)
+
+        if self.verbose and not self.daemon:
+            print(self.traffic_legend)
+
+        # Start proxying
+        try:
+            self.do_proxy(tsock)
+        except:
+            if tsock:
+                tsock.shutdown(socket.SHUT_RDWR)
+                tsock.close()
+                self.vmsg("%s:%s: Target closed" % (host, port))
+            raise
+
+if __name__ == '__main__':
+    # Create and start the NovaWebSockets proxy
+    server = NovaWebSocketProxy(listen_host=LISTEN_HOST,
+                                listen_port=LISTEN_PORT,
+                                source_is_ipv6=False,
+                                verbose=False,
+                                cert='self.pem',
+                                key=None,
+                                ssl_only=False,
+                                daemon=False,
+                                record=False,
+                                web=False,
+                                target_host='ignore',
+                                target_port='ignore',
+                                wrap_mode='exit',
+                                wrap_cmd=None)
+    server.start_server()

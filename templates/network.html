@@ -1,127 +1,184 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "Virtual Network" %}{% endblock %}
+{% block title %}{% trans "Network Pool" %}{% endblock %}
 {% block content %}
-      <div class="container-fluid">
-        <div class="row-fluid">
-          {% include 'sidebar.html' %}
-          <div class="span9 well">
-            <h2>{% trans "Virtual Networks" %}</h2>
-            <hr>
-            <a href="#poolModal" class="btn btn-success" data-toggle="modal">{% trans "Add Pool" %}</a><br><br>
+    <div class="row">
+        {% include 'sidebar.html' %}
+        <div class="col-md-9" role="main">
+            <div class="page-header">
+                <h1>{% trans "Network Pool" %}</h1>
+            </div>
             {% if errors %}
-              {% for error in errors %}
-              <div class="row-fluid">
-                <div class="alert alert-block alert-error">
-                  <a class="close" data-dismiss="alert">&times;</a>
-                  <p>{{ error }}</p>
-                </div>
-              </div>
-              {% endfor %}
+                {% for error in errors %}
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        {{ error }}
+                    </div>
+                {% endfor %}
             {% endif %}
-            
-            {% ifequal pool 'add' %}
-              {% if not errors %}
-              <div class="well pagination-centered">
-                <h4>{% trans "You do not have any virtual networks" %}</h4>
-              </div>
-              {% endif %}
-            {% endifequal %}
-
-            {% if info %}
-              {% if networks %}
-              <div class="row-fluid">
-                <div class="span5">
-                  <p>{% trans "Pool name" %}</p>
-                  <p>{% trans "Device pool" %}</p>
-                  <p>{% trans "State" %}</p>
+            {% if device %}
+                <div class="row show-grid">
+                    <div class="col-md-6">
+                        <p>{% trans "Pool name" %}</p>
+                        <p>{% trans "Device pool" %}</p>
+                        <p>{% trans "State" %}</p>
+                        <p>{% trans "Autostart" %}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p>
+                            [{% for net in networks %}
+                                {% ifequal net pool %}
+                                    <b>{{ net }}</b>
+                                {% else %}
+                                    <a href="{% url 'network' host_id net %}">{{ net }}</a>
+                                {% endifequal %}
+                            {% endfor %} ]
+                        </p>
+                        <p>{{ device }}</p>
+                        <p>
+                            <form action="" method="post">{% csrf_token %}
+                                {% ifequal state 0 %}
+                                    <input type="submit" class="btn btn-xs btn-default" name="start" value="{% trans "Start" %}">
+                                    <input type="submit" class="btn btn-xs btn-default" name="delete" value="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
+                                {% else %}
+                                    <input type="submit" class="btn btn-xs btn-default" name="stop" value="{% trans "Stop" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
+                                {% endifequal %}
+                            </form>
+                        </p>
+                        <p>
+                            <form action="" method="post">{% csrf_token %}
+                                {% ifequal autostart 0 %}
+                                    <input type="submit" class="btn btn-xs btn-default" name="set_autostart" value="{% trans "Enable" %}">
+                                {% else %}
+                                    <input type="submit" class="btn btn-xs btn-default" name="unset_autostart" onclick="return confirm('{% trans "Are you sure?" %}')" value="{% trans "Disable" %}">
+                                {% endifequal %}
+                            </form>
+                        </p>
+                    </div>
                 </div>
-                <div class="span7">
-                  <p>[{% for key, value in networks.items %} {% ifequal key pool %}<b>{{ pool }}</b>{% else %}<a href="/network/{{ host_id }}/{{ key }}">{{ key }}</a>{% endifequal %}{% endfor %} ]</p>
-                  <p>{{ info.1 }}</p>
-                  <form action="/network/{{ host_id }}/{{ pool }}/" method="post" style="height:10px;">{% csrf_token %}
-                    {% ifequal info.0 0 %}
-                    <input type="submit" class="btn btn-primary" name="start" value="{% trans "Start" %}">
-                    <input type="submit" class="btn btn-danger" name="delete" value="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
-                    {% else %}
-                    <input type="submit" class="btn btn-primary" name="stop" value="{% trans "Stop" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
-                    {% endifequal %}
-                  </form>
+                <h3>{% trans "IPv4 configuration" %}</h3>
+                <hr>
+                <div class="row show-grid">
+                    <div class="col-md-6">
+                        <p>{% trans "IPv4 Forwarding" %}</p>
+                        <p>{% trans "Network" %}</p>
+                        <p>{% trans "DHCP" %}</p>
+                        {% if ipv4_dhcp_range %}
+                            <p>{% trans "Start" %}</p>
+                            <p>{% trans "End" %}</p>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <p>
+                           {% ifequal ipv4_forward.0 'nat' %}
+                               {% trans "NAT" %}
+                           {% endifequal %}
+                           {% ifequal ipv4_forward.0 'route' %}
+                               {% trans "ROUTE" %}
+                           {% endifequal %}
+                           {% ifequal ipv4_forward.0 'bridge' %}
+                               {% trans "BRIDGE" %}
+                           {% endifequal %}
+                           {% if not ipv4_forward.0 %}
+                               {% trans "ISOLATE" %}
+                           {% endif %}
+                        </p>
+                        <p>{{ ipv4_network }}</p>
+                        <p>
+                            {% if ipv4_dhcp_range %}
+                                <span class="text-success">{% trans "ON" %}</span>
+                            {% else %}
+                                <span class="text-danger">{% trans "OFF" %}</span>
+                            {% endif %}
+                        </p>
+                        {% if ipv4_dhcp_range %}
+                            {% for dhcp in ipv4_dhcp_range %}
+                                <p>{{ dhcp }}</p>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
                 </div>
-              </div>
-              <h3>{% trans "IPv4 configuration" %}</h3>
-              <hr>
-              <div class="row-fluid">
-                <div class="span5">
-                  <p>{% trans "Type forwarding" %}</p>
-                  <p>{% trans "Subnet pool" %}</p>
-                  <p>{% trans "DHCP" %}</p>
-                  {% if ipv4_net.2 %}
-                  <p>{% trans "Start" %}</p>
-                  <p>{% trans "End" %}</p> 
-                  {% endif %}
-                </div>
-                <div class="span5">
-                  <p>{% ifequal ipv4_net.0.0 'nat' %} {% trans "NAT" %} {% endifequal %} {% ifequal ipv4_net.0.0 'route' %} {% trans "ROUTE" %} {% endifequal %} {% if not ipv4_net.0.0 %} {% trans "ISOLATE" %} {% endif %}</p>
-                  <p>{{ ipv4_net.1 }}</p>
-                  <p>{% if ipv4_net.2 %}<font color="green">{% trans "ON" %}</font>{% else %}<font color="red">{% trans "OFF" %}</font>{% endif %}</p>
-                    {% if not ipv4_net.2 %}
-                    {% trans "None" %}
-                    {% else %}
-                    {% for dhcp in ipv4_net.2 %} 
-                      <p>{{ dhcp }}</p>
-                    {% endfor %}
-                  </div>
-                  {% endif %}
+                {% if fixed_address %}
+                    <h3>{% trans "Fixed Address" %}</h3>
+                    <hr>
+                    <div class="panel-group" id="accordion">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                                    Show
+                                </a>
+                            </div>
+                        <div id="collapseOne" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="input-append form-inline pull-right" style="">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" id="filter_input" style="margin-top:-28px;">
+                                    </div>
+                                    <input type="button" class="btn btn-default" id="filter_button" value="Filter">
+                                    <button type="button" class="btn btn-default" id="filter_clear">Clear</button>
+                                </div>
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align: center">{% trans "Address" %}</th>
+                                            <th style="text-align: center">{% trans "MAC" %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody style="text-align: center">
+                                        {% for fix in fixed_address %}
+                                            <tr>
+                                                <td>{{ fix.host }}</td>
+                                                <td>{{ fix.mac }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                                 </div>
+                            </div>
+                        </div>
+                      </div>
+                    </div>
                 {% endif %}
-              {% endif %}
-            </div>
-          </div><!--/span-->
-        </div><!--/row-fluid-->
-      </div><!--/container-fluid-->
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script type="text/javascript">
+        $.expr[':'].Contains = $.expr.createPseudo(function(arg) {
+        return function( elem ) {
+            return $(elem).text().toUpperCase().indexOf(arg.toUpperCase()) >= 0;
+        };
+        });
 
-      <div id="poolModal" class="modal hide fade">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-          <h3 id="poolModalLabel">{% trans "Add New Network Pool" %}</h3>
-        </div>
-        <div class="modal-body">
-        <form class="form-horizontal" action="/network/{{ host_id }}/add/" method="post">{% csrf_token %}
-          <fieldset><br>
-            <div class="control-group">
-              <label class="control-label">{% trans "Name" %}</label>
-              <div class="controls">
-                <input type="text" name="name" class="input-medium focused" placeholder="default">
-              </div>
-            </div>
-            <div class="control-group">
-              <label class="control-label">{% trans "Subnet pool" %}</label>
-                <div class="controls">
-                  <input type="text" class="input-medium"  name="net_addr" value="192.168.100.0/24">
-                </div>
-              </div>
-              <div class="control-group">
-              <label class="control-label">{% trans "DHCP" %}</label>
-                <div class="controls">
-                  <input type="checkbox" name="dhcp" value="1" checked>
-                </div>
-              </div>
-              <div class="control-group">
-                <label class="control-label">{% trans "Type forwarding" %}</label>
-                <div class="controls">
-                  <select class="input-medium" name="forward"> 
-                    <option value="nat">{% trans "NAT" %}</option>
-                    <option value="route">{% trans "ROUTE" %}</option>
-                    <option value="none">{% trans "ISOLATE" %}</option>
-                  </select>
-                </div>
-              </div>
-            </fieldset>
-          </div>
-        <div class="modal-footer">
-          <button class="btn" data-dismiss="modal">{% trans "Cancel" %}</button>
-          <input class="btn btn-success" name="addpool" type="submit" value="{% trans "Submit" %}">
-          </form>
-        </div>
-      </div> <!-- /poolModal -->
+        $(document).ready(function() {
+            // add event button labeled "filter"
+            $('#filter_button').click(function(event) {
+                // get value
+                var filter_val = $('#filter_input').val();
+                if(filter_val == '') {
+                    // show all
+                    $('tbody tr').show();
+                } else {
+                    // show only matches
+                    $('tbody tr:Contains(\'' + filter_val + '\')').show();
+                    // hide non-matching items
+                    $('tbody tr:not(:Contains(\'' + filter_val + '\'))').hide();
+                }
+            });
+
+            // add event button labeled "clear"
+            $('#filter_clear').click(function(event) {
+                $('#filter_input').val('');
+                $('#filter_button').click();
+            });
+
+            // trigger filter when enter key pressed
+            $('#filter_input').keyup(function(event){
+                if(event.keyCode == 13){
+                    $('#filter_button').click();
+                }
+            });
+        });
+    </script>
 {% endblock %}

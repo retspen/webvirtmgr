@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Infrastructure" %}{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-12" role="main">
+            <div class="page-header">
+                <div class="input-append form-inline pull-right" style="">
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="filter_input" style="margin-top:-28px;">
+                    </div>
+                    <input type="button" class="btn btn-default" id="filter_button" value="Filter">
+                    <button type="button" class="btn btn-default" id="filter_clear">Clear</button>
+                </div>
+                <h1>{% trans "Infrastructure" %}</h1>
+            </div>
+            {% if hosts_vms %}
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th style="width: 10px;">#</th>
+                        <th>{% trans "Hostname / VM's" %}</th>
+                        <th>{% trans "Status" %}</th>
+                        <th style="text-align:center;width:50px;">{% trans "VCPU's" %}</th>
+                        <th style="text-align:center;width:100px;">{% trans "Memory" %}</th>
+                        <th style="text-align:center;width:80px;">{% trans "Usage" %}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for host, vms in hosts_vms.items %}
+                        <tr style="font-size:18px;">
+                            <td>{{ forloop.counter }}</td>
+                            <td><a href="{% url 'instances' host.0 %}">{{ host.1 }}</a></td>
+                            <td>{% ifequal host.2 1 %}<span class="text-success">{% trans "Active" %}</span>{% endifequal %}
+                                {% ifequal host.2 2 %}<span class="text-danger">{% trans "Not Active" %}</span>{% endifequal %}
+                                {% ifequal host.2 3 %}<span class="text-danger">{% trans "Connection Failed" %}</span>{% endifequal %}
+                            </td>
+                            <td style="text-align:center;">{{ host.3 }}</td>
+                            <td style="text-align:center;">{{ host.4|filesizeformat }}</td>
+                            <td style="text-align:center;">{{ host.5 }}%</td>
+                        </tr>
+                        {% if vms %}
+                            {% for vm, info in vms.items %}
+                                <tr>
+                                    <td></td>
+                                    <td>{{ forloop.counter }} &emsp; <a href="{% url 'instance' host.0 vm %}">{{ vm }}</a></td>
+                                    <td>{% ifequal info.0 1 %}<span class="text-success">{% trans "Running" %}</span>{% endifequal %}
+                                        {% ifequal info.0 3 %}<span class="text-warning">{% trans "Suspend" %}</span>{% endifequal %}
+                                        {% ifequal info.0 5 %}<span class="text-danger">{% trans "Shutoff" %}</span>{% endifequal %}
+                                    </td>
+                                    <td style="text-align:center;">{{ info.1 }}</td>
+                                    <td style="text-align:center;">{{ info.2|filesizeformat }}</td>
+                                    <td style="text-align:center;">{{ info.3 }}%</td>
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="well">
+                    <h4>{% trans "You have no connection" %}</h4>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script src="/static/js/infrastructure.js"></script>
+{% endblock %}

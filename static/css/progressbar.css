@@ -1,0 +1,16 @@
+.progress {
+    position: relative;
+}
+.bar {
+    z-index: 1;
+    position: absolute;
+}
+.progress span {
+    border-radius: 4px;
+    position: absolute;
+    top: 0;
+    z-index: 2;
+    color: #000;
+    text-align: center;
+    width: 100%;
+}
