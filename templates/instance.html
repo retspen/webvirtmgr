@@ -86,14 +86,22 @@
                     </div>
                     <div id="net-usage">
                         {% for network in networks %}
-                           <p style="margin-left: 25px">{% trans "Bandwidth" %} - Eth{{ forloop.counter0 }}</p>
-                           <canvas style="margin-left: 25px" id="netEth{{ forloop.counter0 }}Chart" width="700" height="125"></canvas>
+                            <p style="margin-left: 25px">{% trans "Bandwidth" %} - Eth{{ forloop.counter0 }}</p>
+                            <canvas style="margin-left: 25px" id="netEth{{ forloop.counter0 }}Chart" width="700" height="125"></canvas>
+                            <div id="lineLegend">
+                                <span class="netIN">{% trans "In" %}</span>
+                                <span class="netOUT">{% trans "Out" %}</span>
+                            </div>
                         {% endfor %}
                     </div>
                     <div id="disk-usage">
                         {% for disk in disks %}
                            <p style="margin-left: 25px">{% trans "Disk I/O" %} - {{ disk.dev }}</p>
                            <canvas style="margin-left: 25px" id="blk{{ disk.dev }}Chart" width="700" height="125"></canvas>
+                           <div id="lineLegend">
+                                <span class="diskRD">{% trans "Read" %}</span>
+                                <span class="diskWR">{% trans "Write" %}</span>
+                           </div>
                         {% endfor %}
                     </div>
                 </div>
