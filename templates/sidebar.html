@@ -20,9 +20,15 @@
                             <li>
                                 <a href="{% url 'networks' host_id %}"><span class="glyphicon glyphicon-globe"></span> {% trans "Networks" %}</a>
                             </li>
+                            {% if vname %}
+                            <li>
+                                <a href="{% url 'snapshot' host_id vname %}"><span class="glyphicon glyphicon-camera"></span> {% trans "Snapshots" %}</a>
+                            </li>
+                            {% else %}
                             <li>
                                 <a href="{% url 'snapshots' host_id %}"><span class="glyphicon glyphicon-camera"></span> {% trans "Snapshots" %}</a>
                             </li>
+                            {% endif %}
                         </ul>
                     </li>
                 </ul>

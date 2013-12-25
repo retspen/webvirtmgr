@@ -81,31 +81,19 @@
                 </div>
                 <div class="row show-grid">
                     <div id="cpu-usage">
-                        <div class="col-md-6" id="cpu-usage">
-                            <p><strong>{% trans "CPU" %}</strong></p>
-                        </div>
-                        <div class="col-md-6">
-                            <p>{% trans "Usage" %}: <span id="cpu-data">0</span>%</p>
-                        </div>
+                        <p style="margin-left: 25px">{% trans "CPU usage" %}</p>
+                        <canvas style="margin-left: 25px" id="cpuChart" width="700" height="125"></canvas>
                     </div>
                     <div id="net-usage">
                         {% for network in networks %}
-                            <div class="col-md-6">
-                                <p><strong>Eth{{ forloop.counter0 }}</strong></p>
-                            </div>
-                            <div class="col-md-6">
-                                <p>Rx: 0.0 Mbps Tx: 0.0 Mbps</p>
-                            </div>
+                           <p style="margin-left: 25px">{% trans "Bandwidth" %} - Eth{{ forloop.counter0 }}</p>
+                           <canvas style="margin-left: 25px" id="netEth{{ forloop.counter0 }}Chart" width="700" height="125"></canvas>
                         {% endfor %}
                     </div>
                     <div id="disk-usage">
                         {% for disk in disks %}
-                            <div class="col-md-6">
-                                <p><strong>{% trans "Disk" %} {{ disk.dev }}</strong></p>
-                            </div>
-                            <div class="col-md-6">
-                                <p>Read: 0.0 Mb/s Write: 0.0 Mb/s</p>
-                            </div>
+                           <p style="margin-left: 25px">{% trans "Disk I/O" %} - {{ disk.dev }}</p>
+                           <canvas style="margin-left: 25px" id="blk{{ disk.dev }}Chart" width="700" height="125"></canvas>
                         {% endfor %}
                     </div>
                 </div>
@@ -170,7 +158,11 @@
                 </div>
                 <div class="col-md-6">
                     {% for network in networks %}
-                        <p>{{ network.mac }} ({{ network.nic }})</p>
+                        {% if network.ip %}
+                            <p>{{ network.ip }} ({{ network.nic }})</p>
+                        {% else %}
+                            <p>{{ network.mac }} ({{ network.nic }})</p>
+                        {% endif %}
                     {% endfor %}
                 </div>
             </div>
@@ -390,6 +382,7 @@
     <script type="text/javascript">
         function open_vnc() { window.open('{% url 'console' %}?token={{ uuid }}','','width=850,height=485') }
     </script>
+    <script src="{% static "js/Chart.min.js" %}"></script>
     <script type="text/javascript">
         $(document).on('change','#vnc_passwd_gen',function(){
             if($(this).prop('checked')) {
@@ -408,45 +401,46 @@
         <script type="text/javascript">
             function cpu_usage(){
                 $.getJSON('/info/inst/cpu/{{ host_id }}/{{ vname }}', function(data) {
-                    $('#cpu-data').text(data.cpu);
+                    var ctx = $("#cpuChart").get(0).getContext("2d");
+                    var options = {
+                        animation : false,
+                        pointDotRadius : 2,
+                        scaleLabel : "<%=value%> %"
+                    }
+                    new Chart(ctx).Line(data, options);
                 });
             }
             function disk_usage(){
                 $.getJSON('/info/inst/disk/{{ host_id }}/{{ vname }}', function(data) {
-                    var disktar = document.getElementById('disk-usage');
-                    var disktartext = '';
-
-                    for(var i = 0; i < data.length; i++){
-                        disktartext += '<div class="col-md-6">' +
-                                          '<p><strong>{% trans "Disk" %} ' +  data[i].dev  + '</strong></p>' +
-                                        '</div>' +
-                                        '<div class="col-md-6">' +
-                                          '<p>{% trans "Read" %}: ' + (data[i].rd/1024/1024).toFixed(1) + ' Mb/s {% trans "Write" %}: ' + (data[i].wr/1024/1024).toFixed(1) + ' Mb/s</p>' +
-                                        '</div>';
+                    var options = {
+                        animation : false,
+                        pointDotRadius : 2,
+                        scaleLabel : "<%=value%> Mb/s"
                     }
-                    disktar.innerHTML = disktartext;
+                    for(var i = 0; i < data.length; i++){
+                        var ctx = $("#blk" + data[i].dev + "Chart").get(0).getContext("2d");
+                        new Chart(ctx).Line(data[i].data, options);
+                    }
                 });
+
             }
             function net_usage(){
                 $.getJSON('/info/inst/net/{{ host_id }}/{{ vname }}', function(data) {
-                    var disktar = document.getElementById('net-usage');
-                    var disktartext = '';
-
-                    for(var i = 0; i < data.length; i++){
-                        disktartext += '<div class="col-md-6">' +
-                                          '<p><strong>{% trans "Eth" %}' +  data[i].dev  + '</strong></p>' +
-                                        '</div>' +
-                                        '<div class="col-md-6">' +
-                                          '<p>{% trans "Rx" %}: ' + (data[i].rx/1024/1024).toFixed(1) + ' Mbps {% trans "Tx" %}: ' + (data[i].tx/1024/1024).toFixed(1) + ' Mbps</p>' +
-                                        '</div>';
+                    var options = {
+                        animation : false,
+                        pointDotRadius : 2,
+                        scaleLabel : "<%=value%> Mbps"
                     }
-                    disktar.innerHTML = disktartext;
+                    for(var i = 0; i < data.length; i++){
+                        var ctx = $("#netEth" + data[i].dev + "Chart").get(0).getContext("2d");
+                        new Chart(ctx).Line(data[i].data, options);
+                    }
                 });
             }
             $(function() {
                 window.setInterval('cpu_usage()', {{ time_refresh }});
-                window.setInterval('net_usage()', {{ time_refresh }});
                 window.setInterval('disk_usage()', {{ time_refresh }});
+                window.setInterval('net_usage()', {{ time_refresh }});
             });
         </script>
     {% endifequal %}

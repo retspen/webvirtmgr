@@ -23,6 +23,10 @@ def diskusage(request, host_id, vname):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
+    datasets_rd = []
+    datasets_wr = []
+    json_blk = []
+    cookie_blk = {}
     compute = Compute.objects.get(id=host_id)
 
     try:
@@ -32,13 +36,73 @@ def diskusage(request, host_id, vname):
                            compute.type,
                            vname)
         blk_usage = conn.disk_usage()
-        data = simplejson.dumps(blk_usage)
         conn.close()
-    except libvirtError as msg_error:
-        data = msg_error.message
+    except libvirtError:
+        blk_usage = None
 
+    try:
+        cookies = request._cookies['blk_usage']
+    except KeyError:
+        cookies = None
+
+    for blk in blk_usage:
+        if not cookies:
+            datasets_wr.append(0)
+            datasets_rd.append(0)
+        else:
+            datasets = eval(cookies)
+            datasets_rd = datasets[blk['dev']][0]
+            datasets_wr = datasets[blk['dev']][1]
+
+        if len(datasets_rd) > 10:
+            while datasets_rd:
+                del datasets_rd[0]
+                if len(datasets_rd) == 10:
+                    break
+        if len(datasets_wr) > 10:
+            while datasets_wr:
+                del datasets_wr[0]
+                if len(datasets_wr) == 10:
+                    break
+
+        if len(datasets_rd) <= 9:
+            datasets_rd.append(int(blk['rd']) / 1048576)
+        if len(datasets_rd) == 10:
+            datasets_rd.append(int(blk['rd']) / 1048576)
+            del datasets_rd[0]
+
+        if len(datasets_wr) <= 9:
+            datasets_wr.append(int(blk['wr']) / 1048576)
+        if len(datasets_wr) == 10:
+            datasets_wr.append(int(blk['wr']) / 1048576)
+            del datasets_wr[0]
+
+        disk = {
+            'labels': [""] * 10,
+            'datasets': [
+                {
+                    "fillColor": "rgba(83,191,189,0.5)",
+                    "strokeColor": "rgba(83,191,189,1)",
+                    "pointColor": "rgba(83,191,189,1)",
+                    "pointStrokeColor": "#fff",
+                    "data": datasets_rd
+                },
+                {
+                    "fillColor": "rgba(249,134,33,0.5)",
+                    "strokeColor": "rgba(249,134,33,1)",
+                    "pointColor": "rgba(249,134,33,1)",
+                    "pointStrokeColor": "#fff",
+                    "data": datasets_wr
+                },
+            ]
+        }
+        json_blk.append({'dev': blk['dev'], 'data': disk})
+        cookie_blk[blk['dev']] = [datasets_rd, datasets_wr]
+
+    data = simplejson.dumps(json_blk)
     response = HttpResponse()
     response['Content-Type'] = "text/javascript"
+    response.cookies['blk_usage'] = cookie_blk
     response.write(data)
     return response
 
@@ -50,6 +114,10 @@ def netusage(request, host_id, vname):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
+    datasets_rx = []
+    datasets_tx = []
+    json_net = []
+    cookie_net = {}
     compute = Compute.objects.get(id=host_id)
 
     try:
@@ -59,13 +127,73 @@ def netusage(request, host_id, vname):
                            compute.type,
                            vname)
         net_usage = conn.net_usage()
-        data = simplejson.dumps(net_usage)
         conn.close()
-    except libvirtError as msg_error:
-        data = msg_error.message
+    except libvirtError:
+        net_usage = None
 
+    try:
+        cookies = request._cookies['net_usage']
+    except KeyError:
+        cookies = None
+
+    for net in net_usage:
+        if not cookies:
+            datasets_rx.append(0)
+            datasets_tx.append(0)
+        else:
+            datasets = eval(cookies)
+            datasets_rx = datasets[net['dev']][0]
+            datasets_tx = datasets[net['dev']][1]
+
+        if len(datasets_rx) > 10:
+            while datasets_rx:
+                del datasets_rx[0]
+                if len(datasets_rx) == 10:
+                    break
+        if len(datasets_tx) > 10:
+            while datasets_tx:
+                del datasets_tx[0]
+                if len(datasets_tx) == 10:
+                    break
+
+        if len(datasets_rx) <= 9:
+            datasets_rx.append(int(net['rx']) / 1048576)
+        if len(datasets_rx) == 10:
+            datasets_rx.append(int(net['rx']) / 1048576)
+            del datasets_rx[0]
+
+        if len(datasets_tx) <= 9:
+            datasets_tx.append(int(net['tx']) / 1048576)
+        if len(datasets_tx) == 10:
+            datasets_tx.append(int(net['tx']) / 1048576)
+            del datasets_tx[0]
+
+        network = {
+            'labels': [""] * 10,
+            'datasets': [
+                {
+                    "fillColor": "rgba(83,191,189,0.5)",
+                    "strokeColor": "rgba(83,191,189,1)",
+                    "pointColor": "rgba(83,191,189,1)",
+                    "pointStrokeColor": "#fff",
+                    "data": datasets_rx
+                },
+                {
+                    "fillColor": "rgba(151,187,205,0.5)",
+                    "strokeColor": "rgba(151,187,205,1)",
+                    "pointColor": "rgba(151,187,205,1)",
+                    "pointStrokeColor": "#fff",
+                    "data": datasets_tx
+                },
+            ]
+        }
+        json_net.append({'dev': net['dev'], 'data': network})
+        cookie_net[net['dev']] = [datasets_rx, datasets_tx]
+
+    data = simplejson.dumps(json_net)
     response = HttpResponse()
     response['Content-Type'] = "text/javascript"
+    response.cookies['net_usage'] = cookie_net
     response.write(data)
     return response
 
@@ -77,6 +205,7 @@ def cpuusage(request, host_id, vname):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
+    datasets = []
     compute = Compute.objects.get(id=host_id)
 
     try:
@@ -86,13 +215,47 @@ def cpuusage(request, host_id, vname):
                            compute.type,
                            vname)
         cpu_usage = conn.cpu_usage()
-        data = simplejson.dumps(cpu_usage)
         conn.close()
-    except libvirtError as msg_error:
-        data = msg_error.message
+    except libvirtError:
+        cpu_usage = 0
 
+    try:
+        cookies = request._cookies['cpu_usage']
+    except KeyError:
+        cookies = None
+
+    if not cookies:
+        datasets.append(0)
+    else:
+        datasets = eval(cookies)
+    if len(datasets) > 10:
+        while datasets:
+            del datasets[0]
+            if len(datasets) == 10:
+                break
+    if len(datasets) <= 9:
+        datasets.append(int(cpu_usage['cpu']))
+    if len(datasets) == 10:
+        datasets.append(int(cpu_usage['cpu']))
+        del datasets[0]
+
+    cpu = {
+        'labels': [""] * 10,
+        'datasets': [
+            {
+                "fillColor": "rgba(241,72,70,0.5)",
+                "strokeColor": "rgba(241,72,70,1)",
+                "pointColor": "rgba(241,72,70,1)",
+                "pointStrokeColor": "#fff",
+                "data": datasets
+            }
+        ]
+    }
+
+    data = simplejson.dumps(cpu)
     response = HttpResponse()
     response['Content-Type'] = "text/javascript"
+    response.cookies['cpu_usage'] = datasets
     response.write(data)
     return response
 
@@ -186,7 +349,6 @@ def instance(request, host_id, vname):
         memory_range = [256, 512, 1024, 2048, 4096, 8192, 16384]
         vnc_port = conn.get_vnc()
         inst_xml = conn._XMLDesc(VIR_DOMAIN_XML_SECURE)
-
     except libvirtError as msg_error:
         errors.append(msg_error.message)
 

@@ -3,7 +3,7 @@
 #
 import time
 import re
-from libvirt import VIR_DOMAIN_XML_SECURE
+from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE
 from vrtManager import util
 from xml.etree import ElementTree
 from vrtManager.connection import wvmConnect
@@ -94,41 +94,63 @@ class wvmInstance(wvmConnect):
         return range_pcpus
 
     def get_net_device(self):
+        def get_mac_ipaddr(net, mac_host):
+            def fixed(ctx):
+                for net in ctx.xpathEval('/network/ip/dhcp/host'):
+                    mac = net.xpathEval('@mac')[0].content
+                    host = net.xpathEval('@ip')[0].content
+                    if mac == mac_host:
+                        return host
+                return None
+            return util.get_xml_path(net.XMLDesc(0), func=fixed)
         def networks(ctx):
             result = []
-            for interface in ctx.xpathEval('/domain/devices/interface'):
-                mac = interface.xpathEval('mac/@address')[0].content
-                nic = interface.xpathEval('source/@network|source/@bridge|source/@dev')[0].content
-                result.append({'mac': mac, 'nic': nic})
+            for net in ctx.xpathEval('/domain/devices/interface'):
+                mac_host = net.xpathEval('mac/@address')[0].content
+                nic_host = net.xpathEval('source/@network|source/@bridge|source/@dev')[0].content
+                try:
+                    net = self.get_network(nic_host)
+                    ip = get_mac_ipaddr(net, mac_host)
+                except:
+                    ip = None
+                result.append({'mac': mac_host, 'nic': nic_host, 'ip': ip})
             return result
         return util.get_xml_path(self._XMLDesc(0), func=networks)
 
     def get_disk_device(self):
         def disks(ctx):
             result = []
-            for interface in ctx.xpathEval('/domain/devices/disk'):
-                device = interface.xpathEval('@device')[0].content
+            for disk in ctx.xpathEval('/domain/devices/disk'):
+                device = disk.xpathEval('@device')[0].content
                 if device == 'disk':
-                    dev = interface.xpathEval('target/@dev')[0].content
-                    file = interface.xpathEval('source/@file|source/@dev')[0].content
+                    dev = disk.xpathEval('target/@dev')[0].content
+                    file = disk.xpathEval('source/@file|source/@dev')[0].content
                     vol = self.get_volume_by_path(file)
+                    volume = vol.name()
                     stg = vol.storagePoolLookupByVolume()
-                    result.append({'dev': dev, 'image': vol.name(), 'storage': stg.name(), 'path': file})
+                    storage = stg.name()
+                    result.append({'dev': dev, 'image': volume, 'storage': storage, 'path': file})
             return result
         return util.get_xml_path(self._XMLDesc(0), func=disks)
 
     def get_media_device(self):
         def disks(ctx):
             result = []
-            for interface in ctx.xpathEval('/domain/devices/disk'):
-                device = interface.xpathEval('@device')[0].content
+            for media in ctx.xpathEval('/domain/devices/disk'):
+                device = media.xpathEval('@device')[0].content
                 if device == 'cdrom':
                     try:
-                        dev = interface.xpathEval('target/@dev')[0].content
-                        file = interface.xpathEval('source/@file')[0].content
-                        vol = self.get_volume_by_path(file)
-                        stg = vol.storagePoolLookupByVolume()
-                        result.append({'dev': dev, 'image': vol.name(), 'storage': stg.name(), 'path': file})
+                        dev = media.xpathEval('target/@dev')[0].content
+                        file = media.xpathEval('source/@file')[0].content
+                        try:
+                            vol = self.get_volume_by_path(file)
+                            volume = vol.name()
+                            stg = vol.storagePoolLookupByVolume()
+                            storage = stg.name()
+                        except libvirtError:
+                            volume = file
+                            storage = None
+                        result.append({'dev': dev, 'image': volume, 'storage': storage, 'path': file})
                     except:
                         pass
             return result

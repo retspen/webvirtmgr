@@ -17,7 +17,7 @@ def cpuusage(request, host_id):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
-    data = {}
+    datasets = []
     compute = Compute.objects.get(id=host_id)
 
     try:
@@ -26,12 +26,47 @@ def cpuusage(request, host_id):
                               compute.password,
                               compute.type)
         cpu_usage = conn.get_cpu_usage()
-        data = simplejson.dumps(cpu_usage)
         conn.close()
     except libvirtError:
-        pass
+        cpu_usage = 0
+
+    try:
+        cookies = request._cookies['cpu_usage']
+    except KeyError:
+        cookies = None
+
+    if not cookies:
+        datasets.append(0)
+    else:
+        datasets = eval(cookies)
+    if len(datasets) > 10:
+        while datasets:
+            del datasets[0]
+            if len(datasets) == 10:
+                break
+    if len(datasets) <= 9:
+        datasets.append(int(cpu_usage['usage']))
+    if len(datasets) == 10:
+        datasets.append(int(cpu_usage['usage']))
+        del datasets[0]
+
+    cpu = {
+        'labels': [""] * 10,
+        'datasets': [
+            {
+                "fillColor": "rgba(241,72,70,0.5)",
+                "strokeColor": "rgba(241,72,70,1)",
+                "pointColor": "rgba(241,72,70,1)",
+                "pointStrokeColor": "#fff",
+                "data": datasets
+            }
+        ]
+    }
+
+    data = simplejson.dumps(cpu)
     response = HttpResponse()
     response['Content-Type'] = "text/javascript"
+    response.cookies['cpu_usage'] = datasets
     response.write(data)
     return response
 
@@ -43,7 +78,7 @@ def memusage(request, host_id):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
-    data = {}
+    datasets = []
     compute = Compute.objects.get(id=host_id)
 
     try:
@@ -52,12 +87,47 @@ def memusage(request, host_id):
                               compute.password,
                               compute.type)
         mem_usage = conn.get_memory_usage()
-        data = simplejson.dumps(mem_usage)
         conn.close()
     except libvirtError:
-        pass
+        mem_usage = 0
+
+    try:
+        cookies = request._cookies['memory_usage']
+    except KeyError:
+        cookies = None
+
+    if not cookies:
+        datasets.append(0)
+    else:
+        datasets = eval(cookies)
+    if len(datasets) > 10:
+        while datasets:
+            del datasets[0]
+            if len(datasets) == 10:
+                break
+    if len(datasets) <= 9:
+        datasets.append(int(mem_usage['usage']) / 1048576)
+    if len(datasets) == 10:
+        datasets.append(int(mem_usage['usage']) / 1048576)
+        del datasets[0]
+
+    memory = {
+        'labels': [""] * 10,
+        'datasets': [
+            {
+                "fillColor": "rgba(249,134,33,0.5)",
+                "strokeColor": "rgba(249,134,33,1)",
+                "pointColor": "rgba(249,134,33,1)",
+                "pointStrokeColor": "#fff",
+                "data": datasets
+            }
+        ]
+    }
+
+    data = simplejson.dumps(memory)
     response = HttpResponse()
     response['Content-Type'] = "text/javascript"
+    response.cookies['memory_usage'] = datasets
     response.write(data)
     return response
 

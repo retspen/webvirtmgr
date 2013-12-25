@@ -1,9 +1,19 @@
 #
 # Copyright (C) 2013 Webvirtmgr.
 #
+import re
 import random
 import libxml2
 import libvirt
+
+
+def is_kvm_available(xml):
+    capabilites = re.search('kvm', xml)
+    if capabilites:
+        return True
+    else:
+        return False
+
 
 def randomMAC():
     """Generate a random MAC address."""
@@ -16,11 +26,13 @@ def randomMAC():
             random.randint(0x00, 0xff)]
     return ':'.join(map(lambda x: "%02x" % x, mac))
 
+
 def randomUUID():
     """Generate a random UUID."""
 
     u = [ random.randint(0, 255) for dummy in range(0, 16) ]
     return "-".join(["%02x" * 4, "%02x" * 2, "%02x" * 2, "%02x" * 2, "%02x" * 6]) % tuple(u)
+
 
 def get_max_vcpus(conn, type=None):
     """@param conn: libvirt connection to poll for max possible vcpus
@@ -33,6 +45,7 @@ def get_max_vcpus(conn, type=None):
         m = 32
     return m
 
+
 def xml_escape(str):
     """Replaces chars ' " < > & with xml safe counterparts"""
     if str is None:
@@ -44,6 +57,7 @@ def xml_escape(str):
     str = str.replace("<", "&lt;")
     str = str.replace(">", "&gt;")
     return str
+
 
 def compareMAC(p, q):
     """Compare two MAC addresses"""
@@ -63,6 +77,7 @@ def compareMAC(p, q):
         elif n < 0:
             return -1
     return 0
+
 
 def get_xml_path(xml, path=None, func=None):
     """
@@ -98,12 +113,14 @@ def get_xml_path(xml, path=None, func=None):
             ctx.xpathFreeContext()
     return result
 
+
 def pretty_mem(val):
     val = int(val)
     if val > (10 * 1024 * 1024):
         return "%2.2f GB" % (val / (1024.0 * 1024.0))
     else:
         return "%2.0f MB" % (val / 1024.0)
+
 
 def pretty_bytes(val):
     val = int(val)

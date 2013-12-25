@@ -45,7 +45,8 @@ def networks(request, host_id):
                         msg = _("Input subnet pool error")
                         errors.append(msg)
                     if not errors:
-                        conn.create_network(data['name'], data['forward'], gateway, netmask, dhcp, data['bridge_name'])
+                        conn.create_network(data['name'], data['forward'], gateway, netmask,
+                                            dhcp, data['bridge_name'], data['fixed'])
                         return HttpResponseRedirect('/network/%s/%s/' % (host_id, data['name']))
         conn.close()
     except libvirtError as err:
@@ -76,6 +77,7 @@ def network(request, host_id, pool):
         ipv4_forward = conn.get_ipv4_forward()
         ipv4_dhcp_range = conn.get_ipv4_dhcp_range()
         ipv4_network = conn.get_ipv4_network()
+        fixed_address = conn.get_mac_ipaddr()
     except libvirtError as err:
         errors.append(err.message)
 

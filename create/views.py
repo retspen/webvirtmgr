@@ -31,10 +31,11 @@ def create(request, host_id):
                          compute.password,
                          compute.type)
 
-        storages = conn.get_storages()
-        networks = conn.get_networks()
+        storages = sorted(conn.get_storages())
+        networks = sorted(conn.get_networks())
         instances = conn.get_instances()
         get_images = sorted(conn.get_storages_images())
+        mac_auto = util.randomMAC()
     except libvirtError as err:
         errors.append(err.message)
 
@@ -84,22 +85,26 @@ def create(request, host_id):
                                 except libvirtError as msg_error:
                                     errors.append(msg_error.message)
                     else:
-                        try:
-                            path = conn.create_volume(data['storage'], data['name'], data['hdd_size'])
-                            volumes[path] = conn.get_volume_type(path)
-                        except libvirtError as msg_error:
-                            errors.append(msg_error.message)
+                        if not data['mac']:
+                            msg = _("No Virtual Machine MAC has been entered")
+                            errors.append(msg)
+                        else:
+                            try:
+                                path = conn.create_volume(data['storage'], data['name'], data['hdd_size'])
+                                volumes[path] = conn.get_volume_type(path)
+                            except libvirtError as msg_error:
+                                errors.append(msg_error.message)
                     if not errors:
                         uuid = util.randomUUID()
                         try:
                             conn.create_instance(data['name'], data['memory'], data['vcpu'], data['host_model'],
-                                                 uuid, volumes, data['networks'], data['virtio'])
+                                                 uuid, volumes, data['networks'], data['virtio'], data['mac'])
                             create_instance = Instance(compute_id=host_id, name=data['name'], uuid=uuid)
                             create_instance.save()
                             return HttpResponseRedirect('/instance/%s/%s/' % (host_id, data['name']))
                         except libvirtError as msg_error:
                             if data['hdd_size']:
-                                conn.delete_volume(volumes[0])
+                                conn.delete_volume(volumes.keys()[0])
                             errors.append(msg_error.message)
     conn.close()
 

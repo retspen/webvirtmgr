@@ -1,7 +1,6 @@
 #
 # Copyright (C) 2013 Webvirtmgr.
 #
-import virtinst
 import string
 from vrtManager import util
 from vrtManager.connection import wvmConnect
@@ -27,9 +26,13 @@ class wvmCreate(wvmConnect):
                     images.append(img)
         return images
 
-    def get_guest_cap(self):
+    def get_os_type(self):
         """Get guest capabilities"""
-        return virtinst.CapabilitiesParser.guest_lookup(self.wvm)
+        return util.get_xml_path(self.get_cap_xml(), "/capabilities/guest/os_type")
+
+    def get_host_arch(self):
+        """Get guest capabilities"""
+        return util.get_xml_path(self.get_cap_xml(), "/capabilities/host/cpu/arch")
 
     def create_volume(self, storage, name, size, format='qcow2'):
         size = int(size) * 1073741824
@@ -75,7 +78,11 @@ class wvmCreate(wvmConnect):
     def _defineXML(self, xml):
         self.wvm.defineXML(xml)
 
-    def create_instance(self, name, memory, vcpu, host_model, uuid, images, networks, virtio):
+    def delete_volume(self, path):
+        vol = self.get_volume_by_path(path)
+        vol.delete()
+
+    def create_instance(self, name, memory, vcpu, host_model, uuid, images, networks, virtio, mac=None):
         """
         Create VM function
         """
@@ -100,8 +107,7 @@ class wvmCreate(wvmConnect):
                     <boot dev='hd'/>
                     <boot dev='cdrom'/>
                     <bootmenu enable='yes'/>
-                  </os>""" % (self.get_guest_cap()[0].arch,
-                              self.get_guest_cap()[0].os_type)
+                  </os>""" % (self.get_host_arch(), self.get_os_type())
         xml += """<features>
                     <acpi/><apic/><pae/>
                   </features>
@@ -130,9 +136,10 @@ class wvmCreate(wvmConnect):
                       <address type='drive' controller='0' bus='1' target='0' unit='1'/>
                     </disk>"""
         for net in networks.split(','):
-            xml += """
-                    <interface type='network'>
-                        <source network='%s'/>""" % net
+            xml += """<interface type='network'>"""
+            if mac:
+                xml += """<mac address='%s'/>""" % mac
+            xml += """<source network='%s'/>""" % net
             if virtio:
                 xml += """<model type='virtio'/>"""
             xml += """</interface>"""

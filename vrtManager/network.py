@@ -1,7 +1,6 @@
 #
 # Copyright (C) 2013 Webvirtmgr.
 #
-
 from vrtManager import util
 from vrtManager.IPy import IP
 from vrtManager.connection import wvmConnect
@@ -40,7 +39,7 @@ class wvmNetworks(wvmConnect):
     def define_network(self, xml):
         self.wvm.networkDefineXML(xml)
 
-    def create_network(self, name, forward, gateway, mask, dhcp, bridge):
+    def create_network(self, name, forward, gateway, mask, dhcp, bridge, fixed=False):
         xml = """
             <network>
                 <name>%s</name>""" % name
@@ -57,8 +56,13 @@ class wvmNetworks(wvmConnect):
                         <ip address='%s' netmask='%s'>""" % (gateway, mask)
             if dhcp:
                 xml += """<dhcp>
-                            <range start='%s' end='%s' />
-                        </dhcp>""" % (dhcp[0], dhcp[1])
+                            <range start='%s' end='%s' />""" % (dhcp[0], dhcp[1])
+                if fixed:
+                    fist_oct = int(dhcp[0].strip().split('.')[3])
+                    last_oct = int(dhcp[1].strip().split('.')[3])
+                    for ip in range(fist_oct, last_oct + 1):
+                        xml += """<host mac='%s' ip='%s.%s' />""" % (util.randomMAC(), gateway[:-2], ip)
+                xml += """</dhcp>"""
 
             xml += """</ip>"""
         xml += """</network>"""
@@ -150,3 +154,13 @@ class wvmNetwork(wvmConnect):
         if forward and forward != "nat":
             return True
         return bool(util.get_xml_path(xml, "/network/ip/dhcp/bootp/@file"))
+
+    def get_mac_ipaddr(self):
+        def network(ctx):
+            result = []
+            for net in ctx.xpathEval('/network/ip/dhcp/host'):
+                host = net.xpathEval('@ip')[0].content
+                mac = net.xpathEval('@mac')[0].content
+                result.append({'host': host, 'mac': mac})
+            return result
+        return util.get_xml_path(self._XMLDesc(0), func=network)

@@ -45,54 +45,42 @@
             <div class="row show-grid">
                 <div class="col-md-6">
                     <p>{% trans "CPU usage" %}</p>
-                    <p>{% trans "Memory usage" %} ({{ mem_usage.usage|filesizeformat }})</p>
-                </div>
-                <div class="col-md-6">
-                    <div class="progress">
-                        <span id="cpu-usage" style="text-align:center;">0%</span>
-                        <div class="progress-bar" id="cpu-usage-bar" style="width:0%;"></div>
-                    </div>
-                    <div class="progress">
-                        <span id="memory-usage" style="text-align: center;">0%</span>
-                        <div class="progress-bar" id="memory-usage-bar" style="width:0%;"></div>
-                    </div>
+                    <canvas id="cpuChart" width="700" height="200"></canvas>
+                    <p>{% trans "Memory usage" %}</p>
+                    <canvas id="memoryChart" width="700" height="200"></canvas>
                 </div>
             </div>
         </div>
     </div>
 {% endblock %}
 {% block script %}
-    <script src="{% static "js/jquery.tablesorter.js" %}"></script>
+    <script src="{% static "js/Chart.min.js" %}"></script>
     <script type="text/javascript">
         function cpu_usage(){
             $.getJSON('/info/cpu/{{ host_id }}', function(data) {
-                $('#cpu-usage').text(data.usage + '%');
-                $('#cpu-usage-bar').css({'width':data.usage +'%'})
-                if (data.usage < 50){
-                    $('#cpu-usage-bar').attr('class', "progress-bar progress-bar-success");
-                }else if (data.usage < 80){
-                    $('#cpu-usage-bar').attr('class', "progress-bar progress-bar-warning");
-                }else if (data.usage <= 100){
-                    $('#cpu-usage-bar').attr('class', "progress-bar progress-bar-danger");
+                var ctx = $("#cpuChart").get(0).getContext("2d");
+                var options = {
+                    animation : false,
+                    pointDotRadius : 2,
+                    scaleLabel : "<%=value%> %"
                 }
+                new Chart(ctx).Line(data, options);
             });
         }
-        function mem_usage(){
+        function memory_usage(){
             $.getJSON('/info/memory/{{ host_id }}', function(data) {
-                $('#memory-usage').text(data.percent + '%');
-                $('#memory-usage-bar').css({'width':data.percent +'%'})
-                if (data.usage < 50){
-                    $('#memory-usage-bar').attr('class', "progress-bar progress-bar-success");
-                }else if (data.usage < 80){
-                    $('#memory-usage-bar').attr('class', "progress-bar progress-bar-warning");
-                }else if (data.usage <= 100){
-                    $('#memory-usage-bar').attr('class', "progress-bar progress-bar-danger");
+                var ctx = $("#memoryChart").get(0).getContext("2d");
+                var options = {
+                    animation : false,
+                    pointDotRadius : 2,
+                    scaleLabel : "<%=value%> Mb"
                 }
+                new Chart(ctx).Line(data, options);
             });
         }
         $(function() {
             window.setInterval('cpu_usage()', {{ time_refresh }});
-            window.setInterval('mem_usage()', {{ time_refresh }});
+            window.setInterval('memory_usage()', {{ time_refresh }});
         });
     </script>
 {% endblock %}
