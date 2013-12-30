@@ -407,17 +407,24 @@
     </script>
     {% ifequal status 1 %}
         <script type="text/javascript">
+            var cpu_ctx = $("#cpuChart").get(0).getContext("2d");
+            var cpuChart = new Chart(cpu_ctx);
             function cpu_usage(){
                 $.getJSON('/info/inst/cpu/{{ host_id }}/{{ vname }}', function(data) {
-                    var ctx = $("#cpuChart").get(0).getContext("2d");
                     var options = {
                         animation : false,
                         pointDotRadius : 2,
                         scaleLabel : "<%=value%> %"
                     }
-                    new Chart(ctx).Line(data, options);
+                    cpuChart.Line(data, options);
                 });
             }
+
+            var diskChart = {};
+            {% for disk in disks %}
+                var disk_ctx_{{ disk.dev }} = $("#blk{{ disk.dev }}Chart").get(0).getContext("2d");
+                diskChart['{{ disk.dev }}'] = new Chart(disk_ctx_{{ disk.dev }});
+            {% endfor %}
             function disk_usage(){
                 $.getJSON('/info/inst/disk/{{ host_id }}/{{ vname }}', function(data) {
                     var options = {
@@ -426,12 +433,17 @@
                         scaleLabel : "<%=value%> Mb/s"
                     }
                     for(var i = 0; i < data.length; i++){
-                        var ctx = $("#blk" + data[i].dev + "Chart").get(0).getContext("2d");
-                        new Chart(ctx).Line(data[i].data, options);
+                        diskChart[data[i].dev].Line(data[i].data, options);
                     }
                 });
 
             }
+
+            var netChart = {};
+            {% for net in networks %}
+                var net_ctx_{{ forloop.counter0 }} = $("#netEth{{ forloop.counter0 }}Chart").get(0).getContext("2d");
+                netChart['{{ forloop.counter0 }}'] = new Chart(net_ctx_{{ forloop.counter0 }});
+            {% endfor %}
             function net_usage(){
                 $.getJSON('/info/inst/net/{{ host_id }}/{{ vname }}', function(data) {
                     var options = {
@@ -440,8 +452,7 @@
                         scaleLabel : "<%=value%> Mbps"
                     }
                     for(var i = 0; i < data.length; i++){
-                        var ctx = $("#netEth" + data[i].dev + "Chart").get(0).getContext("2d");
-                        new Chart(ctx).Line(data[i].data, options);
+                        netChart[[i]].Line(data[i].data, options);;
                     }
                 });
             }

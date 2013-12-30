@@ -56,26 +56,29 @@
 {% block script %}
     <script src="{% static "js/Chart.min.js" %}"></script>
     <script type="text/javascript">
+        var cpu_ctx = $("#cpuChart").get(0).getContext("2d");
+        var cpuChart = new Chart(cpu_ctx);
         function cpu_usage(){
+            var options = {
+                animation : false,
+                pointDotRadius : 2,
+                scaleLabel : "<%=value%> %"
+            }
             $.getJSON('/info/cpu/{{ host_id }}', function(data) {
-                var ctx = $("#cpuChart").get(0).getContext("2d");
-                var options = {
-                    animation : false,
-                    pointDotRadius : 2,
-                    scaleLabel : "<%=value%> %"
-                }
-                new Chart(ctx).Line(data, options);
+                cpuChart.Line(data, options);
             });
         }
+
+        var mem_ctx = $("#memoryChart").get(0).getContext("2d");
+        var memChart = new Chart(mem_ctx);
         function memory_usage(){
             $.getJSON('/info/memory/{{ host_id }}', function(data) {
-                var ctx = $("#memoryChart").get(0).getContext("2d");
                 var options = {
                     animation : false,
                     pointDotRadius : 2,
                     scaleLabel : "<%=value%> Mb"
                 }
-                new Chart(ctx).Line(data, options);
+                memChart.Line(data, options);
             });
         }
         $(function() {

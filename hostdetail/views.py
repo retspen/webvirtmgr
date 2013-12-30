@@ -51,10 +51,11 @@ def cpuusage(request, host_id):
         del datasets[0]
 
     # Some fix division by 0 Chart.js
-    if sum(datasets) == 0:
-        datasets[9] += 0.1
-    if sum(datasets) / 10 == datasets[0]:
-        datasets[9] += 0.1
+    if len(datasets) == 10:
+        if sum(datasets) == 0:
+            datasets[9] += 0.1
+        if sum(datasets) / 10 == datasets[0]:
+            datasets[9] += 0.1
 
     cpu = {
         'labels': [""] * 10,
@@ -118,10 +119,11 @@ def memusage(request, host_id):
         del datasets[0]
 
     # Some fix division by 0 Chart.js
-    if sum(datasets) == 0:
-        datasets[9] += 0.1
-    if sum(datasets) / 10 == datasets[0]:
-        datasets[9] += 0.1
+    if len(datasets) == 10:
+        if sum(datasets) == 0:
+            datasets[9] += 0.1
+        if sum(datasets) / 10 == datasets[0]:
+            datasets[9] += 0.1
 
     memory = {
         'labels': [""] * 10,
