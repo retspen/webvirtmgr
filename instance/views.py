@@ -77,6 +77,12 @@ def diskusage(request, host_id, vname):
             datasets_wr.append(int(blk['wr']) / 1048576)
             del datasets_wr[0]
 
+        # Some fix division by 0 Chart.js
+        if sum(datasets_rd) == 0:
+            datasets_rd[9] += 0.01
+        if sum(datasets_rd) / 10 == datasets_rd[0]:
+            datasets_rd[9] += 0.01
+
         disk = {
             'labels': [""] * 10,
             'datasets': [
@@ -168,6 +174,12 @@ def netusage(request, host_id, vname):
             datasets_tx.append(int(net['tx']) / 1048576)
             del datasets_tx[0]
 
+        # Some fix division by 0 Chart.js
+        if sum(datasets_rx) == 0:
+            datasets_rx[9] += 0.01
+        if sum(datasets_rx) / 10 == datasets_rx[0]:
+            datasets_rx[9] += 0.01
+
         network = {
             'labels': [""] * 10,
             'datasets': [
@@ -238,6 +250,12 @@ def cpuusage(request, host_id, vname):
     if len(datasets) == 10:
         datasets.append(int(cpu_usage['cpu']))
         del datasets[0]
+
+    # Some fix division by 0 Chart.js
+    if sum(datasets) == 0:
+        datasets[9] += 0.1
+    if sum(datasets) / 10 == datasets[0]:
+        datasets[9] += 0.1
 
     cpu = {
         'labels': [""] * 10,
