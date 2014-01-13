@@ -13,6 +13,13 @@ libvirt:
     - require:
       - pkg: libvirt
 
+/etc/sysconfig/libvirtd:
+  file.managed:
+    - user: root
+    - group: root
+    - mode: 644
+    - source: salt://libvirt/libvirtd
+
 /etc/libvirt/qemu.conf:
   file.managed:
     - user: root
