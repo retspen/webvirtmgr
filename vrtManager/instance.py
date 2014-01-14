@@ -167,7 +167,7 @@ class wvmInstance(wvmConnect):
 
     def get_vnc(self):
         vnc = util.get_xml_path(self._XMLDesc(0),
-                                "/domain/devices/graphics/@port")
+                                "/domain/devices/graphics[@type='vnc']/@port")
         return vnc
 
     def mount_iso(self, image):
