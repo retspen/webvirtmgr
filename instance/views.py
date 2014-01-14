@@ -348,6 +348,8 @@ def instance(request, host_id, vname):
     messages = []
     time_refresh = TIME_JS_REFRESH
     compute = Compute.objects.get(id=host_id)
+    computes = Compute.objects.all()
+    computes_count = len(computes)
 
     try:
         conn = wvmInstance(compute.hostname,
@@ -451,6 +453,18 @@ def instance(request, host_id, vname):
                 if not errors:
                     conn.set_vnc_passwd(passwd)
                     return HttpResponseRedirect(request.get_full_path())
+            if 'migrate' in request.POST:
+                compute_id = request.POST.get('compute_id', '')
+                new_compute = Compute.objects.get(id=compute_id)
+                conn_migrate = wvmInstances(new_compute.hostname,
+                                            new_compute.login,
+                                            new_compute.password,
+                                            new_compute.type)
+                conn_migrate.moveto(conn, vname)
+                conn_migrate.define_move(vname)
+                conn_migrate.close()
+                return HttpResponseRedirect('/instance/%s/%s' % (compute_id, vname))
+
         conn.close()
 
     except libvirtError as msg_error:

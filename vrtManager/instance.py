@@ -34,6 +34,15 @@ class wvmInstances(wvmConnect):
         dom = self.get_instance(name)
         dom.resume()
 
+    def moveto(self, conn, name):
+        dom = conn.get_instance(name)
+        self.wvm.migrate(dom, 0, name, None, 0)
+
+    def define_move(self, name):
+        dom = self.get_instance(name)
+        xml = dom.XMLDesc(VIR_DOMAIN_XML_SECURE)
+        self.wvm.defineXML(xml)
+
 
 class wvmInstance(wvmConnect):
     def __init__(self, host, login, passwd, conn, vname):

@@ -70,7 +70,11 @@
                     {% ifequal status 5 %}
                         <a href="#Edit" class="btn btn-default btn-md" data-toggle="modal" id="inst-btn"><span class="glyphicon glyphicon-edit"></span><br> {% trans "Edit" %}</a>
                     {% else %}
-                        <button href="#" class="btn btn-default btn-md disabled" id="inst-btn"><span class="glyphicon glyphicon-edit"></span><br> {% trans "Edit" %}</button>
+                        {% if computes_count != 1 %}
+                            <a href="#Migrate" class="btn btn-default btn-md" data-toggle="modal" id="inst-btn"><span class="glyphicon glyphicon-cloud-download"></span><br> {% trans "Migrate" %}</a>
+                        {% else %}
+                            <a href="#" class="btn btn-default btn-md disabled" data-toggle="modal" id="inst-btn"><span class="glyphicon glyphicon-cloud-download"></span><br> {% trans "Migrate" %}</a>
+                        {% endif %}
                     {% endifequal %}
                 </form>
             </div>
@@ -287,6 +291,52 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
                         <button type="submit" class="btn btn-primary" name="delete">{% trans "Delete" %}</button>
+                    </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <!-- Migrate -->
+    <div class="modal fade" id="Migrate" tabindex="-1" role="dialog" aria-labelledby="MigrateLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">{% trans "Migrate" %} '{{ vname }}'</h4>
+                </div>
+                <div class="modal-body">
+                    <p style="text-align:center;">
+                        <span class="text-danger">{% trans "Warning:" %}</span> {% trans "Both servers must have equal settings and OS type" %}
+                    </p>
+                    <br>
+                    <div class="row show-grid">
+                        <div class="col-lg-4" style="text-align:right;">
+                             <p><strong>{% trans "Original host" %}</strong></p>
+                        </div>
+                        <div class="col-lg-4">
+                             <p>{{ compute.name }}</p>
+                        </div>
+                    </div>
+                </div>
+                <form class="form-horizontal" method="post" role="form">{% csrf_token %}
+                    <div class="form-group">
+                        <label class="col-lg-4 control-label">{% trans "New host" %}</label>
+                        <div class="col-lg-5">
+                            <select name="compute_id" class="form-control">
+                            {% if computes_count != 1 %}
+                                {% for comp in computes %}
+                                    {% if comp.id != compute.id %}
+                                        <option value="{{ comp.id }}">{{ comp.name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+                        <button type="submit" class="btn btn-primary" name="migrate">{% trans "Migrate" %}</button>
                     </div>
                 </form>
             </div><!-- /.modal-content -->
