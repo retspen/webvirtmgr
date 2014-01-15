@@ -6,6 +6,14 @@ from vrtManager.connection import wvmConnect
 from vrtManager.util import get_xml_path
 
 
+def cpu_version(ctx):
+    for info in ctx.xpathEval('/sysinfo/processor/entry'):
+        elem = info.xpathEval('@name')[0].content
+        if elem == 'version':
+            return info.content
+    return 'Unknown'
+
+
 class wvmHostDetails(wvmConnect):
     def get_memory_usage(self):
         """
@@ -58,11 +66,7 @@ class wvmHostDetails(wvmConnect):
         info.append(self.wvm.getInfo()[0])
         info.append(self.wvm.getInfo()[1] * 1048576)
         info.append(self.wvm.getInfo()[2])
-        try:
-            info.append(get_xml_path(self.wvm.getSysinfo(0),
-                                     "/sysinfo/processor/entry[6]"))
-        except Exception:
-            info.append('Unknown')
+        info.append(get_xml_path(self.wvm.getSysinfo(0), func=cpu_version))
         info.append(self.wvm.getURI())
         return info
 
