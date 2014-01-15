@@ -361,8 +361,10 @@ def instance(request, host_id, vname):
         status = conn.get_status()
         autostart = conn.get_autostart()
         vcpu = conn.get_vcpu()
+        cur_vcpu = conn.get_cur_vcpu()
         uuid = conn.get_uuid()
         memory = conn.get_memory()
+        cur_memory = conn.get_cur_memory()
         description = conn.get_description()
         disks = conn.get_disk_device()
         media = conn.get_media_device()
@@ -370,6 +372,8 @@ def instance(request, host_id, vname):
         media_iso = sorted(conn.get_iso_media())
         vcpu_range = conn.get_max_cpus()
         memory_range = [256, 512, 1024, 2048, 4096, 8192, 16384]
+        memory_host = conn.get_max_memory()
+        vcpu_host = len(vcpu_range)
         vnc_port = conn.get_vnc()
         inst_xml = conn._XMLDesc(VIR_DOMAIN_XML_SECURE)
     except libvirtError as msg_error:
@@ -434,8 +438,10 @@ def instance(request, host_id, vname):
             if 'change_settings' in request.POST:
                 description = request.POST.get('description', '')
                 vcpu = request.POST.get('vcpu', '')
+                cur_vcpu = request.POST.get('cur_vcpu', '')
                 memory = request.POST.get('memory', '')
-                conn.change_settings(description, memory, vcpu)
+                cur_memory = request.POST.get('cur_memory', '')
+                conn.change_settings(description, cur_memory, memory, cur_vcpu, vcpu)
                 return HttpResponseRedirect(request.get_full_path())
             if 'change_xml' in request.POST:
                 xml = request.POST.get('inst_xml', '')

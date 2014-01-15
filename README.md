@@ -1,16 +1,16 @@
-# WebVirtMgr panel - v4.1.4
+# WebVirtMgr panel - v4.1.6
 
 * <a href="https://github.com/retspen/webvirtmgr/wiki/Upgrade-from-v3">Upgrade from v3</a>
 
 ### Whats new?
 
+* Add Max vs Used memory or vcpu
 * Add support live migration
 * Add new graphs (Overview and Instance)
 * Create Network with Fixed IP address
 * Create Instance with Fixed MAC address
 * Remove python-virtinst
 * Add saltstack SLS for CentOS, RedHat
-* Fix bugs
 
 ### <a href="https://github.com/retspen/webvirtmgr/wiki/Screenshots">Screenshots</a>
 
