@@ -119,7 +119,7 @@ def infrastructure(request):
                 conn = wvmHostDetails(host, host.login, host.password, host.type)
                 host_info = conn.get_node_info()
                 host_mem = conn.get_memory_usage()
-                hosts_vms[host.id, host.name, status, host_info[3], host_info[2], \
+                hosts_vms[host.id, host.name, status, host_info[3], host_info[2],
                           host_mem['percent']] = conn.get_host_instances()
             except libvirtError as e:
                 hosts_vms[host.id, host.name, 3, 0, 0, 0] = None
