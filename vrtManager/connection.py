@@ -136,10 +136,14 @@ class wvmConnect(object):
         memory = self.wvm.getInfo()[1] * 1048576
         for name in self.get_instances():
             dom = self.get_instance(name)
-            mem = util.get_xml_path(dom.XMLDesc(0), "/domain/memory")
+            mem = util.get_xml_path(dom.XMLDesc(0), "/domain/currentMemory")
             mem = int(mem) * 1024
             mem_usage = (mem * 100) / memory
-            vcpu = util.get_xml_path(dom.XMLDesc(0), "/domain/vcpu")
+            cur_vcpu = util.get_xml_path(dom.XMLDesc(0), "/domain/vcpu/@current")
+            if cur_vcpu:
+                vcpu = cur_vcpu
+            else:
+                vcpu = util.get_xml_path(dom.XMLDesc(0), "/domain/vcpu")
             vname[dom.name()] = (dom.info()[0], vcpu, mem, mem_usage)
         return vname
 
