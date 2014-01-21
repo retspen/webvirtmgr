@@ -37,3 +37,5 @@ WebVirtMgr is licensed under the Apache Licence, Version 2.0 (http://www.apache.
 Powered by
 
 <img src=http://www.jetbrains.com/img/logos/pycharm_logo.gif>
+
+[![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=CEN82VLX7GD7S)
