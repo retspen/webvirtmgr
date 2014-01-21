@@ -66,7 +66,7 @@ class wvmCreate(wvmConnect):
         if vol_type:
             return vol_type
         else:
-            return 'block'
+            return 'raw'
 
     def get_volume_path(self, volume):
         storages = self.get_storages()
