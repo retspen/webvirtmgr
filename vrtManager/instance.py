@@ -1,6 +1,7 @@
 #
 # Copyright (C) 2013 Webvirtmgr.
 #
+import subprocess
 import time
 import re
 from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE
@@ -42,6 +43,10 @@ class wvmInstances(wvmConnect):
         dom = self.get_instance(name)
         xml = dom.XMLDesc(VIR_DOMAIN_XML_SECURE)
         self.wvm.defineXML(xml)
+
+    def get_net_device(self, name):
+        inst = self.get_instance(name)
+        return inst.get_net_device()[0]
 
 
 class wvmInstance(wvmConnect):
@@ -116,6 +121,15 @@ class wvmInstance(wvmConnect):
         return range_pcpus
 
     def get_net_device(self):
+	def get_ip(mac_host):
+		try:
+			virsh = subprocess.Popen(('grep', mac_host,"/var/log/syslog"), stdout=subprocess.PIPE)
+        		output = subprocess.check_output(('tail', "-n","1"), stdin=virsh.stdout)
+        		return output.split(" ")[6]
+		except:
+			return None
+
+
         def get_mac_ipaddr(net, mac_host):
             def fixed(ctx):
                 for net in ctx.xpathEval('/network/ip/dhcp/host'):
@@ -135,6 +149,10 @@ class wvmInstance(wvmConnect):
                     ip = get_mac_ipaddr(net, mac_host)
                 except:
                     ip = None
+
+		if ip == None:
+			ip = get_ip(mac_host)
+
                 result.append({'mac': mac_host, 'nic': nic_host, 'ip': ip})
             return result
         return util.get_xml_path(self._XMLDesc(0), func=networks)

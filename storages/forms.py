@@ -63,8 +63,9 @@ class AddImage(forms.Form):
 
 class CloneImage(forms.Form):
     name = forms.CharField(max_length=20)
-    image = forms.CharField(max_length=20)
+    #image = forms.CharField(max_length=20)
     convert = forms.BooleanField(required=False)
+    overlay = forms.BooleanField(required=False)
     format = forms.ChoiceField(required=False, choices=(('qcow2', 'qcow2'), ('qcow', 'qcow'), ('raw', 'raw')))
 
     def clean_name(self):

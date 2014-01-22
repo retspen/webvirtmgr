@@ -176,7 +176,7 @@
                 </div>
                 <div class="col-md-6">
                     {% for network in networks %}
-                        {% if network.ip %}
+                        {% if network.ip and status == 1 %}
                             <p>{{ network.ip }} ({{ network.nic }})</p>
                         {% else %}
                             <p>{{ network.mac }} ({{ network.nic }})</p>

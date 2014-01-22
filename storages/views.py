@@ -150,16 +150,18 @@ def storage(request, host_id, pool):
             if form.is_valid():
                 data = form.cleaned_data
                 img_name = data['name'] + '.img'
+                vol_name = request.POST.get('image', '')
                 if img_name in conn.update_volumes():
                     msg = _("Name of volume name already use")
                     errors.append(msg)
                 if not errors:
+		    overlay = data['overlay']
                     if data['convert']:
                         format = data['format']
                     else:
                         format = None
                     try:
-                        conn.clone_volume(data['image'], data['name'], format)
+                        conn.clone_volume(vol_name, data['name'], overlay, format)
                         return HttpResponseRedirect(request.get_full_path())
                     except libvirtError as error_msg:
                         errors.append(error_msg.message)

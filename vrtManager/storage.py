@@ -180,20 +180,41 @@ class wvmStorage(wvmConnect):
             </volume>""" % (name, size, alloc, format)
         self._createXML(xml, 0)
 
-    def clone_volume(self, name, clone, format=None):
+    def clone_volume(self, name, clone, overlay, format=None):
         storage_type = self.get_type()
         if storage_type == 'dir':
             clone += '.img'
         vol = self.get_volume(name)
         if not format:
             format = self.get_volume_type(name)
-        xml = """
-            <volume>
-                <name>%s</name>
-                <capacity>0</capacity>
-                <allocation>0</allocation>
-                <target>
-                    <format type='%s'/>
-                </target>
-            </volume>""" % (clone, format)
-        self._createXMLFrom(xml, vol, 0)
+
+	if overlay:
+	    vol_format = self.get_volume_type(name)
+	    vol_size = self.get_volume_size(name)
+            path = self.get_target_path()
+	    xml = """
+                <volume>
+                    <name>%s</name>
+                    <capacity>%s</capacity>
+                    <allocation>0</allocation>
+                    <target>
+                        <format type='%s'/>
+                    </target>
+		    <backingStore>
+                        <path>%s/%s</path>
+                        <format type='%s'/>
+                    </backingStore>
+                </volume>""" % (clone, vol_size, format, path, name, vol_format)
+	    self._createXML(xml, 0)			
+	else:
+            xml = """
+                <volume>
+                    <name>%s</name>
+                    <capacity>0</capacity>
+                    <allocation>0</allocation>
+                    <target>
+                        <format type='%s'/>
+                    </target>
+                </volume>""" % (clone, format)
+
+            self._createXMLFrom(xml, vol, 0)
