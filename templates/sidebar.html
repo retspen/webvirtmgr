@@ -1,36 +1,27 @@
 {% load i18n %}
-        <div class="col-md-3">
-            <div class="bs-sidebar hidden-print affix" role="complementary">
-                <ul class="nav bs-sidenav">
+        <div class="pagehead">
+            <a href="{% url 'create' host_id %}" class="btn btn-sm btn-success pull-right">{% trans "New Instance" %}</a>
+            <h1><a href="{% url 'overview' host_id %}">{{ compute.name|upper }}</a></h1>
+        </div>
+        <div class="sidebar">
+                <ul>
                     <li>
-                        <ul class="nav">
-                            <li>
-                                <a href="{% url 'overview' host_id %}"><span class="glyphicon glyphicon-tasks"></span> {{ compute.name|upper }}</a>
-                            </li>
-                            <hr style="margin:10px;">
-                            <li>
-                                <a href="{% url 'instances' host_id %}"><span class="glyphicon glyphicon-th-large"></span> {% trans "Instances" %}</a>
-                            </li>
-                            <li>
-                                <a href="{% url 'create' host_id %}"><span class="glyphicon glyphicon-plus"></span> {% trans "Create" %}</a>
-                            </li>
-                            <li>
-                                <a href="{% url 'storages' host_id %}"><span class="glyphicon glyphicon-hdd"></span> {% trans "Storages" %}</a>
-                            </li>
-                            <li>
-                                <a href="{% url 'networks' host_id %}"><span class="glyphicon glyphicon-globe"></span> {% trans "Networks" %}</a>
-                            </li>
-                            {% if vname %}
-                            <li>
-                                <a href="{% url 'snapshot' host_id vname %}"><span class="glyphicon glyphicon-camera"></span> {% trans "Snapshots" %}</a>
-                            </li>
-                            {% else %}
-                            <li>
-                                <a href="{% url 'snapshots' host_id %}"><span class="glyphicon glyphicon-camera"></span> {% trans "Snapshots" %}</a>
-                            </li>
-                            {% endif %}
-                        </ul>
+                        <a href="{% url 'instances' host_id %}" class="list selected">{% trans "Instances" %}</a>
                     </li>
+                    <li>
+                        <a href="{% url 'storages' host_id %}" class="list">{% trans "Storages" %}</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'networks' host_id %}" class="list">{% trans "Networks" %}</a>
+                    </li>
+                    {% if vname %}
+                    <li>
+                        <a href="{% url 'snapshot' host_id vname %}" class="list">{% trans "Snapshots" %}</a>
+                    </li>
+                    {% else %}
+                    <li>
+                        <a href="{% url 'snapshots' host_id %}" class="list">{% trans "Snapshots" %}</a>
+                    </li>
+                    {% endif %}
                 </ul>
-            </div>
         </div>

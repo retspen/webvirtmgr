@@ -1,0 +1,66 @@
+body {
+    min-width: 1020px;
+    color: #333333;
+    background-color: #fff;
+}
+.container {
+    width: 980px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.pagehead {
+    position: relative;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+.pagehead h1 {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 28px;
+}
+ul.nav.nav-tabs {
+    display: block;
+    padding: 0px 40px;
+    margin: 0 0 5px 0;
+}
+.sidebar {
+    float: left;
+    width: 220px;
+    padding: 0;
+}
+.sidebar ul .list {
+    display: block;
+    padding: 8px 10px;
+    margin: 0 0 5px 0;
+    font-size: 14px;
+    border-radius: 3px;
+    text-decoration: none;
+    color: #777;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
+.sidebar ul {
+    padding-left: 0;
+}
+.sidebar .list.selected {
+    color: #fff;
+    background: #4183c4;
+}
+.sidebar .list:hover {
+    color: #777;
+    background: #eee;
+}
+.main {
+    margin-left: 240px;
+    padding: 0;
+    float: none;
+}
+.table thead>tr>th {
+vertical-align: bottom;
+border-bottom: 1px solid #ddd;
+}

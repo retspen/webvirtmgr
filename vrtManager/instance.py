@@ -14,6 +14,20 @@ class wvmInstances(wvmConnect):
         inst = self.get_instance(name)
         return inst.info()[0]
 
+    def get_instance_memory(self, name):
+        inst = self.get_instance(name)
+        mem = util.get_xml_path(inst.XMLDesc(0), "/domain/currentMemory")
+        return int(mem) / 1024
+
+    def get_instance_vcpu(self, name):
+        inst = self.get_instance(name)
+        cur_vcpu = util.get_xml_path(inst.XMLDesc(0), "/domain/vcpu/@current")
+        if cur_vcpu:
+            vcpu = cur_vcpu
+        else:
+            vcpu = util.get_xml_path(inst.XMLDesc(0), "/domain/vcpu")
+        return vcpu
+
     def start(self, name):
         dom = self.get_instance(name)
         dom.create()

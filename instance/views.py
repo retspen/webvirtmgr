@@ -309,7 +309,9 @@ def instances(request, host_id):
             uuid = None
         instances.append({'name': instance,
                           'status': conn.get_instance_status(instance),
-                          'uuid': uuid})
+                          'uuid': uuid,
+                          'memory': conn.get_instance_memory(instance),
+                          'vcpu': conn.get_instance_vcpu(instance)})
 
     try:
         if request.method == 'POST':
