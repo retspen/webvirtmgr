@@ -74,3 +74,18 @@ ul.nav.nav-tabs {
     margin-top: 20px;
     text-align: center;
 }
+.instance-info ul li {
+    display: block;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    padding: 30px 0 25px;
+}
+.instance-btn {
+    width: 90px;
+    text-align: center;
+}
+.nav>li>a #instance-nav {
+    text-decoration: none;
+    background-color: #eee;
+}

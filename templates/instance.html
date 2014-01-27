@@ -6,240 +6,274 @@
     <link href="{% static "css/progressbar.css" %}" rel="stylesheet" xmlns="http://www.w3.org/1999/html">
 {% endblock %}
 {% block content %}
-    <div class="row" xmlns="http://www.w3.org/1999/html">
-        {% include 'sidebar.html' %}
-        <div class="main">
-            {% if errors %}
-                {% for error in errors %}
-                    <div class="alert alert-danger">
-                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                        {{ error }}
-                    </div>
-                {% endfor %}
-            {% endif %}
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-success">
-                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
-            <div class="block-btn">
-                <li>{% trans "Action For This Server" %}</li>
-            </div>
-            <div class="col-md-12" id="instaction">
-                <form action="" method="post">{% csrf_token %}
-                    {% ifequal status 5 %}
-                        <button class="btn btn-default btn-md disabled" id="inst-btn"><span class="glyphicon glyphicon-align-justify"></span><br> {% trans "Console" %}</button>
-                    {% else %}
-                        <a href="#console" class="btn btn-default btn-md" id="inst-btn" data-toggle="modal" title="VNC Port: {{ vnc_port }}" onclick="open_vnc()">
-                            <span class="glyphicon glyphicon-align-justify"></span><br> {% trans "Console" %}
-                        </a>
-                    {% endifequal %}
-                    {% ifequal status 5 %}
-                        <button type="submit" class="btn btn-default btn-md" id="inst-btn" name="start"><span class="glyphicon glyphicon-play"></span><br> {% trans "Start" %}</button>
-                    {% endifequal %}
-                    {% ifequal status 1 %}
-                        <button href="#Power" class="btn btn-default btn-md" id="inst-btn" data-toggle="modal"><span class="glyphicon glyphicon-off"></span><br> {% trans "Shutdown" %}</button>
-                    {% endifequal %}
-                    {% ifequal status 3 %}
-                        <button class="btn btn-default btn-md disabled" id="inst-btn" data-toggle="modal"><span class="glyphicon glyphicon-off"></span><br> {% trans "Shutdown" %}</button>
-                    {% endifequal %}
-                    <a href="#Delete" class="btn btn-default btn-md" id="inst-btn" data-toggle="modal"><span class="glyphicon glyphicon-trash"></span><br> {% trans "Delete" %}</a>
-                    {% ifequal status 3 %}
-                        <button type="submit" name="resume" class="btn btn-default btn-md" id="inst-btn"><span class="glyphicon glyphicon-play"></span><br> {% trans "Resume" %}</button>
-                        <button type="submit" name="snapshot" class="btn btn-default btn-md" id="inst-btn"><span class="glyphicon glyphicon-camera"></span><br> {% trans "Snapshot" %}</button>
-                        <button class="btn btn-default btn-md disabled" id="inst-btn"><span class="glyphicon glyphicon-signal"></span><br> {% trans "Statistics" %}</button>
-                    {% endifequal %}
-                    {% ifequal status 1 %}
-                        <button type="submit" name="suspend" class="btn btn-default btn-md" id="inst-btn"><span class="glyphicon glyphicon-pause"></span><br> {% trans "Suspend" %}</button>
-                        <button class="btn btn-default btn-md disabled" id="inst-btn"><span class="glyphicon glyphicon-camera"></span><br> {% trans "Snapshot" %}</button>
-                        <a href="vm-stat" class="showbar btn btn-default btn-md" id="inst-btn"><span class="glyphicon glyphicon-signal"></span><br> {% trans "Statistics" %}</a>
-                    {% endifequal %}
-                    {% ifequal status 5 %}
-                        <button class="btn btn-default btn-md disabled" id="inst-btn"><span class="glyphicon glyphicon-pause"></span><br> {% trans "Suspend" %}</button>
-                        <button type="submit" name="snapshot" class="btn btn-default btn-md" id="inst-btn"><span class="glyphicon glyphicon-camera"></span><br> {% trans "Snapshot" %}</button>
-                    {% endifequal %}
-                    {% ifequal status 5 %}
-                        <button class="btn btn-default btn-md disabled" id="inst-btn"><span class="glyphicon glyphicon-signal"></span><br> {% trans "Statistics" %}</button>
-                    {% endifequal %}
-                    {% ifequal status 5 %}
-                        <a href="#Edit" class="btn btn-default btn-md" data-toggle="modal" id="inst-btn"><span class="glyphicon glyphicon-edit"></span><br> {% trans "Edit" %}</a>
-                    {% else %}
-                        {% if computes_count != 1 %}
-                            <a href="#Migrate" class="btn btn-default btn-md" data-toggle="modal" id="inst-btn"><span class="glyphicon glyphicon-cloud-download"></span><br> {% trans "Migrate" %}</a>
-                        {% else %}
-                            <a href="#" class="btn btn-default btn-md disabled" data-toggle="modal" id="inst-btn"><span class="glyphicon glyphicon-cloud-download"></span><br> {% trans "Migrate" %}</a>
-                        {% endif %}
-                    {% endifequal %}
-                </form>
-            </div>
-            <hr>
-            <div id="vm-stat">
-                <div class="block-btn">
-                    <li>{% trans "Usage Statistics" %}</li>
+    {% include 'sidebar.html' %}
+    <div class="main">
+        {% if errors %}
+            {% for error in errors %}
+                <div class="alert alert-danger">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    {{ error }}
                 </div>
-                <div class="row show-grid">
-                    <div id="cpu-usage">
-                        <p style="margin-left: 25px">{% trans "CPU usage" %}</p>
-                        <canvas style="margin-left: 25px" id="cpuChart" width="700" height="125"></canvas>
-                    </div>
-                    <div id="net-usage">
-                        {% for network in networks %}
-                            <p style="margin-left: 25px">{% trans "Bandwidth" %} - Eth{{ forloop.counter0 }}</p>
-                            <canvas style="margin-left: 25px" id="netEth{{ forloop.counter0 }}Chart" width="700" height="125"></canvas>
-                            <div id="lineLegend">
-                                <span class="netIN">{% trans "In" %}</span>
-                                <span class="netOUT">{% trans "Out" %}</span>
-                            </div>
-                        {% endfor %}
-                    </div>
-                    <div id="disk-usage">
-                        {% for disk in disks %}
-                           <p style="margin-left: 25px">{% trans "Disk I/O" %} - {{ disk.dev }}</p>
-                           <canvas style="margin-left: 25px" id="blk{{ disk.dev }}Chart" width="700" height="125"></canvas>
-                           <div id="lineLegend">
-                                <span class="diskRD">{% trans "Read" %}</span>
-                                <span class="diskWR">{% trans "Write" %}</span>
-                           </div>
-                        {% endfor %}
-                    </div>
+            {% endfor %}
+        {% endif %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    {{ message }}
                 </div>
-                <hr>
-            </div>
-            <div class="block-btn">
-                <li>{% trans "Name & Status" %}</li>
-            </div>
-            <div class="row show-grid">
-                <div class="col-md-6">
-                    <p><strong>{% trans "Name" %}:</strong></p>
-                    <p><strong>{% trans "Description" %}:</strong></p>
-                    <p><strong>{% trans "Autostart" %}:</strong></p>
-                    <p><strong>{% trans "Status" %}:</strong></p>
-                </div>
-                <div class="col-md-6">
-                    <p>{{ vname }}</p>
-                    <p>{{ description }}</p>
-                    <p>
-                        <form action="" method="post">{% csrf_token %}
-                            {% ifequal autostart 0 %}
-                                <input type="submit" class="btn btn-xs btn-default" name="set_autostart" value="{% trans "Enable" %}">
-                            {% else %}
-                                <input type="submit" class="btn btn-xs btn-default" name="unset_autostart" onclick="return confirm('{% trans "Are you sure?" %}')" value="{% trans "Disable" %}">
-                            {% endifequal %}
-                        </form>
-                    </p>
-                    <p>{% if status %}
-                        <span class={% ifequal status 5 %}"text-danger">{% trans "Shuttoff" %}{% endifequal %}
-                                    {% ifequal status 1 %}"text-success">{% trans "Running" %}{% endifequal %}
-                                    {% ifequal status 3 %}"text-warnging">{% trans "Suspend" %}{% endifequal %}
-                        </span>
+            {% endfor %}
+        {% endif %}
+        <ul class="nav nav-pills" id="instance-nav">
+            <li class="active">
+                 <a class="instance-btn" href="#">
+                    <span class="glyphicon glyphicon-info-sign"></span><br> {% trans "Info" %}
+                 </a>
+            </li>
+            <li>
+                 <a class="instance-btn" href="#">
+                    <span class="glyphicon glyphicon-briefcase"></span><br> {% trans "Access" %}
+                 </a>
+            </li>
+            <li>
+                 <a class="instance-btn" href="#">
+                    <span class="glyphicon glyphicon-off"></span><br> {% trans "Power" %}
+                 </a>
+            </li>
+            <li>
+                 <a class="instance-btn" href="#">
+                    <span class="glyphicon glyphicon-wrench"></span><br> {% trans "Settings" %}
+                 </a>
+            </li>
+            <li>
+                 <a class="instance-btn" href="#">
+                    <span class="glyphicon glyphicon-camera"></span><br> {% trans "Snapshots" %}
+                 </a>
+            </li>
+            <li>
+                 <a class="instance-btn" href="#">
+                    <span class="glyphicon glyphicon-signal"></span><br> {% trans "Graphics" %}
+                 </a>
+            </li>
+            <li>
+                 <a class="instance-btn" href="#">
+                    <span class="glyphicon glyphicon-trash"></span><br> {% trans "Snapshots" %}
+                 </a>
+            </li>
+        </ul>
+
+
+
+        <div class="instance-info">
+            <ul>
+                <li>{% if cur_vcpu %}
+                      {{ cur_vcpu }}
                     {% else %}
-                        {% trans "None" %}
+                      {{ vcpu }}
                     {% endif %}
-                    </p>
-                </div>
-            </div>
-            <hr>
-            <div class="block-btn">
-                <li>{% trans "Technical Details" %}</li>
-            </div>
-            <div class="row show-grid">
-                <div class="col-md-6">
-                    <p><strong>{% trans "Processor" %}</strong></p>
-                    <p><strong>{% trans "Memory" %}</strong></p>
-                </div>
-                <div class="col-md-6">
-                    <p>{% if cur_vcpu %}
-                          {{ cur_vcpu }}
-                       {% else %}
-                          {{ vcpu }}
-                       {% endif %}
-                        {% trans "VCPU" %}
-                    </p>
-                    <p>{{ cur_memory }} {% trans "MB" %}</p>
-                </div>
-            </div>
-            <hr>
-            <div class="block-btn">
-                <li>{% trans "Network Details" %}</li>
-            </div>
-            <div class="row show-grid">
-                <div class="col-md-6">
-                     {% for network in networks %}
-                        <p><strong>Eth{{ forloop.counter0 }}</strong></p>
-                     {% endfor %}
-                </div>
-                <div class="col-md-6">
-                    {% for network in networks %}
-                        {% if network.ip %}
-                            <p>{{ network.ip }} ({{ network.nic }})</p>
-                        {% else %}
-                            <p>{{ network.mac }} ({{ network.nic }})</p>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-            </div>
-            <hr>
-            <div class="block-btn">
-                <li>{% trans "Storage Details" %}</li>
-            </div>
-            <div class="row show-grid">
-                <div class="col-md-6">
-                    {% for disk in disks %}
-                        <p><strong>{% trans "Disk" %} {{ disk.dev }}</strong></p>
-                    {% endfor %}
-                </div>
-                <div class="col-md-6">
-                    {% for disk in disks %}
-                        <p>{{ disk.image }} ({{ disk.storage }})</p>
-                    {% endfor %}
-                </div>
-            </div>
-            <hr>
-            <div class="block-btn">
-                <li>{% trans "Media Details" %}</li>
-            </div>
-            {% if media %}
-                <div class="row show-grid">
-                    <div class="col-md-6">
-                        <p><strong>{% trans "Connected" %}</strong></p>
-                    </div>
-                    <div class="col-md-6">
-                        {% for iso in media %}
-                        <p>{{ iso.image }}</p>
-                        {% endfor %}
-                    </div>
-                </div>
-            {% endif %}
+                </li>
+                <li>{{ cur_memory }}</li>
+            </ul>
+        </div>
+
+
+
+
+
+        <div class="block-btn">
+            <li>{% trans "Action For This Server" %}</li>
+        </div>
+        <div class="col-md-12" id="instaction">
             <form action="" method="post">{% csrf_token %}
-                {% if media %}
-                    <input type="hidden" name="iso_media" value="{{ media.0.path }}">
-                    <button type="submit" class="btn btn-default"  name="umount_iso" onclick="return confirm('{% trans "Are you sure?" %}')">{% trans "Disconnect" %}</button>
+                {% ifequal status 5 %}
+                    <button class="btn btn-default btn-md disabled" id="inst-btn"><span class="glyphicon glyphicon-align-justify"></span><br> {% trans "Console" %}</button>
                 {% else %}
-                    <div class="form-group">
-                    <label class="col-lg-1 control-label">{% trans "Images" %}</label>
-                    <div class="col-lg-5">
-                        <select name="iso_media" class="form-control">
-                            {% if media_iso %}
-                                {% for iso in media_iso %}
-                                    <option value="{{ iso }}">{{ iso }}</option>
-                                {% endfor %}
-                            {% else %}
-                                <option value="none">{% trans "None" %}</option>
-                            {% endif %}
-                        </select>
-                        <br>
-                        {% if media_iso %}
-                            <button type="submit" class="btn btn-default" name="mount_iso" >{% trans "Connect" %}</button>
-                        {% else %}
-                            <button class="btn btn-default disabled" name="connect">{% trans "Connect" %}</button>
-                        {% endif %}
-                    </div>
-                {% endif %}
+                    <a href="#console" class="btn btn-default btn-md" id="inst-btn" data-toggle="modal" title="VNC Port: {{ vnc_port }}" onclick="open_vnc()">
+                        <span class="glyphicon glyphicon-align-justify"></span><br> {% trans "Console" %}
+                    </a>
+                {% endifequal %}
+                {% ifequal status 5 %}
+                    <button type="submit" class="btn btn-default btn-md" id="inst-btn" name="start"><span class="glyphicon glyphicon-play"></span><br> {% trans "Start" %}</button>
+                {% endifequal %}
+                {% ifequal status 1 %}
+                    <button href="#Power" class="btn btn-default btn-md" id="inst-btn" data-toggle="modal"><span class="glyphicon glyphicon-off"></span><br> {% trans "Shutdown" %}</button>
+                {% endifequal %}
+                {% ifequal status 3 %}
+                    <button class="btn btn-default btn-md disabled" id="inst-btn" data-toggle="modal"><span class="glyphicon glyphicon-off"></span><br> {% trans "Shutdown" %}</button>
+                {% endifequal %}
+                <a href="#Delete" class="btn btn-default btn-md" id="inst-btn" data-toggle="modal"><span class="glyphicon glyphicon-trash"></span><br> {% trans "Delete" %}</a>
+                {% ifequal status 3 %}
+                    <button type="submit" name="resume" class="btn btn-default btn-md" id="inst-btn"><span class="glyphicon glyphicon-play"></span><br> {% trans "Resume" %}</button>
+                    <button type="submit" name="snapshot" class="btn btn-default btn-md" id="inst-btn"><span class="glyphicon glyphicon-camera"></span><br> {% trans "Snapshot" %}</button>
+                    <button class="btn btn-default btn-md disabled" id="inst-btn"><span class="glyphicon glyphicon-signal"></span><br> {% trans "Statistics" %}</button>
+                {% endifequal %}
+                {% ifequal status 1 %}
+                    <button type="submit" name="suspend" class="btn btn-default btn-md" id="inst-btn"><span class="glyphicon glyphicon-pause"></span><br> {% trans "Suspend" %}</button>
+                    <button class="btn btn-default btn-md disabled" id="inst-btn"><span class="glyphicon glyphicon-camera"></span><br> {% trans "Snapshot" %}</button>
+                    <a href="vm-stat" class="showbar btn btn-default btn-md" id="inst-btn"><span class="glyphicon glyphicon-signal"></span><br> {% trans "Statistics" %}</a>
+                {% endifequal %}
+                {% ifequal status 5 %}
+                    <button class="btn btn-default btn-md disabled" id="inst-btn"><span class="glyphicon glyphicon-pause"></span><br> {% trans "Suspend" %}</button>
+                    <button type="submit" name="snapshot" class="btn btn-default btn-md" id="inst-btn"><span class="glyphicon glyphicon-camera"></span><br> {% trans "Snapshot" %}</button>
+                {% endifequal %}
+                {% ifequal status 5 %}
+                    <button class="btn btn-default btn-md disabled" id="inst-btn"><span class="glyphicon glyphicon-signal"></span><br> {% trans "Statistics" %}</button>
+                {% endifequal %}
+                {% ifequal status 5 %}
+                    <a href="#Edit" class="btn btn-default btn-md" data-toggle="modal" id="inst-btn"><span class="glyphicon glyphicon-edit"></span><br> {% trans "Edit" %}</a>
+                {% else %}
+                    {% if computes_count != 1 %}
+                        <a href="#Migrate" class="btn btn-default btn-md" data-toggle="modal" id="inst-btn"><span class="glyphicon glyphicon-cloud-download"></span><br> {% trans "Migrate" %}</a>
+                    {% else %}
+                        <a href="#" class="btn btn-default btn-md disabled" data-toggle="modal" id="inst-btn"><span class="glyphicon glyphicon-cloud-download"></span><br> {% trans "Migrate" %}</a>
+                    {% endif %}
+                {% endifequal %}
             </form>
         </div>
+        <hr>
+        <div id="vm-stat">
+            <div class="block-btn">
+                <li>{% trans "Usage Statistics" %}</li>
+            </div>
+            <div class="row show-grid">
+                <div id="cpu-usage">
+                    <p style="margin-left: 25px">{% trans "CPU usage" %}</p>
+                    <canvas style="margin-left: 25px" id="cpuChart" width="700" height="125"></canvas>
+                </div>
+                <div id="net-usage">
+                    {% for network in networks %}
+                        <p style="margin-left: 25px">{% trans "Bandwidth" %} - Eth{{ forloop.counter0 }}</p>
+                        <canvas style="margin-left: 25px" id="netEth{{ forloop.counter0 }}Chart" width="700" height="125"></canvas>
+                        <div id="lineLegend">
+                            <span class="netIN">{% trans "In" %}</span>
+                            <span class="netOUT">{% trans "Out" %}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div id="disk-usage">
+                    {% for disk in disks %}
+                       <p style="margin-left: 25px">{% trans "Disk I/O" %} - {{ disk.dev }}</p>
+                       <canvas style="margin-left: 25px" id="blk{{ disk.dev }}Chart" width="700" height="125"></canvas>
+                       <div id="lineLegend">
+                            <span class="diskRD">{% trans "Read" %}</span>
+                            <span class="diskWR">{% trans "Write" %}</span>
+                       </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <hr>
+        </div>
+        <div class="block-btn">
+            <li>{% trans "Name & Status" %}</li>
+        </div>
+        <div class="row show-grid">
+            <div class="col-md-6">
+                <p><strong>{% trans "Name" %}:</strong></p>
+                <p><strong>{% trans "Description" %}:</strong></p>
+                <p><strong>{% trans "Autostart" %}:</strong></p>
+                <p><strong>{% trans "Status" %}:</strong></p>
+            </div>
+            <div class="col-md-6">
+                <p>{{ vname }}</p>
+                <p>{{ description }}</p>
+                <p>
+                    <form action="" method="post">{% csrf_token %}
+                        {% ifequal autostart 0 %}
+                            <input type="submit" class="btn btn-xs btn-default" name="set_autostart" value="{% trans "Enable" %}">
+                        {% else %}
+                            <input type="submit" class="btn btn-xs btn-default" name="unset_autostart" onclick="return confirm('{% trans "Are you sure?" %}')" value="{% trans "Disable" %}">
+                        {% endifequal %}
+                    </form>
+                </p>
+                <p>{% if status %}
+                    <span class={% ifequal status 5 %}"text-danger">{% trans "Shuttoff" %}{% endifequal %}
+                                {% ifequal status 1 %}"text-success">{% trans "Running" %}{% endifequal %}
+                                {% ifequal status 3 %}"text-warnging">{% trans "Suspend" %}{% endifequal %}
+                    </span>
+                {% else %}
+                    {% trans "None" %}
+                {% endif %}
+                </p>
+            </div>
+        </div>
+        <hr>
+        <div class="block-btn">
+            <li>{% trans "Network Details" %}</li>
+        </div>
+        <div class="row show-grid">
+            <div class="col-md-6">
+                 {% for network in networks %}
+                    <p><strong>Eth{{ forloop.counter0 }}</strong></p>
+                 {% endfor %}
+            </div>
+            <div class="col-md-6">
+                {% for network in networks %}
+                    {% if network.ip %}
+                        <p>{{ network.ip }} ({{ network.nic }})</p>
+                    {% else %}
+                        <p>{{ network.mac }} ({{ network.nic }})</p>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        <hr>
+        <div class="block-btn">
+            <li>{% trans "Storage Details" %}</li>
+        </div>
+        <div class="row show-grid">
+            <div class="col-md-6">
+                {% for disk in disks %}
+                    <p><strong>{% trans "Disk" %} {{ disk.dev }}</strong></p>
+                {% endfor %}
+            </div>
+            <div class="col-md-6">
+                {% for disk in disks %}
+                    <p>{{ disk.image }} ({{ disk.storage }})</p>
+                {% endfor %}
+            </div>
+        </div>
+        <hr>
+        <div class="block-btn">
+            <li>{% trans "Media Details" %}</li>
+        </div>
+        {% if media %}
+            <div class="row show-grid">
+                <div class="col-md-6">
+                    <p><strong>{% trans "Connected" %}</strong></p>
+                </div>
+                <div class="col-md-6">
+                    {% for iso in media %}
+                    <p>{{ iso.image }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+        <form action="" method="post">{% csrf_token %}
+            {% if media %}
+                <input type="hidden" name="iso_media" value="{{ media.0.path }}">
+                <button type="submit" class="btn btn-default"  name="umount_iso" onclick="return confirm('{% trans "Are you sure?" %}')">{% trans "Disconnect" %}</button>
+            {% else %}
+                <div class="form-group">
+                <label class="col-lg-1 control-label">{% trans "Images" %}</label>
+                <div class="col-lg-5">
+                    <select name="iso_media" class="form-control">
+                        {% if media_iso %}
+                            {% for iso in media_iso %}
+                                <option value="{{ iso }}">{{ iso }}</option>
+                            {% endfor %}
+                        {% else %}
+                            <option value="none">{% trans "None" %}</option>
+                        {% endif %}
+                    </select>
+                    <br>
+                    {% if media_iso %}
+                        <button type="submit" class="btn btn-default" name="mount_iso" >{% trans "Connect" %}</button>
+                    {% else %}
+                        <button class="btn btn-default disabled" name="connect">{% trans "Connect" %}</button>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </form>
     </div>
 
     <!-- Power -->
