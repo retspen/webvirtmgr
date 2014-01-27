@@ -62,7 +62,11 @@ class wvmCreate(wvmConnect):
 
     def get_volume_type(self, path):
         vol = self.get_volume_by_path(path)
-        return util.get_xml_path(vol.XMLDesc(0), "/volume/target/format/@type")
+        vol_type = util.get_xml_path(vol.XMLDesc(0), "/volume/target/format/@type")
+        if vol_type:
+            return vol_type
+        else:
+            return 'raw'
 
     def get_volume_path(self, volume):
         storages = self.get_storages()

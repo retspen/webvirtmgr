@@ -70,7 +70,11 @@
                     {% ifequal status 5 %}
                         <a href="#Edit" class="btn btn-default btn-md" data-toggle="modal" id="inst-btn"><span class="glyphicon glyphicon-edit"></span><br> {% trans "Edit" %}</a>
                     {% else %}
-                        <button href="#" class="btn btn-default btn-md disabled" id="inst-btn"><span class="glyphicon glyphicon-edit"></span><br> {% trans "Edit" %}</button>
+                        {% if computes_count != 1 %}
+                            <a href="#Migrate" class="btn btn-default btn-md" data-toggle="modal" id="inst-btn"><span class="glyphicon glyphicon-cloud-download"></span><br> {% trans "Migrate" %}</a>
+                        {% else %}
+                            <a href="#" class="btn btn-default btn-md disabled" data-toggle="modal" id="inst-btn"><span class="glyphicon glyphicon-cloud-download"></span><br> {% trans "Migrate" %}</a>
+                        {% endif %}
                     {% endifequal %}
                 </form>
             </div>
@@ -86,14 +90,22 @@
                     </div>
                     <div id="net-usage">
                         {% for network in networks %}
-                           <p style="margin-left: 25px">{% trans "Bandwidth" %} - Eth{{ forloop.counter0 }}</p>
-                           <canvas style="margin-left: 25px" id="netEth{{ forloop.counter0 }}Chart" width="700" height="125"></canvas>
+                            <p style="margin-left: 25px">{% trans "Bandwidth" %} - Eth{{ forloop.counter0 }}</p>
+                            <canvas style="margin-left: 25px" id="netEth{{ forloop.counter0 }}Chart" width="700" height="125"></canvas>
+                            <div id="lineLegend">
+                                <span class="netIN">{% trans "In" %}</span>
+                                <span class="netOUT">{% trans "Out" %}</span>
+                            </div>
                         {% endfor %}
                     </div>
                     <div id="disk-usage">
                         {% for disk in disks %}
                            <p style="margin-left: 25px">{% trans "Disk I/O" %} - {{ disk.dev }}</p>
                            <canvas style="margin-left: 25px" id="blk{{ disk.dev }}Chart" width="700" height="125"></canvas>
+                           <div id="lineLegend">
+                                <span class="diskRD">{% trans "Read" %}</span>
+                                <span class="diskWR">{% trans "Write" %}</span>
+                           </div>
                         {% endfor %}
                     </div>
                 </div>
@@ -142,8 +154,14 @@
                     <p><strong>{% trans "Memory" %}</strong></p>
                 </div>
                 <div class="col-md-6">
-                    <p>{{ vcpu }} VCPU</p>
-                    <p>{{ memory }} {% trans "MB" %}</p>
+                    <p>{% if cur_vcpu %}
+                          {{ cur_vcpu }}
+                       {% else %}
+                          {{ vcpu }}
+                       {% endif %}
+                        {% trans "VCPU" %}
+                    </p>
+                    <p>{{ cur_memory }} {% trans "MB" %}</p>
                 </div>
             </div>
             <hr>
@@ -285,6 +303,52 @@
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 
+    <!-- Migrate -->
+    <div class="modal fade" id="Migrate" tabindex="-1" role="dialog" aria-labelledby="MigrateLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">{% trans "Migrate" %} '{{ vname }}'</h4>
+                </div>
+                <div class="modal-body">
+                    <p style="text-align:center;">
+                        <span class="text-danger">{% trans "Warning:" %}</span> {% trans "Both servers must have equal settings and OS type" %}
+                    </p>
+                    <br>
+                    <div class="row show-grid">
+                        <div class="col-lg-4" style="text-align:right;">
+                             <p><strong>{% trans "Original host" %}</strong></p>
+                        </div>
+                        <div class="col-lg-4">
+                             <p>{{ compute.name }}</p>
+                        </div>
+                    </div>
+                </div>
+                <form class="form-horizontal" method="post" role="form">{% csrf_token %}
+                    <div class="form-group">
+                        <label class="col-lg-4 control-label">{% trans "New host" %}</label>
+                        <div class="col-lg-5">
+                            <select name="compute_id" class="form-control">
+                            {% if computes_count != 1 %}
+                                {% for comp in computes %}
+                                    {% if comp.id != compute.id %}
+                                        <option value="{{ comp.id }}">{{ comp.name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+                        <button type="submit" class="btn btn-primary" name="migrate">{% trans "Migrate" %}</button>
+                    </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
     <!-- Modal Edit -->
     <div class="modal fade" id="Edit" tabindex="-1" role="dialog" aria-labelledby="addHostLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -305,14 +369,25 @@
                 <div class="tab-content">
                     <div class="tab-pane active" id="1">
                         <form class="form-horizontal" method="post" role="form">{% csrf_token %}
+                            <div class="modal-body">
+                                <p style="font-weight:bold;">{% trans "Logical host CPUs:" %} {{ vcpu_host }}</p>
+                            </div>
                             <div class="form-group">
-                                <label class="col-lg-4 control-label">{% trans "Description" %}</label>
+                                <label class="col-lg-4 control-label" style="font-weight:normal;"> {% trans "Current allocation" %}</label>
                                 <div class="col-lg-6">
-                                    <input type="text" class="form-control" name="description" value="{{ description }}"/>
+                                    <select name="cur_vcpu" class="form-control">
+                                        {% for cpu in vcpu_range %}
+                                            {% if cur_vcpu %}
+                                                <option value="{{ cpu }}" {% if cpu == cur_vcpu %}selected{% endif %}>{{ cpu }}</option>
+                                            {% else %}
+                                                <option value="{{ cpu }}" {% if cpu == vcpu %}selected{% endif %}>{{ cpu }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-lg-4 control-label">{% trans "VCPU" %}</label>
+                                <label class="col-lg-4 control-label" style="font-weight:normal;">{% trans "Maximum allocation" %}</label>
                                 <div class="col-lg-6">
                                     <select name="vcpu" class="form-control">
                                         {% for cpu in vcpu_range %}
@@ -321,14 +396,36 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="modal-body">
+                                <p style="font-weight:bold;">{% trans "Total host memory:" %} {{ memory_host|filesizeformat }}</p>
+                            </div>
                             <div class="form-group">
-                                <label class="col-lg-4 control-label">{% trans "RAM" %}</label>
+                                <label class="col-lg-4 control-label" style="font-weight:normal;">{% trans "Current allocation" %}</label>
+                                <div class="col-lg-6">
+                                    <select name="cur_memory" class="form-control">
+                                        {% for mem in memory_range %}
+                                            <option value="{{ mem }}" {% if mem == cur_memory %}selected{% endif %}>{{ mem }} {% trans "MB" %}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label" style="font-weight:normal;">{% trans "Maximum allocation" %}</label>
                                 <div class="col-lg-6">
                                     <select name="memory" class="form-control">
                                         {% for mem in memory_range %}
                                             <option value="{{ mem }}" {% if mem == memory %}selected{% endif %}>{{ mem }} {% trans "MB" %}</option>
                                         {% endfor %}
                                     </select>
+                                </div>
+                            </div>
+                            <div class="modal-body">
+                                <p style="font-weight:bold;">{% trans "Information" %}</p>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label" style="font-weight:normal;">{% trans "Description" %}</label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control" name="description" value="{{ description }}"/>
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -399,17 +496,24 @@
     </script>
     {% ifequal status 1 %}
         <script type="text/javascript">
+            var cpu_ctx = $("#cpuChart").get(0).getContext("2d");
+            var cpuChart = new Chart(cpu_ctx);
             function cpu_usage(){
                 $.getJSON('/info/inst/cpu/{{ host_id }}/{{ vname }}', function(data) {
-                    var ctx = $("#cpuChart").get(0).getContext("2d");
                     var options = {
                         animation : false,
                         pointDotRadius : 2,
                         scaleLabel : "<%=value%> %"
                     }
-                    new Chart(ctx).Line(data, options);
+                    cpuChart.Line(data, options);
                 });
             }
+
+            var diskChart = {};
+            {% for disk in disks %}
+                var disk_ctx_{{ disk.dev }} = $("#blk{{ disk.dev }}Chart").get(0).getContext("2d");
+                diskChart['{{ disk.dev }}'] = new Chart(disk_ctx_{{ disk.dev }});
+            {% endfor %}
             function disk_usage(){
                 $.getJSON('/info/inst/disk/{{ host_id }}/{{ vname }}', function(data) {
                     var options = {
@@ -418,12 +522,17 @@
                         scaleLabel : "<%=value%> Mb/s"
                     }
                     for(var i = 0; i < data.length; i++){
-                        var ctx = $("#blk" + data[i].dev + "Chart").get(0).getContext("2d");
-                        new Chart(ctx).Line(data[i].data, options);
+                        diskChart[data[i].dev].Line(data[i].data, options);
                     }
                 });
 
             }
+
+            var netChart = {};
+            {% for net in networks %}
+                var net_ctx_{{ forloop.counter0 }} = $("#netEth{{ forloop.counter0 }}Chart").get(0).getContext("2d");
+                netChart['{{ forloop.counter0 }}'] = new Chart(net_ctx_{{ forloop.counter0 }});
+            {% endfor %}
             function net_usage(){
                 $.getJSON('/info/inst/net/{{ host_id }}/{{ vname }}', function(data) {
                     var options = {
@@ -432,8 +541,7 @@
                         scaleLabel : "<%=value%> Mbps"
                     }
                     for(var i = 0; i < data.length; i++){
-                        var ctx = $("#netEth" + data[i].dev + "Chart").get(0).getContext("2d");
-                        new Chart(ctx).Line(data[i].data, options);
+                        netChart[[i]].Line(data[i].data, options);;
                     }
                 });
             }

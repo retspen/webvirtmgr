@@ -50,6 +50,13 @@ def cpuusage(request, host_id):
         datasets.append(int(cpu_usage['usage']))
         del datasets[0]
 
+    # Some fix division by 0 Chart.js
+    if len(datasets) == 10:
+        if sum(datasets) == 0:
+            datasets[9] += 0.1
+        if sum(datasets) / 10 == datasets[0]:
+            datasets[9] += 0.1
+
     cpu = {
         'labels': [""] * 10,
         'datasets': [
@@ -110,6 +117,13 @@ def memusage(request, host_id):
     if len(datasets) == 10:
         datasets.append(int(mem_usage['usage']) / 1048576)
         del datasets[0]
+
+    # Some fix division by 0 Chart.js
+    if len(datasets) == 10:
+        if sum(datasets) == 0:
+            datasets[9] += 0.1
+        if sum(datasets) / 10 == datasets[0]:
+            datasets[9] += 0.1
 
     memory = {
         'labels': [""] * 10,

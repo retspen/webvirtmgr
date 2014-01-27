@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-12-24 11:31+0200\n"
+"POT-Creation-Date: 2013-12-25 11:03+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -53,35 +53,40 @@ msgstr "未输入虚拟机名称"
 msgid "No Network pool has been choice"
 msgstr "未选择网络池"
 
-#: create/forms.py:51
+#: create/forms.py:52
 msgid "The name of the virtual machine must not contain any special characters"
 msgstr "虚拟机名称不能包含特殊字符"
 
-#: create/forms.py:53
+#: create/forms.py:54
 msgid "The name of the virtual machine must not exceed 20 characters"
 msgstr "虚拟机名称不能多于20个字符"
 
-#: create/views.py:42
+#: create/views.py:43
 msgid "You haven't defined have any storage pools"
 msgstr "未定义存储池"
 
-#: create/views.py:45
+#: create/views.py:46
 msgid "You haven't defined have any network pools"
 msgstr "未定义网络池"
 
-#: create/views.py:72
+#: create/views.py:73
 msgid "A virtual machine with this name already exists"
 msgstr "同名虚拟机已存在"
 
-#: create/views.py:77
+#: create/views.py:78
 msgid "First you need to create or select an image"
 msgstr "首先请创建或者选取一个磁盘镜像"
 
-#: instance/views.py:396
+#: create/views.py:89
+#, fuzzy
+msgid "No Virtual Machine MAC has been entered"
+msgstr "未输入虚拟机名称"
+
+#: instance/views.py:395
 msgid "Create snapshot for instance successful"
 msgstr "虚拟机快照文件创建成功"
 
-#: instance/views.py:429
+#: instance/views.py:428
 msgid "Enter the VNC password or select Generate"
 msgstr "输入VNC密码或勾选自动生成"
 
@@ -93,27 +98,27 @@ msgstr "未输入池名称"
 msgid "No subnet has been entered"
 msgstr "子网掩码未输入"
 
-#: networks/forms.py:19 storages/forms.py:21
+#: networks/forms.py:20 storages/forms.py:21
 msgid "The pool name must not contain any special characters"
 msgstr "池名称不能包含特殊字符"
 
-#: networks/forms.py:21 storages/forms.py:23
+#: networks/forms.py:22 storages/forms.py:23
 msgid "The pool name must not exceed 20 characters"
 msgstr "池名称不能多于20个字符"
 
-#: networks/forms.py:28
+#: networks/forms.py:29
 msgid "The pool subnet must not contain any special characters"
 msgstr "子网名称不能包含特殊字符"
 
-#: networks/forms.py:30
+#: networks/forms.py:31
 msgid "The pool subnet must not exceed 20 characters"
 msgstr "子网名称不能多于20个字符"
 
-#: networks/forms.py:37
+#: networks/forms.py:38
 msgid "The pool bridge name must not contain any special characters"
 msgstr "桥接名称不能包含特殊字符"
 
-#: networks/forms.py:39
+#: networks/forms.py:40
 msgid "The pool bridge name must not exceed 20 characters"
 msgstr "桥接名称不能多于20个字符"
 
@@ -279,8 +284,8 @@ msgid "Add Flavor"
 msgstr "添加收藏"
 
 #: templates/create.html:73 templates/create.html.py:98
-#: templates/create.html:100 templates/create.html.py:185
-#: templates/create.html:187 templates/create.html.py:271
+#: templates/create.html:100 templates/create.html.py:191
+#: templates/create.html:193 templates/create.html.py:277
 #: templates/instance.html:107 templates/instances.html:28
 #: templates/networks.html:74 templates/servers.html:163
 #: templates/servers.html.py:196 templates/snapshot.html:34
@@ -296,30 +301,30 @@ msgstr "名称"
 msgid "VCPU's"
 msgstr "虚拟CPU"
 
-#: templates/create.html:75 templates/create.html.py:204
-#: templates/create.html:283 templates/instance.html:321
+#: templates/create.html:75 templates/create.html.py:210
+#: templates/create.html:289 templates/instance.html:325
 msgid "RAM"
 msgstr "内存"
 
-#: templates/create.html:76 templates/create.html.py:211
-#: templates/create.html:290
+#: templates/create.html:76 templates/create.html.py:217
+#: templates/create.html:296
 msgid "HDD"
 msgstr "磁盘镜像"
 
-#: templates/create.html:77 templates/instance.html:239
+#: templates/create.html:77 templates/instance.html:243
 #: templates/instances.html:30 templates/servers.html:54
 #: templates/snapshot.html:36 templates/storage.html:86
 #: templates/storage.html.py:126
 msgid "Action"
 msgstr "执行"
 
-#: templates/create.html:86 templates/create.html.py:208
-#: templates/create.html:287 templates/instance.html:146
-#: templates/instance.html.py:325
+#: templates/create.html:86 templates/create.html.py:214
+#: templates/create.html:293 templates/instance.html:146
+#: templates/instance.html.py:329
 msgid "MB"
 msgstr "MB"
 
-#: templates/create.html:87 templates/create.html.py:294
+#: templates/create.html:87 templates/create.html.py:300
 #: templates/storage.html:233
 msgid "GB"
 msgstr "GB"
@@ -328,34 +333,38 @@ msgstr "GB"
 msgid "Storage"
 msgstr "存储池"
 
-#: templates/create.html:115 templates/create.html.py:223
-#: templates/instance.html:130 templates/instance.html.py:211
+#: templates/create.html:115 templates/create.html.py:229
+#: templates/instance.html:130 templates/instance.html.py:215
 #: templates/storage.html:46 templates/storage.html.py:47
 msgid "None"
 msgstr "无"
 
-#: templates/create.html:121 templates/create.html.py:229
+#: templates/create.html:121 templates/create.html.py:235
 #: templates/network.html:64
 msgid "Network"
 msgstr "网络池"
 
-#: templates/create.html:131 templates/create.html.py:197
+#: templates/create.html:131 templates/network.html:124
+msgid "MAC"
+msgstr ""
+
+#: templates/create.html:137 templates/create.html.py:203
 msgid "Host-Model"
 msgstr "主机模式"
 
-#: templates/create.html:135 templates/create.html.py:201
+#: templates/create.html:141 templates/create.html.py:207
 msgid "CPU"
 msgstr "CPU"
 
-#: templates/create.html:138 templates/create.html.py:243
+#: templates/create.html:144 templates/create.html.py:249
 msgid "VirtIO"
 msgstr "VirtIO模式"
 
-#: templates/create.html:144 templates/create.html.py:249
-#: templates/create.html:297 templates/instance.html:250
-#: templates/instance.html.py:276 templates/instance.html:331
-#: templates/instance.html.py:351 templates/instance.html:360
-#: templates/instance.html.py:367 templates/networks.html:109
+#: templates/create.html:150 templates/create.html.py:255
+#: templates/create.html:303 templates/instance.html:254
+#: templates/instance.html.py:280 templates/instance.html:335
+#: templates/instance.html.py:355 templates/instance.html:364
+#: templates/instance.html.py:371 templates/networks.html:115
 #: templates/servers.html:173 templates/servers.html.py:200
 #: templates/storage.html:170 templates/storage.html.py:236
 #: templates/storage.html:260 templates/storages.html:105
@@ -363,25 +372,25 @@ msgstr "VirtIO模式"
 msgid "Close"
 msgstr "关闭"
 
-#: templates/create.html:146 templates/create.html.py:148
-#: templates/create.html:155 templates/create.html.py:251
-#: templates/create.html:253 templates/networks.html:9
-#: templates/networks.html.py:110 templates/sidebar.html:15
+#: templates/create.html:152 templates/create.html.py:154
+#: templates/create.html:161 templates/create.html.py:257
+#: templates/create.html:259 templates/networks.html:9
+#: templates/networks.html.py:116 templates/sidebar.html:15
 #: templates/storage.html:237 templates/storages.html:9
 #: templates/storages.html.py:106 templates/storages.html:133
 #: templates/storages.html.py:155
 msgid "Create"
 msgstr "创建"
 
-#: templates/create.html:160 templates/instance.html:52
-#: templates/instance.html.py:277 templates/network.html:42
+#: templates/create.html:166 templates/instance.html:52
+#: templates/instance.html.py:281 templates/network.html:42
 #: templates/snapshot.html:57 templates/storage.html:53
 #: templates/storage.html.py:99 templates/storage.html:186
 msgid "Delete"
 msgstr "删除"
 
-#: templates/create.html:160 templates/instance.html:120
-#: templates/instance.html.py:200 templates/network.html:42
+#: templates/create.html:166 templates/instance.html:120
+#: templates/instance.html.py:204 templates/network.html:42
 #: templates/network.html.py:44 templates/network.html:53
 #: templates/servers.html:113 templates/snapshot.html:57
 #: templates/storage.html:53 templates/storage.html.py:55
@@ -390,24 +399,24 @@ msgstr "删除"
 msgid "Are you sure?"
 msgstr "确定操作？"
 
-#: templates/create.html:169
+#: templates/create.html:175
 msgid "You do not have any flavors"
 msgstr "未定义收藏"
 
-#: templates/create.html:181
+#: templates/create.html:187
 msgid "Create Custom Virtual Machine"
 msgstr "创建自定义虚拟机"
 
-#: templates/create.html:191 templates/create.html.py:277
-#: templates/instance.html:311
+#: templates/create.html:197 templates/create.html.py:283
+#: templates/instance.html:315
 msgid "VCPU"
 msgstr "虚拟CPU"
 
-#: templates/create.html:267
+#: templates/create.html:273
 msgid "Add New Flavor"
 msgstr "添加收藏"
 
-#: templates/create.html:298 templates/servers.html:174
+#: templates/create.html:304 templates/servers.html:174
 #: templates/servers.html.py:201
 msgid "Add"
 msgstr "添加"
@@ -531,7 +540,7 @@ msgid "Start"
 msgstr "启动"
 
 #: templates/instance.html:47 templates/instance.html.py:50
-#: templates/instance.html:242 templates/instances.html:58
+#: templates/instance.html:246 templates/instances.html:58
 #: templates/instances.html.py:75 templates/instances.html:92
 msgid "Shutdown"
 msgstr "关机"
@@ -551,7 +560,7 @@ msgid "Statistics"
 msgstr "统计"
 
 #: templates/instance.html:71 templates/instance.html.py:73
-#: templates/instance.html:361
+#: templates/instance.html:365
 msgid "Edit"
 msgstr "编辑"
 
@@ -572,7 +581,7 @@ msgstr "磁盘"
 msgid "Name & Status"
 msgstr "名称和状态"
 
-#: templates/instance.html:108 templates/instance.html.py:305
+#: templates/instance.html:108 templates/instance.html.py:309
 msgid "Description"
 msgstr "描述"
 
@@ -603,39 +612,39 @@ msgstr "技术详情"
 msgid "Network Details"
 msgstr "网络详情"
 
-#: templates/instance.html:167
+#: templates/instance.html:171
 msgid "Storage Details"
 msgstr "存储详情"
 
-#: templates/instance.html:172
+#: templates/instance.html:176
 msgid "Disk"
 msgstr "磁盘"
 
-#: templates/instance.html:183
+#: templates/instance.html:187
 msgid "Media Details"
 msgstr "介质详情"
 
-#: templates/instance.html:188
+#: templates/instance.html:192
 msgid "Connected"
 msgstr "已连接"
 
-#: templates/instance.html:200
+#: templates/instance.html:204
 msgid "Disconnect"
 msgstr "已断开"
 
-#: templates/instance.html:203 templates/storage.html:72
+#: templates/instance.html:207 templates/storage.html:72
 msgid "Images"
 msgstr "光盘镜像"
 
-#: templates/instance.html:216 templates/instance.html.py:218
+#: templates/instance.html:220 templates/instance.html.py:222
 msgid "Connect"
 msgstr "连接"
 
-#: templates/instance.html:232
+#: templates/instance.html:236
 msgid "Power On Server"
 msgstr "启动虚拟机"
 
-#: templates/instance.html:235
+#: templates/instance.html:239
 msgid ""
 "Shutdown sends ACPI shutdown signal to guest system. Force shutdown is lost "
 "immediately."
@@ -643,58 +652,58 @@ msgstr ""
 "关机选项执行指令发送ACPI软件关闭信号给虚拟机关机，而强制关机选项则相当于立即"
 "关闭电源关闭虚拟机。"
 
-#: templates/instance.html:245 templates/instances.html:61
+#: templates/instance.html:249 templates/instances.html:61
 #: templates/instances.html.py:78 templates/instances.html:95
 msgid "Force Shutdown"
 msgstr "强制关机"
 
-#: templates/instance.html:251
+#: templates/instance.html:255
 msgid "Send"
 msgstr "发送"
 
-#: templates/instance.html:264
+#: templates/instance.html:268
 msgid "Undefined Server"
 msgstr "未定义服务器"
 
-#: templates/instance.html:267
+#: templates/instance.html:271
 msgid "Delete HDD image?"
 msgstr "确认删除磁盘镜像？"
 
-#: templates/instance.html:272
+#: templates/instance.html:276
 msgid "Warning: if you check this box, VM's data will be lost!"
 msgstr "警告：勾选此选项，该虚拟机虚拟磁盘数据将被删除！"
 
-#: templates/instance.html:290
+#: templates/instance.html:294
 msgid "Change Virtual Machine Settings"
 msgstr "修改虚拟机设置"
 
-#: templates/instance.html:295
+#: templates/instance.html:299
 msgid "Settings"
 msgstr "设置"
 
-#: templates/instance.html:297 templates/instances.html:64
+#: templates/instance.html:301 templates/instances.html:64
 #: templates/instances.html.py:81 templates/instances.html:98
 msgid "VNC"
 msgstr "VNC"
 
-#: templates/instance.html:298
+#: templates/instance.html:302
 msgid "XML"
 msgstr "XML"
 
-#: templates/instance.html:332 templates/instance.html.py:352
+#: templates/instance.html:336 templates/instance.html.py:356
 msgid "Change"
 msgstr "修改"
 
-#: templates/instance.html:339
+#: templates/instance.html:343
 msgid "Generate"
 msgstr "自动生成"
 
-#: templates/instance.html:345 templates/instance.html.py:347
+#: templates/instance.html:349 templates/instance.html.py:351
 #: templates/servers.html:167
 msgid "Password"
 msgstr "密码"
 
-#: templates/instance.html:368
+#: templates/instance.html:372
 msgid "Save"
 msgstr "保存"
 
@@ -765,19 +774,19 @@ msgstr "DHCP"
 msgid "End"
 msgstr "结束"
 
-#: templates/network.html:74 templates/networks.html:95
+#: templates/network.html:74 templates/networks.html:101
 msgid "NAT"
 msgstr "NAT"
 
-#: templates/network.html:77 templates/networks.html:96
+#: templates/network.html:77 templates/networks.html:102
 msgid "ROUTE"
 msgstr "ROUTE"
 
-#: templates/network.html:80 templates/networks.html:98
+#: templates/network.html:80 templates/networks.html:104
 msgid "BRIDGE"
 msgstr "BRIDGE"
 
-#: templates/network.html:83 templates/networks.html:97
+#: templates/network.html:83 templates/networks.html:103
 msgid "ISOLATE"
 msgstr "ISOLATE"
 
@@ -789,6 +798,14 @@ msgstr "开启"
 msgid "OFF"
 msgstr "关闭"
 
+#: templates/network.html:102 templates/networks.html:92
+msgid "Fixed Address"
+msgstr ""
+
+#: templates/network.html:123
+msgid "Address"
+msgstr ""
+
 #: templates/networks.html:3
 msgid "Virtual Networks"
 msgstr "虚拟网络"
@@ -797,8 +814,8 @@ msgstr "虚拟网络"
 msgid "You do not have any virtual networks"
 msgstr "没有任何虚拟网络"
 
-#: templates/networks.html:55
-msgid "Deivce"
+#: templates/networks.html:55 templates/storages.html:126
+msgid "Device"
 msgstr "设备"
 
 #: templates/networks.html:56
@@ -813,11 +830,11 @@ msgstr "添加网络池"
 msgid "Subnet pool"
 msgstr "子网池"
 
-#: templates/networks.html:92
+#: templates/networks.html:98
 msgid "Type forwarding"
 msgstr "网络类型"
 
-#: templates/networks.html:103
+#: templates/networks.html:109
 msgid "Bridge Name"
 msgstr "桥接名称"
 
@@ -1020,9 +1037,8 @@ msgstr "ISO镜像卷"
 msgid "Path"
 msgstr "路径"
 
-#: templates/storages.html:126
-msgid "Device"
-msgstr "设备"
+#~ msgid "Deivce"
+#~ msgstr "设备"
 
 #~ msgid "Read"
 #~ msgstr "读取"

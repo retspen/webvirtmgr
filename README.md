@@ -1,15 +1,16 @@
-# WebVirtMgr panel - v4.1.0
+# WebVirtMgr panel - v4.1.6
 
 * <a href="https://github.com/retspen/webvirtmgr/wiki/Upgrade-from-v3">Upgrade from v3</a>
 
 ### Whats new?
 
+* Add Max vs Used memory or vcpu
+* Add support live migration
 * Add new graphs (Overview and Instance)
 * Create Network with Fixed IP address
 * Create Instance with Fixed MAC address
 * Remove python-virtinst
 * Add saltstack SLS for CentOS, RedHat
-* Fix bugs
 
 ### <a href="https://github.com/retspen/webvirtmgr/wiki/Screenshots">Screenshots</a>
 
@@ -36,3 +37,5 @@ WebVirtMgr is licensed under the Apache Licence, Version 2.0 (http://www.apache.
 Powered by
 
 <img src=http://www.jetbrains.com/img/logos/pycharm_logo.gif>
+
+[![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=CEN82VLX7GD7S)

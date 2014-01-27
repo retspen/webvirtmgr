@@ -158,12 +158,12 @@
                                         </div>
                                     </div>
                                 </div>
-                                <a data-toggle="modal" href="#addVMflavor{{ forloop.counter }}" class="btn btn-success">{% trans "Create" %}</a>
+                                <a data-toggle="modal" href="#addVMflavor{{ forloop.counter }}" class="btn btn-sm btn-success">{% trans "Create" %}</a>
                             </td>
                             <td style="width:5px;">
                                 <form class="form-horizontal" action="" method="post">{% csrf_token %}
                                     <input type="hidden" name="flavor" value="{{ flavor.id }}">
-                                    <input type="submit" class="btn btn-danger" name="delete_flavor" value="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
+                                    <input type="submit" class="btn btn-sm btn-danger" name="delete_flavor" value="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
                                 </form>
                             </td>
                         </tr>

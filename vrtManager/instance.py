@@ -34,6 +34,15 @@ class wvmInstances(wvmConnect):
         dom = self.get_instance(name)
         dom.resume()
 
+    def moveto(self, conn, name):
+        dom = conn.get_instance(name)
+        self.wvm.migrate(dom, 0, name, None, 0)
+
+    def define_move(self, name):
+        dom = self.get_instance(name)
+        xml = dom.XMLDesc(VIR_DOMAIN_XML_SECURE)
+        self.wvm.defineXML(xml)
+
 
 class wvmInstance(wvmConnect):
     def __init__(self, host, login, passwd, conn, vname):
@@ -77,14 +86,27 @@ class wvmInstance(wvmConnect):
         return self.instance.UUIDString()
 
     def get_vcpu(self):
-        return util.get_xml_path(self._XMLDesc(0), "/domain/vcpu")
+        vcpu = util.get_xml_path(self._XMLDesc(0), "/domain/vcpu")
+        return int(vcpu)
+
+    def get_cur_vcpu(self):
+        cur_vcpu = util.get_xml_path(self._XMLDesc(0), "/domain/vcpu/@current")
+        if cur_vcpu:
+            return int(cur_vcpu)
 
     def get_memory(self):
         mem = util.get_xml_path(self._XMLDesc(0), "/domain/memory")
         return int(mem) / 1024
 
+    def get_cur_memory(self):
+        mem = util.get_xml_path(self._XMLDesc(0), "/domain/currentMemory")
+        return int(mem) / 1024
+
     def get_description(self):
         return util.get_xml_path(self._XMLDesc(0), "/domain/description")
+
+    def get_max_memory(self):
+        return self.wvm.getInfo()[1] * 1048576
 
     def get_max_cpus(self):
         """Get number of physical CPUs."""
@@ -124,7 +146,7 @@ class wvmInstance(wvmConnect):
                 device = disk.xpathEval('@device')[0].content
                 if device == 'disk':
                     dev = disk.xpathEval('target/@dev')[0].content
-                    file = disk.xpathEval('source/@file|source/@dev')[0].content
+                    file = disk.xpathEval('source/@file|source/@dev|source/@name')[0].content
                     vol = self.get_volume_by_path(file)
                     volume = vol.name()
                     stg = vol.storagePoolLookupByVolume()
@@ -158,7 +180,7 @@ class wvmInstance(wvmConnect):
 
     def get_vnc(self):
         vnc = util.get_xml_path(self._XMLDesc(0),
-                                "/domain/devices/graphics/@port")
+                                "/domain/devices/graphics[@type='vnc']/@port")
         return vnc
 
     def mount_iso(self, image):
@@ -266,17 +288,18 @@ class wvmInstance(wvmConnect):
         xmldom = re.sub('<graphics.*>', newxml, xml)
         self._defineXML(xmldom)
 
-    def change_settings(self, description, memory, vcpu):
+    def change_settings(self, description, cur_memory, memory, cur_vcpu, vcpu):
         """
         Function change ram and cpu on vds.
         """
         xml = self._XMLDesc(VIR_DOMAIN_XML_SECURE)
         memory = int(memory) * 1024
+        cur_memory = int(cur_memory) * 1024
         xml_memory = "<memory unit='KiB'>%s</memory>" % memory
         xml_memory_change = re.sub('<memory.*memory>', xml_memory, xml)
-        xml_curmemory = "<currentMemory unit='KiB'>%s</currentMemory>" % memory
+        xml_curmemory = "<currentMemory unit='KiB'>%s</currentMemory>" % cur_memory
         xml_curmemory_change = re.sub('<currentMemory.*currentMemory>', xml_curmemory, xml_memory_change)
-        xml_vcpu = "<vcpu>%s</vcpu>" % vcpu
+        xml_vcpu = "<vcpu current='%s'>%s</vcpu>" % (cur_vcpu, vcpu)
         xml_vcpu_change = re.sub('<vcpu.*vcpu>', xml_vcpu, xml_curmemory_change)
         xml_description = "<description>%s</description>" % description
         xml_description_change = re.sub('<description.*description>', xml_description, xml_vcpu_change)

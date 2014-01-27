@@ -77,6 +77,13 @@ def diskusage(request, host_id, vname):
             datasets_wr.append(int(blk['wr']) / 1048576)
             del datasets_wr[0]
 
+        # Some fix division by 0 Chart.js
+        if len(datasets_rd) == 10:
+            if sum(datasets_rd) == 0:
+                datasets_rd[9] += 0.01
+            if sum(datasets_rd) / 10 == datasets_rd[0]:
+                datasets_rd[9] += 0.01
+
         disk = {
             'labels': [""] * 10,
             'datasets': [
@@ -168,6 +175,13 @@ def netusage(request, host_id, vname):
             datasets_tx.append(int(net['tx']) / 1048576)
             del datasets_tx[0]
 
+        # Some fix division by 0 Chart.js
+        if len(datasets_rx) == 10:
+            if sum(datasets_rx) == 0:
+                datasets_rx[9] += 0.01
+            if sum(datasets_rx) / 10 == datasets_rx[0]:
+                datasets_rx[9] += 0.01
+
         network = {
             'labels': [""] * 10,
             'datasets': [
@@ -238,6 +252,13 @@ def cpuusage(request, host_id, vname):
     if len(datasets) == 10:
         datasets.append(int(cpu_usage['cpu']))
         del datasets[0]
+
+    # Some fix division by 0 Chart.js
+    if len(datasets) == 10:
+        if sum(datasets) == 0:
+            datasets[9] += 0.1
+        if sum(datasets) / 10 == datasets[0]:
+            datasets[9] += 0.1
 
     cpu = {
         'labels': [""] * 10,
@@ -327,6 +348,8 @@ def instance(request, host_id, vname):
     messages = []
     time_refresh = TIME_JS_REFRESH
     compute = Compute.objects.get(id=host_id)
+    computes = Compute.objects.all()
+    computes_count = len(computes)
 
     try:
         conn = wvmInstance(compute.hostname,
@@ -338,8 +361,10 @@ def instance(request, host_id, vname):
         status = conn.get_status()
         autostart = conn.get_autostart()
         vcpu = conn.get_vcpu()
+        cur_vcpu = conn.get_cur_vcpu()
         uuid = conn.get_uuid()
         memory = conn.get_memory()
+        cur_memory = conn.get_cur_memory()
         description = conn.get_description()
         disks = conn.get_disk_device()
         media = conn.get_media_device()
@@ -347,6 +372,8 @@ def instance(request, host_id, vname):
         media_iso = sorted(conn.get_iso_media())
         vcpu_range = conn.get_max_cpus()
         memory_range = [256, 512, 1024, 2048, 4096, 8192, 16384]
+        memory_host = conn.get_max_memory()
+        vcpu_host = len(vcpu_range)
         vnc_port = conn.get_vnc()
         inst_xml = conn._XMLDesc(VIR_DOMAIN_XML_SECURE)
     except libvirtError as msg_error:
@@ -411,8 +438,10 @@ def instance(request, host_id, vname):
             if 'change_settings' in request.POST:
                 description = request.POST.get('description', '')
                 vcpu = request.POST.get('vcpu', '')
+                cur_vcpu = request.POST.get('cur_vcpu', '')
                 memory = request.POST.get('memory', '')
-                conn.change_settings(description, memory, vcpu)
+                cur_memory = request.POST.get('cur_memory', '')
+                conn.change_settings(description, cur_memory, memory, cur_vcpu, vcpu)
                 return HttpResponseRedirect(request.get_full_path())
             if 'change_xml' in request.POST:
                 xml = request.POST.get('inst_xml', '')
@@ -430,6 +459,18 @@ def instance(request, host_id, vname):
                 if not errors:
                     conn.set_vnc_passwd(passwd)
                     return HttpResponseRedirect(request.get_full_path())
+            if 'migrate' in request.POST:
+                compute_id = request.POST.get('compute_id', '')
+                new_compute = Compute.objects.get(id=compute_id)
+                conn_migrate = wvmInstances(new_compute.hostname,
+                                            new_compute.login,
+                                            new_compute.password,
+                                            new_compute.type)
+                conn_migrate.moveto(conn, vname)
+                conn_migrate.define_move(vname)
+                conn_migrate.close()
+                return HttpResponseRedirect('/instance/%s/%s' % (compute_id, vname))
+
         conn.close()
 
     except libvirtError as msg_error:
