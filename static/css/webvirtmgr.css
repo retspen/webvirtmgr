@@ -60,7 +60,17 @@ ul.nav.nav-tabs {
     padding: 0;
     float: none;
 }
+.table {
+    margin-top: 20px;
+}
 .table thead>tr>th {
-vertical-align: bottom;
-border-bottom: 1px solid #ddd;
+    vertical-align: bottom;
+    border-bottom: 1px solid #ddd;
+}
+.panel-success {
+    margin-top: 20px;
+}
+.well {
+    margin-top: 20px;
+    text-align: center;
 }

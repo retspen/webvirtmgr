@@ -9,10 +9,7 @@
 {% block content %}
     <div class="row">
         {% include 'sidebar.html' %}
-        <div class="col-md-9" role="main">
-            <div class="page-header">
-                <h1>{% trans "Create Virtual Machine" %}</h1>
-            </div>
+        <div class="main">
             {% if errors %}
                 {% for error in errors %}
                     <div class="alert alert-danger">
@@ -61,7 +58,7 @@
                     {% endfor %}
                 </div>
             {% endif %}
-            <div class="block-btn">
+            <div class="btn-group-sm">
                 <a data-toggle="modal" href="#addCustom" class="btn btn-success">{% trans "Custom VM" %}</a>
                 <a data-toggle="modal" href="#addFlavor" class="btn btn-success">{% trans "Add Flavor" %}</a>
             </div>

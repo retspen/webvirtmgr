@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load tags_active %}
         <div class="pagehead">
             <a href="{% url 'create' host_id %}" class="btn btn-sm btn-success pull-right">{% trans "New Instance" %}</a>
             <h1><a href="{% url 'overview' host_id %}">{{ compute.name|upper }}</a></h1>
@@ -6,22 +7,16 @@
         <div class="sidebar">
                 <ul>
                     <li>
-                        <a href="{% url 'instances' host_id %}" class="list selected">{% trans "Instances" %}</a>
+                        <a href="{% url 'instances' host_id %}" class="list {% active request "^/instance" %}">{% trans "Instances" %}</a>
                     </li>
                     <li>
-                        <a href="{% url 'storages' host_id %}" class="list">{% trans "Storages" %}</a>
+                        <a href="{% url 'storages' host_id %}" class="list {% active request "^/storage" %}">{% trans "Storages" %}</a>
                     </li>
                     <li>
-                        <a href="{% url 'networks' host_id %}" class="list">{% trans "Networks" %}</a>
+                        <a href="{% url 'networks' host_id %}" class="list {% active request "^/network" %}">{% trans "Networks" %}</a>
                     </li>
-                    {% if vname %}
                     <li>
-                        <a href="{% url 'snapshot' host_id vname %}" class="list">{% trans "Snapshots" %}</a>
+                        <a href="{% url 'overview' host_id %}" class="list {% active request "^/host" %}">{% trans "Overview" %}</a>
                     </li>
-                    {% else %}
-                    <li>
-                        <a href="{% url 'snapshots' host_id %}" class="list">{% trans "Snapshots" %}</a>
-                    </li>
-                    {% endif %}
                 </ul>
         </div>

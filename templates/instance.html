@@ -8,10 +8,7 @@
 {% block content %}
     <div class="row" xmlns="http://www.w3.org/1999/html">
         {% include 'sidebar.html' %}
-        <div class="col-md-9" role="main">
-            <div class="page-header">
-                <h1>{% trans "Virtual Machine" %}</h1>
-            </div>
+        <div class="main">
             {% if errors %}
                 {% for error in errors %}
                     <div class="alert alert-danger">
