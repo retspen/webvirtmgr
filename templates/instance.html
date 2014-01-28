@@ -2,9 +2,6 @@
 {% load i18n %}
 {% load staticfiles %}
 {% block title %}{% trans "VM's" %} - {{ vname }}{% endblock %}
-{% block style %}
-    <link href="{% static "css/progressbar.css" %}" rel="stylesheet" xmlns="http://www.w3.org/1999/html">
-{% endblock %}
 {% block content %}
     {% include 'sidebar.html' %}
     <div class="main">
@@ -24,289 +21,367 @@
                 </div>
             {% endfor %}
         {% endif %}
-        <ul class="nav nav-pills" id="instance-nav">
+
+            <table class="table">
+                <thead>
+                <tr class="active">
+                    <th>{% trans "Name" %}</th>
+                    <th>{% trans "Status" %}</th>
+                    <th>{% trans "VPU's" %}</th>
+                    <th>{% trans "Memory" %}</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ vname }}</td>
+                        <td>{% if status %}
+                            <span class={% ifequal status 5 %}"text-danger">{% trans "Shuttoff" %}{% endifequal %}
+                                        {% ifequal status 1 %}"text-success">{% trans "Running" %}{% endifequal %}
+                                        {% ifequal status 3 %}"text-warnging">{% trans "Suspend" %}{% endifequal %}
+                            </span>
+                            {% else %}
+                                {% trans "None" %}
+                            {% endif %}
+                        </td>
+                        <td>{% if cur_vcpu %}{{ cur_vcpu }}{% else %}{{ vcpu }}{% endif %}</td>
+                        <td>{{ cur_memory }}{% trans "MB" %}</td>
+                    <tr>
+                </tbody>
+            </table>
+        <hr>
+        <ul class="nav nav-tabs" style="height: 61px;">
             <li class="active">
-                 <a class="instance-btn" href="#">
-                    <span class="glyphicon glyphicon-info-sign"></span><br> {% trans "Info" %}
-                 </a>
+                <a class="inst-btn" href="#power" data-toggle="tab">
+                    <span class="glyphicon glyphicon-off"></span><br>{% trans "Power" %}
+                </a>
             </li>
-            <li>
-                 <a class="instance-btn" href="#">
-                    <span class="glyphicon glyphicon-briefcase"></span><br> {% trans "Access" %}
-                 </a>
+            <li><a class="inst-btn" href="#access" data-toggle="tab">
+                    <span class="glyphicon glyphicon-briefcase"></span><br>{% trans "Access" %}
+                </a>
             </li>
-            <li>
-                 <a class="instance-btn" href="#">
-                    <span class="glyphicon glyphicon-off"></span><br> {% trans "Power" %}
-                 </a>
+            <li><a class="inst-btn" href="#snapshots" data-toggle="tab">
+                    <span class="glyphicon glyphicon-camera"></span><br>{% trans "Snapshots" %}
+                </a>
             </li>
-            <li>
-                 <a class="instance-btn" href="#">
-                    <span class="glyphicon glyphicon-wrench"></span><br> {% trans "Settings" %}
-                 </a>
+            <li><a class="inst-btn" href="#graph" data-toggle="tab">
+                    <span class="glyphicon glyphicon-signal"></span><br>{% trans "Graphics" %}
+                </a>
             </li>
-            <li>
-                 <a class="instance-btn" href="#">
-                    <span class="glyphicon glyphicon-camera"></span><br> {% trans "Snapshots" %}
-                 </a>
+            <li><a class="inst-btn" href="#settings" data-toggle="tab">
+                    <span class="glyphicon glyphicon-wrench"></span><br>{% trans "Settings" %}
+                </a>
             </li>
-            <li>
-                 <a class="instance-btn" href="#">
-                    <span class="glyphicon glyphicon-signal"></span><br> {% trans "Graphics" %}
-                 </a>
+            <li><a class="inst-btn" href="#migrate" data-toggle="tab">
+                    <span class="glyphicon glyphicon-cloud-download"></span><br>{% trans "Migrate" %}
+                </a>
             </li>
-            <li>
-                 <a class="instance-btn" href="#">
-                    <span class="glyphicon glyphicon-trash"></span><br> {% trans "Snapshots" %}
-                 </a>
+            <li><a class="inst-btn" href="#delete" data-toggle="tab">
+                    <span class="glyphicon glyphicon-trash"></span><br>{% trans "Destroy" %}
+                </a>
             </li>
         </ul>
 
-
-
-        <div class="instance-info">
-            <ul>
-                <li>{% if cur_vcpu %}
-                      {{ cur_vcpu }}
-                    {% else %}
-                      {{ vcpu }}
-                    {% endif %}
-                </li>
-                <li>{{ cur_memory }}</li>
-            </ul>
-        </div>
-
-
-
-
-
-        <div class="block-btn">
-            <li>{% trans "Action For This Server" %}</li>
-        </div>
-        <div class="col-md-12" id="instaction">
-            <form action="" method="post">{% csrf_token %}
-                {% ifequal status 5 %}
-                    <button class="btn btn-default btn-md disabled" id="inst-btn"><span class="glyphicon glyphicon-align-justify"></span><br> {% trans "Console" %}</button>
-                {% else %}
-                    <a href="#console" class="btn btn-default btn-md" id="inst-btn" data-toggle="modal" title="VNC Port: {{ vnc_port }}" onclick="open_vnc()">
-                        <span class="glyphicon glyphicon-align-justify"></span><br> {% trans "Console" %}
-                    </a>
-                {% endifequal %}
-                {% ifequal status 5 %}
-                    <button type="submit" class="btn btn-default btn-md" id="inst-btn" name="start"><span class="glyphicon glyphicon-play"></span><br> {% trans "Start" %}</button>
-                {% endifequal %}
-                {% ifequal status 1 %}
-                    <button href="#Power" class="btn btn-default btn-md" id="inst-btn" data-toggle="modal"><span class="glyphicon glyphicon-off"></span><br> {% trans "Shutdown" %}</button>
-                {% endifequal %}
-                {% ifequal status 3 %}
-                    <button class="btn btn-default btn-md disabled" id="inst-btn" data-toggle="modal"><span class="glyphicon glyphicon-off"></span><br> {% trans "Shutdown" %}</button>
-                {% endifequal %}
-                <a href="#Delete" class="btn btn-default btn-md" id="inst-btn" data-toggle="modal"><span class="glyphicon glyphicon-trash"></span><br> {% trans "Delete" %}</a>
-                {% ifequal status 3 %}
-                    <button type="submit" name="resume" class="btn btn-default btn-md" id="inst-btn"><span class="glyphicon glyphicon-play"></span><br> {% trans "Resume" %}</button>
-                    <button type="submit" name="snapshot" class="btn btn-default btn-md" id="inst-btn"><span class="glyphicon glyphicon-camera"></span><br> {% trans "Snapshot" %}</button>
-                    <button class="btn btn-default btn-md disabled" id="inst-btn"><span class="glyphicon glyphicon-signal"></span><br> {% trans "Statistics" %}</button>
-                {% endifequal %}
-                {% ifequal status 1 %}
-                    <button type="submit" name="suspend" class="btn btn-default btn-md" id="inst-btn"><span class="glyphicon glyphicon-pause"></span><br> {% trans "Suspend" %}</button>
-                    <button class="btn btn-default btn-md disabled" id="inst-btn"><span class="glyphicon glyphicon-camera"></span><br> {% trans "Snapshot" %}</button>
-                    <a href="vm-stat" class="showbar btn btn-default btn-md" id="inst-btn"><span class="glyphicon glyphicon-signal"></span><br> {% trans "Statistics" %}</a>
-                {% endifequal %}
-                {% ifequal status 5 %}
-                    <button class="btn btn-default btn-md disabled" id="inst-btn"><span class="glyphicon glyphicon-pause"></span><br> {% trans "Suspend" %}</button>
-                    <button type="submit" name="snapshot" class="btn btn-default btn-md" id="inst-btn"><span class="glyphicon glyphicon-camera"></span><br> {% trans "Snapshot" %}</button>
-                {% endifequal %}
-                {% ifequal status 5 %}
-                    <button class="btn btn-default btn-md disabled" id="inst-btn"><span class="glyphicon glyphicon-signal"></span><br> {% trans "Statistics" %}</button>
-                {% endifequal %}
-                {% ifequal status 5 %}
-                    <a href="#Edit" class="btn btn-default btn-md" data-toggle="modal" id="inst-btn"><span class="glyphicon glyphicon-edit"></span><br> {% trans "Edit" %}</a>
-                {% else %}
-                    {% if computes_count != 1 %}
-                        <a href="#Migrate" class="btn btn-default btn-md" data-toggle="modal" id="inst-btn"><span class="glyphicon glyphicon-cloud-download"></span><br> {% trans "Migrate" %}</a>
-                    {% else %}
-                        <a href="#" class="btn btn-default btn-md disabled" data-toggle="modal" id="inst-btn"><span class="glyphicon glyphicon-cloud-download"></span><br> {% trans "Migrate" %}</a>
-                    {% endif %}
-                {% endifequal %}
-            </form>
-        </div>
-        <hr>
-        <div id="vm-stat">
-            <div class="block-btn">
-                <li>{% trans "Usage Statistics" %}</li>
-            </div>
-            <div class="row show-grid">
-                <div id="cpu-usage">
-                    <p style="margin-left: 25px">{% trans "CPU usage" %}</p>
-                    <canvas style="margin-left: 25px" id="cpuChart" width="700" height="125"></canvas>
-                </div>
-                <div id="net-usage">
-                    {% for network in networks %}
-                        <p style="margin-left: 25px">{% trans "Bandwidth" %} - Eth{{ forloop.counter0 }}</p>
-                        <canvas style="margin-left: 25px" id="netEth{{ forloop.counter0 }}Chart" width="700" height="125"></canvas>
-                        <div id="lineLegend">
-                            <span class="netIN">{% trans "In" %}</span>
-                            <span class="netOUT">{% trans "Out" %}</span>
-                        </div>
-                    {% endfor %}
-                </div>
-                <div id="disk-usage">
-                    {% for disk in disks %}
-                       <p style="margin-left: 25px">{% trans "Disk I/O" %} - {{ disk.dev }}</p>
-                       <canvas style="margin-left: 25px" id="blk{{ disk.dev }}Chart" width="700" height="125"></canvas>
-                       <div id="lineLegend">
-                            <span class="diskRD">{% trans "Read" %}</span>
-                            <span class="diskWR">{% trans "Write" %}</span>
-                       </div>
-                    {% endfor %}
+        <div class="tab-content">
+            <div class="tab-pane active" id="power" style="margin-top: 20px">
+                <ul class="nav nav-tabs ">
+                    <li class="active"><a href="#shutdown" data-toggle="tab">{% trans "Shutdown" %}</a></li>
+                    <li><a href="#forceshutdown" data-toggle="tab">{% trans "Force Shutdown" %}</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane tab-inst active" id="shutdown">
+                        <p>{% trans "This will power off your droplet. recommend powering off your droplet through the command line, as this action is the same as hard resetting the server and may cause data corruption. Do you wish to proceed?" %}</p>
+                        <form action="" method="post">{% csrf_token %}
+                            {% ifequal status 5 %}
+                                <button type="submit" name="start" class="btn btn-lg btn-primary pull-right">{% trans "Start" %}</button>
+                            {% else %}
+                                <button type="submit" name="power" value="shutdown" class="btn btn-lg btn-primary pull-right">{% trans "Shutdown" %}</button>
+                            {% endifequal %}
+                        </form>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="tab-pane tab-inst" id="forceshutdown">
+                        <p>{% trans "This will power off your droplet. recommend powering off your droplet through the command line, as this action is the same as hard resetting the server and may cause data corruption. Do you wish to proceed?" %}</p>
+                        <form action="" method="post">{% csrf_token %}
+                            {% ifequal status 5 %}
+                                <button type="submit" name="start" class="btn btn-lg btn-primary pull-right">{% trans "Start" %}</button>
+                            {% else %}
+                                <button type="submit" name="power" value="destroy" class="btn btn-lg btn-primary pull-right">{% trans "Force Shutdown" %}</button>
+                            {% endifequal %}
+                        </form>
+                        <div class="clearfix"></div>
+                    </div>
                 </div>
             </div>
-            <hr>
-        </div>
-        <div class="block-btn">
-            <li>{% trans "Name & Status" %}</li>
-        </div>
-        <div class="row show-grid">
-            <div class="col-md-6">
-                <p><strong>{% trans "Name" %}:</strong></p>
-                <p><strong>{% trans "Description" %}:</strong></p>
-                <p><strong>{% trans "Autostart" %}:</strong></p>
-                <p><strong>{% trans "Status" %}:</strong></p>
-            </div>
-            <div class="col-md-6">
-                <p>{{ vname }}</p>
-                <p>{{ description }}</p>
-                <p>
-                    <form action="" method="post">{% csrf_token %}
-                        {% ifequal autostart 0 %}
-                            <input type="submit" class="btn btn-xs btn-default" name="set_autostart" value="{% trans "Enable" %}">
+            <div class="tab-pane" id="access" style="margin-top: 20px">
+                <ul class="nav nav-tabs ">
+                    <li class="active"><a href="#console" data-toggle="tab">{% trans "Console" %}</a></li>
+                    <li><a href="#vnc" data-toggle="tab">{% trans "VNC Settings" %}</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane tab-inst active" id="console">
+                        <p>{% trans "This will open up a console VNC connection to your droplet and is the equivalent of plugging a monitor and keyboard directly to your virtual server." %}</p>
+                        {% ifequal status 5 %}
+                            <button class="btn btn-primary btn-lg pull-right disabled">{% trans "Console" %}</button>
                         {% else %}
-                            <input type="submit" class="btn btn-xs btn-default" name="unset_autostart" onclick="return confirm('{% trans "Are you sure?" %}')" value="{% trans "Disable" %}">
+                            <a href="#" class="btn btn-primary btn-lg pull-right" title="VNC Port: {{ vnc_port }}" onclick="open_vnc()">{% trans "Console" %}</a>
                         {% endifequal %}
-                    </form>
-                </p>
-                <p>{% if status %}
-                    <span class={% ifequal status 5 %}"text-danger">{% trans "Shuttoff" %}{% endifequal %}
-                                {% ifequal status 1 %}"text-success">{% trans "Running" %}{% endifequal %}
-                                {% ifequal status 3 %}"text-warnging">{% trans "Suspend" %}{% endifequal %}
-                    </span>
-                {% else %}
-                    {% trans "None" %}
-                {% endif %}
-                </p>
-            </div>
-        </div>
-        <hr>
-        <div class="block-btn">
-            <li>{% trans "Network Details" %}</li>
-        </div>
-        <div class="row show-grid">
-            <div class="col-md-6">
-                 {% for network in networks %}
-                    <p><strong>Eth{{ forloop.counter0 }}</strong></p>
-                 {% endfor %}
-            </div>
-            <div class="col-md-6">
-                {% for network in networks %}
-                    {% if network.ip %}
-                        <p>{{ network.ip }} ({{ network.nic }})</p>
-                    {% else %}
-                        <p>{{ network.mac }} ({{ network.nic }})</p>
-                    {% endif %}
-                {% endfor %}
-            </div>
-        </div>
-        <hr>
-        <div class="block-btn">
-            <li>{% trans "Storage Details" %}</li>
-        </div>
-        <div class="row show-grid">
-            <div class="col-md-6">
-                {% for disk in disks %}
-                    <p><strong>{% trans "Disk" %} {{ disk.dev }}</strong></p>
-                {% endfor %}
-            </div>
-            <div class="col-md-6">
-                {% for disk in disks %}
-                    <p>{{ disk.image }} ({{ disk.storage }})</p>
-                {% endfor %}
-            </div>
-        </div>
-        <hr>
-        <div class="block-btn">
-            <li>{% trans "Media Details" %}</li>
-        </div>
-        {% if media %}
-            <div class="row show-grid">
-                <div class="col-md-6">
-                    <p><strong>{% trans "Connected" %}</strong></p>
-                </div>
-                <div class="col-md-6">
-                    {% for iso in media %}
-                    <p>{{ iso.image }}</p>
-                    {% endfor %}
-                </div>
-            </div>
-        {% endif %}
-        <form action="" method="post">{% csrf_token %}
-            {% if media %}
-                <input type="hidden" name="iso_media" value="{{ media.0.path }}">
-                <button type="submit" class="btn btn-default"  name="umount_iso" onclick="return confirm('{% trans "Are you sure?" %}')">{% trans "Disconnect" %}</button>
-            {% else %}
-                <div class="form-group">
-                <label class="col-lg-1 control-label">{% trans "Images" %}</label>
-                <div class="col-lg-5">
-                    <select name="iso_media" class="form-control">
-                        {% if media_iso %}
-                            {% for iso in media_iso %}
-                                <option value="{{ iso }}">{{ iso }}</option>
-                            {% endfor %}
-                        {% else %}
-                            <option value="none">{% trans "None" %}</option>
-                        {% endif %}
-                    </select>
-                    <br>
-                    {% if media_iso %}
-                        <button type="submit" class="btn btn-default" name="mount_iso" >{% trans "Connect" %}</button>
-                    {% else %}
-                        <button class="btn btn-default disabled" name="connect">{% trans "Connect" %}</button>
-                    {% endif %}
-                </div>
-            {% endif %}
-        </form>
-    </div>
-
-    <!-- Power -->
-    <div class="modal fade" id="Power" tabindex="-1" role="dialog" aria-labelledby="PowerLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">{% trans "Power On Server" %}</h4>
-                </div>
-                <div class="modal-body">
-                    <p>{% trans "Shutdown sends ACPI shutdown signal to guest system. Force shutdown is lost immediately." %}</p>
-                </div>
-                <form class="form-horizontal" method="post" role="form">{% csrf_token %}
-                    <div class="form-group">
-                        <label class="col-lg-4 control-label">{% trans "Action" %}</label>
-                        <div class="col-lg-6">
-                            <label class="radio">
-                                <input type="radio" name="power" value="shutdown"/>{% trans "Shutdown" %}
-                            </label>
-                            <label class="radio">
-                                <input type="radio" name="power" value="destroy"/>{% trans "Force Shutdown" %}
-                            </label>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="tab-pane tab-inst" id="vnc">
+                        <p>{% trans "You cant set passord" %}</p>
+                        <div class="col-lg-3">
+                            <form class="form-horizontal" method="post" role="form">{% csrf_token %}
+                                <div class="form-group">
+                                    <div class="col-sm-offset-2 col-sm-10">
+                                        <div class="checkbox">
+                                          <label>
+                                            <input type="checkbox" name="auto_pass" value="true" id="vnc_passwd_gen">{% trans "Generate" %}
+                                          </label>
+                                        </div>
+                                     </div>
+                                </div>
+                                <div class="form-group" id="vnc_passwd_manual">
+                                    <label for="inputPassword1" class="col-sm-2 control-label">{% trans "Password" %}</label>
+                                    <div class="col-sm-6">
+                                        <input type="password" class="form-control" name="vnc_passwd" placeholder="{% trans "Password" %}" maxlength="14">
+                                    </div>
+                                </div>
+                                {% if computes_count != 1 %}
+                                    <button class="btn btn-primary btn-lg pull-right disabled" name="set_vnc_passwd">{% trans "Set Password" %}</button>
+                                {% else %}
+                                    <button type="submit" class="btn btn-primary btn-lg pull-right" name="set_vnc_passwd">{% trans "Set Password" %}</button>
+                                {% endif %}
+                            </form>
+                            <div class="clearfix"></div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-                        <button type="submit" class="btn btn-primary">{% trans "Send" %}</button>
+                </div>
+            </div>
+            <div class="tab-pane" id="settings" style="margin-top: 20px">
+               <div class="col-md-6">
+                    <p><strong>{% trans "Description" %}:</strong></p>
+                    <p><strong>{% trans "Autostart" %}:</strong></p>
+                </div>
+                <div class="col-md-6">
+                    <p>{{ description }}</p>
+                    <p>
+                        <form action="" method="post">{% csrf_token %}
+                            {% ifequal autostart 0 %}
+                                <input type="submit" class="btn btn-xs btn-default" name="set_autostart" value="{% trans "Enable" %}">
+                            {% else %}
+                                <input type="submit" class="btn btn-xs btn-default" name="unset_autostart" onclick="return confirm('{% trans "Are you sure?" %}')" value="{% trans "Disable" %}">
+                            {% endifequal %}
+                        </form>
+                    </p>
+                </div>
+                <div class="col-md-6">
+                     {% for network in networks %}
+                        <p><strong>Eth{{ forloop.counter0 }}</strong></p>
+                     {% endfor %}
+                </div>
+                <div class="col-md-6">
+                    {% for network in networks %}
+                        {% if network.ip %}
+                            <p>{{ network.ip }} ({{ network.nic }})</p>
+                        {% else %}
+                            <p>{{ network.mac }} ({{ network.nic }})</p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <hr>
+                <div class="col-md-6">
+                    {% for disk in disks %}
+                        <p><strong>{% trans "Disk" %} {{ disk.dev }}</strong></p>
+                    {% endfor %}
+                </div>
+                <div class="col-md-6">
+                    {% for disk in disks %}
+                        <p>{{ disk.image }} ({{ disk.storage }})</p>
+                    {% endfor %}
+                </div>
+                <hr>
+                {% if media %}
+                    <div class="col-md-6">
+                        <p><strong>{% trans "Connected" %}</strong></p>
                     </div>
+                    <div class="col-md-6">
+                        {% for iso in media %}
+                        <p>{{ iso.image }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <form action="" method="post">{% csrf_token %}
+                    {% if media %}
+                        <input type="hidden" name="iso_media" value="{{ media.0.path }}">
+                        <button type="submit" class="btn btn-default"  name="umount_iso" onclick="return confirm('{% trans "Are you sure?" %}')">{% trans "Disconnect" %}</button>
+                    {% else %}
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">{% trans "Images" %}</label>
+                            <div class="col-sm-6">
+                                <select name="iso_media" class="form-control">
+                                    {% if media_iso %}
+                                        {% for iso in media_iso %}
+                                            <option value="{{ iso }}">{{ iso }}</option>
+                                        {% endfor %}
+                                    {% else %}
+                                        <option value="none">{% trans "None" %}</option>
+                                    {% endif %}
+                                </select>
+                            <br>
+                            {% if media_iso %}
+                                <button type="submit" class="btn btn-default" name="mount_iso" >{% trans "Connect" %}</button>
+                            {% else %}
+                                <button class="btn btn-default disabled" name="connect">{% trans "Connect" %}</button>
+                            {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
                 </form>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
+            </div>
+            <div class="tab-pane" id="snapshots">
+                <ul class="nav nav-tabs" style="margin-top: 20px">
+                    <li class="active"><a href="#createsnapshot" data-toggle="tab">{% trans "Create Snapshot" %}</a></li>
+                    <li><a href="#istaceshapshosts" data-toggle="tab">{% trans "Restore from Snapshots" %}</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane tab-inst active" id="createsnapshot">
+                        <p>{% trans "This will power off your droplet. recommend powering off your droplet through the command line, as this action is the same as hard resetting the server and may cause data corruption. Do you wish to proceed?" %}</p>
+                        <form class="form-horizontal" method="post" role="form">{% csrf_token %}
+                            <div class="form-group">
+                                <label for="snapshot" class="col-sm-2 control-label">{% trans "Name" %}</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}" maxlength="14">
+                                </div>
+                            </div>
+                            {% ifequal status 5 %}
+                                <button type="submit" class="btn btn-primary btn-lg pull-right" name="snapshot">{% trans "Create Snapshot" %}</button>
+                            {% else %}
+                                <button class="btn btn-primary btn-lg pull-right disabled">{% trans "Create Snapshot" %}</button>
+                            {% endifequal %}
+                        </form>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="tab-pane tab-inst" id="istaceshapshosts">
+                        {% if vm_snapshot %}
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>{% trans "Name" %}</th>
+                                    <th>{% trans "Date" %}</th>
+                                    <th colspan="2">{% trans "Action" %}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for name, time in vm_snapshot.items %}
+                                    <tr>
+                                        <td><strong>{{ name }}</strong></td>
+                                        <td>{{ time.0|date:"M d H:i:s" }}</td>
+                                        <td style="width:30px;">
+                                            <form action="" method="post" style="height:10px;">{% csrf_token %}
+                                                <input type="hidden" name="name" value="{{ name }}">
+                                                {% ifnotequal time.1 3 %}
+                                                    <button type="submit" class="btn btn-sm btn-primary" name="revert" value="revert" onclick="return confirm('Are you sure?')">{% trans "Revert" %}</button>
+                                                {% else %}
+                                                    <button type="button" class="btn btn-sm btn-primary disabled" name="revert" value="Revert">{% trans "Revert" %}</button>
+                                                {% endifnotequal %}
+                                            </form>
+                                        </td>
+                                        <td style="width:30px;">
+                                            <form action="" method="post">{% csrf_token %}
+                                                <input type="hidden" name="name" value="{{ name }}">
+                                                <button type="submit" class="btn btn-sm btn-danger" name="delete" value="delete" onclick="return confirm('{% trans "Are you sure?" %}')">{% trans "Delete" %}</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        {% else %}
+                            <p>{% trans "You do not have any snapshots for" %}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane" id="graph">
+                {% ifequal status 1 %}
+                    <div id="cpu-usage">
+                        <p style="margin-left: 25px">{% trans "CPU usage" %}</p>
+                        <canvas style="margin-left: 25px" id="cpuChart" width="700" height="125"></canvas>
+                    </div>
+                    <div id="net-usage">
+                        {% for network in networks %}
+                            <p style="margin-left: 25px">{% trans "Bandwidth" %} - Eth{{ forloop.counter0 }}</p>
+                            <canvas style="margin-left: 25px" id="netEth{{ forloop.counter0 }}Chart" width="700" height="125"></canvas>
+                            <div id="lineLegend">
+                                <span class="netIN">{% trans "In" %}</span>
+                                <span class="netOUT">{% trans "Out" %}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div id="disk-usage">
+                        {% for disk in disks %}
+                           <p style="margin-left: 25px">{% trans "Disk I/O" %} - {{ disk.dev }}</p>
+                           <canvas style="margin-left: 25px" id="blk{{ disk.dev }}Chart" width="700" height="125"></canvas>
+                           <div id="lineLegend">
+                                <span class="diskRD">{% trans "Read" %}</span>
+                                <span class="diskWR">{% trans "Write" %}</span>
+                           </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="well">
+                        <h4>{% trans "Turn on your instance" %}</h4>
+                    </div>
+                {% endifequal %}
+            </div>
+            <div class="tab-pane" id="migrate">
+                <ul class="nav nav-tabs" style="margin-top: 20px">
+                    <li class="active"><a href="#instancemigate" data-toggle="tab">{% trans "Instance Migrate" %}</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane tab-inst active" id="instancemigate">
+                        <p style="text-align:center;">
+                            <span class="text-danger">{% trans "Warning:" %}</span> {% trans "Both servers must have equal settings and OS type" %}
+                        </p>
+                        <br>
+                        <div class="row show-grid">
+                            <div class="col-sm-3" style="text-align: right;padding-right: 2px;">
+                                 <p><strong>{% trans "Original host" %}</strong></p>
+                            </div>
+                            <div class="col-sm-6">
+                                 <p style="margin: 10px -10px 0 0;">{{ compute.name }}</p>
+                            </div>
+                        </div>
+                        <form class="form-horizontal" method="post" role="form">{% csrf_token %}
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">{% trans "New host" %}</label>
+                                <div class="col-sm-6">
+                                    <select name="compute_id" class="form-control">
+                                    {% if computes_count != 1 %}
+                                        {% for comp in computes %}
+                                            {% if comp.id != compute.id %}
+                                                <option value="{{ comp.id }}">{{ comp.name }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                    </select>
+                                </div>
+                            </div>
+                            {% ifequal status 5 %}
+                                <button class="btn btn-lg btn-primary pull-right disabled">{% trans "Migrate" %}</button>
+                            {% else %}
+                                <button type="submit" class="btn btn-lg btn-primary pull-right" name="migrate">{% trans "Migrate" %}</button>
+                            {% endifequal %}
+                        </form>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane" id="delete">
+
+            </div>
+        </div>
+    </div>
 
     <!-- Delete -->
     <div class="modal fade" id="Delete" tabindex="-1" role="dialog" aria-labelledby="DeleteLabel" aria-hidden="true">
@@ -518,11 +593,6 @@
             } else {
                 $('#vnc_passwd_manual').show();
             }
-        });
-        $(document).on('click','a.showbar',function(){
-            var id = $(this).attr('href');
-            $('#' + id).slideToggle();
-            return false;
         });
     </script>
     {% ifequal status 1 %}
