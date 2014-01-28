@@ -139,22 +139,22 @@
                                                 </div>
                                                 <form class="form-horizontal" method="post" role="form">{% csrf_token %}
                                                     <div class="form-group">
-                                                        <label class="col-lg-4 control-label">{% trans "Name" %}</label>
-                                                        <div class="col-lg-6">
+                                                        <label class="col-sm-3 control-label">{% trans "Name" %}</label>
+                                                        <div class="col-sm-6">
                                                             <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}" required pattern="[a-zA-Z0-9_]+">
                                                             <input type="hidden" name="image" value="{{ volume.name }}">
                                                         </div>
-                                                        <label class="col-lg-1 control-label">.img</label>
+                                                        <label class="col-sm-1 control-label">.img</label>
                                                     </div>
                                                     <div class="form-group">
-                                                        <label class="col-lg-4 control-label">{% trans "Convert" %}</label>
-                                                        <div class="col-lg-6">
+                                                        <label class="col-sm-3 control-label">{% trans "Convert" %}</label>
+                                                        <div class="col-sm-6">
                                                             <input class="volume-convert" type="checkbox" name="convert" value="true">
                                                         </div>
                                                     </div>
                                                     <div class="form-group format-convert">
-                                                        <label class="col-lg-4 control-label">{% trans "Format" %}</label>
-                                                        <div class="col-lg-6">
+                                                        <label class="col-sm-3 control-label">{% trans "Format" %}</label>
+                                                        <div class="col-sm-6">
                                                             <select name="format" class="form-control">
                                                                 <option value="raw">{% trans "raw" %}</option>
                                                                 <option value="qcow">{% trans "qcow" %}</option>
@@ -205,14 +205,14 @@
                 </div>
                 <form class="form-horizontal" method="post" role="form">{% csrf_token %}
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">{% trans "Name" %}</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-3 control-label">{% trans "Name" %}</label>
+                        <div class="col-sm-6">
                             <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}" required pattern="[a-zA-Z0-9_]+">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">{% trans "Format" %}</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-3 control-label">{% trans "Format" %}</label>
+                        <div class="col-sm-6">
                             <select name="format" class="form-control">
                                 <option value="qcow2">{% trans "qcow2" %}</option>
                                 <option value="qcow">{% trans "qcow" %}</option>
@@ -221,11 +221,11 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">{% trans "Size" %}</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-3 control-label">{% trans "Size" %}</label>
+                        <div class="col-sm-6">
                             <input type="text" class="form-control" name="size" value="10" maxlength="3" required pattern="[0-9]+">
                         </div>
-                        <label class="col-lg-1 control-label">{% trans "GB" %}</label>
+                        <label class="col-sm-1 control-label">{% trans "GB" %}</label>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
@@ -246,8 +246,8 @@
                 </div>
                 <form class="form-horizontal" enctype="multipart/form-data"  method="post" role="form">{% csrf_token %}
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">{% trans "Name" %}</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-3 control-label">{% trans "Name" %}</label>
+                        <div class="col-sm-6">
                             <input type="file" name="file" id="id_file">
                         </div>
                     </div>

@@ -65,6 +65,9 @@ body {
     padding: 0;
     float: none;
 }
+.form-group {
+    margin-top: 25px;
+}
 .table {
     margin-top: 20px;
 }

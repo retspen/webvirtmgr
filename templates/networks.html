@@ -68,32 +68,32 @@
                 </div>
                 <form class="form-horizontal" method="post" action="" role="form">{% csrf_token %}
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">{% trans "Name" %}</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-4 control-label">{% trans "Name" %}</label>
+                        <div class="col-sm-6">
                             <input type="text" class="form-control" name="name" placeholder="default" required pattern="[a-zA-Z0-9_]+">
                         </div>
                     </div>
                     <div class="form-group bridge_name_form_group_dhcp">
-                        <label class="col-lg-4 control-label">{% trans "Subnet pool" %}</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-4 control-label">{% trans "Subnet pool" %}</label>
+                        <div class="col-sm-6">
                             <input type="text" class="form-control" name="subnet" value="192.168.100.0/24" required pattern="[0-9\/\.]+">
                         </div>
                     </div>
                     <div class="form-group bridge_name_form_group_dhcp">
-                        <label class="col-lg-4 control-label">{% trans "DHCP" %}</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-4 control-label">{% trans "DHCP" %}</label>
+                        <div class="col-sm-6">
                             <input type="checkbox" name="dhcp" value="true" checked>
                         </div>
                     </div>
                     <div class="form-group bridge_name_form_group_dhcp">
-                        <label class="col-lg-4 control-label">{% trans "Fixed Address" %}</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-4 control-label">{% trans "Fixed Address" %}</label>
+                        <div class="col-sm-6">
                             <input type="checkbox" name="fixed" value="true">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">{% trans "Type forwarding" %}</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-4 control-label">{% trans "Type forwarding" %}</label>
+                        <div class="col-sm-6">
                             <select id="forward_select" class="form-control" name="forward">
                                 <option value="nat">{% trans "NAT" %}</option>
                                 <option value="route">{% trans "ROUTE" %}</option>
@@ -103,8 +103,8 @@
                         </div>
                     </div>
                     <div class="form-group" id="bridge_name_form_group">
-                        <label class="col-lg-4 control-label">{% trans "Bridge Name" %}</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-4 control-label">{% trans "Bridge Name" %}</label>
+                        <div class="col-sm-6">
                             <input type="text" class="form-control" name="bridge_name" placeholder="br0" pattern="[a-z0-9]+">
                         </div>
                     </div>

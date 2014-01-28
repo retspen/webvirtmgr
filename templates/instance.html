@@ -158,85 +158,169 @@
                 </div>
             </div>
             <div class="tab-pane" id="settings" style="margin-top: 20px">
-               <div class="col-md-6">
-                    <p><strong>{% trans "Description" %}:</strong></p>
-                    <p><strong>{% trans "Autostart" %}:</strong></p>
-                </div>
-                <div class="col-md-6">
-                    <p>{{ description }}</p>
-                    <p>
-                        <form action="" method="post">{% csrf_token %}
-                            {% ifequal autostart 0 %}
-                                <input type="submit" class="btn btn-xs btn-default" name="set_autostart" value="{% trans "Enable" %}">
-                            {% else %}
-                                <input type="submit" class="btn btn-xs btn-default" name="unset_autostart" onclick="return confirm('{% trans "Are you sure?" %}')" value="{% trans "Disable" %}">
-                            {% endifequal %}
-                        </form>
-                    </p>
-                </div>
-                <div class="col-md-6">
-                     {% for network in networks %}
-                        <p><strong>Eth{{ forloop.counter0 }}</strong></p>
-                     {% endfor %}
-                </div>
-                <div class="col-md-6">
-                    {% for network in networks %}
-                        {% if network.ip %}
-                            <p>{{ network.ip }} ({{ network.nic }})</p>
-                        {% else %}
-                            <p>{{ network.mac }} ({{ network.nic }})</p>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-                <hr>
-                <div class="col-md-6">
-                    {% for disk in disks %}
-                        <p><strong>{% trans "Disk" %} {{ disk.dev }}</strong></p>
-                    {% endfor %}
-                </div>
-                <div class="col-md-6">
-                    {% for disk in disks %}
-                        <p>{{ disk.image }} ({{ disk.storage }})</p>
-                    {% endfor %}
-                </div>
-                <hr>
-                {% if media %}
-                    <div class="col-md-6">
-                        <p><strong>{% trans "Connected" %}</strong></p>
-                    </div>
-                    <div class="col-md-6">
-                        {% for iso in media %}
-                        <p>{{ iso.image }}</p>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-                <form action="" method="post">{% csrf_token %}
-                    {% if media %}
-                        <input type="hidden" name="iso_media" value="{{ media.0.path }}">
-                        <button type="submit" class="btn btn-default"  name="umount_iso" onclick="return confirm('{% trans "Are you sure?" %}')">{% trans "Disconnect" %}</button>
-                    {% else %}
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">{% trans "Images" %}</label>
-                            <div class="col-sm-6">
-                                <select name="iso_media" class="form-control">
-                                    {% if media_iso %}
-                                        {% for iso in media_iso %}
-                                            <option value="{{ iso }}">{{ iso }}</option>
+                <ul class="nav nav-tabs" style="margin-top: 20px">
+                    <li class="active"><a href="#instancesettings" data-toggle="tab">{% trans "Instance Settings" %}</a></li>
+                    <li><a href="#instancexml" data-toggle="tab">{% trans "Instance XML" %}</a></li>
+                    <li><a href="#instancemedia" data-toggle="tab">{% trans "Instance Media" %}</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane tab-inst active" id="instancesettings">
+                        <form class="form-horizontal" method="post" role="form">{% csrf_token %}
+                            <p style="font-weight:bold;">{% trans "Logical host CPUs:" %} {{ vcpu_host }}</p>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" style="font-weight:normal;"> {% trans "Current allocation" %}</label>
+                                <div class="col-sm-4">
+                                    <select name="cur_vcpu" class="form-control">
+                                        {% for cpu in vcpu_range %}
+                                            {% if cur_vcpu %}
+                                                <option value="{{ cpu }}" {% if cpu == cur_vcpu %}selected{% endif %}>{{ cpu }}</option>
+                                            {% else %}
+                                                <option value="{{ cpu }}" {% if cpu == vcpu %}selected{% endif %}>{{ cpu }}</option>
+                                            {% endif %}
                                         {% endfor %}
-                                    {% else %}
-                                        <option value="none">{% trans "None" %}</option>
-                                    {% endif %}
-                                </select>
-                            <br>
-                            {% if media_iso %}
-                                <button type="submit" class="btn btn-default" name="mount_iso" >{% trans "Connect" %}</button>
-                            {% else %}
-                                <button class="btn btn-default disabled" name="connect">{% trans "Connect" %}</button>
-                            {% endif %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" style="font-weight:normal;">{% trans "Maximum allocation" %}</label>
+                                <div class="col-sm-4">
+                                    <select name="vcpu" class="form-control">
+                                        {% for cpu in vcpu_range %}
+                                            <option value="{{ cpu }}" {% if cpu == vcpu %}selected{% endif %}>{{ cpu }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <p style="font-weight:bold;">{% trans "Total host memory:" %} {{ memory_host|filesizeformat }}</p>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" style="font-weight:normal;">{% trans "Current allocation" %}</label>
+                                <div class="col-sm-4">
+                                    <select name="cur_memory" class="form-control">
+                                        {% for mem in memory_range %}
+                                            <option value="{{ mem }}" {% if mem == cur_memory %}selected{% endif %}>{{ mem }} {% trans "MB" %}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" style="font-weight:normal;">{% trans "Maximum allocation" %}</label>
+                                <div class="col-sm-4">
+                                    <select name="memory" class="form-control">
+                                        {% for mem in memory_range %}
+                                            <option value="{{ mem }}" {% if mem == memory %}selected{% endif %}>{{ mem }} {% trans "MB" %}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <p style="font-weight:bold;">{% trans "Information" %}</p>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" style="font-weight:normal;">{% trans "Description" %}</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" name="description" value="{{ description }}"/>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-lg btn-primary pull-right" name="change_settings">{% trans "Change" %}</button>
+                        </form>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="tab-pane tab-inst" id="instancexml">
+                        <div id="viewXMLpre">
+                            <pre class="pre-scrollable">{{ inst_xml }}</pre>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+                                <button type="button" class="btn btn-primary" onclick="javascript:$('#viewXMLpre').hide();$('#viewXMLform').show();">{% trans "Edit" %}</button>
                             </div>
                         </div>
-                    {% endif %}
-                </form>
+                        <form id="viewXMLform" class="form-horizontal" method="post" role="form" style="display: none;">{% csrf_token %}
+                            <textarea class="form-control" rows="18" name="inst_xml">{{ inst_xml }}</textarea>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+                                <button type="submit" class="btn btn-danger" name="change_xml">{% trans "Save" %}</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane tab-inst" id="instancemedia">
+                        <div class="col-md-6">
+                            <p><strong>{% trans "Description" %}:</strong></p>
+                            <p><strong>{% trans "Autostart" %}:</strong></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p>{{ description }}</p>
+                            <p>
+                                <form action="" method="post">{% csrf_token %}
+                                    {% ifequal autostart 0 %}
+                                        <input type="submit" class="btn btn-xs btn-default" name="set_autostart" value="{% trans "Enable" %}">
+                                    {% else %}
+                                        <input type="submit" class="btn btn-xs btn-default" name="unset_autostart" onclick="return confirm('{% trans "Are you sure?" %}')" value="{% trans "Disable" %}">
+                                    {% endifequal %}
+                                </form>
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                             {% for network in networks %}
+                                <p><strong>Eth{{ forloop.counter0 }}</strong></p>
+                             {% endfor %}
+                        </div>
+                        <div class="col-md-6">
+                            {% for network in networks %}
+                                {% if network.ip %}
+                                    <p>{{ network.ip }} ({{ network.nic }})</p>
+                                {% else %}
+                                    <p>{{ network.mac }} ({{ network.nic }})</p>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <hr>
+                        <div class="col-md-6">
+                            {% for disk in disks %}
+                                <p><strong>{% trans "Disk" %} {{ disk.dev }}</strong></p>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-6">
+                            {% for disk in disks %}
+                                <p>{{ disk.image }} ({{ disk.storage }})</p>
+                            {% endfor %}
+                        </div>
+                        <hr>
+                        {% if media %}
+                            <div class="col-md-6">
+                                <p><strong>{% trans "Connected" %}</strong></p>
+                            </div>
+                            <div class="col-md-6">
+                                {% for iso in media %}
+                                <p>{{ iso.image }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <form action="" method="post">{% csrf_token %}
+                            {% if media %}
+                                <input type="hidden" name="iso_media" value="{{ media.0.path }}">
+                                <button type="submit" class="btn btn-default"  name="umount_iso" onclick="return confirm('{% trans "Are you sure?" %}')">{% trans "Disconnect" %}</button>
+                            {% else %}
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">{% trans "Images" %}</label>
+                                    <div class="col-sm-6">
+                                        <select name="iso_media" class="form-control">
+                                            {% if media_iso %}
+                                                {% for iso in media_iso %}
+                                                    <option value="{{ iso }}">{{ iso }}</option>
+                                                {% endfor %}
+                                            {% else %}
+                                                <option value="none">{% trans "None" %}</option>
+                                            {% endif %}
+                                        </select>
+                                    <br>
+                                    {% if media_iso %}
+                                        <button type="submit" class="btn btn-default" name="mount_iso" >{% trans "Connect" %}</button>
+                                    {% else %}
+                                        <button class="btn btn-default disabled" name="connect">{% trans "Connect" %}</button>
+                                    {% endif %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </form>
+                    </div>
+                </div>
             </div>
             <div class="tab-pane" id="snapshots">
                 <ul class="nav nav-tabs" style="margin-top: 20px">
@@ -303,36 +387,41 @@
                 </div>
             </div>
             <div class="tab-pane" id="graph">
-                {% ifequal status 1 %}
-                    <div id="cpu-usage">
-                        <p style="margin-left: 25px">{% trans "CPU usage" %}</p>
-                        <canvas style="margin-left: 25px" id="cpuChart" width="700" height="125"></canvas>
+                <ul class="nav nav-tabs" style="margin-top: 20px">
+                    <li class="active"><a href="#statistics" data-toggle="tab">{% trans "Instance Statistics" %}</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane tab-inst active" id="statistics">
+                    {% ifequal status 1 %}
+                        <div id="cpu-usage">
+                            <p style="margin-left: 25px">{% trans "CPU usage" %}</p>
+                            <canvas style="margin-left: 25px" id="cpuChart" width="700" height="125"></canvas>
+                        </div>
+                        <div id="net-usage">
+                            {% for network in networks %}
+                                <p style="margin-left: 25px">{% trans "Bandwidth" %} - Eth{{ forloop.counter0 }}</p>
+                                <canvas style="margin-left: 25px" id="netEth{{ forloop.counter0 }}Chart" width="700" height="125"></canvas>
+                                <div id="lineLegend">
+                                    <span class="netIN">{% trans "In" %}</span>
+                                    <span class="netOUT">{% trans "Out" %}</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div id="disk-usage">
+                            {% for disk in disks %}
+                               <p style="margin-left: 25px">{% trans "Disk I/O" %} - {{ disk.dev }}</p>
+                               <canvas style="margin-left: 25px" id="blk{{ disk.dev }}Chart" width="700" height="125"></canvas>
+                               <div id="lineLegend">
+                                    <span class="diskRD">{% trans "Read" %}</span>
+                                    <span class="diskWR">{% trans "Write" %}</span>
+                               </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p>{% trans "Turn On your instance" %}</p>
+                    {% endifequal %}
                     </div>
-                    <div id="net-usage">
-                        {% for network in networks %}
-                            <p style="margin-left: 25px">{% trans "Bandwidth" %} - Eth{{ forloop.counter0 }}</p>
-                            <canvas style="margin-left: 25px" id="netEth{{ forloop.counter0 }}Chart" width="700" height="125"></canvas>
-                            <div id="lineLegend">
-                                <span class="netIN">{% trans "In" %}</span>
-                                <span class="netOUT">{% trans "Out" %}</span>
-                            </div>
-                        {% endfor %}
-                    </div>
-                    <div id="disk-usage">
-                        {% for disk in disks %}
-                           <p style="margin-left: 25px">{% trans "Disk I/O" %} - {{ disk.dev }}</p>
-                           <canvas style="margin-left: 25px" id="blk{{ disk.dev }}Chart" width="700" height="125"></canvas>
-                           <div id="lineLegend">
-                                <span class="diskRD">{% trans "Read" %}</span>
-                                <span class="diskWR">{% trans "Write" %}</span>
-                           </div>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <div class="well">
-                        <h4>{% trans "Turn on your instance" %}</h4>
-                    </div>
-                {% endifequal %}
+                </div>
             </div>
             <div class="tab-pane" id="migrate">
                 <ul class="nav nav-tabs" style="margin-top: 20px">
@@ -341,7 +430,7 @@
                 <div class="tab-content">
                     <div class="tab-pane tab-inst active" id="instancemigate">
                         <p style="text-align:center;">
-                            <span class="text-danger">{% trans "Warning:" %}</span> {% trans "Both servers must have equal settings and OS type" %}
+                            <span class="text-danger">{% trans "Warning:" %}</span> {% trans "Both host servers must have equal settings and OS type" %}
                         </p>
                         <br>
                         <div class="row show-grid">
@@ -378,82 +467,27 @@
                 </div>
             </div>
             <div class="tab-pane" id="delete">
-
+                <ul class="nav nav-tabs" style="margin-top: 20px">
+                    <li class="active"><a href="#destroy" data-toggle="tab">{% trans "Delete Instance" %}</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane tab-inst active" id="destroy">
+                        <p>{% trans "Delete HDD image?" %}</p>
+                        <form class="form-group" method="post" role="form">{% csrf_token %}
+                            <div class="checkbox" style="margin-left: 8px;">
+                                <label>
+                                  <input type="checkbox" name="delete_disk" value="true">
+                                    <strong>{% trans "Warning: if you check this box, VM's data will be lost!" %}</strong>
+                                </label>
+                            </div>
+                            <button type="submit" class="btn btn-lg btn-primary pull-right" name="delete">{% trans "Delete" %}</button>
+                        </form>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
-    <!-- Delete -->
-    <div class="modal fade" id="Delete" tabindex="-1" role="dialog" aria-labelledby="DeleteLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">{% trans "Undefined Server" %}</h4>
-                </div>
-                <div class="modal-body">
-                    <p>{% trans "Delete HDD image?" %}</p>
-                </div>
-                <form class="form-group" method="post" role="form">{% csrf_token %}
-                    <div class="checkbox">
-                        <label>
-                          <input type="checkbox" name="delete_disk" value="true"><strong>{% trans "Warning: if you check this box, VM's data will be lost!" %}</strong>
-                        </label>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-                        <button type="submit" class="btn btn-primary" name="delete">{% trans "Delete" %}</button>
-                    </div>
-                </form>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-
-    <!-- Migrate -->
-    <div class="modal fade" id="Migrate" tabindex="-1" role="dialog" aria-labelledby="MigrateLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">{% trans "Migrate" %} '{{ vname }}'</h4>
-                </div>
-                <div class="modal-body">
-                    <p style="text-align:center;">
-                        <span class="text-danger">{% trans "Warning:" %}</span> {% trans "Both servers must have equal settings and OS type" %}
-                    </p>
-                    <br>
-                    <div class="row show-grid">
-                        <div class="col-lg-4" style="text-align:right;">
-                             <p><strong>{% trans "Original host" %}</strong></p>
-                        </div>
-                        <div class="col-lg-4">
-                             <p>{{ compute.name }}</p>
-                        </div>
-                    </div>
-                </div>
-                <form class="form-horizontal" method="post" role="form">{% csrf_token %}
-                    <div class="form-group">
-                        <label class="col-lg-4 control-label">{% trans "New host" %}</label>
-                        <div class="col-lg-5">
-                            <select name="compute_id" class="form-control">
-                            {% if computes_count != 1 %}
-                                {% for comp in computes %}
-                                    {% if comp.id != compute.id %}
-                                        <option value="{{ comp.id }}">{{ comp.name }}</option>
-                                    {% endif %}
-                                {% endfor %}
-                            {% endif %}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-                        <button type="submit" class="btn btn-primary" name="migrate">{% trans "Migrate" %}</button>
-                    </div>
-                </form>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
 
     <!-- Modal Edit -->
     <div class="modal fade" id="Edit" tabindex="-1" role="dialog" aria-labelledby="addHostLabel" aria-hidden="true">
@@ -474,71 +508,7 @@
                 </div>
                 <div class="tab-content">
                     <div class="tab-pane active" id="1">
-                        <form class="form-horizontal" method="post" role="form">{% csrf_token %}
-                            <div class="modal-body">
-                                <p style="font-weight:bold;">{% trans "Logical host CPUs:" %} {{ vcpu_host }}</p>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-lg-4 control-label" style="font-weight:normal;"> {% trans "Current allocation" %}</label>
-                                <div class="col-lg-6">
-                                    <select name="cur_vcpu" class="form-control">
-                                        {% for cpu in vcpu_range %}
-                                            {% if cur_vcpu %}
-                                                <option value="{{ cpu }}" {% if cpu == cur_vcpu %}selected{% endif %}>{{ cpu }}</option>
-                                            {% else %}
-                                                <option value="{{ cpu }}" {% if cpu == vcpu %}selected{% endif %}>{{ cpu }}</option>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-lg-4 control-label" style="font-weight:normal;">{% trans "Maximum allocation" %}</label>
-                                <div class="col-lg-6">
-                                    <select name="vcpu" class="form-control">
-                                        {% for cpu in vcpu_range %}
-                                            <option value="{{ cpu }}" {% if cpu == vcpu %}selected{% endif %}>{{ cpu }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="modal-body">
-                                <p style="font-weight:bold;">{% trans "Total host memory:" %} {{ memory_host|filesizeformat }}</p>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-lg-4 control-label" style="font-weight:normal;">{% trans "Current allocation" %}</label>
-                                <div class="col-lg-6">
-                                    <select name="cur_memory" class="form-control">
-                                        {% for mem in memory_range %}
-                                            <option value="{{ mem }}" {% if mem == cur_memory %}selected{% endif %}>{{ mem }} {% trans "MB" %}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-lg-4 control-label" style="font-weight:normal;">{% trans "Maximum allocation" %}</label>
-                                <div class="col-lg-6">
-                                    <select name="memory" class="form-control">
-                                        {% for mem in memory_range %}
-                                            <option value="{{ mem }}" {% if mem == memory %}selected{% endif %}>{{ mem }} {% trans "MB" %}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="modal-body">
-                                <p style="font-weight:bold;">{% trans "Information" %}</p>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-lg-4 control-label" style="font-weight:normal;">{% trans "Description" %}</label>
-                                <div class="col-lg-6">
-                                    <input type="text" class="form-control" name="description" value="{{ description }}"/>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-                                <button type="submit" class="btn btn-primary" name="change_settings">{% trans "Change" %}</button>
-                            </div>
-                        </form>
+
                     </div>
                     <div class="tab-pane" id="2">
                         <form class="form-horizontal" method="post" role="form">{% csrf_token %}
@@ -561,20 +531,7 @@
                         </form>
                     </div>
                     <div class="tab-pane" id="3">
-                        <div id="viewXMLpre">
-                            <pre class="pre-scrollable">{{ inst_xml }}</pre>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-                                <button type="button" class="btn btn-primary" onclick="javascript:$('#viewXMLpre').hide();$('#viewXMLform').show();">{% trans "Edit" %}</button>
-                            </div>
-                        </div>
-                        <form id="viewXMLform" class="form-horizontal" method="post" role="form" style="display: none;">{% csrf_token %}
-                            <textarea class="form-control" rows="18" name="inst_xml">{{ inst_xml }}</textarea>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-                                <button type="submit" class="btn btn-danger" name="change_xml">{% trans "Save" %}</button>
-                            </div>
-                        </form>
+
                     </div>
                 </div>
             </div><!-- /.modal-content -->
