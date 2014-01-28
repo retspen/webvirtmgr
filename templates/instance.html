@@ -146,11 +146,11 @@
                                         <input type="password" class="form-control" name="vnc_passwd" placeholder="{% trans "Password" %}" maxlength="14">
                                     </div>
                                 </div>
-                                {% if computes_count != 1 %}
-                                    <button class="btn btn-primary btn-lg pull-right disabled" name="set_vnc_passwd">{% trans "Set Password" %}</button>
-                                {% else %}
+                                {% ifequal status 5 %}
                                     <button type="submit" class="btn btn-primary btn-lg pull-right" name="set_vnc_passwd">{% trans "Set Password" %}</button>
-                                {% endif %}
+                                {% else %}
+                                    <button class="btn btn-primary btn-lg pull-right disabled" name="set_vnc_passwd">{% trans "Set Password" %}</button>
+                                {% endifequal %}
                             </form>
                             <div class="clearfix"></div>
                         </div>
@@ -367,11 +367,11 @@
                                     </select>
                                 </div>
                             </div>
-                            {% ifequal status 5 %}
-                                <button class="btn btn-lg btn-primary pull-right disabled">{% trans "Migrate" %}</button>
-                            {% else %}
+                            {% if computes_count != 1 %}
                                 <button type="submit" class="btn btn-lg btn-primary pull-right" name="migrate">{% trans "Migrate" %}</button>
-                            {% endifequal %}
+                            {% else %}
+                                <button class="btn btn-lg btn-primary pull-right disabled">{% trans "Migrate" %}</button>
+                            {% endif %}
                         </form>
                         <div class="clearfix"></div>
                     </div>
