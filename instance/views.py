@@ -307,8 +307,16 @@ def instances(request, host_id):
             uuid = inst.uuid
         except Instance.DoesNotExist:
             uuid = None
+       
+	ip =  wvmInstance(compute.hostname,
+                          compute.login,
+                          compute.password,
+                          compute.type,
+			  instance).get_net_device()[0]["ip"]
+
         instances.append({'name': instance,
                           'status': conn.get_instance_status(instance),
+			  'ip':ip,
                           'uuid': uuid})
 
     try:
@@ -369,7 +377,7 @@ def instance(request, host_id, vname):
         disks = conn.get_disk_device()
         media = conn.get_media_device()
         networks = conn.get_net_device()
-        media_iso = sorted(conn.get_iso_media())
+	media_iso = sorted(conn.get_iso_media())
         vcpu_range = conn.get_max_cpus()
         memory_range = [256, 512, 1024, 2048, 4096, 8192, 16384]
         memory_host = conn.get_max_memory()
