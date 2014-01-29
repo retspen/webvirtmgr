@@ -2,53 +2,45 @@
 {% load i18n %}
 {% load staticfiles %}
 {% block title %}{% trans "Overview" %}{% endblock %}
-{% block style %}
-    <link href="{% static "css/progressbar.css" %}" rel="stylesheet">
-{% endblock %}
 {% block content %}
-    <div class="row">
-        {% include 'sidebar.html' %}
-        <div class="col-md-9" role="main">
-            {% if errors %}
-                {% for error in errors %}
-                    <div class="alert alert-danger">
-                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                        {{ error }}
-                    </div>
-                {% endfor %}
-            {% endif %}
-            <div class="page-header">
-                <h1>{% trans "Overview" %}</h1>
+    {% include 'sidebar.html' %}
+    <div class="main">
+        {% if errors %}
+            {% for error in errors %}
+                <div class="alert alert-danger">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    {{ error }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        <h4>{% trans "Basic details" %}</h4>
+        <div class="row show-grid">
+            <div class="col-md-6">
+                <p>{% trans "Connection" %}</p>
+                <p>{% trans "Hostname" %}</p>
+                <p>{% trans "Hypervisor" %}</p>
+                <p>{% trans "Memory" %}</p>
+                <p>{% trans "Logical CPUs" %}</p>
+                <p>{% trans "Processor" %}</p>
+                <p>{% trans "Architecture" %}</p>
             </div>
-            <h4>{% trans "Basic details" %}</h4>
-            <div class="row show-grid">
-                <div class="col-md-6">
-                    <p>{% trans "Connection" %}</p>
-                    <p>{% trans "Hostname" %}</p>
-                    <p>{% trans "Hypervisor" %}</p>
-                    <p>{% trans "Memory" %}</p>
-                    <p>{% trans "Logical CPUs" %}</p>
-                    <p>{% trans "Processor" %}</p>
-                    <p>{% trans "Architecture" %}</p>
-                </div>
-                <div class="col-md-6">
-                    <p>{{ uri_conn }}</p>
-                    <p>{{ hostname }}</p>
-                    <p>{{ hypervisor }}</p>
-                    <p>{{ host_memory|filesizeformat }}</p>
-                    <p>{{ logical_cpu }}</p>
-                    <p>{{ model_cpu }}</p>
-                    <p>{{ host_arch }}</p>
-                </div>
+            <div class="col-md-6">
+                <p>{{ uri_conn }}</p>
+                <p>{{ hostname }}</p>
+                <p>{{ hypervisor }}</p>
+                <p>{{ host_memory|filesizeformat }}</p>
+                <p>{{ logical_cpu }}</p>
+                <p>{{ model_cpu }}</p>
+                <p>{{ host_arch }}</p>
             </div>
-            <h4>{% trans "Performance" %}</h4>
-            <div class="row show-grid">
-                <div class="col-md-6">
-                    <p>{% trans "CPU usage" %}</p>
-                    <canvas id="cpuChart" width="700" height="200"></canvas>
-                    <p>{% trans "Memory usage" %}</p>
-                    <canvas id="memoryChart" width="700" height="200"></canvas>
-                </div>
+        </div>
+        <h4>{% trans "Performance" %}</h4>
+        <div class="row show-grid">
+            <div class="col-md-6">
+                <p>{% trans "CPU usage" %}</p>
+                <canvas id="cpuChart" width="700" height="200"></canvas>
+                <p>{% trans "Memory usage" %}</p>
+                <canvas id="memoryChart" width="700" height="200"></canvas>
             </div>
         </div>
     </div>
