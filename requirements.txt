@@ -1,1 +1,2 @@
 django==1.5.5
+gunicorn==18.0

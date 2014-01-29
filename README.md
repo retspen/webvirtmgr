@@ -5,10 +5,10 @@
 ### Whats new?
 
 * New design
+* Move from apache to nginx (supervisor and gunicorn)
 * Move snapshots to instance page
 * Fix view on device with 1024x768 resolution
 * Fix bugs
-
 
 ### <a href="https://github.com/retspen/webvirtmgr/wiki/Screenshots">Screenshots</a>
 

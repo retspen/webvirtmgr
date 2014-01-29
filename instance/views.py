@@ -27,7 +27,7 @@ def diskusage(request, host_id, vname):
     datasets_wr = []
     json_blk = []
     cookie_blk = {}
-    data_error = None
+    data_error = False
     compute = Compute.objects.get(id=host_id)
 
     try:
