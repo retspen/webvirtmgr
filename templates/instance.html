@@ -104,29 +104,6 @@
                         </form>
                         <div class="clearfix"></div>
                     </div>
-<<<<<<< HEAD
-                </form>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-
-    <!-- Delete -->
-    <div class="modal fade" id="Delete" tabindex="-1" role="dialog" aria-labelledby="DeleteLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">{% trans "Delete" %} '{{ vname }}'</h4>
-                </div>
-                <div class="modal-body">
-                    <p>{% trans "Delete HDD image?" %}</p>
-                </div>
-                <form class="form-group" method="post" role="form">{% csrf_token %}
-                    <div class="checkbox">
-                        <label>
-                          <input type="checkbox" name="delete_disk" value="true"><strong>{% trans "Warning: if you check this box, VM's data will be lost!" %}</strong>
-                        </label>
-=======
                     <div class="tab-pane tab-inst" id="forceshutdown">
                         <p>{% trans "This action forces power off the instance and may cause data corruption." %}</p>
                         <form action="" method="post">{% csrf_token %}
@@ -141,7 +118,6 @@
                             {% endifequal %}
                         </form>
                         <div class="clearfix"></div>
->>>>>>> develop
                     </div>
                     <div class="tab-pane tab-inst" id="suspend">
                         <p>{% trans "This action suspend or restore the instance." %}</p>
