@@ -3,6 +3,9 @@ body {
     color: #333333;
     background-color: #fff;
 }
+pre {
+    font-size: 12px;
+}
 .navbar-inverse {
     text-shadow: 0 -1px 0 rgba(0,0,0,.15);
     background-color: #563d7c;

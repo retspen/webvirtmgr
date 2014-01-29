@@ -37,7 +37,7 @@
                         <td>{% if status %}
                             <span class={% ifequal status 5 %}"text-danger">{% trans "Shuttoff" %}{% endifequal %}
                                         {% ifequal status 1 %}"text-success">{% trans "Running" %}{% endifequal %}
-                                        {% ifequal status 3 %}"text-warnging">{% trans "Suspend" %}{% endifequal %}
+                                        {% ifequal status 3 %}"text-warning">{% trans "Suspend" %}{% endifequal %}
                             </span>
                             {% else %}
                                 {% trans "None" %}
@@ -86,26 +86,50 @@
                 <ul class="nav nav-tabs ">
                     <li class="active"><a href="#shutdown" data-toggle="tab">{% trans "Shutdown" %}</a></li>
                     <li><a href="#forceshutdown" data-toggle="tab">{% trans "Force Shutdown" %}</a></li>
+                    <li><a href="#suspend" data-toggle="tab">{% trans "Suspend" %}</a></li>
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane tab-inst active" id="shutdown">
-                        <p>{% trans "This will power off your droplet. recommend powering off your droplet through the command line, as this action is the same as hard resetting the server and may cause data corruption. Do you wish to proceed?" %}</p>
+                        <p>{% trans "This action sends ACPI shutdown signal to instance." %}</p>
                         <form action="" method="post">{% csrf_token %}
                             {% ifequal status 5 %}
                                 <button type="submit" name="start" class="btn btn-lg btn-primary pull-right">{% trans "Start" %}</button>
-                            {% else %}
+                            {% endifequal %}
+                            {% ifequal status 1 %}
                                 <button type="submit" name="power" value="shutdown" class="btn btn-lg btn-primary pull-right">{% trans "Shutdown" %}</button>
+                            {% endifequal %}
+                            {% ifequal status 3 %}
+                                <button class="btn btn-lg btn-primary pull-right disabled">{% trans "Shutdown" %}</button>
                             {% endifequal %}
                         </form>
                         <div class="clearfix"></div>
                     </div>
                     <div class="tab-pane tab-inst" id="forceshutdown">
-                        <p>{% trans "This will power off your droplet. recommend powering off your droplet through the command line, as this action is the same as hard resetting the server and may cause data corruption. Do you wish to proceed?" %}</p>
+                        <p>{% trans "This action forces power off the instance and may cause data corruption." %}</p>
                         <form action="" method="post">{% csrf_token %}
                             {% ifequal status 5 %}
                                 <button type="submit" name="start" class="btn btn-lg btn-primary pull-right">{% trans "Start" %}</button>
-                            {% else %}
+                            {% endifequal %}
+                            {% ifequal status 1 %}
                                 <button type="submit" name="power" value="destroy" class="btn btn-lg btn-primary pull-right">{% trans "Force Shutdown" %}</button>
+                            {% endifequal %}
+                            {% ifequal status 3 %}
+                                <button class="btn btn-lg btn-primary pull-right disabled">{% trans "Force Shutdown" %}</button>
+                            {% endifequal %}
+                        </form>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="tab-pane tab-inst" id="suspend">
+                        <p>{% trans "This action suspend or restore the instance." %}</p>
+                        <form action="" method="post">{% csrf_token %}
+                            {% ifequal status 5 %}
+                                <button type="submit" name="start" class="btn btn-lg btn-primary pull-right">{% trans "Start" %}</button>
+                            {% endifequal %}
+                            {% ifequal status 1 %}
+                                <button type="submit" name="suspend" class="btn btn-lg btn-primary pull-right">{% trans "Suspend" %}</button>
+                            {% endifequal %}
+                            {% ifequal status 3 %}
+                                <button type="submit" name="resume" class="btn btn-lg btn-primary pull-right">{% trans "Resume" %}</button>
                             {% endifequal %}
                         </form>
                         <div class="clearfix"></div>
@@ -119,7 +143,7 @@
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane tab-inst active" id="console">
-                        <p>{% trans "This will open up a console VNC connection to your droplet and is the equivalent of plugging a monitor and keyboard directly to your virtual server." %}</p>
+                        <p>{% trans "This action open new window with console VNC connection to your instance." %}</p>
                         {% ifequal status 5 %}
                             <button class="btn btn-primary btn-lg pull-right disabled">{% trans "Console" %}</button>
                         {% else %}
@@ -128,7 +152,7 @@
                         <div class="clearfix"></div>
                     </div>
                     <div class="tab-pane tab-inst" id="vnc">
-                        <p>{% trans "You cant set passord" %}</p>
+                        <p>{% trans "If you want to create password for vnc, shutdown the instance." %}</p>
                         <div class="col-lg-3">
                             <form class="form-horizontal" method="post" role="form">{% csrf_token %}
                                 <div class="form-group">
@@ -159,13 +183,33 @@
             </div>
             <div class="tab-pane" id="settings" style="margin-top: 20px">
                 <ul class="nav nav-tabs" style="margin-top: 20px">
-                    <li class="active"><a href="#instancesettings" data-toggle="tab">{% trans "Instance Settings" %}</a></li>
-                    <li><a href="#instancexml" data-toggle="tab">{% trans "Instance XML" %}</a></li>
-                    <li><a href="#instancemedia" data-toggle="tab">{% trans "Instance Media" %}</a></li>
+                    <li class="active"><a href="#instancesettings" data-toggle="tab">{% trans "VCPU's and Memory" %}</a></li>
+                    <li><a href="#instancemedia" data-toggle="tab">{% trans "Media" %}</a></li>
+                    <li><a href="#instancedevice" data-toggle="tab">{% trans "Disk and Networks" %}</a></li>
+                    <li><a href="#instancexml" data-toggle="tab">{% trans "XML" %}</a></li>
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane tab-inst active" id="instancesettings">
+                        <p style="font-weight:bold;">{% trans "Description and Autostart" %}</p>
+                        <form class="form-horizontal" action="" method="post">{% csrf_token %}
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" style="font-weight:normal;"> {% trans "Autostart" %}</label>
+                                <div class="col-sm-4">
+                                    {% ifequal autostart 0 %}
+                                        <input type="submit" class="btn btn-md btn-default" name="set_autostart" value="{% trans "Enable" %}">
+                                    {% else %}
+                                        <input type="submit" class="btn btn-md btn-default" name="unset_autostart" onclick="return confirm('{% trans "Are you sure?" %}')" value="{% trans "Disable" %}">
+                                    {% endifequal %}
+                                </div>
+                            </div>
+                        </form>
                         <form class="form-horizontal" method="post" role="form">{% csrf_token %}
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" style="font-weight:normal;">{% trans "Description" %}</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" name="description" value="{{ description }}"/>
+                                </div>
+                            </div>
                             <p style="font-weight:bold;">{% trans "Logical host CPUs:" %} {{ vcpu_host }}</p>
                             <div class="form-group">
                                 <label class="col-sm-4 control-label" style="font-weight:normal;"> {% trans "Current allocation" %}</label>
@@ -212,93 +256,32 @@
                                     </select>
                                 </div>
                             </div>
-                            <p style="font-weight:bold;">{% trans "Information" %}</p>
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label" style="font-weight:normal;">{% trans "Description" %}</label>
-                                <div class="col-sm-4">
-                                    <input type="text" class="form-control" name="description" value="{{ description }}"/>
-                                </div>
-                            </div>
-                            <button type="submit" class="btn btn-lg btn-primary pull-right" name="change_settings">{% trans "Change" %}</button>
+                            {% ifequal stutus 5 %}
+                                <button type="submit" class="btn btn-lg btn-primary pull-right" name="change_settings">{% trans "Change" %}</button>
+                            {% else %}
+                                <button  class="btn btn-lg btn-primary pull-right disabled">{% trans "Change" %}</button>
+                            {% endifequal %}
                         </form>
                         <div class="clearfix"></div>
                     </div>
-                    <div class="tab-pane tab-inst" id="instancexml">
-                        <div id="viewXMLpre">
-                            <pre class="pre-scrollable">{{ inst_xml }}</pre>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-                                <button type="button" class="btn btn-primary" onclick="javascript:$('#viewXMLpre').hide();$('#viewXMLform').show();">{% trans "Edit" %}</button>
-                            </div>
-                        </div>
-                        <form id="viewXMLform" class="form-horizontal" method="post" role="form" style="display: none;">{% csrf_token %}
-                            <textarea class="form-control" rows="18" name="inst_xml">{{ inst_xml }}</textarea>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-                                <button type="submit" class="btn btn-danger" name="change_xml">{% trans "Save" %}</button>
-                            </div>
-                        </form>
-                    </div>
                     <div class="tab-pane tab-inst" id="instancemedia">
-                        <div class="col-md-6">
-                            <p><strong>{% trans "Description" %}:</strong></p>
-                            <p><strong>{% trans "Autostart" %}:</strong></p>
-                        </div>
-                        <div class="col-md-6">
-                            <p>{{ description }}</p>
-                            <p>
-                                <form action="" method="post">{% csrf_token %}
-                                    {% ifequal autostart 0 %}
-                                        <input type="submit" class="btn btn-xs btn-default" name="set_autostart" value="{% trans "Enable" %}">
-                                    {% else %}
-                                        <input type="submit" class="btn btn-xs btn-default" name="unset_autostart" onclick="return confirm('{% trans "Are you sure?" %}')" value="{% trans "Disable" %}">
-                                    {% endifequal %}
-                                </form>
-                            </p>
-                        </div>
-                        <div class="col-md-6">
-                             {% for network in networks %}
-                                <p><strong>Eth{{ forloop.counter0 }}</strong></p>
-                             {% endfor %}
-                        </div>
-                        <div class="col-md-6">
-                            {% for network in networks %}
-                                {% if network.ip %}
-                                    <p>{{ network.ip }} ({{ network.nic }})</p>
-                                {% else %}
-                                    <p>{{ network.mac }} ({{ network.nic }})</p>
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-                        <hr>
-                        <div class="col-md-6">
-                            {% for disk in disks %}
-                                <p><strong>{% trans "Disk" %} {{ disk.dev }}</strong></p>
-                            {% endfor %}
-                        </div>
-                        <div class="col-md-6">
-                            {% for disk in disks %}
-                                <p>{{ disk.image }} ({{ disk.storage }})</p>
-                            {% endfor %}
-                        </div>
-                        <hr>
                         {% if media %}
-                            <div class="col-md-6">
-                                <p><strong>{% trans "Connected" %}</strong></p>
+                            <div class="col-sm-3">
+                                <p style="text-align: right; margin-top: 20px;"><strong>{% trans "Connected" %}</strong></p>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-sm-9">
                                 {% for iso in media %}
-                                <p>{{ iso.image }}</p>
+                                <p style="margin-top: 20px;">{{ iso.image }}</p>
                                 {% endfor %}
                             </div>
                         {% endif %}
-                        <form action="" method="post">{% csrf_token %}
+                        <form class="form-horizontal" action="" method="post">{% csrf_token %}
                             {% if media %}
                                 <input type="hidden" name="iso_media" value="{{ media.0.path }}">
-                                <button type="submit" class="btn btn-default"  name="umount_iso" onclick="return confirm('{% trans "Are you sure?" %}')">{% trans "Disconnect" %}</button>
+                                <button type="submit" class="btn btn-primary btn-lg pull-right"  name="umount_iso" onclick="return confirm('{% trans "Are you sure?" %}')">{% trans "Disconnect" %}</button>
                             {% else %}
                                 <div class="form-group">
-                                    <label class="col-sm-2 control-label">{% trans "Images" %}</label>
+                                    <label class="col-sm-3 control-label">{% trans "Images" %}</label>
                                     <div class="col-sm-6">
                                         <select name="iso_media" class="form-control">
                                             {% if media_iso %}
@@ -309,16 +292,61 @@
                                                 <option value="none">{% trans "None" %}</option>
                                             {% endif %}
                                         </select>
-                                    <br>
-                                    {% if media_iso %}
-                                        <button type="submit" class="btn btn-default" name="mount_iso" >{% trans "Connect" %}</button>
-                                    {% else %}
-                                        <button class="btn btn-default disabled" name="connect">{% trans "Connect" %}</button>
-                                    {% endif %}
                                     </div>
                                 </div>
+                                {% if media_iso %}
+                                    <button type="submit" class="btn btn-primary btn-lg pull-right" name="mount_iso" >{% trans "Connect" %}</button>
+                                {% else %}
+                                    <button class="btn btn-primary btn-lg pull-right disabled" name="connect">{% trans "Connect" %}</button>
+                                {% endif %}
                             {% endif %}
                         </form>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="tab-pane tab-inst" id="instancedevice">
+                        <p style="font-weight:bold;">{% trans "Network devices" %}</p>
+                        <div class="col-sm-3">
+                             {% for network in networks %}
+                                <p style="text-align: right;">eth{{ forloop.counter0 }} ({{ network.nic }})</p>
+                             {% endfor %}
+                        </div>
+                        <div class="col-sm-9">
+                            {% for network in networks %}
+                                {% if network.ip %}
+                                    <p>{{ network.ip }}</p>
+                                {% else %}
+                                    <p>{{ network.mac }}</p>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <p style="font-weight:bold;">{% trans "Storage devices" %}</p>
+                        <div class="col-sm-3">
+                            {% for disk in disks %}
+                                <p style="text-align: right;">{{ disk.dev }} ({{ disk.storage }})</p>
+                            {% endfor %}
+                        </div>
+                        <div class="col-sm-9">
+                            {% for disk in disks %}
+                                <p>{{ disk.image }}</p>
+                            {% endfor %}
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="tab-pane tab-inst" id="instancexml">
+                        <div id="viewXMLpre">
+                            <pre class="pre-scrollable">{{ inst_xml }}</pre>
+                            {% ifequal status 5 %}
+                                <button type="button" class="btn btn-lg btn-primary pull-right" onclick="javascript:$('#viewXMLpre').hide();$('#viewXMLform').show();">{% trans "Edit" %}</button>
+                            {% else %}
+                                <button type="button" class="btn btn-lg btn-primary pull-right disabled">{% trans "Edit" %}</button>
+                            {% endifequal %}
+                        </div>
+                        <form id="viewXMLform" class="form-horizontal" method="post" role="form" style="display: none;">{% csrf_token %}
+                            <textarea style="margin-bottom: 20px;" class="form-control" rows="17" name="inst_xml">{{ inst_xml }}</textarea>
+                            <button type="button" class="btn btn-lg btn-default" onclick="javascript:$('#viewXMLpre').show();$('#viewXMLform').hide();">{% trans "Close" %}</button>
+                            <button type="submit" class="btn btn-lg btn-danger pull-right" name="change_xml">{% trans "Save" %}</button>
+                        </form>
+                        <div class="clearfix"></div>
                     </div>
                 </div>
             </div>
@@ -329,11 +357,11 @@
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane tab-inst active" id="createsnapshot">
-                        <p>{% trans "This will power off your droplet. recommend powering off your droplet through the command line, as this action is the same as hard resetting the server and may cause data corruption. Do you wish to proceed?" %}</p>
+                        <p>{% trans "To take a snapshot please shutdown your instance." %}</p>
                         <form class="form-horizontal" method="post" role="form">{% csrf_token %}
                             <div class="form-group">
                                 <label for="snapshot" class="col-sm-2 control-label">{% trans "Name" %}</label>
-                                <div class="col-sm-6">
+                                <div class="col-sm-4">
                                     <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}" maxlength="14">
                                 </div>
                             </div>
@@ -346,34 +374,35 @@
                         <div class="clearfix"></div>
                     </div>
                     <div class="tab-pane tab-inst" id="istaceshapshosts">
-                        {% if vm_snapshot %}
+                        <p>{% trans "If you want to revert a snapshot shutdown the instance" %}</p>
+                        {% if snapshots %}
                             <table class="table table-bordered">
                                 <thead>
-                                <tr>
+                                <tr class="active">
                                     <th>{% trans "Name" %}</th>
                                     <th>{% trans "Date" %}</th>
                                     <th colspan="2">{% trans "Action" %}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {% for name, time in vm_snapshot.items %}
+                                {% for snap in snapshots %}
                                     <tr>
-                                        <td><strong>{{ name }}</strong></td>
-                                        <td>{{ time.0|date:"M d H:i:s" }}</td>
+                                        <td><strong>{{ snap.name }}</strong></td>
+                                        <td>{{ snap.date|date:"M d H:i:s" }}</td>
                                         <td style="width:30px;">
                                             <form action="" method="post" style="height:10px;">{% csrf_token %}
-                                                <input type="hidden" name="name" value="{{ name }}">
-                                                {% ifnotequal time.1 3 %}
-                                                    <button type="submit" class="btn btn-sm btn-primary" name="revert" value="revert" onclick="return confirm('Are you sure?')">{% trans "Revert" %}</button>
+                                                <input type="hidden" name="name" value="{{ snap.name }}">
+                                                {% ifequal status 5 %}
+                                                    <button type="submit" class="btn btn-sm btn-primary" name="revert" value="revert_snapshot" onclick="return confirm('Are you sure?')">{% trans "Revert" %}</button>
                                                 {% else %}
-                                                    <button type="button" class="btn btn-sm btn-primary disabled" name="revert" value="Revert">{% trans "Revert" %}</button>
-                                                {% endifnotequal %}
+                                                    <button type="button" class="btn btn-sm btn-primary disabled">{% trans "Revert" %}</button>
+                                                {% endifequal %}
                                             </form>
                                         </td>
                                         <td style="width:30px;">
                                             <form action="" method="post">{% csrf_token %}
-                                                <input type="hidden" name="name" value="{{ name }}">
-                                                <button type="submit" class="btn btn-sm btn-danger" name="delete" value="delete" onclick="return confirm('{% trans "Are you sure?" %}')">{% trans "Delete" %}</button>
+                                                <input type="hidden" name="name" value="{{ snap.name }}">
+                                                <button type="submit" class="btn btn-sm btn-danger" name="delete_snapshot" value="delete" onclick="return confirm('{% trans "Are you sure?" %}')">{% trans "Delete" %}</button>
                                             </form>
                                         </td>
                                     </tr>
@@ -381,7 +410,7 @@
                                 </tbody>
                             </table>
                         {% else %}
-                            <p>{% trans "You do not have any snapshots for" %}</p>
+                            <p>{% trans "You do not have any snapshots" %}</p>
                         {% endif %}
                     </div>
                 </div>
@@ -395,12 +424,12 @@
                     {% ifequal status 1 %}
                         <div id="cpu-usage">
                             <p style="margin-left: 25px">{% trans "CPU usage" %}</p>
-                            <canvas style="margin-left: 25px" id="cpuChart" width="700" height="125"></canvas>
+                            <canvas style="margin-left: 25px" id="cpuChart" width="600" height="125"></canvas>
                         </div>
                         <div id="net-usage">
                             {% for network in networks %}
                                 <p style="margin-left: 25px">{% trans "Bandwidth" %} - Eth{{ forloop.counter0 }}</p>
-                                <canvas style="margin-left: 25px" id="netEth{{ forloop.counter0 }}Chart" width="700" height="125"></canvas>
+                                <canvas style="margin-left: 25px" id="netEth{{ forloop.counter0 }}Chart" width="600" height="125"></canvas>
                                 <div id="lineLegend">
                                     <span class="netIN">{% trans "In" %}</span>
                                     <span class="netOUT">{% trans "Out" %}</span>
@@ -410,7 +439,7 @@
                         <div id="disk-usage">
                             {% for disk in disks %}
                                <p style="margin-left: 25px">{% trans "Disk I/O" %} - {{ disk.dev }}</p>
-                               <canvas style="margin-left: 25px" id="blk{{ disk.dev }}Chart" width="700" height="125"></canvas>
+                               <canvas style="margin-left: 25px" id="blk{{ disk.dev }}Chart" width="600" height="125"></canvas>
                                <div id="lineLegend">
                                     <span class="diskRD">{% trans "Read" %}</span>
                                     <span class="diskWR">{% trans "Write" %}</span>
@@ -477,7 +506,7 @@
                             <div class="checkbox" style="margin-left: 8px;">
                                 <label>
                                   <input type="checkbox" name="delete_disk" value="true">
-                                    <strong>{% trans "Warning: if you check this box, VM's data will be lost!" %}</strong>
+                                  <strong><span class="text-danger">{% trans "Warning:" %}</span> {% trans "if you check this box, Instance's data will be lost!" %}</strong>
                                 </label>
                             </div>
                             <button type="submit" class="btn btn-lg btn-primary pull-right" name="delete">{% trans "Delete" %}</button>
@@ -488,55 +517,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Modal Edit -->
-    <div class="modal fade" id="Edit" tabindex="-1" role="dialog" aria-labelledby="addHostLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">{% trans "Change Virtual Machine Settings" %}</h4>
-                </div>
-                <div class="tabbable">
-                    <ul class="nav nav-tabs">
-                        <li class="active">
-                            <a href="#1" data-toggle="tab">{% trans "Settings" %}</a>
-                        </li>
-                        <li><a href="#2" data-toggle="tab">{% trans "VNC" %}</a></li>
-                        <li><a href="#3" data-toggle="tab">{% trans "XML" %}</a></li>
-                    </ul>
-                </div>
-                <div class="tab-content">
-                    <div class="tab-pane active" id="1">
-
-                    </div>
-                    <div class="tab-pane" id="2">
-                        <form class="form-horizontal" method="post" role="form">{% csrf_token %}
-                            <div class="form-group">
-                                <label for="inputPassword1" class="col-lg-3 control-label">{% trans "Generate" %}</label>
-                                <div class="col-lg-6">
-                                    <input type="checkbox" name="auto_pass" value="true" id="vnc_passwd_gen">
-                                </div>
-                            </div>
-                            <div class="form-group" id="vnc_passwd_manual">
-                                <label for="inputPassword1" class="col-lg-3 control-label">{% trans "Password" %}</label>
-                                <div class="col-lg-6">
-                                    <input type="password" class="form-control" name="vnc_passwd" placeholder="{% trans "Password" %}" maxlength="14">
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-                                <button type="submit" class="btn btn-primary" name="set_vnc_passwd">{% trans "Change" %}</button>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="tab-pane" id="3">
-
-                    </div>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
 {% endblock %}
 {% block script %}
     <script type="text/javascript">

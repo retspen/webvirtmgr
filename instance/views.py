@@ -377,6 +377,7 @@ def instance(request, host_id, vname):
         memory_host = conn.get_max_memory()
         vcpu_host = len(vcpu_range)
         vnc_port = conn.get_vnc()
+        snapshots = sorted(conn.get_snapshot(), reverse=True)
         inst_xml = conn._XMLDesc(VIR_DOMAIN_XML_SECURE)
     except libvirtError as msg_error:
         errors.append(msg_error.message)
@@ -420,8 +421,9 @@ def instance(request, host_id, vname):
                     conn.delete()
                 return HttpResponseRedirect('/instances/%s/' % host_id)
             if 'snapshot' in request.POST:
-                conn.create_snapshot()
-                msg = _("Create snapshot for instance successful")
+                name = request.POST.get('name', '')
+                conn.create_snapshot(name)
+                msg = _("Snapshot '%s' has been created successful" % name)
                 messages.append(msg)
             if 'umount_iso' in request.POST:
                 image = request.POST.get('iso_media', '')
@@ -472,6 +474,15 @@ def instance(request, host_id, vname):
                 conn_migrate.define_move(vname)
                 conn_migrate.close()
                 return HttpResponseRedirect('/instance/%s/%s' % (compute_id, vname))
+            if 'delete_snapshot' in request.POST:
+                snap_name = request.POST.get('name', '')
+                conn.snapshot_delete(snap_name)
+                return HttpResponseRedirect(request.get_full_path())
+            if 'revert_snapshot' in request.POST:
+                snap_name = request.POST.get('name', '')
+                conn.snapshot_revert(snap_name)
+                message = _("Successful revert snapshot: ")
+                message += snap_name
 
         conn.close()
 

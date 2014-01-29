@@ -2,7 +2,6 @@
 # Copyright (C) 2013 Webvirtmgr.
 #
 import libvirt
-from datetime import datetime
 from vrtManager import util
 
 from libvirt import VIR_DOMAIN_XML_SECURE, libvirtError
@@ -103,33 +102,6 @@ class wvmConnect(object):
             if dom.snapshotNum(0) != 0:
                 instance.append(dom.name())
         return instance
-
-    def get_snapshot(self, name):
-        """
-        Function return all vds snaphots.
-        """
-        snapshots = {}
-        dom = self.get_instance(name)
-        snapshot_list = dom.snapshotListNames(0)
-        for snapshot in snapshot_list:
-            snapshots[snapshot] = (datetime.fromtimestamp(int(snapshot)), dom.info()[0])
-        return snapshots
-
-    def snapshot_delete(self, name, snapshot):
-        """
-        Function delete vds snaphots.
-        """
-        dom = self.get_instance(name)
-        snap = dom.snapshotLookupByName(snapshot, 0)
-        snap.delete(0)
-
-    def snapshot_revert(self, name, snapshot):
-        """
-        Function revert vds snaphots.
-        """
-        dom = self.get_instance(name)
-        snap = dom.snapshotLookupByName(snapshot, 0)
-        dom.revertToSnapshot(snap, 0)
 
     def get_host_instances(self):
         vname = {}
