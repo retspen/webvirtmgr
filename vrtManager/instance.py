@@ -6,6 +6,7 @@ import re
 from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE
 from vrtManager import util
 from xml.etree import ElementTree
+from datetime import datetime
 from vrtManager.connection import wvmConnect
 
 
@@ -13,6 +14,24 @@ class wvmInstances(wvmConnect):
     def get_instance_status(self, name):
         inst = self.get_instance(name)
         return inst.info()[0]
+
+    def get_instance_memory(self, name):
+        inst = self.get_instance(name)
+        mem = util.get_xml_path(inst.XMLDesc(0), "/domain/currentMemory")
+        return int(mem) / 1024
+
+    def get_instance_vcpu(self, name):
+        inst = self.get_instance(name)
+        cur_vcpu = util.get_xml_path(inst.XMLDesc(0), "/domain/vcpu/@current")
+        if cur_vcpu:
+            vcpu = cur_vcpu
+        else:
+            vcpu = util.get_xml_path(inst.XMLDesc(0), "/domain/vcpu")
+        return vcpu
+
+    def get_uuid(self, name):
+        inst = self.get_instance(name)
+        return inst.UUIDString()
 
     def start(self, name):
         dom = self.get_instance(name)
@@ -329,12 +348,29 @@ class wvmInstance(wvmConnect):
     def _snapshotCreateXML(self, xml, flag):
         self.instance.snapshotCreateXML(xml, flag)
 
-    def create_snapshot(self):
-        xml = """<domainsnapshot>\n
-                     <name>%d</name>\n
-                     <state>shutoff</state>\n
-                     <creationTime>%d</creationTime>\n""" % (time.time(), time.time())
+    def create_snapshot(self, name):
+        xml = """<domainsnapshot>
+                     <name>%s</name>
+                     <state>shutoff</state>
+                     <creationTime>%d</creationTime>""" % (name, time.time())
         xml += self._XMLDesc(VIR_DOMAIN_XML_SECURE)
-        xml += """<active>0</active>\n
+        xml += """<active>0</active>
                   </domainsnapshot>"""
         self._snapshotCreateXML(xml, 0)
+
+    def get_snapshot(self):
+        snapshots = []
+        snapshot_list = self.instance.snapshotListNames(0)
+        for snapshot in snapshot_list:
+            snap = self.instance.snapshotLookupByName(snapshot, 0)
+            snap_time_create = util.get_xml_path(snap.getXMLDesc(0), "/domainsnapshot/creationTime")
+            snapshots.append({'date': datetime.fromtimestamp(int(snap_time_create)), 'name': snapshot})
+        return snapshots
+
+    def snapshot_delete(self, snapshot):
+        snap = self.instance.snapshotLookupByName(snapshot, 0)
+        snap.delete(0)
+
+    def snapshot_revert(self, snapshot):
+        snap = self.instance.snapshotLookupByName(snapshot, 0)
+        self.instance.revertToSnapshot(snap, 0)

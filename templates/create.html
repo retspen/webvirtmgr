@@ -9,10 +9,7 @@
 {% block content %}
     <div class="row">
         {% include 'sidebar.html' %}
-        <div class="col-md-9" role="main">
-            <div class="page-header">
-                <h1>{% trans "Create Virtual Machine" %}</h1>
-            </div>
+        <div class="main">
             {% if errors %}
                 {% for error in errors %}
                     <div class="alert alert-danger">
@@ -61,7 +58,7 @@
                     {% endfor %}
                 </div>
             {% endif %}
-            <div class="block-btn">
+            <div class="btn-group-sm">
                 <a data-toggle="modal" href="#addCustom" class="btn btn-success">{% trans "Custom VM" %}</a>
                 <a data-toggle="modal" href="#addFlavor" class="btn btn-success">{% trans "Add Flavor" %}</a>
             </div>
@@ -95,8 +92,8 @@
                                             </div>
                                             <form class="form-horizontal" method="post" role="form">{% csrf_token %}
                                                 <div class="form-group">
-                                                    <label class="col-lg-4 control-label">{% trans "Name" %}</label>
-                                                    <div class="col-lg-6">
+                                                    <label class="col-sm-3 control-label">{% trans "Name" %}</label>
+                                                    <div class="col-sm-6">
                                                         <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}" maxlength="14" required pattern="[a-zA-Z0-9_]+">
                                                         <input type="hidden" name="vcpu" value="{{ flavor.vcpu }}">
                                                         <input type="hidden" name="memory" value="{{ flavor.memory }}">
@@ -104,8 +101,8 @@
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label class="col-lg-4 control-label">{% trans "Storage" %}</label>
-                                                    <div class="col-lg-6">
+                                                    <label class="col-sm-3 control-label">{% trans "Storage" %}</label>
+                                                    <div class="col-sm-6">
                                                         <select name="storage" class="form-control">
                                                             {% if storages %}
                                                                 {% for storage in storages %}
@@ -118,8 +115,8 @@
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label class="col-lg-4 control-label">{% trans "Network" %}</label>
-                                                    <div class="col-lg-6">
+                                                    <label class="col-sm-3 control-label">{% trans "Network" %}</label>
+                                                    <div class="col-sm-6">
                                                         <select name="networks" class="form-control">
                                                             {% for network in networks %}
                                                                 <option value="{{ network }}">{{ network }}</option>
@@ -128,21 +125,21 @@
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label class="col-lg-4 control-label">{% trans "MAC" %}</label>
-                                                    <div class="col-lg-6">
+                                                    <label class="col-sm-3 control-label">{% trans "MAC" %}</label>
+                                                    <div class="col-sm-6">
                                                         <input type="text" class="form-control" name="mac" maxlength="17" value="{{ mac_auto }}" required pattern="[a-zA-Z0-9:]+">
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label class="col-lg-4 control-label">{% trans "Host-Model" %}</label>
-                                                    <div class="col-lg-6">
+                                                    <label class="col-sm-3 control-label">{% trans "Host-Model" %}</label>
+                                                    <div class="col-sm-6">
                                                         <input type="checkbox" name="host_model" value="true" checked>
                                                     </div>
                                                     <label class="col-lg-1 control-label">{% trans "CPU" %}</label>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label class="col-lg-4 control-label">{% trans "VirtIO" %}</label>
-                                                    <div class="col-lg-6">
+                                                    <label class="col-sm-3 control-label">{% trans "VirtIO" %}</label>
+                                                    <div class="col-sm-6">
                                                         <input type="checkbox" name="virtio" value="true" checked>
                                                     </div>
                                                 </div>
@@ -188,34 +185,34 @@
                 </div>
                 <form class="form-horizontal" method="post" role="form">{% csrf_token %}
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">{% trans "Name" %}</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-3 control-label">{% trans "Name" %}</label>
+                        <div class="col-sm-6">
                             <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}" maxlength="14" required pattern="[a-zA-Z0-9_]+">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">{% trans "VCPU" %}</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-3 control-label">{% trans "VCPU" %}</label>
+                        <div class="col-sm-6">
                             <input type="text" class="form-control" name="vcpu" value="1" maxlength="1" required pattern="[0-9]">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">{% trans "Host-Model" %}</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-3 control-label">{% trans "Host-Model" %}</label>
+                        <div class="col-sm-6">
                             <input type="checkbox" name="host_model" value="true" checked>
                         </div>
-                        <label class="col-lg-1 control-label">{% trans "CPU" %}</label>
+                        <label class="col-sm-1 control-label">{% trans "CPU" %}</label>
                     </div>
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">{% trans "RAM" %}</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-3 control-label">{% trans "RAM" %}</label>
+                        <div class="col-sm-6">
                             <input type="text" class="form-control" name="memory" value="512" maxlength="5" required pattern="[0-9]+">
                         </div>
-                        <label class="col-lg-1 control-label">{% trans "MB" %}</label>
+                        <label class="col-sm-1 control-label">{% trans "MB" %}</label>
                     </div>
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">{% trans "HDD" %}</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-3 control-label">{% trans "HDD" %}</label>
+                        <div class="col-sm-6">
                             <ul id="img-list">
                                 <!-- populated from javascript -->
                             </ul>
@@ -232,8 +229,8 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">{% trans "Network" %}</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-3 control-label">{% trans "Network" %}</label>
+                        <div class="col-sm-6">
                             <ul id="net-list">
                                 <!-- populated from javascript -->
                             </ul>
@@ -246,8 +243,8 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">{% trans "VirtIO" %}</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-3 control-label">{% trans "VirtIO" %}</label>
+                        <div class="col-sm-6">
                             <input type="checkbox" name="virtio" value="true" checked>
                         </div>
                     </div>
@@ -274,30 +271,30 @@
                 </div>
                 <form class="form-horizontal" method="post" role="form">{% csrf_token %}
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">{% trans "Name" %}</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-3 control-label">{% trans "Name" %}</label>
+                        <div class="col-sm-6">
                             <input type="text" name="label" class="form-control" placeholder="Micro" maxlength="20" required pattern="[a-zA-Z0-9]+">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">{% trans "VCPU" %}</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-3 control-label">{% trans "VCPU" %}</label>
+                        <div class="col-sm-6">
                             <input type="text" class="form-control" name="vcpu" value="1" maxlength="1" required pattern="[0-9]">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">{% trans "RAM" %}</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-3 control-label">{% trans "RAM" %}</label>
+                        <div class="col-sm-6">
                             <input type="text" class="form-control" name="memory" value="512" maxlength="5" required pattern="[0-9]+">
                         </div>
-                        <label class="col-lg-1 control-label">{% trans "MB" %}</label>
+                        <label class="col-sm-1 control-label">{% trans "MB" %}</label>
                     </div>
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">{% trans "HDD" %}</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-3 control-label">{% trans "HDD" %}</label>
+                        <div class="col-sm-6">
                             <input type="text" class="form-control" name="disk" value="10" maxlength="3" required pattern="[0-9]+">
                         </div>
-                        <label class="col-lg-1 control-label">{% trans "GB" %}</label>
+                        <label class="col-sm-1 control-label">{% trans "GB" %}</label>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
@@ -308,10 +305,8 @@
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 {% endblock %}
-
 {% block script %}
     <script src="{% static "js/bootstrap-multiselect.js" %}"></script>
-
     <script>
         function toggleValue(string, updated_value, checked) {
             var result = '';

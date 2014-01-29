@@ -2,145 +2,140 @@
 {% load i18n %}
 {% block title %}{% trans "Network Pool" %}{% endblock %}
 {% block content %}
-    <div class="row">
-        {% include 'sidebar.html' %}
-        <div class="col-md-9" role="main">
-            <div class="page-header">
-                <h1>{% trans "Network Pool" %}</h1>
-            </div>
-            {% if errors %}
-                {% for error in errors %}
-                    <div class="alert alert-danger">
-                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                        {{ error }}
-                    </div>
-                {% endfor %}
-            {% endif %}
-            {% if device %}
-                <div class="row show-grid">
-                    <div class="col-md-6">
-                        <p>{% trans "Pool name" %}</p>
-                        <p>{% trans "Device pool" %}</p>
-                        <p>{% trans "State" %}</p>
-                        <p>{% trans "Autostart" %}</p>
-                    </div>
-                    <div class="col-md-6">
-                        <p>
-                            [{% for net in networks %}
-                                {% ifequal net pool %}
-                                    <b>{{ net }}</b>
-                                {% else %}
-                                    <a href="{% url 'network' host_id net %}">{{ net }}</a>
-                                {% endifequal %}
-                            {% endfor %} ]
-                        </p>
-                        <p>{{ device }}</p>
-                        <p>
-                            <form action="" method="post">{% csrf_token %}
-                                {% ifequal state 0 %}
-                                    <input type="submit" class="btn btn-xs btn-default" name="start" value="{% trans "Start" %}">
-                                    <input type="submit" class="btn btn-xs btn-default" name="delete" value="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
-                                {% else %}
-                                    <input type="submit" class="btn btn-xs btn-default" name="stop" value="{% trans "Stop" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
-                                {% endifequal %}
-                            </form>
-                        </p>
-                        <p>
-                            <form action="" method="post">{% csrf_token %}
-                                {% ifequal autostart 0 %}
-                                    <input type="submit" class="btn btn-xs btn-default" name="set_autostart" value="{% trans "Enable" %}">
-                                {% else %}
-                                    <input type="submit" class="btn btn-xs btn-default" name="unset_autostart" onclick="return confirm('{% trans "Are you sure?" %}')" value="{% trans "Disable" %}">
-                                {% endifequal %}
-                            </form>
-                        </p>
-                    </div>
+    {% include 'sidebar.html' %}
+    <div class="main">
+        {% if errors %}
+            {% for error in errors %}
+                <div class="alert alert-danger">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    {{ error }}
                 </div>
-                <h3>{% trans "IPv4 configuration" %}</h3>
-                <hr>
-                <div class="row show-grid">
-                    <div class="col-md-6">
-                        <p>{% trans "IPv4 Forwarding" %}</p>
-                        <p>{% trans "Network" %}</p>
-                        <p>{% trans "DHCP" %}</p>
-                        {% if ipv4_dhcp_range %}
-                            <p>{% trans "Start" %}</p>
-                            <p>{% trans "End" %}</p>
-                        {% endif %}
-                    </div>
-                    <div class="col-md-6">
-                        <p>
-                           {% ifequal ipv4_forward.0 'nat' %}
-                               {% trans "NAT" %}
-                           {% endifequal %}
-                           {% ifequal ipv4_forward.0 'route' %}
-                               {% trans "ROUTE" %}
-                           {% endifequal %}
-                           {% ifequal ipv4_forward.0 'bridge' %}
-                               {% trans "BRIDGE" %}
-                           {% endifequal %}
-                           {% if not ipv4_forward.0 %}
-                               {% trans "ISOLATE" %}
-                           {% endif %}
-                        </p>
-                        <p>{{ ipv4_network }}</p>
-                        <p>
-                            {% if ipv4_dhcp_range %}
-                                <span class="text-success">{% trans "ON" %}</span>
+            {% endfor %}
+        {% endif %}
+        {% if device %}
+            <div class="row show-grid">
+                <div class="col-md-6">
+                    <p>{% trans "Pool name" %}</p>
+                    <p>{% trans "Device pool" %}</p>
+                    <p>{% trans "State" %}</p>
+                    <p>{% trans "Autostart" %}</p>
+                </div>
+                <div class="col-md-6">
+                    <p>
+                        [{% for net in networks %}
+                            {% ifequal net pool %}
+                                <b>{{ net }}</b>
                             {% else %}
-                                <span class="text-danger">{% trans "OFF" %}</span>
-                            {% endif %}
-                        </p>
-                        {% if ipv4_dhcp_range %}
-                            {% for dhcp in ipv4_dhcp_range %}
-                                <p>{{ dhcp }}</p>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
+                                <a href="{% url 'network' host_id net %}">{{ net }}</a>
+                            {% endifequal %}
+                        {% endfor %} ]
+                    </p>
+                    <p>{{ device }}</p>
+                    <p>
+                        <form action="" method="post">{% csrf_token %}
+                            {% ifequal state 0 %}
+                                <input type="submit" class="btn btn-xs btn-default" name="start" value="{% trans "Start" %}">
+                                <input type="submit" class="btn btn-xs btn-default" name="delete" value="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
+                            {% else %}
+                                <input type="submit" class="btn btn-xs btn-default" name="stop" value="{% trans "Stop" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
+                            {% endifequal %}
+                        </form>
+                    </p>
+                    <p>
+                        <form action="" method="post">{% csrf_token %}
+                            {% ifequal autostart 0 %}
+                                <input type="submit" class="btn btn-xs btn-default" name="set_autostart" value="{% trans "Enable" %}">
+                            {% else %}
+                                <input type="submit" class="btn btn-xs btn-default" name="unset_autostart" onclick="return confirm('{% trans "Are you sure?" %}')" value="{% trans "Disable" %}">
+                            {% endifequal %}
+                        </form>
+                    </p>
                 </div>
-                {% if fixed_address %}
-                    <h3>{% trans "Fixed Address" %}</h3>
-                    <hr>
-                    <div class="panel-group" id="accordion">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
-                                    Show
-                                </a>
-                            </div>
-                        <div id="collapseOne" class="panel-collapse collapse">
-                            <div class="panel-body">
-                                <div class="input-append form-inline pull-right" style="">
-                                    <div class="form-group">
-                                        <input type="text" class="form-control" id="filter_input" style="margin-top:-28px;">
-                                    </div>
-                                    <input type="button" class="btn btn-default" id="filter_button" value="Filter">
-                                    <button type="button" class="btn btn-default" id="filter_clear">Clear</button>
-                                </div>
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th style="text-align: center">{% trans "Address" %}</th>
-                                            <th style="text-align: center">{% trans "MAC" %}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody style="text-align: center">
-                                        {% for fix in fixed_address %}
-                                            <tr>
-                                                <td>{{ fix.host }}</td>
-                                                <td>{{ fix.mac }}</td>
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                                 </div>
-                            </div>
+            </div>
+            <h3>{% trans "IPv4 configuration" %}</h3>
+            <hr>
+            <div class="row show-grid">
+                <div class="col-md-6">
+                    <p>{% trans "IPv4 Forwarding" %}</p>
+                    <p>{% trans "Network" %}</p>
+                    <p>{% trans "DHCP" %}</p>
+                    {% if ipv4_dhcp_range %}
+                        <p>{% trans "Start" %}</p>
+                        <p>{% trans "End" %}</p>
+                    {% endif %}
+                </div>
+                <div class="col-md-6">
+                    <p>
+                       {% ifequal ipv4_forward.0 'nat' %}
+                           {% trans "NAT" %}
+                       {% endifequal %}
+                       {% ifequal ipv4_forward.0 'route' %}
+                           {% trans "ROUTE" %}
+                       {% endifequal %}
+                       {% ifequal ipv4_forward.0 'bridge' %}
+                           {% trans "BRIDGE" %}
+                       {% endifequal %}
+                       {% if not ipv4_forward.0 %}
+                           {% trans "ISOLATE" %}
+                       {% endif %}
+                    </p>
+                    <p>{{ ipv4_network }}</p>
+                    <p>
+                        {% if ipv4_dhcp_range %}
+                            <span class="text-success">{% trans "ON" %}</span>
+                        {% else %}
+                            <span class="text-danger">{% trans "OFF" %}</span>
+                        {% endif %}
+                    </p>
+                    {% if ipv4_dhcp_range %}
+                        {% for dhcp in ipv4_dhcp_range %}
+                            <p>{{ dhcp }}</p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+            {% if fixed_address %}
+                <h3>{% trans "Fixed Address" %}</h3>
+                <hr>
+                <div class="panel-group" id="accordion">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                                Show
+                            </a>
                         </div>
-                      </div>
+                    <div id="collapseOne" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div class="input-append form-inline pull-right" style="">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" id="filter_input" style="margin-top:-28px;">
+                                </div>
+                                <input type="button" class="btn btn-default" id="filter_button" value="Filter">
+                                <button type="button" class="btn btn-default" id="filter_clear">Clear</button>
+                            </div>
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align: center">{% trans "Address" %}</th>
+                                        <th style="text-align: center">{% trans "MAC" %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody style="text-align: center">
+                                    {% for fix in fixed_address %}
+                                        <tr>
+                                            <td>{{ fix.host }}</td>
+                                            <td>{{ fix.mac }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                             </div>
+                        </div>
                     </div>
-                {% endif %}
+                  </div>
+                </div>
             {% endif %}
-        </div>
+        {% endif %}
     </div>
 {% endblock %}
 {% block script %}

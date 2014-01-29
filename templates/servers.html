@@ -41,7 +41,7 @@
         {% endif %}
         <div class="col-md-12" role="main">
             <div class="page-header">
-                <a data-toggle="modal" href="#addHost" class="btn btn-success pull-right">{% trans "Add Host" %}</a>
+                <a data-toggle="modal" href="#addHost" class="btn btn-sm btn-success pull-right">{% trans "Add Host" %}</a>
                 <h1>{% trans "Servers List" %}</h1>
             </div>
             {% if hosts_info %}
@@ -67,6 +67,7 @@
                                 {% endifequal %}
                             </td>
                             <td style="width:280px">
+                                <div class="btn-group btn-group-sm">
                                 {% ifequal info.2 1 %}
                                     <a href="{% url 'instances' host_id %}" class="btn btn-primary">
                                         <span class="glyphicon glyphicon-th-large"></span>
@@ -74,17 +75,14 @@
                                     <a href="{% url 'create' host_id %}" class="btn btn-primary">
                                         <span class="glyphicon glyphicon-plus"></span>
                                     </a>
-                                    <a href="{% url 'overview' host_id %}" class="btn btn-primary">
-                                        <span class="glyphicon glyphicon-info-sign"></span>
-                                    </a>
                                     <a href="{% url 'storages' host_id %}" class="btn btn-primary">
                                         <span class="glyphicon glyphicon-hdd"></span>
                                     </a>
                                     <a href="{% url 'networks' host_id %}" class="btn btn-primary">
                                         <span class="glyphicon glyphicon-globe"></span>
                                     </a>
-                                    <a href="{% url 'snapshots' host_id %}" class="btn btn-primary">
-                                        <span class="glyphicon glyphicon-camera"></span>
+                                    <a href="{% url 'overview' host_id %}" class="btn btn-primary">
+                                        <span class="glyphicon glyphicon-info-sign"></span>
                                     </a>
                                 {% else %}
                                     <a href="#" class="btn btn-primary">
@@ -94,23 +92,21 @@
                                         <span class="glyphicon glyphicon-plus"></span>
                                     </a>
                                     <a href="#" class="btn btn-primary">
-                                        <span class="glyphicon glyphicon-info-sign"></span>
-                                    </a>
-                                    <a href="#" class="btn btn-primary">
                                         <span class="glyphicon glyphicon-hdd"></span>
                                     </a>
                                     <a href="#" class="btn btn-primary">
                                         <span class="glyphicon glyphicon-globe"></span>
                                     </a>
                                     <a href="#" class="btn btn-primary">
-                                        <span class="glyphicon glyphicon-camera"></span>
+                                        <span class="glyphicon glyphicon-info-sign"></span>
                                     </a>
+                                </div>
                                 {% endifequal %}
                             </td>
                             <td style="width:70px">
                                 <form action="" method="post">{% csrf_token %}
                                     <input type="hidden" name="host_id" value="{{ host_id }}">
-                                    <button type="submit" class="btn btn-danger" name="host_del" title="Delete" onclick="return confirm('{% trans "Are you sure?"%}')">
+                                    <button type="submit" class="btn btn-sm btn-danger" name="host_del" title="Delete" onclick="return confirm('{% trans "Are you sure?"%}')">
                                         <span class="glyphicon glyphicon-trash"></span>
                                     </button>
                                 </form>
@@ -146,26 +142,26 @@
                     <div class="tab-pane active" id="1">
                         <form class="form-horizontal" method="post" role="form">{% csrf_token %}
                             <div class="form-group">
-                                <label class="col-lg-4 control-label">{% trans "Hostname" %}</label>
-                                <div class="col-lg-6">
+                                <label class="col-sm-4 control-label">{% trans "Hostname" %}</label>
+                                <div class="col-sm-6">
                                     <input type="text" name="name" class="form-control" placeholder="Name" maxlength="20" required pattern="[a-z0-9\.\-_]+">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-lg-4 control-label">{% trans "IP / Domain" %}</label>
-                                <div class="col-lg-6">
+                                <label class="col-sm-4 control-label">{% trans "IP / Domain" %}</label>
+                                <div class="col-sm-6">
                                     <input type="text" name="hostname" class="form-control" placeholder="{% trans "IP or domain" %}" required pattern="[a-z0-9\.\-_]+">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-lg-4 control-label">{% trans "Username" %}</label>
-                                <div class="col-lg-6">
+                                <label class="col-sm-4 control-label">{% trans "Username" %}</label>
+                                <div class="col-sm-6">
                                     <input type="text" name="login" class="form-control" placeholder="{% trans "Name" %}">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-lg-4 control-label">{% trans "Password" %}</label>
-                                <div class="col-lg-6">
+                                <label class="col-sm-4 control-label">{% trans "Password" %}</label>
+                                <div class="col-sm-6">
                                     <input type="password" name="password" class="form-control" placeholder="{% trans "********" %}">
                                 </div>
                             </div>
@@ -179,20 +175,20 @@
                         <form class="form-horizontal" method="post" role="form">{% csrf_token %}
                             <p>{% trans "Need create ssh authorization key" %}</p>
                             <div class="form-group">
-                                <label class="col-lg-4 control-label">{% trans "Hostname" %}</label>
-                                <div class="col-lg-6">
+                                <label class="col-sm-4 control-label">{% trans "Hostname" %}</label>
+                                <div class="col-sm-6">
                                     <input type="text" name="name" class="form-control" placeholder="Name" maxlength="20" required pattern="[a-z0-9\.\-_]+">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-lg-4 control-label">{% trans "IP / Domain" %}</label>
-                                <div class="col-lg-6">
+                                <label class="col-sm-4 control-label">{% trans "IP / Domain" %}</label>
+                                <div class="col-sm-6">
                                     <input type="text" name="hostname" class="form-control" placeholder="{% trans "IP or domain" %}" required pattern="[a-z0-9\.\-_]+">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-lg-4 control-label">{% trans "Username" %}</label>
-                                <div class="col-lg-6">
+                                <label class="col-sm-4 control-label">{% trans "Username" %}</label>
+                                <div class="col-sm-6">
                                     <input type="text" name="login" class="form-control" placeholder="{% trans "Name" %}">
                                 </div>
                             </div>

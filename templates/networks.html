@@ -2,63 +2,60 @@
 {% load i18n %}
 {% block title %}{% trans "Virtual Networks" %}{% endblock %}
 {% block content %}
-    <div class="row">
-        {% include 'sidebar.html' %}
-        <div class="col-md-9" role="main">
-            <div class="page-header">
-                <a href="#AddNetPool" class="btn btn-lg btn-success pull-right" data-toggle="modal">{% trans "Create" %}</a>
-                <h1>{% trans "Network Pool" %}</h1>
-            </div>
-            {% if errors %}
-                {% for error in errors %}
-                    <div class="alert alert-danger">
-                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                        {{ error }}
-                    </div>
-                {% endfor %}
-            {% endif %}
-            {% if form.name.errors %}
-                <div class="alert alert-danger">
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                    {% for error in form.name.errors  %}
-                        {{ error }}
-                    {% endfor %}
-                </div>
-            {% endif %}
-            {% if form.subnet.errors %}
-                <div class="alert alert-danger">
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                    {% for error in form.subnet.errors  %}
-                        {{ error }}
-                    {% endfor %}
-                </div>
-            {% endif %}
-            {% if form.bridge_name.errors %}
-                <div class="alert alert-danger">
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                    {% for error in form.bridge_name.errors  %}
-                        {{ error }}
-                    {% endfor %}
-                </div>
-            {% endif %}
-            {% if not networks %}
-                <div class="well">
-                    <h4>{% trans "You do not have any virtual networks" %}</h4>
-                </div>
-            {% else %}
-                {% for pool in networks %}
-                    <div class="panel {% if pool.status %}panel-success{% else %}panel-danger{% endif %}">
-                        <div class="panel-heading">
-                            <h3 class="panel-title"><a href="{% url 'network' host_id pool.name %}">{{ pool.name }}</a></h3>
-                        </div>
-                        <div class="panel-body">
-                            <p>{% trans "Device" %}: {{ pool.device }}</p>
-                            <p>{% trans "Forward" %}: {{ pool.forward|upper }}</p>
-                        </div>
-                    </div>
-                {% endfor %}
-            {% endif %}
+    {% include 'sidebar.html' %}
+    <div class="main">
+        <div class="btn-group-sm">
+            <a href="#AddNetPool" class="btn btn-success" data-toggle="modal">{% trans "New Network" %}</a>
         </div>
+        {% if errors %}
+            {% for error in errors %}
+                <div class="alert alert-danger">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    {{ error }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% if form.name.errors %}
+            <div class="alert alert-danger">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                {% for error in form.name.errors  %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% if form.subnet.errors %}
+            <div class="alert alert-danger">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                {% for error in form.subnet.errors  %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% if form.bridge_name.errors %}
+            <div class="alert alert-danger">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                {% for error in form.bridge_name.errors  %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% if not networks %}
+            <div class="well">
+                <h4>{% trans "You do not have any virtual networks" %}</h4>
+            </div>
+        {% else %}
+            {% for pool in networks %}
+                <div class="panel {% if pool.status %}panel-success{% else %}panel-danger{% endif %}">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><a href="{% url 'network' host_id pool.name %}">{{ pool.name }}</a></h3>
+                    </div>
+                    <div class="panel-body">
+                        <p>{% trans "Device" %}: {{ pool.device }}</p>
+                        <p>{% trans "Forward" %}: {{ pool.forward|upper }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
     </div>
 
     <!-- Modal pool -->
@@ -71,32 +68,32 @@
                 </div>
                 <form class="form-horizontal" method="post" action="" role="form">{% csrf_token %}
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">{% trans "Name" %}</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-4 control-label">{% trans "Name" %}</label>
+                        <div class="col-sm-6">
                             <input type="text" class="form-control" name="name" placeholder="default" required pattern="[a-zA-Z0-9_]+">
                         </div>
                     </div>
                     <div class="form-group bridge_name_form_group_dhcp">
-                        <label class="col-lg-4 control-label">{% trans "Subnet pool" %}</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-4 control-label">{% trans "Subnet pool" %}</label>
+                        <div class="col-sm-6">
                             <input type="text" class="form-control" name="subnet" value="192.168.100.0/24" required pattern="[0-9\/\.]+">
                         </div>
                     </div>
                     <div class="form-group bridge_name_form_group_dhcp">
-                        <label class="col-lg-4 control-label">{% trans "DHCP" %}</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-4 control-label">{% trans "DHCP" %}</label>
+                        <div class="col-sm-6">
                             <input type="checkbox" name="dhcp" value="true" checked>
                         </div>
                     </div>
                     <div class="form-group bridge_name_form_group_dhcp">
-                        <label class="col-lg-4 control-label">{% trans "Fixed Address" %}</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-4 control-label">{% trans "Fixed Address" %}</label>
+                        <div class="col-sm-6">
                             <input type="checkbox" name="fixed" value="true">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">{% trans "Type forwarding" %}</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-4 control-label">{% trans "Type forwarding" %}</label>
+                        <div class="col-sm-6">
                             <select id="forward_select" class="form-control" name="forward">
                                 <option value="nat">{% trans "NAT" %}</option>
                                 <option value="route">{% trans "ROUTE" %}</option>
@@ -106,8 +103,8 @@
                         </div>
                     </div>
                     <div class="form-group" id="bridge_name_form_group">
-                        <label class="col-lg-4 control-label">{% trans "Bridge Name" %}</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-4 control-label">{% trans "Bridge Name" %}</label>
+                        <div class="col-sm-6">
                             <input type="text" class="form-control" name="bridge_name" placeholder="br0" pattern="[a-z0-9]+">
                         </div>
                     </div>
