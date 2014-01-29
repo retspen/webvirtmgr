@@ -262,8 +262,10 @@ class wvmInstance(wvmConnect):
         tree = ElementTree.fromstring(self._XMLDesc(0))
         for source, target in zip(tree.findall("devices/disk/source"),
                                   tree.findall("devices/disk/target")):
-            if source.get("file").endswith('.img'):
+            if source.get("file"):
                 devices.append([source.get("file"), target.get("dev")])
+            elif source.get("dev"):
+                devices.append([source.get("dev"), target.get("dev")])
         for dev in devices:
             rd_use_ago = self.instance.blockStats(dev[0])[1]
             wr_use_ago = self.instance.blockStats(dev[0])[3]
