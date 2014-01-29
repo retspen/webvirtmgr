@@ -29,6 +29,10 @@ class wvmInstances(wvmConnect):
             vcpu = util.get_xml_path(inst.XMLDesc(0), "/domain/vcpu")
         return vcpu
 
+    def get_uuid(self, name):
+        inst = self.get_instance(name)
+        return inst.UUIDString()
+
     def start(self, name):
         dom = self.get_instance(name)
         dom.create()

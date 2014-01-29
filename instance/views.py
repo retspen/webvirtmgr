@@ -306,7 +306,9 @@ def instances(request, host_id):
             inst = Instance.objects.get(compute_id=host_id, name=instance)
             uuid = inst.uuid
         except Instance.DoesNotExist:
-            uuid = None
+            uuid = conn.get_uuid(instance)
+            inst = Instance(compute_id=host_id, name=instance, uuid=uuid)
+            inst.save()
         instances.append({'name': instance,
                           'status': conn.get_instance_status(instance),
                           'uuid': uuid,
