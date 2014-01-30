@@ -3,7 +3,6 @@ import socket
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
-from django.utils.datastructures import SortedDict
 
 from servers.models import Compute
 from instance.models import Instance

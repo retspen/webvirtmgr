@@ -5,7 +5,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
-from django.utils import simplejson
+import json
 
 from instance.models import Instance
 from servers.models import Compute
@@ -111,7 +111,7 @@ def diskusage(request, host_id, vname):
             json_blk.append({'dev': blk['dev'], 'data': disk})
             cookie_blk[blk['dev']] = [datasets_rd, datasets_wr]
 
-    data = simplejson.dumps(json_blk)
+    data = json.dumps(json_blk)
     response = HttpResponse()
     response['Content-Type'] = "text/javascript"
     if not data_error:
@@ -133,6 +133,7 @@ def netusage(request, host_id, vname):
     datasets_tx = []
     json_net = []
     cookie_net = {}
+    data_error = False
     compute = Compute.objects.get(id=host_id)
 
     try:
@@ -157,65 +158,72 @@ def netusage(request, host_id, vname):
             datasets_tx.append(0)
         else:
             datasets = eval(cookies)
-            datasets_rx = datasets[net['dev']][0]
-            datasets_tx = datasets[net['dev']][1]
+            try:
+                datasets_rx = datasets[net['dev']][0]
+                datasets_tx = datasets[net['dev']][1]
+            except:
+                data_error = True
 
-        if len(datasets_rx) > 10:
-            while datasets_rx:
+        if not data_error:
+            if len(datasets_rx) > 10:
+                while datasets_rx:
+                    del datasets_rx[0]
+                    if len(datasets_rx) == 10:
+                        break
+            if len(datasets_tx) > 10:
+                while datasets_tx:
+                    del datasets_tx[0]
+                    if len(datasets_tx) == 10:
+                        break
+
+            if len(datasets_rx) <= 9:
+                datasets_rx.append(int(net['rx']) / 1048576)
+            if len(datasets_rx) == 10:
+                datasets_rx.append(int(net['rx']) / 1048576)
                 del datasets_rx[0]
-                if len(datasets_rx) == 10:
-                    break
-        if len(datasets_tx) > 10:
-            while datasets_tx:
+
+            if len(datasets_tx) <= 9:
+                datasets_tx.append(int(net['tx']) / 1048576)
+            if len(datasets_tx) == 10:
+                datasets_tx.append(int(net['tx']) / 1048576)
                 del datasets_tx[0]
-                if len(datasets_tx) == 10:
-                    break
 
-        if len(datasets_rx) <= 9:
-            datasets_rx.append(int(net['rx']) / 1048576)
-        if len(datasets_rx) == 10:
-            datasets_rx.append(int(net['rx']) / 1048576)
-            del datasets_rx[0]
+            # Some fix division by 0 Chart.js
+            if len(datasets_rx) == 10:
+                if sum(datasets_rx) == 0:
+                    datasets_rx[9] += 0.01
+                if sum(datasets_rx) / 10 == datasets_rx[0]:
+                    datasets_rx[9] += 0.01
 
-        if len(datasets_tx) <= 9:
-            datasets_tx.append(int(net['tx']) / 1048576)
-        if len(datasets_tx) == 10:
-            datasets_tx.append(int(net['tx']) / 1048576)
-            del datasets_tx[0]
+            network = {
+                'labels': [""] * 10,
+                'datasets': [
+                    {
+                        "fillColor": "rgba(83,191,189,0.5)",
+                        "strokeColor": "rgba(83,191,189,1)",
+                        "pointColor": "rgba(83,191,189,1)",
+                        "pointStrokeColor": "#fff",
+                        "data": datasets_rx
+                    },
+                    {
+                        "fillColor": "rgba(151,187,205,0.5)",
+                        "strokeColor": "rgba(151,187,205,1)",
+                        "pointColor": "rgba(151,187,205,1)",
+                        "pointStrokeColor": "#fff",
+                        "data": datasets_tx
+                    },
+                ]
+            }
+            json_net.append({'dev': net['dev'], 'data': network})
+            cookie_net[net['dev']] = [datasets_rx, datasets_tx]
 
-        # Some fix division by 0 Chart.js
-        if len(datasets_rx) == 10:
-            if sum(datasets_rx) == 0:
-                datasets_rx[9] += 0.01
-            if sum(datasets_rx) / 10 == datasets_rx[0]:
-                datasets_rx[9] += 0.01
-
-        network = {
-            'labels': [""] * 10,
-            'datasets': [
-                {
-                    "fillColor": "rgba(83,191,189,0.5)",
-                    "strokeColor": "rgba(83,191,189,1)",
-                    "pointColor": "rgba(83,191,189,1)",
-                    "pointStrokeColor": "#fff",
-                    "data": datasets_rx
-                },
-                {
-                    "fillColor": "rgba(151,187,205,0.5)",
-                    "strokeColor": "rgba(151,187,205,1)",
-                    "pointColor": "rgba(151,187,205,1)",
-                    "pointStrokeColor": "#fff",
-                    "data": datasets_tx
-                },
-            ]
-        }
-        json_net.append({'dev': net['dev'], 'data': network})
-        cookie_net[net['dev']] = [datasets_rx, datasets_tx]
-
-    data = simplejson.dumps(json_net)
+    data = json.dumps(json_net)
     response = HttpResponse()
     response['Content-Type'] = "text/javascript"
-    response.cookies['net_usage'] = cookie_net
+    if not data_error:
+        response.cookies['net_usage'] = cookie_net
+    else:
+        response.cookies['net_usage'] = ''
     response.write(data)
     return response
 
@@ -281,7 +289,7 @@ def cpuusage(request, host_id, vname):
         ]
     }
 
-    data = simplejson.dumps(cpu)
+    data = json.dumps(cpu)
     response = HttpResponse()
     response['Content-Type'] = "text/javascript"
     response.cookies['cpu_usage'] = datasets

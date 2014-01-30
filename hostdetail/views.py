@@ -3,7 +3,7 @@ from libvirt import libvirtError
 from django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
-from django.utils import simplejson
+import json
 
 from servers.models import Compute
 from vrtManager.hostdetails import wvmHostDetails
@@ -70,7 +70,7 @@ def cpuusage(request, host_id):
         ]
     }
 
-    data = simplejson.dumps(cpu)
+    data = json.dumps(cpu)
     response = HttpResponse()
     response['Content-Type'] = "text/javascript"
     response.cookies['cpu_usage'] = datasets
@@ -138,7 +138,7 @@ def memusage(request, host_id):
         ]
     }
 
-    data = simplejson.dumps(memory)
+    data = json.dumps(memory)
     response = HttpResponse()
     response['Content-Type'] = "text/javascript"
     response.cookies['memory_usage'] = datasets
