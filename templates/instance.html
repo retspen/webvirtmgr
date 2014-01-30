@@ -29,6 +29,7 @@
                     <th>{% trans "Status" %}</th>
                     <th>{% trans "VPU's" %}</th>
                     <th>{% trans "Memory" %}</th>
+                    <th>{% trans "Description" %}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -45,6 +46,7 @@
                         </td>
                         <td>{% if cur_vcpu %}{{ cur_vcpu }}{% else %}{{ vcpu }}{% endif %}</td>
                         <td>{{ cur_memory }}{% trans "MB" %}</td>
+                        <td>{{ description }}</td>
                     <tr>
                 </tbody>
             </table>
