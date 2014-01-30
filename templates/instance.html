@@ -153,31 +153,29 @@
                     </div>
                     <div class="tab-pane tab-inst" id="vnc">
                         <p>{% trans "If you want to create password for vnc, shutdown the instance." %}</p>
-                        <div class="col-lg-3">
-                            <form class="form-horizontal" method="post" role="form">{% csrf_token %}
-                                <div class="form-group">
-                                    <div class="col-sm-offset-2 col-sm-10">
-                                        <div class="checkbox">
-                                          <label>
-                                            <input type="checkbox" name="auto_pass" value="true" id="vnc_passwd_gen">{% trans "Generate" %}
-                                          </label>
-                                        </div>
-                                     </div>
-                                </div>
-                                <div class="form-group" id="vnc_passwd_manual">
-                                    <label for="inputPassword1" class="col-sm-2 control-label">{% trans "Password" %}</label>
-                                    <div class="col-sm-6">
-                                        <input type="password" class="form-control" name="vnc_passwd" placeholder="{% trans "Password" %}" maxlength="14">
+                        <form class="form-horizontal" method="post" role="form">{% csrf_token %}
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <div class="checkbox">
+                                      <label>
+                                        <input type="checkbox" name="auto_pass" value="true" id="vnc_passwd_gen">{% trans "Generate" %}
+                                      </label>
                                     </div>
+                                 </div>
+                            </div>
+                            <div class="form-group" id="vnc_passwd_manual">
+                                <label for="inputPassword1" class="col-sm-2 control-label">{% trans "Password" %}</label>
+                                <div class="col-sm-6">
+                                    <input type="password" class="form-control" name="vnc_passwd" placeholder="{% trans "Password" %}" maxlength="14">
                                 </div>
-                                {% ifequal status 5 %}
-                                    <button type="submit" class="btn btn-primary btn-lg pull-right" name="set_vnc_passwd">{% trans "Set Password" %}</button>
-                                {% else %}
-                                    <button class="btn btn-primary btn-lg pull-right disabled" name="set_vnc_passwd">{% trans "Set Password" %}</button>
-                                {% endifequal %}
-                            </form>
-                            <div class="clearfix"></div>
-                        </div>
+                            </div>
+                            {% ifequal status 5 %}
+                                <button type="submit" class="btn btn-primary btn-lg pull-right" name="set_vnc_passwd">{% trans "Set Password" %}</button>
+                            {% else %}
+                                <button class="btn btn-primary btn-lg pull-right disabled" name="set_vnc_passwd">{% trans "Set Password" %}</button>
+                            {% endifequal %}
+                        </form>
+                        <div class="clearfix"></div>
                     </div>
                 </div>
             </div>
