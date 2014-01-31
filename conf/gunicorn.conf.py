@@ -79,7 +79,7 @@ def get_workers():
         return 3
 
 workers = get_workers()
-worker_class = 'egg:gunicorn#eventlet'
+#worker_class = 'egg:gunicorn#eventlet'
 worker_connections = 1000
 timeout = 30
 keepalive = 2

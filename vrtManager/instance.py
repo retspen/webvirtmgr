@@ -161,22 +161,37 @@ class wvmInstance(wvmConnect):
     def get_disk_device(self):
         def disks(ctx):
             result = []
+            dev = None
+            volume = None
+            storage = None
+            file = None
             for disk in ctx.xpathEval('/domain/devices/disk'):
                 device = disk.xpathEval('@device')[0].content
                 if device == 'disk':
-                    dev = disk.xpathEval('target/@dev')[0].content
-                    file = disk.xpathEval('source/@file|source/@dev|source/@name')[0].content
-                    vol = self.get_volume_by_path(file)
-                    volume = vol.name()
-                    stg = vol.storagePoolLookupByVolume()
-                    storage = stg.name()
-                    result.append({'dev': dev, 'image': volume, 'storage': storage, 'path': file})
+                    try:
+                        dev = disk.xpathEval('target/@dev')[0].content
+                        file = disk.xpathEval('source/@file|source/@dev|source/@name')[0].content
+                        try:
+                            vol = self.get_volume_by_path(file)
+                            volume = vol.name()
+                            stg = vol.storagePoolLookupByVolume()
+                            storage = stg.name()
+                        except libvirtError:
+                            volume = file
+                    except:
+                        pass
+                    finally:
+                        result.append({'dev': dev, 'image': volume, 'storage': storage, 'path': file})
             return result
         return util.get_xml_path(self._XMLDesc(0), func=disks)
 
     def get_media_device(self):
         def disks(ctx):
             result = []
+            dev = None
+            volume = None
+            storage = None
+            file = None
             for media in ctx.xpathEval('/domain/devices/disk'):
                 device = media.xpathEval('@device')[0].content
                 if device == 'cdrom':
@@ -190,10 +205,10 @@ class wvmInstance(wvmConnect):
                             storage = stg.name()
                         except libvirtError:
                             volume = file
-                            storage = None
-                        result.append({'dev': dev, 'image': volume, 'storage': storage, 'path': file})
                     except:
                         pass
+                    finally:
+                        result.append({'dev': dev, 'image': volume, 'storage': storage, 'path': file})
             return result
         return util.get_xml_path(self._XMLDesc(0), func=disks)
 
@@ -262,8 +277,10 @@ class wvmInstance(wvmConnect):
         tree = ElementTree.fromstring(self._XMLDesc(0))
         for source, target in zip(tree.findall("devices/disk/source"),
                                   tree.findall("devices/disk/target")):
-            if source.get("file").endswith('.img'):
+            if source.get("file"):
                 devices.append([source.get("file"), target.get("dev")])
+            elif source.get("dev"):
+                devices.append([source.get("dev"), target.get("dev")])
         for dev in devices:
             rd_use_ago = self.instance.blockStats(dev[0])[1]
             wr_use_ago = self.instance.blockStats(dev[0])[3]
