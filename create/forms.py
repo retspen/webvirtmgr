@@ -40,6 +40,7 @@ class NewVMForm(forms.Form):
     memory = forms.IntegerField(error_messages={'required': _('No RAM size has been entered')})
     networks = forms.CharField(error_messages={'required': _('No Network pool has been choice')})
     storage = forms.CharField(max_length=20, required=False)
+    template = forms.CharField(required=False)
     images = forms.CharField(required=False)
     hdd_size = forms.IntegerField(required=False)
     virtio = forms.BooleanField(required=False)

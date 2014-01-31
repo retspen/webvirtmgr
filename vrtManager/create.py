@@ -79,6 +79,26 @@ class wvmCreate(wvmConnect):
                         vol = stg.storageVolLookupByName(img)
                         return vol.path()
 
+    def clone_from_template(self, clone, template):
+        stg = self.get_volume_by_path(template)
+        storage_type = util.get_xml_path(self.XMLDesc(0), "/pool/@type")
+        if storage_type == 'dir':
+            clone += '.img'
+        for img in stg.listVolumes():
+            vol = sgt.storageVolLookupByName(img)
+            if vol.path() == template:
+                format = util.get_xml_path(vol.XMLDesc(0), "/volume/target/format/@type")
+        xml = """
+            <volume>
+                <name>%s</name>
+                <capacity>0</capacity>
+                <allocation>0</allocation>
+                <target>
+                    <format type='%s'/>
+                </target>
+            </volume>""" % (clone, format)
+        self._createXMLFrom(xml, vol, 0)
+
     def _defineXML(self, xml):
         self.wvm.defineXML(xml)
 
