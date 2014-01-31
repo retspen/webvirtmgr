@@ -6,6 +6,7 @@ import sys
 DIR_PATH = os.path.dirname(os.path.abspath(__file__))
 ROOT_PATH = os.path.abspath(os.path.join(DIR_PATH, '..', ''))
 # VENV_PATH = ROOT_PATH + '/venv/lib/python2.7/site-packages'
+CERT = DIR_PATH + '/cert.pem'
 LISTEN_HOST = '0.0.0.0'
 LISTEN_PORT = '6080'
 
@@ -77,7 +78,7 @@ if __name__ == '__main__':
                                 listen_port=LISTEN_PORT,
                                 source_is_ipv6=False,
                                 verbose=False,
-                                cert='self.pem',
+                                cert=CERT,
                                 key=None,
                                 ssl_only=False,
                                 daemon=False,
