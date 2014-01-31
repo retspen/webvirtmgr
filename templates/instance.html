@@ -278,7 +278,7 @@
                         <form class="form-horizontal" action="" method="post">{% csrf_token %}
                             {% if media %}
                                 <input type="hidden" name="iso_media" value="{{ media.0.path }}">
-                                <button type="submit" class="btn btn-primary btn-lg pull-right"  name="umount_iso" onclick="return confirm('{% trans "Are you sure?" %}')">{% trans "Disconnect" %}</button>
+                                <button type="submit" class="btn btn-primary btn-lg pull-right"  name="umount_iso">{% trans "Disconnect" %}</button>
                             {% else %}
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">{% trans "Images" %}</label>
