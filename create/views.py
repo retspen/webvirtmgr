@@ -65,7 +65,6 @@ def create(request, host_id):
         if 'create' in request.POST:
             volumes = {}
             form = NewVMForm(request.POST)
-            print form.errors
             if form.is_valid():
                 data = form.cleaned_data
                 if instances:
@@ -73,7 +72,21 @@ def create(request, host_id):
                         msg = _("A virtual machine with this name already exists")
                         errors.append(msg)
                 if not errors:
-                    if not data['hdd_size']:
+                    if data['hdd_size']:
+                        if not data['mac']:
+                            msg = _("No Virtual Machine MAC has been entered")
+                            errors.append(msg)
+                        else:
+                            try:
+                                path = conn.create_volume(data['storage'], data['name'], data['hdd_size'])
+                                volumes[path] = conn.get_volume_type(path)
+                            except libvirtError as msg_error:
+                                errors.append(msg_error.message)
+                    elif data['template']:
+                        templ_path = conn.get_volume_path(data['template'])
+                        clone_path = conn.clone_from_template(data['name'], templ_path)
+                        volumes[clone_path] = conn.get_volume_type(clone_path)
+                    else:
                         if not data['images']:
                             msg = _("First you need to create or select an image")
                             errors.append(msg)
@@ -84,16 +97,6 @@ def create(request, host_id):
                                     volumes[path] = conn.get_volume_type(path)
                                 except libvirtError as msg_error:
                                     errors.append(msg_error.message)
-                    else:
-                        if not data['mac']:
-                            msg = _("No Virtual Machine MAC has been entered")
-                            errors.append(msg)
-                        else:
-                            try:
-                                path = conn.create_volume(data['storage'], data['name'], data['hdd_size'])
-                                volumes[path] = conn.get_volume_type(path)
-                            except libvirtError as msg_error:
-                                errors.append(msg_error.message)
                     if not errors:
                         uuid = util.randomUUID()
                         try:
