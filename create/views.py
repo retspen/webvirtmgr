@@ -84,8 +84,8 @@ def create(request, host_id):
                                 errors.append(msg_error.message)
                     elif data['template']:
                         templ_path = conn.get_volume_path(data['template'])
-                        new_path = conn.clone_from_template(data['name'], templ_path)
-                        volumes[new_path] =
+                        clone_path = conn.clone_from_template(data['name'], templ_path)
+                        volumes[clone_path] = conn.get_volume_type(clone_path)
                     else:
                         if not data['images']:
                             msg = _("First you need to create or select an image")

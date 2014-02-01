@@ -1,10 +1,11 @@
-# WebVirtMgr panel - v4.3.0
+# WebVirtMgr panel - v4.3.2
 
 * <a href="https://github.com/retspen/webvirtmgr/wiki/Upgrade-from-v3">Upgrade from v3</a>
 
 ### Whats new?
 
 * New design
+* Add create instance from template image
 * Move from apache to nginx (supervisor and gunicorn)
 * Move snapshots to instance page
 * Fix view on device with 1024x768 resolution
