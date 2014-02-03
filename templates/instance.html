@@ -265,7 +265,7 @@
                         <div class="clearfix"></div>
                     </div>
                     <div class="tab-pane tab-inst" id="instancemedia">
-                        {% if media %}
+                        {% if media.0.path %}
                             <div class="col-sm-3">
                                 <p style="text-align: right; margin-top: 20px;"><strong>{% trans "Connected" %}</strong></p>
                             </div>
@@ -276,7 +276,7 @@
                             </div>
                         {% endif %}
                         <form class="form-horizontal" action="" method="post">{% csrf_token %}
-                            {% if media %}
+                            {% if media.0.path %}
                                 <input type="hidden" name="iso_media" value="{{ media.0.path }}">
                                 <button type="submit" class="btn btn-primary btn-lg pull-right"  name="umount_iso">{% trans "Disconnect" %}</button>
                             {% else %}
