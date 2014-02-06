@@ -92,31 +92,13 @@
         <div class="tab-content">
             <div class="tab-pane active" id="power" style="margin-top: 20px">
                 <ul class="nav nav-tabs ">
-                    <li class="active"><a href="#managedsave" data-toggle="tab">{% trans "Save" %}</a></li>
-                    <li><a href="#shutdown" data-toggle="tab">{% trans "Shutdown" %}</a></li>
+                    <li class="active"><a href="#shutdown" data-toggle="tab">{% trans "Shutdown" %}</a></li>
                     <li><a href="#forceshutdown" data-toggle="tab">{% trans "Force Shutdown" %}</a></li>
                     <li><a href="#suspend" data-toggle="tab">{% trans "Suspend" %}</a></li>
+                    <li><a href="#managedsave" data-toggle="tab">{% trans "Save" %}</a></li>
                 </ul>
                 <div class="tab-content">
-                    <div class="tab-pane tab-inst active" id="managedsave">
-                        <p>{% trans "This action saves the state of the instance." %}</p>
-                        <form action="" method="post">{% csrf_token %}
-                            {% ifequal status 5 %}
-                                <button type="submit" name="start" class="btn btn-lg btn-primary pull-right">{% trans "Start" %}</button>
-                                {% ifequal has_managed_save_image 1 %}
-                                    <div class="clearfix" style="height:60px;"></div><button type="submit" name="deletesaveimage" class="btn btn-lg btn-primary pull-right">{% trans "Delete Save Image" %}</button>
-                                {% endifequal %}
-                            {% endifequal %}
-                            {% ifequal status 1 %}
-                                <button type="submit" name="power" value="managedsave" class="btn btn-lg btn-primary pull-right">{% trans "Save" %}</button>
-                            {% endifequal %}
-                            {% ifequal status 3 %}
-                                <button class="btn btn-lg btn-primary pull-right disabled">{% trans "Save" %}</button>
-                            {% endifequal %}
-                        </form>
-                        <div class="clearfix"></div>
-                    </div>
-                    <div class="tab-pane tab-inst" id="shutdown">
+                    <div class="tab-pane tab-inst active" id="shutdown">
                         <p>{% trans "This action sends ACPI shutdown signal to instance." %}</p>
                         <form action="" method="post">{% csrf_token %}
                             {% ifequal status 5 %}
@@ -157,6 +139,25 @@
                             {% endifequal %}
                             {% ifequal status 3 %}
                                 <button type="submit" name="resume" class="btn btn-lg btn-primary pull-right">{% trans "Resume" %}</button>
+                            {% endifequal %}
+                        </form>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="tab-pane tab-inst" id="managedsave">
+                        <p>{% trans "This action saves the state of the instance." %}</p>
+                        <form action="" method="post">{% csrf_token %}
+                            {% ifequal status 5 %}
+                                <button type="submit" name="start" class="btn btn-lg btn-primary pull-right">{% trans "Start" %}</button>
+                                {% ifequal has_managed_save_image 1 %}
+                                    <div class="clearfix" style="height:60px;"></div>
+                                    <button type="submit" name="deletesaveimage" class="btn btn-lg btn-primary pull-right">{% trans "Delete Save Image" %}</button>
+                                {% endifequal %}
+                            {% endifequal %}
+                            {% ifequal status 1 %}
+                                <button type="submit" name="power" value="managedsave" class="btn btn-lg btn-primary pull-right">{% trans "Save" %}</button>
+                            {% endifequal %}
+                            {% ifequal status 3 %}
+                                <button class="btn btn-lg btn-primary pull-right disabled">{% trans "Save" %}</button>
                             {% endifequal %}
                         </form>
                         <div class="clearfix"></div>
