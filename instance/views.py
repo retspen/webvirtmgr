@@ -347,6 +347,10 @@ def instances(request, host_id):
             if 'managedsave' in request.POST:
                 conn.managedsave(name)
                 return HttpResponseRedirect(request.get_full_path())
+            if 'deletesaveimage' in request.POST:
+                f.write("deletesaveimage\n")
+                conn.managed_save_remove(name)
+                return HttpResponseRedirect(request.get_full_path())
             if 'suspend' in request.POST:
                 conn.suspend(name)
                 return HttpResponseRedirect(request.get_full_path())
@@ -418,6 +422,7 @@ def instance(request, host_id, vname):
         if request.method == 'POST':
             if 'start' in request.POST:
                 conn.start()
+
                 return HttpResponseRedirect(request.get_full_path())
             if 'power' in request.POST:
                 if 'shutdown' == request.POST.get('power', ''):

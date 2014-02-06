@@ -53,6 +53,10 @@ class wvmInstances(wvmConnect):
         dom = self.get_instance(name)
         dom.managedSave(0)
 
+    def managed_save_remove(self, name):
+        dom = self.get_instance(name)
+        dom.managedSaveRemove(0)
+
     def suspend(self, name):
         dom = self.get_instance(name)
         dom.suspend()
