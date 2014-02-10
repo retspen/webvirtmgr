@@ -94,7 +94,7 @@
                                                 <div class="form-group">
                                                     <label class="col-sm-3 control-label">{% trans "Name" %}</label>
                                                     <div class="col-sm-6">
-                                                        <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}" maxlength="14" required pattern="[a-zA-Z0-9_]+">
+                                                        <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}" maxlength="14" required pattern="[a-zA-Z0-9\.\-_]+">
                                                         <input type="hidden" name="vcpu" value="{{ flavor.vcpu }}">
                                                         <input type="hidden" name="memory" value="{{ flavor.memory }}">
                                                         <input type="hidden" name="hdd_size" value="{{ flavor.disk }}">
@@ -187,7 +187,7 @@
                     <div class="form-group">
                         <label class="col-sm-3 control-label">{% trans "Name" %}</label>
                         <div class="col-sm-6">
-                            <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}" maxlength="14" required pattern="[a-zA-Z0-9_]+">
+                            <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}" maxlength="14" required pattern="[a-zA-Z0-9\.\-_]+">
                         </div>
                     </div>
                     <div class="form-group">
@@ -317,7 +317,7 @@
                     <div class="form-group">
                         <label class="col-sm-3 control-label">{% trans "Name" %}</label>
                         <div class="col-sm-6">
-                            <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}" maxlength="14" required pattern="[a-zA-Z0-9_]+">
+                            <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}" maxlength="14" required pattern="[a-zA-Z0-9\.\-_]+">
                         </div>
                     </div>
                     <div class="form-group">
