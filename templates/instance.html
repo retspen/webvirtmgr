@@ -36,7 +36,13 @@
                     <tr>
                         <td>{{ vname }}</td>
                         <td>{% if status %}
-                            <span class={% ifequal status 5 %}"text-danger">{% trans "Shuttoff" %}{% endifequal %}
+                            <span class={% ifequal status 5 %}
+                                            {% ifequal has_managed_save_image 1 %}
+                                                "text-warning">{% trans "Saved" %}
+                                            {% else %}
+                                                "text-danger">{% trans "Shuttoff" %}
+                                            {% endifequal %}
+                                        {% endifequal %}
                                         {% ifequal status 1 %}"text-success">{% trans "Running" %}{% endifequal %}
                                         {% ifequal status 3 %}"text-warning">{% trans "Suspend" %}{% endifequal %}
                             </span>
@@ -89,6 +95,7 @@
                     <li class="active"><a href="#shutdown" data-toggle="tab">{% trans "Shutdown" %}</a></li>
                     <li><a href="#forceshutdown" data-toggle="tab">{% trans "Force Shutdown" %}</a></li>
                     <li><a href="#suspend" data-toggle="tab">{% trans "Suspend" %}</a></li>
+                    <li><a href="#managedsave" data-toggle="tab">{% trans "Save" %}</a></li>
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane tab-inst active" id="shutdown">
@@ -132,6 +139,25 @@
                             {% endifequal %}
                             {% ifequal status 3 %}
                                 <button type="submit" name="resume" class="btn btn-lg btn-primary pull-right">{% trans "Resume" %}</button>
+                            {% endifequal %}
+                        </form>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="tab-pane tab-inst" id="managedsave">
+                        <p>{% trans "This action saves the state of the instance." %}</p>
+                        <form action="" method="post">{% csrf_token %}
+                            {% ifequal status 5 %}
+                                <button type="submit" name="start" class="btn btn-lg btn-primary pull-right">{% trans "Start" %}</button>
+                                {% ifequal has_managed_save_image 1 %}
+                                    <div class="clearfix" style="height:60px;"></div>
+                                    <button type="submit" name="deletesaveimage" class="btn btn-lg btn-primary pull-right">{% trans "Delete Save Image" %}</button>
+                                {% endifequal %}
+                            {% endifequal %}
+                            {% ifequal status 1 %}
+                                <button type="submit" name="power" value="managedsave" class="btn btn-lg btn-primary pull-right">{% trans "Save" %}</button>
+                            {% endifequal %}
+                            {% ifequal status 3 %}
+                                <button class="btn btn-lg btn-primary pull-right disabled">{% trans "Save" %}</button>
                             {% endifequal %}
                         </form>
                         <div class="clearfix"></div>
@@ -265,7 +291,7 @@
                         <div class="clearfix"></div>
                     </div>
                     <div class="tab-pane tab-inst" id="instancemedia">
-                        {% if media %}
+                        {% if media.0.path %}
                             <div class="col-sm-3">
                                 <p style="text-align: right; margin-top: 20px;"><strong>{% trans "Connected" %}</strong></p>
                             </div>
@@ -276,7 +302,7 @@
                             </div>
                         {% endif %}
                         <form class="form-horizontal" action="" method="post">{% csrf_token %}
-                            {% if media %}
+                            {% if media.0.path %}
                                 <input type="hidden" name="iso_media" value="{{ media.0.path }}">
                                 <button type="submit" class="btn btn-primary btn-lg pull-right"  name="umount_iso">{% trans "Disconnect" %}</button>
                             {% else %}

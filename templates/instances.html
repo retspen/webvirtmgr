@@ -21,7 +21,7 @@
                     <th>{% trans "Status" %}</th>
                     <th>{% trans "VPU's" %}</th>
                     <th>{% trans "Memory" %}</th>
-                    <th style="width:210px;">{% trans "Action" %}</th>
+                    <th style="width:252px;">{% trans "Action" %}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -32,7 +32,11 @@
                                 <span class="text-success">{% trans "Running" %}</span>
                             {% endifequal %}
                             {% ifequal inst.status 5 %}
-                                <span class="text-danger">{% trans "Shutoff" %}</span>
+                                {% ifequal inst.has_managed_save_image 1 %}
+                                    <span class="text-warning">{% trans "Saved" %}</span>
+                                {% else %}
+                                    <span class="text-danger">{% trans "Shutoff" %}</span>
+                                {% endifequal %}
                             {% endifequal %}
                             {% ifequal inst.status 3 %}
                                 <span class="text-warning">{% trans "Suspend" %}</span>
@@ -50,9 +54,18 @@
                                     <button class="btn btn-sm btn-default disabled" title="{% trans "Pause" %}">
                                         <span class="glyphicon glyphicon-pause"></span>
                                     </button>
-                                    <button class="btn btn-sm btn-default disabled" title="{% trans "Shutdown" %}">
-                                        <span class="glyphicon glyphicon-off"></span>
+                                    <button class="btn btn-sm btn-default disabled" title="{% trans "Save" %}">
+                                        <span class="glyphicon glyphicon-download-alt"></span>
                                     </button>
+                                    {% ifequal inst.has_managed_save_image 1 %}
+                                        <button class="btn btn-sm btn-default" type="submit" name="deletesaveimage" title="{% trans "Delete Save Image" %}">
+                                            <span class="glyphicon glyphicon-remove"></span>
+                                        </button>
+                                    {% else %}
+                                        <button class="btn btn-sm btn-default disabled" title="{% trans "Shutdown" %}">
+                                            <span class="glyphicon glyphicon-off"></span>
+                                        </button>
+                                    {% endifequal %}
                                     <button class="btn btn-sm btn-default disabled" title="{% trans "Force Shutdown" %}">
                                         <span class="glyphicon glyphicon-stop"></span>
                                     </button>
@@ -62,10 +75,13 @@
                                 {% endifequal %}
                                 {% ifequal inst.status 3 %}
                                     <button class="btn btn-sm btn-default" type="submit" name="resume" title="{% trans "Resume" %}">
-                                        <i class="icon-play"></i>
+                                        <i class="glyphicon glyphicon-play"></i>
                                     </button>
                                     <button class="btn btn-sm btn-default disabled" title="{% trans "Pause" %}">
-                                        <i class="icon-pause"></i>
+                                        <i class="glyphicon glyphicon-pause"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-default" type="submit" name="managedsave" title="{% trans "Save" %}">
+                                        <span class="glyphicon glyphicon-download-alt"></span>
                                     </button>
                                     <button class="btn btn-sm btn-default disabled" title="{% trans "Shutdown" %}">
                                         <span class="glyphicon glyphicon-off"></span>
@@ -83,6 +99,9 @@
                                     </button>
                                     <button class="btn btn-sm btn-default" type="submit" name="suspend" title="{% trans "Pause" %}">
                                         <span class="glyphicon glyphicon-pause"></span>
+                                    </button>
+                                    <button class="btn btn-sm btn-default" type="submit" name="managedsave" title="{% trans "Save" %}">
+                                        <span class="glyphicon glyphicon-download-alt"></span>
                                     </button>
                                     <button class="btn btn-sm btn-default" type="submit" name="shutdown" title="{% trans "Shutdown" %}">
                                         <span class="glyphicon glyphicon-off"></span>

@@ -29,6 +29,10 @@ class wvmInstances(wvmConnect):
             vcpu = util.get_xml_path(inst.XMLDesc(0), "/domain/vcpu")
         return vcpu
 
+    def get_instance_managed_save_image(self, name):
+        inst = self.get_instance(name)
+        return inst.hasManagedSaveImage(0)
+
     def get_uuid(self, name):
         inst = self.get_instance(name)
         return inst.UUIDString()
@@ -44,6 +48,14 @@ class wvmInstances(wvmConnect):
     def force_shutdown(self, name):
         dom = self.get_instance(name)
         dom.destroy()
+
+    def managedsave(self, name):
+        dom = self.get_instance(name)
+        dom.managedSave(0)
+
+    def managed_save_remove(self, name):
+        dom = self.get_instance(name)
+        dom.managedSaveRemove(0)
 
     def suspend(self, name):
         dom = self.get_instance(name)
@@ -76,6 +88,12 @@ class wvmInstance(wvmConnect):
 
     def force_shutdown(self):
         self.instance.destroy()
+
+    def managedsave(self):
+        self.instance.managedSave(0)
+
+    def managed_save_remove(self):
+        self.instance.managedSaveRemove(0)
 
     def suspend(self):
         self.instance.suspend()
@@ -391,3 +409,6 @@ class wvmInstance(wvmConnect):
     def snapshot_revert(self, snapshot):
         snap = self.instance.snapshotLookupByName(snapshot, 0)
         self.instance.revertToSnapshot(snap, 0)
+
+    def get_managed_save_image(self):
+        return self.instance.hasManagedSaveImage(0)
