@@ -515,8 +515,9 @@ def instance(request, host_id, vname):
             if 'revert_snapshot' in request.POST:
                 snap_name = request.POST.get('name', '')
                 conn.snapshot_revert(snap_name)
-                message = _("Successful revert snapshot: ")
-                message += snap_name
+                msg = _("Successful revert snapshot: ")
+                msg += snap_name
+                messages.append(msg)
 
         conn.close()
 

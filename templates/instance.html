@@ -419,7 +419,7 @@
                                             <form action="" method="post" style="height:10px;">{% csrf_token %}
                                                 <input type="hidden" name="name" value="{{ snap.name }}">
                                                 {% ifequal status 5 %}
-                                                    <button type="submit" class="btn btn-sm btn-primary" name="revert" value="revert_snapshot" onclick="return confirm('Are you sure?')">{% trans "Revert" %}</button>
+                                                    <button type="submit" class="btn btn-sm btn-primary" name="revert_snapshot" onclick="return confirm('Are you sure?')">{% trans "Revert" %}</button>
                                                 {% else %}
                                                     <button type="button" class="btn btn-sm btn-primary disabled">{% trans "Revert" %}</button>
                                                 {% endifequal %}
@@ -428,7 +428,7 @@
                                         <td style="width:30px;">
                                             <form action="" method="post">{% csrf_token %}
                                                 <input type="hidden" name="name" value="{{ snap.name }}">
-                                                <button type="submit" class="btn btn-sm btn-danger" name="delete_snapshot" value="delete" onclick="return confirm('{% trans "Are you sure?" %}')">{% trans "Delete" %}</button>
+                                                <button type="submit" class="btn btn-sm btn-danger" name="delete_snapshot" onclick="return confirm('{% trans "Are you sure?" %}')">{% trans "Delete" %}</button>
                                             </form>
                                         </td>
                                     </tr>
