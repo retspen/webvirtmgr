@@ -356,7 +356,12 @@ class wvmInstance(wvmConnect):
         xml_vcpu = "<vcpu current='%s'>%s</vcpu>" % (cur_vcpu, vcpu)
         xml_vcpu_change = re.sub('<vcpu.*vcpu>', xml_vcpu, xml_curmemory_change)
         xml_description = "<description>%s</description>" % description
-        xml_description_change = re.sub('<description.*description>', xml_description, xml_vcpu_change)
+        find_description = re.findall('description', xml_vcpu_change)
+        if not find_description:
+            xml_description = '</uuid>\n' + xml_description
+            xml_description_change = re.sub('</uuid>', xml_description, xml_vcpu_change)
+        else:
+            xml_description_change = re.sub('<description.*description>', xml_description, xml_vcpu_change)
         self._defineXML(xml_description_change)
 
     def get_iso_media(self):
