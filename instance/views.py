@@ -329,7 +329,8 @@ def instances(request, host_id):
                           'status': conn.get_instance_status(instance),
                           'uuid': uuid,
                           'memory': conn.get_instance_memory(instance),
-                          'vcpu': conn.get_instance_vcpu(instance)})
+                          'vcpu': conn.get_instance_vcpu(instance),
+                          'has_managed_save_image': conn.get_instance_managed_save_image(instance)})
 
     try:
         if request.method == 'POST':
@@ -342,6 +343,13 @@ def instances(request, host_id):
                 return HttpResponseRedirect(request.get_full_path())
             if 'destroy' in request.POST:
                 conn.force_shutdown(name)
+                return HttpResponseRedirect(request.get_full_path())
+            if 'managedsave' in request.POST:
+                conn.managedsave(name)
+                return HttpResponseRedirect(request.get_full_path())
+            if 'deletesaveimage' in request.POST:
+                f.write("deletesaveimage\n")
+                conn.managed_save_remove(name)
                 return HttpResponseRedirect(request.get_full_path())
             if 'suspend' in request.POST:
                 conn.suspend(name)
@@ -397,6 +405,7 @@ def instance(request, host_id, vname):
         vnc_port = conn.get_vnc()
         snapshots = sorted(conn.get_snapshot(), reverse=True)
         inst_xml = conn._XMLDesc(VIR_DOMAIN_XML_SECURE)
+        has_managed_save_image = conn.get_managed_save_image()
     except libvirtError as msg_error:
         errors.append(msg_error.message)
 
@@ -413,6 +422,7 @@ def instance(request, host_id, vname):
         if request.method == 'POST':
             if 'start' in request.POST:
                 conn.start()
+
                 return HttpResponseRedirect(request.get_full_path())
             if 'power' in request.POST:
                 if 'shutdown' == request.POST.get('power', ''):
@@ -421,6 +431,12 @@ def instance(request, host_id, vname):
                 if 'destroy' == request.POST.get('power', ''):
                     conn.force_shutdown()
                     return HttpResponseRedirect(request.get_full_path())
+                if 'managedsave' == request.POST.get('power', ''):
+                    conn.managedsave()
+                    return HttpResponseRedirect(request.get_full_path())
+            if 'deletesaveimage' in request.POST:
+                conn.managed_save_remove()
+                return HttpResponseRedirect(request.get_full_path())
             if 'suspend' in request.POST:
                 conn.suspend()
                 return HttpResponseRedirect(request.get_full_path())
@@ -499,8 +515,9 @@ def instance(request, host_id, vname):
             if 'revert_snapshot' in request.POST:
                 snap_name = request.POST.get('name', '')
                 conn.snapshot_revert(snap_name)
-                message = _("Successful revert snapshot: ")
-                message += snap_name
+                msg = _("Successful revert snapshot: ")
+                msg += snap_name
+                messages.append(msg)
 
         conn.close()
 
