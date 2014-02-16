@@ -55,6 +55,9 @@ pre {
 .sidebar ul {
     padding-left: 0;
 }
+.sidebar li {
+    list-style-type: none;
+}
 .sidebar .list.selected {
     color: #fff;
     background: #4183c4;
