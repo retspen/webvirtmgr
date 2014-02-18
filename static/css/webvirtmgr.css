@@ -54,6 +54,7 @@ pre {
 }
 .sidebar ul {
     padding-left: 0;
+    list-style: none
 }
 .sidebar .list.selected {
     color: #fff;
