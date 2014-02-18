@@ -41,7 +41,12 @@ def servers_list(request):
                 socket_host = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 socket_host.settimeout(1)
                 if host.type == CONN_SSH:
-                    socket_host.connect((host.hostname, SSH_PORT))
+                    if ':' in host.hostname:
+                        LIBVIRT_HOST, SSH_PORT = (host.hostname).split(":")
+                        SSH_PORT = int(SSH_PORT)
+                    else:
+                        LIBVIRT_HOST = host.hostname
+                    socket_host.connect((LIBVIRT_HOST, SSH_PORT))
                 if host.type == CONN_TCP:
                     socket_host.connect((host.hostname, TCP_PORT))
                 socket_host.close()
