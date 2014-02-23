@@ -1,6 +1,4 @@
-# WebVirtMgr panel - v4.3.2
-
-* <a href="https://github.com/retspen/webvirtmgr/wiki/Upgrade-from-v3">Upgrade from v3</a>
+# WebVirtMgr panel - v4.3.4
 
 ### Whats new?
 
