@@ -348,7 +348,6 @@ def instances(request, host_id):
                 conn.managedsave(name)
                 return HttpResponseRedirect(request.get_full_path())
             if 'deletesaveimage' in request.POST:
-                f.write("deletesaveimage\n")
                 conn.managed_save_remove(name)
                 return HttpResponseRedirect(request.get_full_path())
             if 'suspend' in request.POST:
