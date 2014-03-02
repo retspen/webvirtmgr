@@ -59,14 +59,13 @@ def configure_nginx():
 
     # Upload template to server
     files.upload_template(conf, conf_path, context=context)
-    # TODO:
-    # require.nginx.site(tg.NGINX['server_name'], template_source=conf)
 
     # Nginx, make sure `default` website is not running.
-    require.nginx.disabled('default')
+    require.nginx.disabled("default")
 
     # Ensure running ...
-    require.nginx.server()
+    # require.nginx.server()
+    require.service.started("nginx")
 
 
 def configure_novnc(distro):

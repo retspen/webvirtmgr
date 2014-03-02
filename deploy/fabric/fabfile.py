@@ -33,4 +33,5 @@ def update_webvirt():
     """
     distro = distrib_id()
     get_webvirt()
+    configure_nginx()
     configure_supervisor(distro)
