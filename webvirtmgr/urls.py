@@ -17,9 +17,7 @@ urlpatterns = patterns('',
     url(r'^instances/(\d+)/$', 'instance.views.instances', name='instances'),
     url(r'^console/$', 'console.views.console', name='console'),
     url(r'^info/hostusage/(\d+)/$', 'hostdetail.views.hostusage', name='hostusage'),
-    url(r'^info/inst/cpu/(\d+)/([\w\-\.]+)/$', 'instance.views.cpuusage', name='vdscpuusage'),
-    url(r'^info/inst/net/(\d+)/([\w\-\.]+)/$', 'instance.views.netusage', name='vdsnetusage'),
-    url(r'^info/inst/disk/(\d+)/([\w\-\.]+)/$', 'instance.views.diskusage', name='vdsdiskusage'),
+    url(r'^info/instusage/(\d+)/([\w\-\.]+)/$', 'instance.views.instusage', name='instusage'),
 )
 
 urlpatterns += patterns('',

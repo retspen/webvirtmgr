@@ -16,18 +16,27 @@ from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE
 from webvirtmgr.settings import TIME_JS_REFRESH
 
 
-def diskusage(request, host_id, vname):
+
+def instusage(request, host_id, vname):
     """
     VM disk IO
     """
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
+    cookies = {}
+    datasets = {}
     datasets_rd = []
     datasets_wr = []
     json_blk = []
     cookie_blk = {}
-    data_error = False
+    blk_error = False
+    datasets_rx = []
+    datasets_tx = []
+    json_net = []
+    cookie_net = {}
+    net_error = False
+
     compute = Compute.objects.get(id=host_id)
 
     try:
@@ -37,28 +46,77 @@ def diskusage(request, host_id, vname):
                            compute.type,
                            vname)
         blk_usage = conn.disk_usage()
+        cpu_usage = conn.cpu_usage()
+        net_usage = conn.net_usage()
         conn.close()
     except libvirtError:
         blk_usage = None
+        cpu_usage = None
+        net_usage = None
 
     try:
-        cookies = request._cookies['blk_usage']
+        cookies['cpu'] = request._cookies['cpu']
     except KeyError:
-        cookies = None
+        cookies['cpu'] = None
+
+    try:
+        cookies['hdd'] = request._cookies['hdd']
+    except KeyError:
+        cookies['hdd'] = None
+
+    try:
+        cookies['net'] = request._cookies['net']
+    except KeyError:
+        cookies['net'] = None
+
+    if not cookies['cpu']:
+        datasets['cpu'] = [0]
+    else:
+        datasets['cpu'] = eval(cookies['cpu'])
+    if len(datasets['cpu']) > 10:
+        while datasets['cpu']:
+            del datasets['cpu'][0]
+            if len(datasets['cpu']) == 10:
+                break
+    if len(datasets['cpu']) <= 9:
+        datasets['cpu'].append(int(cpu_usage['cpu']))
+    if len(datasets['cpu']) == 10:
+        datasets['cpu'].append(int(cpu_usage['cpu']))
+        del datasets['cpu'][0]
+
+    # Some fix division by 0 Chart.js
+    if len(datasets['cpu']) == 10:
+        if sum(datasets['cpu']) == 0:
+            datasets['cpu'][9] += 0.1
+        if sum(datasets['cpu']) / 10 == datasets['cpu'][0]:
+            datasets['cpu'][9] += 0.1
+
+    cpu = {
+        'labels': [""] * 10,
+        'datasets': [
+            {
+                "fillColor": "rgba(241,72,70,0.5)",
+                "strokeColor": "rgba(241,72,70,1)",
+                "pointColor": "rgba(241,72,70,1)",
+                "pointStrokeColor": "#fff",
+                "data": datasets['cpu']
+            }
+        ]
+    }
 
     for blk in blk_usage:
-        if not cookies:
+        if not cookies['hdd']:
             datasets_wr.append(0)
             datasets_rd.append(0)
         else:
-            datasets = eval(cookies)
+            datasets['hdd'] = eval(cookies['hdd'])
             try:
-                datasets_rd = datasets[blk['dev']][0]
-                datasets_wr = datasets[blk['dev']][1]
+                datasets_rd = datasets['hdd'][blk['dev']][0]
+                datasets_wr = datasets['hdd'][blk['dev']][1]
             except:
-                data_error = True
+                blk_error = True
 
-        if not data_error:
+        if not blk_error:
             if len(datasets_rd) > 10:
                 while datasets_rd:
                     del datasets_rd[0]
@@ -108,63 +166,24 @@ def diskusage(request, host_id, vname):
                     },
                 ]
             }
-            json_blk.append({'dev': blk['dev'], 'data': disk})
-            cookie_blk[blk['dev']] = [datasets_rd, datasets_wr]
 
-    data = json.dumps(json_blk)
-    response = HttpResponse()
-    response['Content-Type'] = "text/javascript"
-    if not data_error:
-        response.cookies['blk_usage'] = cookie_blk
-    else:
-        response.cookies['blk_usage'] = ''
-    response.write(data)
-    return response
+        json_blk.append({'dev': blk['dev'], 'data': disk})
+        cookie_blk[blk['dev']] = [datasets_rd, datasets_wr]
 
-
-def netusage(request, host_id, vname):
-    """
-    VM net bandwidth
-    """
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect('/login')
-
-    datasets_rx = []
-    datasets_tx = []
-    json_net = []
-    cookie_net = {}
-    data_error = False
-    compute = Compute.objects.get(id=host_id)
-
-    try:
-        conn = wvmInstance(compute.hostname,
-                           compute.login,
-                           compute.password,
-                           compute.type,
-                           vname)
-        net_usage = conn.net_usage()
-        conn.close()
-    except libvirtError:
-        net_usage = None
-
-    try:
-        cookies = request._cookies['net_usage']
-    except KeyError:
-        cookies = None
 
     for net in net_usage:
-        if not cookies:
+        if not cookies['net']:
             datasets_rx.append(0)
             datasets_tx.append(0)
         else:
-            datasets = eval(cookies)
+            datasets['net'] = eval(cookies['net'])
             try:
-                datasets_rx = datasets[net['dev']][0]
-                datasets_tx = datasets[net['dev']][1]
+                datasets_rx = datasets['net'][net['dev']][0]
+                datasets_tx = datasets['net'][net['dev']][1]
             except:
-                data_error = True
+                net_error = True
 
-        if not data_error:
+        if not net_error:
             if len(datasets_rx) > 10:
                 while datasets_rx:
                     del datasets_rx[0]
@@ -214,88 +233,18 @@ def netusage(request, host_id, vname):
                     },
                 ]
             }
-            json_net.append({'dev': net['dev'], 'data': network})
-            cookie_net[net['dev']] = [datasets_rx, datasets_tx]
 
-    data = json.dumps(json_net)
+        json_net.append({'dev': net['dev'], 'data': network})
+        cookie_net[net['dev']] = [datasets_rx, datasets_tx]
+
+    data = json.dumps({'cpu': cpu, 'hdd': json_blk, 'net': json_net})
     response = HttpResponse()
     response['Content-Type'] = "text/javascript"
-    if not data_error:
-        response.cookies['net_usage'] = cookie_net
-    else:
-        response.cookies['net_usage'] = ''
+    response.cookies['cpu'] = datasets['cpu']
+    response.cookies['hdd'] = cookie_blk
+    response.cookies['net'] = cookie_net
     response.write(data)
     return response
-
-
-def cpuusage(request, host_id, vname):
-    """
-    VM cpu usage
-    """
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect('/login')
-
-    datasets = []
-    compute = Compute.objects.get(id=host_id)
-
-    try:
-        conn = wvmInstance(compute.hostname,
-                           compute.login,
-                           compute.password,
-                           compute.type,
-                           vname)
-        cpu_usage = conn.cpu_usage()
-        conn.close()
-    except libvirtError:
-        cpu_usage = 0
-
-    try:
-        cookies = request._cookies['cpu_usage']
-    except KeyError:
-        cookies = None
-
-    if not cookies:
-        datasets.append(0)
-    else:
-        datasets = eval(cookies)
-    if len(datasets) > 10:
-        while datasets:
-            del datasets[0]
-            if len(datasets) == 10:
-                break
-    if len(datasets) <= 9:
-        datasets.append(int(cpu_usage['cpu']))
-    if len(datasets) == 10:
-        datasets.append(int(cpu_usage['cpu']))
-        del datasets[0]
-
-    # Some fix division by 0 Chart.js
-    if len(datasets) == 10:
-        if sum(datasets) == 0:
-            datasets[9] += 0.1
-        if sum(datasets) / 10 == datasets[0]:
-            datasets[9] += 0.1
-
-    cpu = {
-        'labels': [""] * 10,
-        'datasets': [
-            {
-                "fillColor": "rgba(241,72,70,0.5)",
-                "strokeColor": "rgba(241,72,70,1)",
-                "pointColor": "rgba(241,72,70,1)",
-                "pointStrokeColor": "#fff",
-                "data": datasets
-            }
-        ]
-    }
-
-    data = json.dumps(cpu)
-    response = HttpResponse()
-    response['Content-Type'] = "text/javascript"
-    response.cookies['cpu_usage'] = datasets
-    response.write(data)
-    return response
-
 
 def instances(request, host_id):
     """

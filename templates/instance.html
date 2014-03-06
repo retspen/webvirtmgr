@@ -562,57 +562,35 @@
         <script type="text/javascript">
             var cpu_ctx = $("#cpuChart").get(0).getContext("2d");
             var cpuChart = new Chart(cpu_ctx);
-            function cpu_usage(){
-                $.getJSON('/info/inst/cpu/{{ host_id }}/{{ vname }}', function(data) {
-                    var options = {
-                        animation : false,
-                        pointDotRadius : 2,
-                        scaleLabel : "<%=value%> %"
-                    }
-                    cpuChart.Line(data, options);
-                });
-            }
+            var cpu_ptions = {animation : false, pointDotRadius : 2, scaleLabel : "<%=value%> %"}
 
             var diskChart = {};
             {% for disk in disks %}
                 var disk_ctx_{{ disk.dev }} = $("#blk{{ disk.dev }}Chart").get(0).getContext("2d");
                 diskChart['{{ disk.dev }}'] = new Chart(disk_ctx_{{ disk.dev }});
             {% endfor %}
-            function disk_usage(){
-                $.getJSON('/info/inst/disk/{{ host_id }}/{{ vname }}', function(data) {
-                    var options = {
-                        animation : false,
-                        pointDotRadius : 2,
-                        scaleLabel : "<%=value%> Mb/s"
-                    }
-                    for(var i = 0; i < data.length; i++){
-                        diskChart[data[i].dev].Line(data[i].data, options);
-                    }
-                });
-
-            }
+            var disk_options = {animation : false, pointDotRadius : 2, scaleLabel : "<%=value%> Mb/s"}
 
             var netChart = {};
             {% for net in networks %}
                 var net_ctx_{{ forloop.counter0 }} = $("#netEth{{ forloop.counter0 }}Chart").get(0).getContext("2d");
                 netChart['{{ forloop.counter0 }}'] = new Chart(net_ctx_{{ forloop.counter0 }});
             {% endfor %}
-            function net_usage(){
-                $.getJSON('/info/inst/net/{{ host_id }}/{{ vname }}', function(data) {
-                    var options = {
-                        animation : false,
-                        pointDotRadius : 2,
-                        scaleLabel : "<%=value%> Mbps"
+            var net_options = {animation : false, pointDotRadius : 2, scaleLabel : "<%=value%> Mbps"}
+
+            function instusage(){
+                $.getJSON('/info/instusage/{{ host_id }}/{{ vname }}', function(data) {
+                    cpuChart.Line(data['cpu'], cpu_ptions);
+                    for(var i = 0; i < data['hdd'].length; i++){
+                        diskChart[data['hdd'][i].dev].Line(data['hdd'][i].data, disk_options);
                     }
-                    for(var i = 0; i < data.length; i++){
-                        netChart[[i]].Line(data[i].data, options);;
+                    for(var i = 0; i < data['net'].length; i++){
+                        netChart[[i]].Line(data['net'][i].data, net_options);
                     }
                 });
             }
             $(function() {
-                window.setInterval('cpu_usage()', {{ time_refresh }});
-                window.setInterval('disk_usage()', {{ time_refresh }});
-                window.setInterval('net_usage()', {{ time_refresh }});
+                window.setInterval('instusage()', {{ time_refresh }});
             });
         </script>
     {% endifequal %}
