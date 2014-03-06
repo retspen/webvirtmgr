@@ -16,7 +16,6 @@ from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE
 from webvirtmgr.settings import TIME_JS_REFRESH
 
 
-
 def instusage(request, host_id, vname):
     """
     VM disk IO
@@ -246,6 +245,41 @@ def instusage(request, host_id, vname):
     response.write(data)
     return response
 
+def insts_status(request, host_id):
+    """
+    Instances block
+    """
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login')
+
+    errors = []
+    instances = []
+    compute = Compute.objects.get(id=host_id)
+
+    try:
+        conn = wvmInstances(compute.hostname,
+                            compute.login,
+                            compute.password,
+                            compute.type)
+        get_instances = conn.get_instances()
+    except libvirtError as msg_error:
+        errors.append(msg_error.message)
+
+    for instance in get_instances:
+        instances.append({'name': instance,
+                          'status': conn.get_instance_status(instance),
+                          'memory': conn.get_instance_memory(instance),
+                          'vcpu': conn.get_instance_vcpu(instance),
+                          'uuid': conn.get_uuid(instance),
+                          'dump': conn.get_instance_managed_save_image(instance)
+                        })
+
+    data = json.dumps(instances)
+    response = HttpResponse()
+    response['Content-Type'] = "text/javascript"
+    response.write(data)
+    return response
+
 def instances(request, host_id):
     """
     Instances block
@@ -255,6 +289,7 @@ def instances(request, host_id):
 
     errors = []
     instances = []
+    time_refresh = 8000
     compute = Compute.objects.get(id=host_id)
 
     try:
@@ -311,7 +346,6 @@ def instances(request, host_id):
         errors.append(msg_error.message)
 
     return render_to_response('instances.html', locals(), context_instance=RequestContext(request))
-
 
 def instance(request, host_id, vname):
     """

@@ -57,7 +57,7 @@
         var mem_options = {animation : false, pointDotRadius : 2, scaleLabel : "<%=value%> Mb"}
 
         function hostusage(){
-            $.getJSON('/info/hostusage/{{ host_id }}', function(data) {
+            $.getJSON('{%  url 'hostusage' host_id %}', function(data) {
                 cpuChart.Line(data['cpu'], cpu_options);
                 memChart.Line(data['memory'], mem_options);
             });

@@ -579,7 +579,7 @@
             var net_options = {animation : false, pointDotRadius : 2, scaleLabel : "<%=value%> Mbps"}
 
             function instusage(){
-                $.getJSON('/info/instusage/{{ host_id }}/{{ vname }}', function(data) {
+                $.getJSON('{% url 'instusage' host_id vname %}', function(data) {
                     cpuChart.Line(data['cpu'], cpu_ptions);
                     for(var i = 0; i < data['hdd'].length; i++){
                         diskChart[data['hdd'][i].dev].Line(data['hdd'][i].data, disk_options);
