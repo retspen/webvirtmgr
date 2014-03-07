@@ -18,7 +18,7 @@ from webvirtmgr.settings import TIME_JS_REFRESH
 
 def instusage(request, host_id, vname):
     """
-    VM disk IO
+    Return instance usage
     """
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
@@ -44,175 +44,225 @@ def instusage(request, host_id, vname):
                            compute.password,
                            compute.type,
                            vname)
-        blk_usage = conn.disk_usage()
-        cpu_usage = conn.cpu_usage()
-        net_usage = conn.net_usage()
-        conn.close()
+        status = conn.get_status()
+        if status == 5:
+            networks = conn.get_net_device()
+            disks = conn.get_disk_device()
     except libvirtError:
-        blk_usage = None
-        cpu_usage = None
-        net_usage = None
+        status = None
 
-    try:
-        cookies['cpu'] = request._cookies['cpu']
-    except KeyError:
-        cookies['cpu'] = None
+    if status == 1 and status:
+        try:
+            blk_usage = conn.disk_usage()
+            cpu_usage = conn.cpu_usage()
+            net_usage = conn.net_usage()
+            conn.close()
+        except libvirtError:
+            blk_usage = None
+            cpu_usage = None
+            net_usage = None
 
-    try:
-        cookies['hdd'] = request._cookies['hdd']
-    except KeyError:
-        cookies['hdd'] = None
+        try:
+            cookies['cpu'] = request._cookies['cpu']
+        except KeyError:
+            cookies['cpu'] = None
 
-    try:
-        cookies['net'] = request._cookies['net']
-    except KeyError:
-        cookies['net'] = None
+        try:
+            cookies['hdd'] = request._cookies['hdd']
+        except KeyError:
+            cookies['hdd'] = None
 
-    if not cookies['cpu']:
-        datasets['cpu'] = [0]
-    else:
-        datasets['cpu'] = eval(cookies['cpu'])
-    if len(datasets['cpu']) > 10:
-        while datasets['cpu']:
+        try:
+            cookies['net'] = request._cookies['net']
+        except KeyError:
+            cookies['net'] = None
+
+        if cookies['cpu'] == '{}' or not cookies['cpu']:
+            datasets['cpu'] = [0]
+        else:
+            datasets['cpu'] = eval(cookies['cpu'])
+        if len(datasets['cpu']) > 10:
+            while datasets['cpu']:
+                del datasets['cpu'][0]
+                if len(datasets['cpu']) == 10:
+                    break
+        if len(datasets['cpu']) <= 9:
+            datasets['cpu'].append(int(cpu_usage['cpu']))
+        if len(datasets['cpu']) == 10:
+            datasets['cpu'].append(int(cpu_usage['cpu']))
             del datasets['cpu'][0]
-            if len(datasets['cpu']) == 10:
-                break
-    if len(datasets['cpu']) <= 9:
-        datasets['cpu'].append(int(cpu_usage['cpu']))
-    if len(datasets['cpu']) == 10:
-        datasets['cpu'].append(int(cpu_usage['cpu']))
-        del datasets['cpu'][0]
 
-    # Some fix division by 0 Chart.js
-    if len(datasets['cpu']) == 10:
-        if sum(datasets['cpu']) == 0:
-            datasets['cpu'][9] += 0.1
-        if sum(datasets['cpu']) / 10 == datasets['cpu'][0]:
-            datasets['cpu'][9] += 0.1
+        # Some fix division by 0 Chart.js
+        if len(datasets['cpu']) == 10:
+            if sum(datasets['cpu']) == 0:
+                datasets['cpu'][9] += 0.1
+            if sum(datasets['cpu']) / 10 == datasets['cpu'][0]:
+                datasets['cpu'][9] += 0.1
 
-    cpu = {
-        'labels': [""] * 10,
-        'datasets': [
-            {
-                "fillColor": "rgba(241,72,70,0.5)",
-                "strokeColor": "rgba(241,72,70,1)",
-                "pointColor": "rgba(241,72,70,1)",
-                "pointStrokeColor": "#fff",
-                "data": datasets['cpu']
-            }
-        ]
-    }
+        cpu = {
+            'labels': [""] * 10,
+            'datasets': [
+                {
+                    "fillColor": "rgba(241,72,70,0.5)",
+                    "strokeColor": "rgba(241,72,70,1)",
+                    "pointColor": "rgba(241,72,70,1)",
+                    "pointStrokeColor": "#fff",
+                    "data": datasets['cpu']
+                }
+            ]
+        }
 
-    for blk in blk_usage:
-        if not cookies['hdd']:
-            datasets_wr.append(0)
-            datasets_rd.append(0)
-        else:
-            datasets['hdd'] = eval(cookies['hdd'])
-            try:
-                datasets_rd = datasets['hdd'][blk['dev']][0]
-                datasets_wr = datasets['hdd'][blk['dev']][1]
-            except:
-                blk_error = True
+        for blk in blk_usage:
+            if cookies['hdd'] == '{}' or not cookies['hdd']:
+                datasets_wr.append(0)
+                datasets_rd.append(0)
+            else:
+                datasets['hdd'] = eval(cookies['hdd'])
+                try:
+                    datasets_rd = datasets['hdd'][blk['dev']][0]
+                    datasets_wr = datasets['hdd'][blk['dev']][1]
+                except:
+                    blk_error = True
 
-        if not blk_error:
-            if len(datasets_rd) > 10:
-                while datasets_rd:
+            if not blk_error:
+                if len(datasets_rd) > 10:
+                    while datasets_rd:
+                        del datasets_rd[0]
+                        if len(datasets_rd) == 10:
+                            break
+                if len(datasets_wr) > 10:
+                    while datasets_wr:
+                        del datasets_wr[0]
+                        if len(datasets_wr) == 10:
+                            break
+
+                if len(datasets_rd) <= 9:
+                    datasets_rd.append(int(blk['rd']) / 1048576)
+                if len(datasets_rd) == 10:
+                    datasets_rd.append(int(blk['rd']) / 1048576)
                     del datasets_rd[0]
-                    if len(datasets_rd) == 10:
-                        break
-            if len(datasets_wr) > 10:
-                while datasets_wr:
+
+                if len(datasets_wr) <= 9:
+                    datasets_wr.append(int(blk['wr']) / 1048576)
+                if len(datasets_wr) == 10:
+                    datasets_wr.append(int(blk['wr']) / 1048576)
                     del datasets_wr[0]
-                    if len(datasets_wr) == 10:
-                        break
 
-            if len(datasets_rd) <= 9:
-                datasets_rd.append(int(blk['rd']) / 1048576)
-            if len(datasets_rd) == 10:
-                datasets_rd.append(int(blk['rd']) / 1048576)
-                del datasets_rd[0]
+                # Some fix division by 0 Chart.js
+                if len(datasets_rd) == 10:
+                    if sum(datasets_rd) == 0:
+                        datasets_rd[9] += 0.01
+                    if sum(datasets_rd) / 10 == datasets_rd[0]:
+                        datasets_rd[9] += 0.01
 
-            if len(datasets_wr) <= 9:
-                datasets_wr.append(int(blk['wr']) / 1048576)
-            if len(datasets_wr) == 10:
-                datasets_wr.append(int(blk['wr']) / 1048576)
-                del datasets_wr[0]
+                disk = {
+                    'labels': [""] * 10,
+                    'datasets': [
+                        {
+                            "fillColor": "rgba(83,191,189,0.5)",
+                            "strokeColor": "rgba(83,191,189,1)",
+                            "pointColor": "rgba(83,191,189,1)",
+                            "pointStrokeColor": "#fff",
+                            "data": datasets_rd
+                        },
+                        {
+                            "fillColor": "rgba(249,134,33,0.5)",
+                            "strokeColor": "rgba(249,134,33,1)",
+                            "pointColor": "rgba(249,134,33,1)",
+                            "pointStrokeColor": "#fff",
+                            "data": datasets_wr
+                        },
+                    ]
+                }
 
-            # Some fix division by 0 Chart.js
-            if len(datasets_rd) == 10:
-                if sum(datasets_rd) == 0:
-                    datasets_rd[9] += 0.01
-                if sum(datasets_rd) / 10 == datasets_rd[0]:
-                    datasets_rd[9] += 0.01
+            json_blk.append({'dev': blk['dev'], 'data': disk})
+            cookie_blk[blk['dev']] = [datasets_rd, datasets_wr]
 
-            disk = {
-                'labels': [""] * 10,
-                'datasets': [
-                    {
-                        "fillColor": "rgba(83,191,189,0.5)",
-                        "strokeColor": "rgba(83,191,189,1)",
-                        "pointColor": "rgba(83,191,189,1)",
-                        "pointStrokeColor": "#fff",
-                        "data": datasets_rd
-                    },
-                    {
-                        "fillColor": "rgba(249,134,33,0.5)",
-                        "strokeColor": "rgba(249,134,33,1)",
-                        "pointColor": "rgba(249,134,33,1)",
-                        "pointStrokeColor": "#fff",
-                        "data": datasets_wr
-                    },
-                ]
-            }
+        for net in net_usage:
+            if cookies['net'] == '{}' or not cookies['net']:
+                datasets_rx.append(0)
+                datasets_tx.append(0)
+            else:
+                datasets['net'] = eval(cookies['net'])
+                try:
+                    datasets_rx = datasets['net'][net['dev']][0]
+                    datasets_tx = datasets['net'][net['dev']][1]
+                except:
+                    net_error = True
 
-        json_blk.append({'dev': blk['dev'], 'data': disk})
-        cookie_blk[blk['dev']] = [datasets_rd, datasets_wr]
+            if not net_error:
+                if len(datasets_rx) > 10:
+                    while datasets_rx:
+                        del datasets_rx[0]
+                        if len(datasets_rx) == 10:
+                            break
+                if len(datasets_tx) > 10:
+                    while datasets_tx:
+                        del datasets_tx[0]
+                        if len(datasets_tx) == 10:
+                            break
 
-
-    for net in net_usage:
-        if not cookies['net']:
-            datasets_rx.append(0)
-            datasets_tx.append(0)
-        else:
-            datasets['net'] = eval(cookies['net'])
-            try:
-                datasets_rx = datasets['net'][net['dev']][0]
-                datasets_tx = datasets['net'][net['dev']][1]
-            except:
-                net_error = True
-
-        if not net_error:
-            if len(datasets_rx) > 10:
-                while datasets_rx:
+                if len(datasets_rx) <= 9:
+                    datasets_rx.append(int(net['rx']) / 1048576)
+                if len(datasets_rx) == 10:
+                    datasets_rx.append(int(net['rx']) / 1048576)
                     del datasets_rx[0]
-                    if len(datasets_rx) == 10:
-                        break
-            if len(datasets_tx) > 10:
-                while datasets_tx:
+
+                if len(datasets_tx) <= 9:
+                    datasets_tx.append(int(net['tx']) / 1048576)
+                if len(datasets_tx) == 10:
+                    datasets_tx.append(int(net['tx']) / 1048576)
                     del datasets_tx[0]
-                    if len(datasets_tx) == 10:
-                        break
 
-            if len(datasets_rx) <= 9:
-                datasets_rx.append(int(net['rx']) / 1048576)
-            if len(datasets_rx) == 10:
-                datasets_rx.append(int(net['rx']) / 1048576)
-                del datasets_rx[0]
+                # Some fix division by 0 Chart.js
+                if len(datasets_rx) == 10:
+                    if sum(datasets_rx) == 0:
+                        datasets_rx[9] += 0.01
+                    if sum(datasets_rx) / 10 == datasets_rx[0]:
+                        datasets_rx[9] += 0.01
 
-            if len(datasets_tx) <= 9:
-                datasets_tx.append(int(net['tx']) / 1048576)
-            if len(datasets_tx) == 10:
-                datasets_tx.append(int(net['tx']) / 1048576)
-                del datasets_tx[0]
+                network = {
+                    'labels': [""] * 10,
+                    'datasets': [
+                        {
+                            "fillColor": "rgba(83,191,189,0.5)",
+                            "strokeColor": "rgba(83,191,189,1)",
+                            "pointColor": "rgba(83,191,189,1)",
+                            "pointStrokeColor": "#fff",
+                            "data": datasets_rx
+                        },
+                        {
+                            "fillColor": "rgba(151,187,205,0.5)",
+                            "strokeColor": "rgba(151,187,205,1)",
+                            "pointColor": "rgba(151,187,205,1)",
+                            "pointStrokeColor": "#fff",
+                            "data": datasets_tx
+                        },
+                    ]
+                }
 
-            # Some fix division by 0 Chart.js
-            if len(datasets_rx) == 10:
-                if sum(datasets_rx) == 0:
-                    datasets_rx[9] += 0.01
-                if sum(datasets_rx) / 10 == datasets_rx[0]:
-                    datasets_rx[9] += 0.01
+            json_net.append({'dev': net['dev'], 'data': network})
+            cookie_net[net['dev']] = [datasets_rx, datasets_tx]
 
+        data = json.dumps({'status': status, 'cpu': cpu, 'hdd': json_blk, 'net': json_net})
+    else:
+        datasets = [0] * 10
+        cpu = {
+            'labels': [""] * 10,
+            'datasets': [
+                {
+                    "fillColor": "rgba(241,72,70,0.5)",
+                    "strokeColor": "rgba(241,72,70,1)",
+                    "pointColor": "rgba(241,72,70,1)",
+                    "pointStrokeColor": "#fff",
+                    "data": datasets
+                }
+            ]
+        }
+
+        for i, net in enumerate(networks):
+            datasets_rx = [0] * 10
+            datasets_tx = [0] * 10
             network = {
                 'labels': [""] * 10,
                 'datasets': [
@@ -232,16 +282,39 @@ def instusage(request, host_id, vname):
                     },
                 ]
             }
+            json_net.append({'dev': i, 'data': network})
 
-        json_net.append({'dev': net['dev'], 'data': network})
-        cookie_net[net['dev']] = [datasets_rx, datasets_tx]
+        for blk in disks:
+            datasets_wr = [0] * 10
+            datasets_rd = [0] * 10
+            disk = {
+                'labels': [""] * 10,
+                'datasets': [
+                    {
+                        "fillColor": "rgba(83,191,189,0.5)",
+                        "strokeColor": "rgba(83,191,189,1)",
+                        "pointColor": "rgba(83,191,189,1)",
+                        "pointStrokeColor": "#fff",
+                        "data": datasets_rd
+                    },
+                    {
+                        "fillColor": "rgba(249,134,33,0.5)",
+                        "strokeColor": "rgba(249,134,33,1)",
+                        "pointColor": "rgba(249,134,33,1)",
+                        "pointStrokeColor": "#fff",
+                        "data": datasets_wr
+                    },
+                ]
+            }
+            json_blk.append({'dev': blk['dev'], 'data': disk})
+        data = json.dumps({'status': status, 'cpu': cpu, 'hdd': json_blk, 'net': json_net})
 
-    data = json.dumps({'cpu': cpu, 'hdd': json_blk, 'net': json_net})
     response = HttpResponse()
     response['Content-Type'] = "text/javascript"
-    response.cookies['cpu'] = datasets['cpu']
-    response.cookies['hdd'] = cookie_blk
-    response.cookies['net'] = cookie_net
+    if status == 1:
+        response.cookies['cpu'] = datasets['cpu']
+        response.cookies['hdd'] = cookie_blk
+        response.cookies['net'] = cookie_net
     response.write(data)
     return response
 

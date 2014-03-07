@@ -36,7 +36,7 @@
                     <tr>
                         <td>{{ vname }}</td>
                         <td>{% if status %}
-                            <span class={% ifequal status 5 %}
+                            <span id="status" class={% ifequal status 5 %}
                                             {% ifequal has_managed_save_image 1 %}
                                                 "text-warning">{% trans "Saved" %}
                                             {% else %}
@@ -105,7 +105,7 @@
                                 <button type="submit" name="start" class="btn btn-lg btn-primary pull-right">{% trans "Start" %}</button>
                             {% endifequal %}
                             {% ifequal status 1 %}
-                                <button type="submit" name="power" value="shutdown" class="btn btn-lg btn-primary pull-right">{% trans "Shutdown" %}</button>
+                                <button data-id="shutoff" type="submit" name="power" value="shutdown" class="btn btn-lg btn-primary pull-right">{% trans "Shutdown" %}</button>
                             {% endifequal %}
                             {% ifequal status 3 %}
                                 <button class="btn btn-lg btn-primary pull-right disabled">{% trans "Shutdown" %}</button>
@@ -120,7 +120,7 @@
                                 <button type="submit" name="start" class="btn btn-lg btn-primary pull-right">{% trans "Start" %}</button>
                             {% endifequal %}
                             {% ifequal status 1 %}
-                                <button type="submit" name="power" value="destroy" class="btn btn-lg btn-primary pull-right">{% trans "Force Shutdown" %}</button>
+                                <button data-id="shutoff" type="submit" name="power" value="destroy" class="btn btn-lg btn-primary pull-right">{% trans "Force Shutdown" %}</button>
                             {% endifequal %}
                             {% ifequal status 3 %}
                                 <button class="btn btn-lg btn-primary pull-right disabled">{% trans "Force Shutdown" %}</button>
@@ -135,7 +135,7 @@
                                 <button type="submit" name="start" class="btn btn-lg btn-primary pull-right">{% trans "Start" %}</button>
                             {% endifequal %}
                             {% ifequal status 1 %}
-                                <button type="submit" name="suspend" class="btn btn-lg btn-primary pull-right">{% trans "Suspend" %}</button>
+                                <button data-id="shutoff" type="submit" name="suspend" class="btn btn-lg btn-primary pull-right">{% trans "Suspend" %}</button>
                             {% endifequal %}
                             {% ifequal status 3 %}
                                 <button type="submit" name="resume" class="btn btn-lg btn-primary pull-right">{% trans "Resume" %}</button>
@@ -147,7 +147,7 @@
                         <p>{% trans "This action saves the state of the instance." %}</p>
                         <form action="" method="post">{% csrf_token %}
                             {% ifequal status 5 %}
-                                <button type="submit" name="start" class="btn btn-lg btn-primary pull-right">{% trans "Start" %}</button>
+                                <button data-id="shutoff" type="submit" name="start" class="btn btn-lg btn-primary pull-right">{% trans "Start" %}</button>
                                 {% ifequal has_managed_save_image 1 %}
                                     <div class="clearfix" style="height:60px;"></div>
                                     <button type="submit" name="deletesaveimage" class="btn btn-lg btn-primary pull-right">{% trans "Delete Save Image" %}</button>
@@ -586,6 +586,14 @@
                     }
                     for(var i = 0; i < data['net'].length; i++){
                         netChart[[i]].Line(data['net'][i].data, net_options);
+                    }
+                    if(data['status'] == 5){
+                        $('#status').attr('class', 'text-danger');
+                        $('#status').text('Shutoff');
+                        var btnstart = $('button[data-id="shutoff"]');
+                        btnstart.attr('class', 'btn btn-lg btn-primary pull-right');
+                        btnstart.attr('name', 'start');
+                        btnstart.text('{% trans "Start" %}');
                     }
                 });
             }
