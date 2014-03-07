@@ -4,7 +4,7 @@
 import libvirt
 from vrtManager import util
 
-from libvirt import VIR_DOMAIN_XML_SECURE, libvirtError
+from libvirt import libvirtError
 
 CONN_SSH = 2
 CONN_TCP = 1

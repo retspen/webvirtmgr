@@ -50,32 +50,20 @@
     <script type="text/javascript">
         var cpu_ctx = $("#cpuChart").get(0).getContext("2d");
         var cpuChart = new Chart(cpu_ctx);
-        function cpu_usage(){
-            var options = {
-                animation : false,
-                pointDotRadius : 2,
-                scaleLabel : "<%=value%> %"
-            }
-            $.getJSON('/info/cpu/{{ host_id }}', function(data) {
-                cpuChart.Line(data, options);
-            });
-        }
+        var cpu_options = {animation : false, pointDotRadius : 2, scaleLabel : "<%=value%> %"}
 
         var mem_ctx = $("#memoryChart").get(0).getContext("2d");
         var memChart = new Chart(mem_ctx);
-        function memory_usage(){
-            $.getJSON('/info/memory/{{ host_id }}', function(data) {
-                var options = {
-                    animation : false,
-                    pointDotRadius : 2,
-                    scaleLabel : "<%=value%> Mb"
-                }
-                memChart.Line(data, options);
+        var mem_options = {animation : false, pointDotRadius : 2, scaleLabel : "<%=value%> Mb"}
+
+        function hostusage(){
+            $.getJSON('{%  url 'hostusage' host_id %}', function(data) {
+                cpuChart.Line(data['cpu'], cpu_options);
+                memChart.Line(data['memory'], mem_options);
             });
         }
         $(function() {
-            window.setInterval('cpu_usage()', {{ time_refresh }});
-            window.setInterval('memory_usage()', {{ time_refresh }});
+            window.setInterval('hostusage()', {{ time_refresh }});
         });
     </script>
 {% endblock %}

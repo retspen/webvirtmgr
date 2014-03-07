@@ -1,13 +1,9 @@
-# WebVirtMgr panel - v4.3.4
+# WebVirtMgr panel - v4.5.2
 
 ### Whats new?
 
-* New design
-* Add create instance from template image
-* Move from apache to nginx (supervisor and gunicorn)
-* Move snapshots to instance page
-* Fix view on device with 1024x768 resolution
-* Fix bugs
+* Update status VM
+* Fix ajax
 
 ### <a href="https://github.com/retspen/webvirtmgr/wiki/Screenshots">Screenshots</a>
 

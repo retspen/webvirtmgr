@@ -36,7 +36,7 @@
                     <tr>
                         <td>{{ vname }}</td>
                         <td>{% if status %}
-                            <span class={% ifequal status 5 %}
+                            <span id="status" class={% ifequal status 5 %}
                                             {% ifequal has_managed_save_image 1 %}
                                                 "text-warning">{% trans "Saved" %}
                                             {% else %}
@@ -105,7 +105,7 @@
                                 <button type="submit" name="start" class="btn btn-lg btn-primary pull-right">{% trans "Start" %}</button>
                             {% endifequal %}
                             {% ifequal status 1 %}
-                                <button type="submit" name="power" value="shutdown" class="btn btn-lg btn-primary pull-right">{% trans "Shutdown" %}</button>
+                                <button data-id="shutoff" type="submit" name="power" value="shutdown" class="btn btn-lg btn-primary pull-right">{% trans "Shutdown" %}</button>
                             {% endifequal %}
                             {% ifequal status 3 %}
                                 <button class="btn btn-lg btn-primary pull-right disabled">{% trans "Shutdown" %}</button>
@@ -120,7 +120,7 @@
                                 <button type="submit" name="start" class="btn btn-lg btn-primary pull-right">{% trans "Start" %}</button>
                             {% endifequal %}
                             {% ifequal status 1 %}
-                                <button type="submit" name="power" value="destroy" class="btn btn-lg btn-primary pull-right">{% trans "Force Shutdown" %}</button>
+                                <button data-id="shutoff" type="submit" name="power" value="destroy" class="btn btn-lg btn-primary pull-right">{% trans "Force Shutdown" %}</button>
                             {% endifequal %}
                             {% ifequal status 3 %}
                                 <button class="btn btn-lg btn-primary pull-right disabled">{% trans "Force Shutdown" %}</button>
@@ -135,7 +135,7 @@
                                 <button type="submit" name="start" class="btn btn-lg btn-primary pull-right">{% trans "Start" %}</button>
                             {% endifequal %}
                             {% ifequal status 1 %}
-                                <button type="submit" name="suspend" class="btn btn-lg btn-primary pull-right">{% trans "Suspend" %}</button>
+                                <button data-id="shutoff" type="submit" name="suspend" class="btn btn-lg btn-primary pull-right">{% trans "Suspend" %}</button>
                             {% endifequal %}
                             {% ifequal status 3 %}
                                 <button type="submit" name="resume" class="btn btn-lg btn-primary pull-right">{% trans "Resume" %}</button>
@@ -147,7 +147,7 @@
                         <p>{% trans "This action saves the state of the instance." %}</p>
                         <form action="" method="post">{% csrf_token %}
                             {% ifequal status 5 %}
-                                <button type="submit" name="start" class="btn btn-lg btn-primary pull-right">{% trans "Start" %}</button>
+                                <button data-id="shutoff" type="submit" name="start" class="btn btn-lg btn-primary pull-right">{% trans "Start" %}</button>
                                 {% ifequal has_managed_save_image 1 %}
                                     <div class="clearfix" style="height:60px;"></div>
                                     <button type="submit" name="deletesaveimage" class="btn btn-lg btn-primary pull-right">{% trans "Delete Save Image" %}</button>
@@ -562,57 +562,43 @@
         <script type="text/javascript">
             var cpu_ctx = $("#cpuChart").get(0).getContext("2d");
             var cpuChart = new Chart(cpu_ctx);
-            function cpu_usage(){
-                $.getJSON('/info/inst/cpu/{{ host_id }}/{{ vname }}', function(data) {
-                    var options = {
-                        animation : false,
-                        pointDotRadius : 2,
-                        scaleLabel : "<%=value%> %"
-                    }
-                    cpuChart.Line(data, options);
-                });
-            }
+            var cpu_ptions = {animation : false, pointDotRadius : 2, scaleLabel : "<%=value%> %"}
 
             var diskChart = {};
             {% for disk in disks %}
                 var disk_ctx_{{ disk.dev }} = $("#blk{{ disk.dev }}Chart").get(0).getContext("2d");
                 diskChart['{{ disk.dev }}'] = new Chart(disk_ctx_{{ disk.dev }});
             {% endfor %}
-            function disk_usage(){
-                $.getJSON('/info/inst/disk/{{ host_id }}/{{ vname }}', function(data) {
-                    var options = {
-                        animation : false,
-                        pointDotRadius : 2,
-                        scaleLabel : "<%=value%> Mb/s"
-                    }
-                    for(var i = 0; i < data.length; i++){
-                        diskChart[data[i].dev].Line(data[i].data, options);
-                    }
-                });
-
-            }
+            var disk_options = {animation : false, pointDotRadius : 2, scaleLabel : "<%=value%> Mb/s"}
 
             var netChart = {};
             {% for net in networks %}
                 var net_ctx_{{ forloop.counter0 }} = $("#netEth{{ forloop.counter0 }}Chart").get(0).getContext("2d");
                 netChart['{{ forloop.counter0 }}'] = new Chart(net_ctx_{{ forloop.counter0 }});
             {% endfor %}
-            function net_usage(){
-                $.getJSON('/info/inst/net/{{ host_id }}/{{ vname }}', function(data) {
-                    var options = {
-                        animation : false,
-                        pointDotRadius : 2,
-                        scaleLabel : "<%=value%> Mbps"
+            var net_options = {animation : false, pointDotRadius : 2, scaleLabel : "<%=value%> Mbps"}
+
+            function instusage(){
+                $.getJSON('{% url 'instusage' host_id vname %}', function(data) {
+                    cpuChart.Line(data['cpu'], cpu_ptions);
+                    for(var i = 0; i < data['hdd'].length; i++){
+                        diskChart[data['hdd'][i].dev].Line(data['hdd'][i].data, disk_options);
                     }
-                    for(var i = 0; i < data.length; i++){
-                        netChart[[i]].Line(data[i].data, options);;
+                    for(var i = 0; i < data['net'].length; i++){
+                        netChart[[i]].Line(data['net'][i].data, net_options);
+                    }
+                    if(data['status'] == 5){
+                        $('#status').attr('class', 'text-danger');
+                        $('#status').text('Shutoff');
+                        var btnstart = $('button[data-id="shutoff"]');
+                        btnstart.attr('class', 'btn btn-lg btn-primary pull-right');
+                        btnstart.attr('name', 'start');
+                        btnstart.text('{% trans "Start" %}');
                     }
                 });
             }
             $(function() {
-                window.setInterval('cpu_usage()', {{ time_refresh }});
-                window.setInterval('disk_usage()', {{ time_refresh }});
-                window.setInterval('net_usage()', {{ time_refresh }});
+                window.setInterval('instusage()', {{ time_refresh }});
             });
         </script>
     {% endifequal %}

@@ -10,14 +10,15 @@ from vrtManager.hostdetails import wvmHostDetails
 from webvirtmgr.settings import TIME_JS_REFRESH
 
 
-def cpuusage(request, host_id):
+def hostusage(request, host_id):
     """
-    Return CPU Usage in %
+    Return Memory and CPU Usage
     """
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
-    datasets = []
+    datasets = {}
+    cookies = {}
     compute = Compute.objects.get(id=host_id)
 
     try:
@@ -26,36 +27,62 @@ def cpuusage(request, host_id):
                               compute.password,
                               compute.type)
         cpu_usage = conn.get_cpu_usage()
+        mem_usage = conn.get_memory_usage()
         conn.close()
     except libvirtError:
         cpu_usage = 0
 
-    try:
-        cookies = request._cookies['cpu_usage']
-    except KeyError:
-        cookies = None
 
-    if not cookies:
-        datasets.append(0)
+    try:
+        cookies['cpu'] = request._cookies['cpu']
+        cookies['mem'] = request._cookies['mem']
+    except KeyError:
+        cookies['cpu'] = None
+        cookies['mem'] = None
+
+    if not cookies['cpu'] and not cookies['mem']:
+        datasets['cpu'] = [0]
+        datasets['mem'] = [0]
     else:
-        datasets = eval(cookies)
-    if len(datasets) > 10:
-        while datasets:
-            del datasets[0]
-            if len(datasets) == 10:
+        datasets['cpu'] = eval(cookies['cpu'])
+        datasets['mem'] = eval(cookies['mem'])
+
+    if len(datasets['cpu']) > 10:
+        while datasets['cpu']:
+            del datasets['cpu'][0]
+            if len(datasets['cpu']) == 10:
                 break
-    if len(datasets) <= 9:
-        datasets.append(int(cpu_usage['usage']))
-    if len(datasets) == 10:
-        datasets.append(int(cpu_usage['usage']))
-        del datasets[0]
+
+    if len(datasets['mem']) > 10:
+        while datasets['mem']:
+            del datasets['mem'][0]
+            if len(datasets['mem']) == 10:
+                break
+
+    if len(datasets['cpu']) <= 9:
+        datasets['cpu'].append(int(cpu_usage['usage']))
+    if len(datasets['cpu']) == 10:
+        datasets['cpu'].append(int(cpu_usage['usage']))
+        del datasets['cpu'][0]
+
+    if len(datasets['mem']) <= 9:
+        datasets['mem'].append(int(mem_usage['usage']) / 1048576)
+    if len(datasets['mem']) == 10:
+        datasets['mem'].append(int(mem_usage['usage']) / 1048576)
+        del datasets['mem'][0]
 
     # Some fix division by 0 Chart.js
-    if len(datasets) == 10:
-        if sum(datasets) == 0:
-            datasets[9] += 0.1
-        if sum(datasets) / 10 == datasets[0]:
-            datasets[9] += 0.1
+    if len(datasets['cpu']) == 10:
+        if sum(datasets['cpu']) == 0:
+            datasets['cpu'][9] += 0.1
+        if sum(datasets['cpu']) / 10 == datasets['cpu'][0]:
+            datasets['cpu'][9] += 0.1
+
+    if len(datasets['mem']) == 10:
+        if sum(datasets['mem']) == 0:
+            datasets['mem'][9] += 0.1
+        if sum(datasets['mem']) / 10 == datasets['mem'][0]:
+            datasets['mem'][9] += 0.1
 
     cpu = {
         'labels': [""] * 10,
@@ -65,65 +92,10 @@ def cpuusage(request, host_id):
                 "strokeColor": "rgba(241,72,70,1)",
                 "pointColor": "rgba(241,72,70,1)",
                 "pointStrokeColor": "#fff",
-                "data": datasets
+                "data": datasets['cpu']
             }
         ]
     }
-
-    data = json.dumps(cpu)
-    response = HttpResponse()
-    response['Content-Type'] = "text/javascript"
-    response.cookies['cpu_usage'] = datasets
-    response.write(data)
-    return response
-
-
-def memusage(request, host_id):
-    """
-    Return Memory Usage in % and numeric
-    """
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect('/login')
-
-    datasets = []
-    compute = Compute.objects.get(id=host_id)
-
-    try:
-        conn = wvmHostDetails(compute.hostname,
-                              compute.login,
-                              compute.password,
-                              compute.type)
-        mem_usage = conn.get_memory_usage()
-        conn.close()
-    except libvirtError:
-        mem_usage = 0
-
-    try:
-        cookies = request._cookies['memory_usage']
-    except KeyError:
-        cookies = None
-
-    if not cookies:
-        datasets.append(0)
-    else:
-        datasets = eval(cookies)
-    if len(datasets) > 10:
-        while datasets:
-            del datasets[0]
-            if len(datasets) == 10:
-                break
-    if len(datasets) <= 9:
-        datasets.append(int(mem_usage['usage']) / 1048576)
-    if len(datasets) == 10:
-        datasets.append(int(mem_usage['usage']) / 1048576)
-        del datasets[0]
-
-    # Some fix division by 0 Chart.js
-    if len(datasets) == 10:
-        if sum(datasets) == 0:
-            datasets[9] += 0.1
-        if sum(datasets) / 10 == datasets[0]:
-            datasets[9] += 0.1
 
     memory = {
         'labels': [""] * 10,
@@ -133,18 +105,18 @@ def memusage(request, host_id):
                 "strokeColor": "rgba(249,134,33,1)",
                 "pointColor": "rgba(249,134,33,1)",
                 "pointStrokeColor": "#fff",
-                "data": datasets
+                "data": datasets['mem']
             }
         ]
     }
 
-    data = json.dumps(memory)
+    data = json.dumps({'cpu': cpu, 'memory': memory})
     response = HttpResponse()
     response['Content-Type'] = "text/javascript"
-    response.cookies['memory_usage'] = datasets
+    response.cookies['cpu'] = datasets['cpu']
+    response.cookies['mem'] = datasets['mem']
     response.write(data)
     return response
-
 
 def overview(request, host_id):
     """
