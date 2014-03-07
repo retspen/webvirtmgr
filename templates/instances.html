@@ -133,7 +133,16 @@
                 for(var i = 0; i < data.length; i++){
                     var elem = '#' + data[i]['name']
                     if(data[i]['status'] == 1) {
-                       $(elem).html("<td><a href=''><i class='icon-th-large'></i> " + data[i]['name'] + "</a></td> \
+                       if(data[i]['dump'] == 1) {
+                           var btn = "<button class='btn btn-sm btn-default' type='submit' name='deletesaveimage' title='{% trans "Delete Save Image" %}'> \
+                                        <span class='glyphicon glyphicon-remove'></span> \
+                                      </button>";
+                       } else {
+                           var btn = "<button class='btn btn-sm btn-default' type='submit' name='shutdown' title='{% trans "Shutdown" %}'> \
+                                        <span class='glyphicon glyphicon-off'></span> \
+                                      </button>";
+                       }
+                       $(elem).html("<td><a href='/instance/{{ host_id }}/" + data[i]['name'] + "'><i class='icon-th-large'></i> " + data[i]['name'] + "</a></td> \
                                      <td><span class='text-success'>{% trans "Running" %}</span></td> \
                                      <td>" + data[i]['vcpu'] + "</td> \
                                      <td>" + data[i]['memory'] + "{% trans "MB" %}</td> \
@@ -149,9 +158,7 @@
                                             <button class='btn btn-sm btn-default' type='submit' name='managedsave' title='{% trans "Save" %}'> \
                                                 <span class='glyphicon glyphicon-download-alt'></span> \
                                             </button> \
-                                            <button class='btn btn-sm btn-default' type='submit' name='shutdown' title='{% trans "Shutdown" %}'> \
-                                                <span class='glyphicon glyphicon-off'></span> \
-                                            </button> \
+                                            " + btn + " \
                                             <button class='btn btn-sm btn-default' type='submit' name='destroy' title='{% trans "Force Shutdown" %}' onclick='return confirm('Are you sure?')'> \
                                                 <span class='glyphicon glyphicon-stop'></span> \
                                             </button> \
@@ -162,7 +169,7 @@
                                      </td>");
                     }
                     if(data[i]['status'] == 3) {
-                        $(elem).html("<td><a href=''><i class='icon-th-large'></i> " + data[i]['name'] + "</a></td> \
+                        $(elem).html("<td><a href='/instance/{{ host_id }}/" + data[i]['name'] + "'><i class='icon-th-large'></i> " + data[i]['name'] + "</a></td> \
                                      <td><span class='text-warning'>{% trans "Suspend" %}</span></td> \
                                      <td>" + data[i]['vcpu'] + "</td> \
                                      <td>" + data[i]['memory'] + "{% trans "MB" %}</td> \
@@ -191,7 +198,7 @@
                                      </td>");
                     }
                     if(data[i]['status'] == 5) {
-                        $(elem).html("<td><a href=''><i class='icon-th-large'></i> " + data[i]['name'] + "</a></td> \
+                        $(elem).html("<td><a href='/instance/{{ host_id }}/" + data[i]['name'] + "'><i class='icon-th-large'></i> " + data[i]['name'] + "</a></td> \
                                      <td><span class='text-danger'>{% trans "Shutoff" %}</span></td> \
                                      <td>" + data[i]['vcpu'] + "</td> \
                                      <td>" + data[i]['memory'] + "{% trans "MB" %}</td> \
