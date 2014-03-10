@@ -8,8 +8,12 @@ import settings as fsettings  # Fabric Deployment settings
 
 from fabric.api import cd, sudo
 from fabric.context_managers import settings
+from fabric.contrib.files import append, contains
 
 from fabtools import require, files
+from fabtools.rpm import is_installed
+from fabtools.supervisor import reload_config
+from fabtools.nginx import disable as disable_site
 
 # Local repo path
 LOCAL_BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__),
@@ -23,6 +27,8 @@ def install_system_packages(distro):
     if distro in ["Debian", "Ubuntu"]:
         return require.deb.packages(fsettings.DEBIAN_PKGS)
     elif distro in ["CentOS", "RHEL"]:
+        if not is_installed(fsettings.CENTOS_EPEL[0]):
+            fsettings.CENTOS_PKGS.append(fsettings.CENTOS_EPEL[1])
         return require.rpm.packages(fsettings.CENTOS_PKGS)
     elif distro in ["Fedora"]:
         return require.rpm.packages(fsettings.FEDORA_PKGS)
@@ -44,7 +50,7 @@ def get_webvirt():
         sudo("python manage.py syncdb")  # --noinput and load fixture?!
 
 
-def configure_nginx():
+def configure_nginx(distro):
     """
     Add Nginx configuration
     """
@@ -61,11 +67,16 @@ def configure_nginx():
     files.upload_template(conf, conf_path, context=context)
 
     # Nginx, make sure `default` website is not running.
-    require.nginx.disabled("default")
+    if distro in ["Debian", "Ubuntu"]:
+        disable_site("default")
+    else:
+        default = "/etc/nginx/conf.d/default.conf"
+        if files.is_file(default):
+            sudo("mv %s %s" % (default, default + ".bak"))
 
     # Ensure running ...
     # require.nginx.server()
-    require.service.started("nginx")
+    require.service.restart("nginx")
 
 
 def configure_novnc(distro):
@@ -96,17 +107,23 @@ def configure_supervisor(distro):
     """
     if distro in ["Debian", "Ubuntu"]:
         user = "www-data"
+        require.supervisor.process(
+            "webvirtmgr",
+            command=
+            "/usr/bin/python /var/www/webvirtmgr/manage.py run_gunicorn -c\
+             /var/www/webvirtmgr/conf/gunicorn.conf.py",
+            directory="/var/www/webvirtmgr",
+            user=user,
+            stdout_logfile="/var/log/supervisor/webvirtmgr.log",
+            autostart=True,
+            autorestart=True,
+            redirect_stderr=True
+        )
     elif distro in ["CentOS", "RHEL", "Fedora"]:
-        user = "nginx"
-
-    require.supervisor.process(
-        "webvirtmgr",
-        command="/usr/bin/python /var/www/webvirtmgr/manage.py run_gunicorn -c\
-         /var/www/webvirtmgr/conf/gunicorn.conf.py",
-        directory="/var/www/webvirtmgr",
-        user=user,
-        stdout_logfile="/var/log/supervisor/webvirtmgr.log",
-        autostart=True,
-        autorestart=True,
-        redirect_stderr=True
-    )
+        supervisord = "/etc/supervisord.conf"
+        if not contains(supervisord, "[program:webvirtmgr]"):
+            f = open("templates/webvirtmgr.ini")
+            content = f.read()
+            f.close()
+            append(supervisord, content)
+            reload_config()

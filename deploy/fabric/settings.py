@@ -15,9 +15,13 @@ FEDORA_PKGS = [
 
 CENTOS_PKGS = [
     "git", "python-pip", "libvirt-python", "libxml2-python", "supervisor",
-    "nginx", "python-websockify",
-    "http://dl.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm"
+    "nginx", "python-websockify"
 ]
+# Extra Centos package
+CENTOS_EPEL = (
+    "epel-release-6-8.noarch",
+    "http://dl.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm"
+)
 
 REPO_URL = "https://github.com/retspen/webvirtmgr.git"
 INSTALL_PATH = "/var/www/"

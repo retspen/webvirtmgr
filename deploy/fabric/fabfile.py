@@ -20,7 +20,7 @@ def deploy_webvirt():
     distro = distrib_id()
     install_system_packages(distro)
     get_webvirt()
-    configure_nginx()
+    configure_nginx(distro)
     configure_novnc(distro)
     configure_supervisor(distro)
 
@@ -33,5 +33,5 @@ def update_webvirt():
     """
     distro = distrib_id()
     get_webvirt()
-    configure_nginx()
+    configure_nginx(distro)
     configure_supervisor(distro)
