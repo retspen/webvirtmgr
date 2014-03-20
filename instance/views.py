@@ -77,7 +77,7 @@ def instusage(request, host_id, vname):
         except KeyError:
             cookies['net'] = None
 
-        if cookies['cpu'] == '{}' or not cookies['cpu']:
+        if cookies['cpu'] == '{}' or not cookies['cpu'] or not cpu_usage:
             datasets['cpu'] = [0]
         else:
             datasets['cpu'] = eval(cookies['cpu'])
@@ -113,7 +113,7 @@ def instusage(request, host_id, vname):
         }
 
         for blk in blk_usage:
-            if cookies['hdd'] == '{}' or not cookies['hdd']:
+            if cookies['hdd'] == '{}' or not cookies['hdd'] or not blk_usage:
                 datasets_wr.append(0)
                 datasets_rd.append(0)
             else:
@@ -179,7 +179,7 @@ def instusage(request, host_id, vname):
             cookie_blk[blk['dev']] = [datasets_rd, datasets_wr]
 
         for net in net_usage:
-            if cookies['net'] == '{}' or not cookies['net']:
+            if cookies['net'] == '{}' or not cookies['net'] or not net_usage:
                 datasets_rx.append(0)
                 datasets_tx.append(0)
             else:
