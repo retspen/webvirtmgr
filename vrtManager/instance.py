@@ -293,12 +293,17 @@ class wvmInstance(wvmConnect):
         devices=[]
         dev_usage = []
         tree = ElementTree.fromstring(self._XMLDesc(0))
-        for source, target in zip(tree.findall("devices/disk/source"),
-                                  tree.findall("devices/disk/target")):
-            if source.get("file"):
-                devices.append([source.get("file"), target.get("dev")])
-            elif source.get("dev"):
-                devices.append([source.get("dev"), target.get("dev")])
+        for disk in tree.findall('devices/disk'):
+            if disk.get('device') == 'disk':
+                for elm in disk:
+                    if elm.tag == 'source':
+                        if elm.get('file'):
+                            dev_file = elm.get('file')
+                        if elm.get('dev'):
+                            dev_file = elm.get('dev')
+                    if elm.tag == 'target':
+                            dev_bus = elm.get('dev')
+                devices.append([dev_file, dev_bus])
         for dev in devices:
             rd_use_ago = self.instance.blockStats(dev[0])[1]
             wr_use_ago = self.instance.blockStats(dev[0])[3]
