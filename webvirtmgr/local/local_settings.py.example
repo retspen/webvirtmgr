@@ -1,0 +1,104 @@
+import os
+
+# Debug settings should default to False in production Environments
+DEBUG = False
+TEMPLATE_DEBUG = DEBUG
+
+LOCAL_PATH = os.path.dirname(os.path.abspath(__file__))
+
+# Set custom secret key:
+# You can either set it to a specific value or you can let horizion generate a
+# default secret key that is unique on this machine, e.i. regardless of the
+# amount of Python WSGI workers (if used behind Apache+mod_wsgi): However, there
+# may be situations where you would want to set this explicitly, e.g. when
+# multiple dashboard instances are distributed on different machines (usually
+# behind a load-balancer). Either you have to make sure that a session gets all
+# requests routed to the same dashboard instance or you set the same SECRET_KEY
+# for all of them.
+from webvirtmgr.utils import secret_key
+SECRET_KEY = secret_key.generate_or_read_from_file(os.path.join(LOCAL_PATH, '.secret_key_store'))
+
+# Authentication Backends
+AUTHENTICATION_BACKENDS = (
+#    'django_auth_ldap.backend.LDAPBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+ADMINS = (
+    # ('Your Name', 'your_email@example.com'),
+)
+
+MANAGERS = ADMINS
+
+# If the system is unable to verify the directory cert then change these settings
+#AUTH_LDAP_GLOBAL_OPTIONS = {
+#  ldap.OPT_X_TLS_REQUIRE_CERT: True,
+#  ldap.OPT_X_TLS_DEMAND: True,
+#  ldap.OPT_REFERRALS: False,
+#  ldap.OPT_X_TLS_CACERTDIR: "/etc/pki/tls/certs/",
+#}
+
+#AUTH_LDAP_SERVER_URI = "ldaps://ldapserverhostname.example.com"
+#AUTH_LDAP_BIND_DN = "uid=binduser,ou=systemusers,dc=example,dc=com"
+#AUTH_LDAP_BIND_PASSWORD = "<ldapbindpassword>"
+#AUTH_LDAP_USER_SEARCH = LDAPSearch("ou=users,dc=example,dc=com",
+#    ldap.SCOPE_SUBTREE, "(uid=%(user)s)")
+#AUTH_LDAP_GROUP_SEARCH = LDAPSearch("ou=groups,dc=example,dc=com",
+#    ldap.SCOPE_SUBTREE, "(objectClass=groupOfUniqueNames)"
+#)
+#AUTH_LDAP_GROUP_TYPE = GroupOfUniqueNamesType()
+#
+#AUTH_LDAP_USER_FLAGS_BY_GROUP = {
+#    "is_active": ["cn=grouptopermit1,ou=groups,dc=example,dc=com", "cn=grouptopermit2,ou=groups,dc=example,dc=com"],
+#    "is_staff": "cn=grouptopermit2,ou=groups,dc=example,dc=com",
+#    "is_superuser": "cn=grouptopermit2,ou=groups,dc=example,dc=com"
+#}
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(LOCAL_PATH, '..', '..', 'webvirtmgr.sqlite3'),
+        # The following settings are not used with sqlite3:
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',  # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
+        'PORT': '',  # Set to empty string for default.
+    }
+}
+
+TIME_JS_REFRESH = 2000
+
+# Hosts/domain names that are valid for this site; required if DEBUG is False
+# See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
+ALLOWED_HOSTS = ['*']
+
+# Local time zone for this installation. Choices can be found here:
+# http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
+# although not all choices may be available on all operating systems.
+# In a Windows environment this must be set to your system time zone.
+TIME_ZONE = 'UTC'
+
+# Language code for this installation. All choices can be found here:
+# http://www.i18nguy.com/unicode/language-identifiers.html
+LANGUAGE_CODE = 'en-us'
+
+SITE_ID = 1
+
+# If you set this to False, Django will make some optimizations so as not
+# to load the internationalization machinery.
+USE_I18N = True
+
+# If you set this to False, Django will not format dates, numbers and
+# calendars according to the current locale.
+USE_L10N = True
+
+# If you set this to False, Django will not use timezone-aware datetimes.
+USE_TZ = True
+
+
+# Set STATIC ROOT & MEDIA ROOT to a path that your Webserver could pick up
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(LOCAL_PATH, '..', '..', 'static')
+
+MEDIA_ROOT = ''
+MEDIA_URL = ''

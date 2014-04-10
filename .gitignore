@@ -6,3 +6,4 @@ venv
 .idea
 Vagrantfile
 .vagrant
+webvirtmgr/local/.secret_key_store

@@ -1,5 +1,6 @@
 # Django settings for webvirtmgr project.
 import os
+import logging
 # Uncomment the relevant entries for ldap authentication
 # from django_auth_ldap.config import LDAPSearch,GroupOfUniqueNamesType
 
@@ -114,9 +115,6 @@ STATICFILES_FINDERS = (
     # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
-# Make this unique, and don't share it with anybody.
-SECRET_KEY = '#^)!5i$=r!h#v9z9j1j5^=+l0xb&1n*5s(e+93r$%zrzr3zgc1'
-
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
@@ -146,20 +144,6 @@ WSGI_APPLICATION = 'webvirtmgr.wsgi.application'
 
 TEMPLATE_DIRS = (os.path.join(os.path.dirname(__file__), '..', 'templates'),)
 
-INSTALLED_APPS = (
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.sites',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    # 'django.contrib.admin',
-    'servers',
-    'instance',
-    'create',
-    'gunicorn',
-)
-
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error when DEBUG=False.
@@ -188,3 +172,39 @@ LOGGING = {
         },
     }
 }
+
+SECRET_KEY = None
+LOCAL_PATH = None
+
+try:
+    from local.local_settings import *  # noqa
+except ImportError:
+    logging.warning("No local_settings file found.")
+
+# Ensure that we always have a SECRET_KEY set, even when no local_settings.py
+# file is present.
+# THIS IS A BACKPORT FROM HORIZON https://github.com/openstack/horizon
+if not SECRET_KEY:
+    if not LOCAL_PATH:
+        LOCAL_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                  'local')
+
+    from webvirtmgr.utils import secret_key
+    SECRET_KEY = secret_key.generate_or_read_from_file(os.path.join(LOCAL_PATH,
+                                                       '.secret_key_store'))
+
+# Installed Apps shouldn't be overridden
+INSTALLED_APPS = (
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.sites',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    # 'django.contrib.admin',
+    'webvirtmgr',
+    'servers',
+    'instance',
+    'create',
+    'gunicorn',
+)
