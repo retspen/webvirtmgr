@@ -1,6 +1,3 @@
-# vim: tabstop=4 shiftwidth=4 softtabstop=4
-# vim: tabstop=4 shiftwidth=4 softtabstop=4
-
 # Copyright 2012 Nebula, Inc.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -51,7 +48,8 @@ def generate_or_read_from_file(key_file='.secret_key', key_length=64):
     throws an exception if not.
     """
     lock = lockfile.FileLock(key_file)
-    with lock:
+    # with lock:
+    if not lock.is_locked():
         if not os.path.exists(key_file):
             key = generate_key(key_length)
             old_umask = os.umask(0o177)  # Use '0600' file permissions

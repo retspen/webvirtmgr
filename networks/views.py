@@ -54,6 +54,7 @@ def networks(request, host_id):
 
     return render_to_response('networks.html', locals(), context_instance=RequestContext(request))
 
+
 def network(request, host_id, pool):
     """
     Networks block

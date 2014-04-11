@@ -4,6 +4,3 @@ django-jenkins==0.14.1
 pyflakes==0.7.3
 pylint==1.1.0
 pep8==1.4.6
-# Utility Requirements
-# for SECURE_KEY generation
-lockfile>=0.9

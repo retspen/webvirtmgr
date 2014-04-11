@@ -162,6 +162,7 @@ class wvmInstance(wvmConnect):
                         return host
                 return None
             return util.get_xml_path(net.XMLDesc(0), func=fixed)
+
         def networks(ctx):
             result = []
             for net in ctx.xpathEval('/domain/devices/interface'):

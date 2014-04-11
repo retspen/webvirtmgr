@@ -318,6 +318,7 @@ def instusage(request, host_id, vname):
     response.write(data)
     return response
 
+
 def insts_status(request, host_id):
     """
     Instances block
@@ -345,13 +346,14 @@ def insts_status(request, host_id):
                           'vcpu': conn.get_instance_vcpu(instance),
                           'uuid': conn.get_uuid(instance),
                           'dump': conn.get_instance_managed_save_image(instance)
-                        })
+                          })
 
     data = json.dumps(instances)
     response = HttpResponse()
     response['Content-Type'] = "text/javascript"
     response.write(data)
     return response
+
 
 def instances(request, host_id):
     """
@@ -419,6 +421,7 @@ def instances(request, host_id):
         errors.append(msg_error.message)
 
     return render_to_response('instances.html', locals(), context_instance=RequestContext(request))
+
 
 def instance(request, host_id, vname):
     """
