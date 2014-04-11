@@ -11,6 +11,7 @@ CONN_TCP = 1
 SSH_PORT = 22
 TCP_PORT = 16509
 
+
 class wvmConnect(object):
     def __init__(self, host, login, passwd, conn):
         self.login = login

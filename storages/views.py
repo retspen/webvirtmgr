@@ -43,7 +43,8 @@ def storages(request, host_id):
     except libvirtError as err:
         errors.append(err.message)
 
-    return render_to_response('storages.html', locals(),  context_instance=RequestContext(request))
+    return render_to_response('storages.html', locals(), context_instance=RequestContext(request))
+
 
 def storage(request, host_id, pool):
     """
@@ -165,4 +166,4 @@ def storage(request, host_id, pool):
                         errors.append(error_msg.message)
     conn.close()
 
-    return render_to_response('storage.html', locals(),  context_instance=RequestContext(request))
+    return render_to_response('storage.html', locals(), context_instance=RequestContext(request))

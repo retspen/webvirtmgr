@@ -77,7 +77,7 @@ def instusage(request, host_id, vname):
         except KeyError:
             cookies['net'] = None
 
-        if cookies['cpu'] == '{}' or not cookies['cpu']:
+        if cookies['cpu'] == '{}' or not cookies['cpu'] or not cpu_usage:
             datasets['cpu'] = [0]
         else:
             datasets['cpu'] = eval(cookies['cpu'])
@@ -113,7 +113,7 @@ def instusage(request, host_id, vname):
         }
 
         for blk in blk_usage:
-            if cookies['hdd'] == '{}' or not cookies['hdd']:
+            if cookies['hdd'] == '{}' or not cookies['hdd'] or not blk_usage:
                 datasets_wr.append(0)
                 datasets_rd.append(0)
             else:
@@ -179,7 +179,7 @@ def instusage(request, host_id, vname):
             cookie_blk[blk['dev']] = [datasets_rd, datasets_wr]
 
         for net in net_usage:
-            if cookies['net'] == '{}' or not cookies['net']:
+            if cookies['net'] == '{}' or not cookies['net'] or not net_usage:
                 datasets_rx.append(0)
                 datasets_tx.append(0)
             else:
@@ -318,6 +318,7 @@ def instusage(request, host_id, vname):
     response.write(data)
     return response
 
+
 def insts_status(request, host_id):
     """
     Instances block
@@ -345,13 +346,14 @@ def insts_status(request, host_id):
                           'vcpu': conn.get_instance_vcpu(instance),
                           'uuid': conn.get_uuid(instance),
                           'dump': conn.get_instance_managed_save_image(instance)
-                        })
+                          })
 
     data = json.dumps(instances)
     response = HttpResponse()
     response['Content-Type'] = "text/javascript"
     response.write(data)
     return response
+
 
 def instances(request, host_id):
     """
@@ -419,6 +421,7 @@ def instances(request, host_id):
         errors.append(msg_error.message)
 
     return render_to_response('instances.html', locals(), context_instance=RequestContext(request))
+
 
 def instance(request, host_id, vname):
     """

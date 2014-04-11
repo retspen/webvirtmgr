@@ -17,20 +17,19 @@ def is_kvm_available(xml):
 
 def randomMAC():
     """Generate a random MAC address."""
+    # qemu MAC
+    oui = [0x52, 0x54, 0x00]
 
-    oui = [ 0x52, 0x54, 0x00 ] # qemu MAC
-
-    mac = oui + [
-            random.randint(0x00, 0xff),
-            random.randint(0x00, 0xff),
-            random.randint(0x00, 0xff)]
+    mac = oui + [random.randint(0x00, 0xff),
+                 random.randint(0x00, 0xff),
+                 random.randint(0x00, 0xff)]
     return ':'.join(map(lambda x: "%02x" % x, mac))
 
 
 def randomUUID():
     """Generate a random UUID."""
 
-    u = [ random.randint(0, 255) for dummy in range(0, 16) ]
+    u = [random.randint(0, 255) for dummy in range(0, 16)]
     return "-".join(["%02x" * 4, "%02x" * 2, "%02x" * 2, "%02x" * 2, "%02x" * 6]) % tuple(u)
 
 
@@ -94,7 +93,7 @@ def get_xml_path(xml, path=None, func=None):
 
         if path:
             ret = ctx.xpathEval(path)
-            if ret != None:
+            if ret is not None:
                 if type(ret) == list:
                     if len(ret) >= 1:
                         result = ret[0].content

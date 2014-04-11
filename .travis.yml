@@ -7,8 +7,8 @@ env:
 install:
   - pip install -r dev-requirements.txt --use-mirrors
 script:
-  - pep8 --exclude=migrations --ignore=E501,E225 console hostdetail instance networks servers storages vrtManager
+  - pep8 --exclude=IPy.py --ignore=E501,E225 console hostdetail instance networks servers storages vrtManager
   - pyflakes console hostdetail instance networks servers storages vrtManager
-  - pylint console hostdetail instance networks servers storages vrtManager
+#  - pylint console hostdetail instance networks servers storages vrtManager
   - python manage.py syncdb --noinput
   - python manage.py test

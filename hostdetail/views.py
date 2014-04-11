@@ -32,7 +32,6 @@ def hostusage(request, host_id):
     except libvirtError:
         cpu_usage = 0
 
-
     try:
         cookies['cpu'] = request._cookies['cpu']
         cookies['mem'] = request._cookies['mem']
@@ -117,6 +116,7 @@ def hostusage(request, host_id):
     response.cookies['mem'] = datasets['mem']
     response.write(data)
     return response
+
 
 def overview(request, host_id):
     """

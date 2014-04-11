@@ -5,6 +5,7 @@ from vrtManager import util
 from vrtManager.IPy import IP
 from vrtManager.connection import wvmConnect
 
+
 def network_size(net, dhcp=None):
     """
     Func return gateway, mask and dhcp pool.
@@ -74,8 +75,8 @@ class wvmNetworks(wvmConnect):
 
 class wvmNetwork(wvmConnect):
     def __init__(self, host, login, passwd, conn, net):
-         wvmConnect.__init__(self, host, login, passwd, conn)
-         self.net = self.wvm.networkLookupByName(net)
+        wvmConnect.__init__(self, host, login, passwd, conn)
+        self.net = self.wvm.networkLookupByName(net)
 
     def get_name(self):
         return self.net.name()
