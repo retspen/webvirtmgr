@@ -1,8 +1,6 @@
 # Django settings for webvirtmgr project.
 import os
 import logging
-# Uncomment the relevant entries for ldap authentication
-# from django_auth_ldap.config import LDAPSearch,GroupOfUniqueNamesType
 
 
 DEBUG = False
@@ -18,6 +16,10 @@ ADMINS = (
 )
 
 MANAGERS = ADMINS
+
+# Uncomment the relevant entries for ldap authentication
+# import ldap
+# from django_auth_ldap.config import LDAPSearch,GroupOfUniqueNamesType
 
 # If the system is unable to verify the directory cert then change these settings
 #AUTH_LDAP_GLOBAL_OPTIONS = {
