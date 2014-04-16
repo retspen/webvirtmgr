@@ -18,17 +18,20 @@ LOCAL_PATH = os.path.dirname(os.path.abspath(__file__))
 from webvirtmgr.utils import secret_key
 SECRET_KEY = secret_key.generate_or_read_from_file(os.path.join(LOCAL_PATH, '.secret_key_store'))
 
-# Authentication Backends
-AUTHENTICATION_BACKENDS = (
-#    'django_auth_ldap.backend.LDAPBackend',
-    'django.contrib.auth.backends.ModelBackend',
-)
-
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
 
 MANAGERS = ADMINS
+
+# Uncomment the relevant entries for ldap authentication
+# import ldap
+# from django_auth_ldap.config import LDAPSearch,GroupOfUniqueNamesType
+
+#AUTHENTICATION_BACKENDS = (
+#    'django_auth_ldap.backend.LDAPBackend',
+#    'django.contrib.auth.backends.ModelBackend',
+#)
 
 # If the system is unable to verify the directory cert then change these settings
 #AUTH_LDAP_GLOBAL_OPTIONS = {

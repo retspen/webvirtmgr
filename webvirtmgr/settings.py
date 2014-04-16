@@ -6,44 +6,11 @@ import logging
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
-AUTHENTICATION_BACKENDS = (
-#    'django_auth_ldap.backend.LDAPBackend',
-    'django.contrib.auth.backends.ModelBackend',
-)
-
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
 
 MANAGERS = ADMINS
-
-# Uncomment the relevant entries for ldap authentication
-# import ldap
-# from django_auth_ldap.config import LDAPSearch,GroupOfUniqueNamesType
-
-# If the system is unable to verify the directory cert then change these settings
-#AUTH_LDAP_GLOBAL_OPTIONS = {
-#  ldap.OPT_X_TLS_REQUIRE_CERT: True,
-#  ldap.OPT_X_TLS_DEMAND: True,
-#  ldap.OPT_REFERRALS: False,
-#  ldap.OPT_X_TLS_CACERTDIR: "/etc/pki/tls/certs/",
-#}
-
-#AUTH_LDAP_SERVER_URI = "ldaps://ldapserverhostname.example.com"
-#AUTH_LDAP_BIND_DN = "uid=binduser,ou=systemusers,dc=example,dc=com"
-#AUTH_LDAP_BIND_PASSWORD = "<ldapbindpassword>"
-#AUTH_LDAP_USER_SEARCH = LDAPSearch("ou=users,dc=example,dc=com",
-#    ldap.SCOPE_SUBTREE, "(uid=%(user)s)")
-#AUTH_LDAP_GROUP_SEARCH = LDAPSearch("ou=groups,dc=example,dc=com",
-#    ldap.SCOPE_SUBTREE, "(objectClass=groupOfUniqueNames)"
-#)
-#AUTH_LDAP_GROUP_TYPE = GroupOfUniqueNamesType()
-#
-#AUTH_LDAP_USER_FLAGS_BY_GROUP = {
-#    "is_active": ["cn=grouptopermit1,ou=groups,dc=example,dc=com", "cn=grouptopermit2,ou=groups,dc=example,dc=com"],
-#    "is_staff": "cn=grouptopermit2,ou=groups,dc=example,dc=com",
-#    "is_superuser": "cn=grouptopermit2,ou=groups,dc=example,dc=com"
-#}
 
 DATABASES = {
     'default': {
