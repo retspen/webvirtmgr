@@ -1,9 +1,11 @@
-# WebVirtMgr panel - v4.5.2
+# WebVirtMgr panel - v4.6.4
 
 ### Whats new?
 
 * Update status VM
 * Fix ajax
+* Add bootstrap for Debian
+* Fix bug in js console when mount ISO
 
 ### <a href="https://github.com/retspen/webvirtmgr/wiki/Screenshots">Screenshots</a>
 
