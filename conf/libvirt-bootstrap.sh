@@ -506,7 +506,7 @@ install_ubuntu_post() {
 }
 
 daemons_running_ubuntu() {
-    if [ -f /etc/init.d/libvird ]; then
+    if [ -f /etc/init.d/libvirt-bin ]; then
         # Still in SysV init!?
         service libvirt-bin stop > /dev/null 2>&1
         service libvirt-bin start
@@ -515,6 +515,52 @@ daemons_running_ubuntu() {
 } 
 #
 #   Ended Ubuntu Install Functions
+#
+##############################################################################
+
+##############################################################################
+#
+#   Debian Install Functions
+#
+install_debian() {
+    apt-get update || return 1
+    apt-get -y install kvm libvirt-bin bridge-utils sasl2-bin || return 1
+    return 0
+}
+
+install_debian_post() {
+    if [ -f /etc/default/libvirt-bin ]; then
+        sed -i 's/libvirtd_opts="-d"/libvirtd_opts="-d -l"/g' /etc/default/libvirt-bin
+    else
+        echoerror "/etc/default/libvirt-bin not found. Exiting..."
+        exit 1
+    fi
+    if [ -f /etc/libvirt/libvirtd.conf ]; then
+        sed -i 's/#listen_tls/listen_tls/g' /etc/libvirt/libvirtd.conf
+        sed -i 's/#listen_tcp/listen_tcp/g' /etc/libvirt/libvirtd.conf
+        sed -i 's/#auth_tcp/auth_tcp/g' /etc/libvirt/libvirtd.conf
+    else
+        echoerror "/etc/libvirt/libvirtd.conf not found. Exiting..."
+        exit 1
+    fi
+    if [ -f /etc/libvirt/qemu.conf ]; then
+        sed -i 's/# vnc_listen/vnc_listen/g' /etc/libvirt/qemu.conf
+    else
+        echoerror "/etc/libvirt/qemu.conf not found. Exiting..."
+        exit 1
+    fi
+    return 0
+}
+
+daemons_running_debian() {
+    if [ -f /etc/init.d/libvirt-bin ]; then
+        /etc/init.d/libvirt-bin stop > /dev/null 2>&1
+        /etc/init.d/libvirt-bin start
+    fi
+    return 0
+} 
+#
+#   Ended Debian Install Functions
 #
 ##############################################################################
 
