@@ -19,10 +19,12 @@ def console(request):
         return HttpResponseRedirect('/login')
 
     if request.method == 'GET':
-        uuid = request.GET.get('token', '')
+        token = request.GET.get('token', '')
 
     try:
-        instance = Instance.objects.get(uuid=uuid)
+        host = int(token[0])
+        uuid = token[2:]
+        instance = Instance.objects.get(compute_id=host, uuid=uuid)
         conn = wvmInstance(instance.compute.hostname,
                            instance.compute.login,
                            instance.compute.password,
@@ -38,5 +40,5 @@ def console(request):
         wsproxy_host = re.sub(':[0-9]+', '', wsproxy_host)
 
     response = render_to_response('console.html', locals(), context_instance=RequestContext(request))
-    response.set_cookie('token', uuid)
+    response.set_cookie('token', token)
     return response

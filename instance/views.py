@@ -345,6 +345,7 @@ def insts_status(request, host_id):
                           'memory': conn.get_instance_memory(instance),
                           'vcpu': conn.get_instance_vcpu(instance),
                           'uuid': conn.get_uuid(instance),
+                          'host': host_id,
                           'dump': conn.get_instance_managed_save_image(instance)
                           })
 

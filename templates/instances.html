@@ -109,7 +109,7 @@
                                     <button class="btn btn-sm btn-default" type="submit" name="destroy" title="{% trans "Force Shutdown" %}" onclick="return confirm('Are you sure?')">
                                         <span class="glyphicon glyphicon-stop"></span>
                                     </button>
-                                    <button class="btn btn-sm btn-default" onclick="console('{{ inst.uuid }}')" title="{% trans "VNC" %}">
+                                    <button class="btn btn-sm btn-default" onclick="console('{{ host_id }}-{{ inst.uuid }}')" title="{% trans "VNC" %}">
                                         <span class="glyphicon glyphicon-align-justify"></span>
                                     </button>
                                 {% endifequal %}
@@ -162,7 +162,7 @@
                                             <button class='btn btn-sm btn-default' type='submit' name='destroy' title='{% trans "Force Shutdown" %}' onclick='return confirm('Are you sure?')'> \
                                                 <span class='glyphicon glyphicon-stop'></span> \
                                             </button> \
-                                            <button class='btn btn-sm btn-default' onclick='console(\"" + data[i]['uuid'] + "\")' title='{% trans "VNC" %}'> \
+                                            <button class='btn btn-sm btn-default' onclick='console(\"" + data[i]['host'] + "-" + data[i]['uuid'] + "\")' title='{% trans "VNC" %}'> \
                                                 <span class='glyphicon glyphicon-align-justify'></span> \
                                             </button> \
                                         </form> \
