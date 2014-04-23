@@ -297,6 +297,8 @@ class wvmInstance(wvmConnect):
         for disk in tree.findall('devices/disk'):
             if disk.get('device') == 'disk':
                 for elm in disk:
+                    dev_file = None
+                    dev_bus = None
                     if elm.tag == 'source':
                         if elm.get('file'):
                             dev_file = elm.get('file')
@@ -304,7 +306,8 @@ class wvmInstance(wvmConnect):
                             dev_file = elm.get('dev')
                     if elm.tag == 'target':
                             dev_bus = elm.get('dev')
-                devices.append([dev_file, dev_bus])
+                if (dev_file and dev_bus) is not None:
+                    devices.append([dev_file, dev_bus])
         for dev in devices:
             rd_use_ago = self.instance.blockStats(dev[0])[1]
             wr_use_ago = self.instance.blockStats(dev[0])[3]
