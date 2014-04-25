@@ -347,7 +347,10 @@ class wvmInstance(wvmConnect):
             close_tag = '/'
         else:
             close_tag = ''
-        newxml = "<graphics type='vnc' passwd='%s'%s>" % (passwd, close_tag)
+        if passwd:
+            newxml = "<graphics type='vnc' passwd='%s'%s>" % (passwd, close_tag)
+        else:
+            newxml = "<graphics type='vnc'%s>" % (close_tag)
         xmldom = re.sub('<graphics.*>', newxml, xml)
         self._defineXML(xmldom)
 

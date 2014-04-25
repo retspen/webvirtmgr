@@ -189,6 +189,11 @@
                                         <input type="checkbox" name="auto_pass" value="true" id="vnc_passwd_gen">{% trans "Generate" %}
                                       </label>
                                     </div>
+                                    <div class="checkbox">
+                                      <label>
+                                        <input type="checkbox" name="clear_pass" value="true" id="vnc_passwd_clear">{% trans "Clear" %}
+                                      </label>
+                                    </div>
                                  </div>
                             </div>
                             <div class="form-group" id="vnc_passwd_manual">
@@ -553,10 +558,20 @@
         $(document).on('change','#vnc_passwd_gen',function(){
             if($(this).prop('checked')) {
                 $('#vnc_passwd_manual').hide();
+                $('#vnc_passwd_clear').prop('checked', false);
             } else {
                 $('#vnc_passwd_manual').show();
             }
         });
+        $(document).on('change','#vnc_passwd_clear',function(){
+            if($(this).prop('checked')) {
+                $('#vnc_passwd_manual').hide();
+                $('#vnc_passwd_gen').prop('checked', false);
+            } else {
+                $('#vnc_passwd_manual').show();
+            }
+        });
+
     </script>
     {% ifequal status 1 %}
         <script type="text/javascript">

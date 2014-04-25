@@ -550,7 +550,8 @@ def instance(request, host_id, vname):
                     passwd = ''.join([choice(letters + digits) for i in xrange(12)])
                 else:
                     passwd = request.POST.get('vnc_passwd', '')
-                    if not passwd:
+                    clear = request.POST.get('clear_pass', False)
+                    if not passwd and not clear:
                         msg = _("Enter the VNC password or select Generate")
                         errors.append(msg)
                 if not errors:
