@@ -162,6 +162,12 @@ if not SECRET_KEY:
     SECRET_KEY = secret_key.generate_or_read_from_file(os.path.join(LOCAL_PATH,
                                                        '.secret_key_store'))
 
+# list taken from http://qemu.weilnetz.de/qemu-doc.html#sec_005finvocation
+QEMU_KEYMAPS = ['ar', 'da', 'de', 'de-ch', 'en-gb', 'en-us', 'es', 'et', 'fi',
+                'fo', 'fr', 'fr-be', 'fr-ca', 'fr-ch', 'hr', 'hu', 'is', 'it',
+                'ja', 'lt', 'lv', 'mk', 'nl', 'nl-be', 'no', 'pl', 'pt',
+                'pt-br', 'ru', 'sl', 'sv', 'th', 'tr']
+
 # Installed Apps shouldn't be overridden
 INSTALLED_APPS = (
     'django.contrib.auth',

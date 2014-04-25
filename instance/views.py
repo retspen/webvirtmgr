@@ -13,7 +13,7 @@ from servers.models import Compute
 from vrtManager.instance import wvmInstances, wvmInstance
 
 from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE
-from webvirtmgr.settings import TIME_JS_REFRESH
+from webvirtmgr.settings import TIME_JS_REFRESH, QEMU_KEYMAPS
 
 
 def instusage(request, host_id, vname):
@@ -437,6 +437,7 @@ def instance(request, host_id, vname):
     compute = Compute.objects.get(id=host_id)
     computes = Compute.objects.all()
     computes_count = len(computes)
+    keymaps = QEMU_KEYMAPS
 
     try:
         conn = wvmInstance(compute.hostname,
@@ -462,6 +463,7 @@ def instance(request, host_id, vname):
         memory_host = conn.get_max_memory()
         vcpu_host = len(vcpu_range)
         vnc_port = conn.get_vnc()
+        vnc_keymap = conn.get_vnc_keymap
         snapshots = sorted(conn.get_snapshot(), reverse=True)
         inst_xml = conn._XMLDesc(VIR_DOMAIN_XML_SECURE)
         has_managed_save_image = conn.get_managed_save_image()
@@ -557,6 +559,16 @@ def instance(request, host_id, vname):
                 if not errors:
                     conn.set_vnc_passwd(passwd)
                     return HttpResponseRedirect(request.get_full_path())
+
+            if 'set_vnc_keymap' in request.POST:
+                keymap = request.POST.get('vnc_keymap', '')
+                clear = request.POST.get('clear_keymap', False)
+                if clear:
+                    conn.set_vnc_keymap('')
+                else:
+                    conn.set_vnc_keymap(keymap)
+                return HttpResponseRedirect(request.get_full_path())
+
             if 'migrate' in request.POST:
                 compute_id = request.POST.get('compute_id', '')
                 new_compute = Compute.objects.get(id=compute_id)
