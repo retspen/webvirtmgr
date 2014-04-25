@@ -347,7 +347,10 @@ class wvmInstance(wvmConnect):
         if passwd:
             graphics_vnc.set('passwd', passwd)
         else:
-            graphics_vnc.attrib.pop('passwd')
+            try:
+                graphics_vnc.attrib.pop('passwd')
+            except:
+                pass
         newxml = ElementTree.tostring(root, encoding='utf-8', method='xml')
         self._defineXML(newxml)
 
@@ -358,7 +361,10 @@ class wvmInstance(wvmConnect):
         if keymap:
             graphics_vnc.set('keymap', keymap)
         else:
-            graphics_vnc.attrib.pop('keymap')
+            try:
+                graphics_vnc.attrib.pop('keymap')
+            except:
+                pass
         newxml = ElementTree.tostring(root, encoding='utf-8', method='xml')
         self._defineXML(newxml)
 
