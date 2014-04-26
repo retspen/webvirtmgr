@@ -53,12 +53,12 @@ USE_TZ = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/var/www/example.com/media/"
-MEDIA_ROOT = ''
+MEDIA_ROOT = os.path.join(os.path.dirname(__file__), '..', 'media')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://example.com/media/", "http://media.example.com/"
-MEDIA_URL = ''
+MEDIA_URL = '/media/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -82,9 +82,6 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
-
-# Make this unique, and don't share it with anybody.
-SECRET_KEY = '#^)!5i$=r!h#v9z9j1j5^=+l0xb&1n*5s(e+93r$%zrzr3zgc1'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -115,41 +112,6 @@ WSGI_APPLICATION = 'webvirtmgr.wsgi.application'
 
 TEMPLATE_DIRS = (os.path.join(os.path.dirname(__file__), '..', 'templates'),)
 
-INSTALLED_APPS = (
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.sites',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    # 'django.contrib.admin',
-    'servers',
-    'instance',
-    'create',
-)
-
-INSTALLED_APPS += ('django_jenkins',)
-
-JENKINS_TASKS = (
-    # 'django_jenkins.tasks.run_pylint',
-    'django_jenkins.tasks.with_coverage',
-    'django_jenkins.tasks.django_tests',
-    'django_jenkins.tasks.run_pep8',
-    'django_jenkins.tasks.run_pyflakes',
-)
-
-PROJECT_APPS = (
-    'console',
-    'create',
-    'hostdetail',
-    'instance',
-    'networks',
-    'servers',
-    'snapshots',
-    'storages',
-    'vrtManager',
-)
-
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error when DEBUG=False.
@@ -178,3 +140,37 @@ LOGGING = {
         },
     }
 }
+
+SECRET_KEY = '#^)!5i$=r!h#v9z9j1j5^=+l0xb&1n*5s(e+93r$%zrzr3zgc1'
+
+# list taken from http://qemu.weilnetz.de/qemu-doc.html#sec_005finvocation
+QEMU_KEYMAPS = ['ar', 'da', 'de', 'de-ch', 'en-gb', 'en-us', 'es', 'et', 'fi',
+                'fo', 'fr', 'fr-be', 'fr-ca', 'fr-ch', 'hr', 'hu', 'is', 'it',
+                'ja', 'lt', 'lv', 'mk', 'nl', 'nl-be', 'no', 'pl', 'pt',
+                'pt-br', 'ru', 'sl', 'sv', 'th', 'tr']
+
+# Installed Apps shouldn't be overridden
+INSTALLED_APPS = (
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.sites',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    # 'django.contrib.admin',
+    'webvirtmgr',
+    'servers',
+    'instance',
+    'create',
+    'gunicorn',
+)
+
+INSTALLED_APPS += ('django_jenkins',)
+
+JENKINS_TASKS = (
+    # 'django_jenkins.tasks.run_pylint',
+    'django_jenkins.tasks.with_coverage',
+    'django_jenkins.tasks.django_tests',
+    'django_jenkins.tasks.run_pep8',
+    'django_jenkins.tasks.run_pyflakes',
+)
