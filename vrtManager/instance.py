@@ -291,7 +291,7 @@ class wvmInstance(wvmConnect):
         return cpu_usage
 
     def disk_usage(self):
-        devices=[]
+        devices = []
         dev_usage = []
         tree = ElementTree.fromstring(self._XMLDesc(0))
         for disk in tree.findall('devices/disk'):
@@ -320,7 +320,7 @@ class wvmInstance(wvmConnect):
         return dev_usage
 
     def net_usage(self):
-        devices=[]
+        devices = []
         dev_usage = []
         tree = ElementTree.fromstring(self._XMLDesc(0))
         for target in tree.findall("devices/interface/target"):
