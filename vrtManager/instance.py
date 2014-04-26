@@ -342,14 +342,35 @@ class wvmInstance(wvmConnect):
 
     def set_vnc_passwd(self, passwd):
         xml = self._XMLDesc(VIR_DOMAIN_XML_SECURE)
-        find_tag = re.findall('<graphics.*/>', xml)
-        if find_tag:
-            close_tag = '/'
+        root = ElementTree.fromstring(xml)
+        graphics_vnc = root.find("devices/graphics[@type='vnc']")
+        if passwd:
+            graphics_vnc.set('passwd', passwd)
         else:
-            close_tag = ''
-        newxml = "<graphics type='vnc' passwd='%s'%s>" % (passwd, close_tag)
-        xmldom = re.sub('<graphics.*>', newxml, xml)
-        self._defineXML(xmldom)
+            try:
+                graphics_vnc.attrib.pop('passwd')
+            except:
+                pass
+        newxml = ElementTree.tostring(root, encoding='utf-8', method='xml')
+        self._defineXML(newxml)
+
+    def set_vnc_keymap(self, keymap):
+        xml = self._XMLDesc(VIR_DOMAIN_XML_SECURE)
+        root = ElementTree.fromstring(xml)
+        graphics_vnc = root.find("devices/graphics[@type='vnc']")
+        if keymap:
+            graphics_vnc.set('keymap', keymap)
+        else:
+            try:
+                graphics_vnc.attrib.pop('keymap')
+            except:
+                pass
+        newxml = ElementTree.tostring(root, encoding='utf-8', method='xml')
+        self._defineXML(newxml)
+
+    def get_vnc_keymap(self):
+        return util.get_xml_path(self._XMLDesc(VIR_DOMAIN_XML_SECURE),
+                                 "/domain/devices/graphics/@keymap") or ''
 
     def change_settings(self, description, cur_memory, memory, cur_vcpu, vcpu):
         """
