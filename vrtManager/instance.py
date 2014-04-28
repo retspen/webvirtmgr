@@ -447,3 +447,53 @@ class wvmInstance(wvmConnect):
 
     def get_managed_save_image(self):
         return self.instance.hasManagedSaveImage(0)
+
+    def clone_instance(self, clone_name):
+        clone_dev_path = []
+
+        xml = self._XMLDesc(VIR_DOMAIN_XML_SECURE)
+        tree = ElementTree.fromstring(xml)
+        name = tree.find('name')
+        name.text = clone_name
+        uuid = tree.find('uuid')
+        tree.remove(uuid)
+
+        for disk in tree.findall('devices/disk'):
+            if disk.get('device') == 'disk':
+                for elm in disk:
+                    if elm.tag == 'source':
+                        if elm.get('file'):
+                            clone_dev_path.append(elm.get('file'))
+                            if elm.get('file').count(".") and len(elm.get('file').rsplit(".", 1)[1]) <= 7:
+                                path, suffix = elm.get('file').rsplit(".", 1)
+                                clone_path = path + "-clone" + "." + suffix
+                            else:
+                                clone_path = elm.get('file') + "-clone"
+                            elm.set('file', clone_path)
+
+        for clone_dev in clone_dev_path:
+            vol = self.get_volume_by_path(clone_dev)
+            vol_name = vol.name()
+            vol_format = util.get_xml_path(vol.XMLDesc(0), "/volume/target/format/@type")
+
+            if vol_name.count(".") and len(vol_name.rsplit(".", 1)[1]) <= 7:
+                name, suffix = vol_name.rsplit(".", 1)
+                clone_name = name + "-clone" + "." + suffix
+            else:
+                name, suffix = vol_name.rsplit(".", 1)
+                clone_name = vol_name + "-clone"
+
+            vol_clone_xml = """
+                            <volume>
+                                <name>%s</name>
+                                <capacity>0</capacity>
+                                <allocation>0</allocation>
+                                <target>
+                                    <format type='%s'/>
+                                </target>
+                            </volume>""" % (clone_name, vol_format)
+            stg = vol.storagePoolLookupByVolume()
+            stg.createXMLFrom(vol_clone_xml, vol, 0)
+
+        clone_xml = ElementTree.tostring(tree)
+        self._defineXML(clone_xml)

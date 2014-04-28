@@ -431,6 +431,17 @@ def instance(request, host_id, vname):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
+    def show_clone_disk(disks):
+        clone_disk = []
+        for disk in disks:
+            if disk['image'].count(".") and len(disk['image'].rsplit(".", 1)[1]) <= 7:
+                name, suffix = disk['image'].rsplit(".", 1)
+                image = name + "-clone" + "." + suffix
+            else:
+                image = disk['image'] + "-clone"
+            clone_disk.append({'dev': disk['dev'], 'storage': disk['storage'], 'image': image})
+        return clone_disk
+
     errors = []
     messages = []
     time_refresh = TIME_JS_REFRESH
@@ -467,6 +478,7 @@ def instance(request, host_id, vname):
         snapshots = sorted(conn.get_snapshot(), reverse=True)
         inst_xml = conn._XMLDesc(VIR_DOMAIN_XML_SECURE)
         has_managed_save_image = conn.get_managed_save_image()
+        clone_disks = show_clone_disk(disks)
     except libvirtError as msg_error:
         errors.append(msg_error.message)
 
@@ -590,6 +602,10 @@ def instance(request, host_id, vname):
                 msg = _("Successful revert snapshot: ")
                 msg += snap_name
                 messages.append(msg)
+            if 'clone' in request.POST:
+                clone_name = request.POST.get('name', '')
+                conn.clone_instance(clone_name)
+                return HttpResponseRedirect('/instance/%s/%s' % (host_id, clone_name))
 
         conn.close()
 

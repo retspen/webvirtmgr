@@ -250,6 +250,7 @@
                     <li class="active"><a href="#instancesettings" data-toggle="tab">{% trans "VCPU's and Memory" %}</a></li>
                     <li><a href="#instancemedia" data-toggle="tab">{% trans "Media" %}</a></li>
                     <li><a href="#instancedevice" data-toggle="tab">{% trans "Disk and Networks" %}</a></li>
+                    <li><a href="#instanceclone" data-toggle="tab">{% trans "Clone" %}</a></li>
                     <li><a href="#instancexml" data-toggle="tab">{% trans "XML" %}</a></li>
                 </ul>
                 <div class="tab-content">
@@ -394,6 +395,49 @@
                                 <p>{{ disk.image }}</p>
                             {% endfor %}
                         </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="tab-pane tab-inst" id="instanceclone">
+                        <p style="font-weight:bold;">{% trans "Create a clone" %}</p>
+                        <form class="form-horizontal" action="" method="post">{% csrf_token %}
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" style="font-weight:normal;">{% trans "Clone Name" %}</label>
+                                <div class="col-sm-3">
+                                    <input type="text" class="form-control" name="name" value="{{ vname }}-clone"/>
+                                </div>
+                            </div>
+                            <p style="font-weight:bold;">{% trans "Network devices" %}</p>
+                            <div class="col-sm-3">
+                                 {% for network in networks %}
+                                    <p style="text-align: right;">eth{{ forloop.counter0 }} ({{ network.nic }})</p>
+                                 {% endfor %}
+                            </div>
+                            <div class="col-sm-9">
+                                {% for network in networks %}
+                                    {% if network.ip %}
+                                        <p>{{ network.ip }}</p>
+                                    {% else %}
+                                        <p>{{ network.mac }}</p>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <p style="font-weight:bold;">{% trans "Storage devices" %}</p>
+                            <div class="col-sm-3">
+                                {% for disk in clone_disks %}
+                                    <p style="text-align: right;">{{ disk.dev }} ({{ disk.storage }})</p>
+                                {% endfor %}
+                            </div>
+                            <div class="col-sm-9">
+                                {% for disk in clone_disks %}
+                                    <p>{{ disk.image }}</p>
+                                {% endfor %}
+                            </div>
+                            {% ifequal status 5 %}
+                                <button type="submit" class="btn btn-primary btn-lg pull-right" name="clone">{% trans "Clone" %}</button>
+                            {% else %}
+                                <button class="btn btn-primary btn-lg pull-right disabled" name="clone">{% trans "Clone" %}</button>
+                            {% endifequal %}
+                        </form>
                         <div class="clearfix"></div>
                     </div>
                     <div class="tab-pane tab-inst" id="instancexml">

@@ -1,7 +1,8 @@
-# WebVirtMgr panel - v4.6.4
+# WebVirtMgr panel - v4.7.2
 
 ### Whats new?
 
+* Add clone instance (Settings -> Clone)
 * Update status VM
 * Fix ajax
 * Add bootstrap for Debian
