@@ -167,7 +167,9 @@
             <div class="tab-pane" id="access" style="margin-top: 20px">
                 <ul class="nav nav-tabs ">
                     <li class="active"><a href="#console" data-toggle="tab">{% trans "Console" %}</a></li>
-                    <li><a href="#vnc" data-toggle="tab">{% trans "VNC Settings" %}</a></li>
+                    <li><a href="#vnc_pass" data-toggle="tab">{% trans "VNC Password" %}</a></li>
+                    <li><a href="#vnc_keymap" data-toggle="tab">{% trans "VNC Keymap" %}</a></li>
+
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane tab-inst active" id="console">
@@ -179,7 +181,7 @@
                         {% endifequal %}
                         <div class="clearfix"></div>
                     </div>
-                    <div class="tab-pane tab-inst" id="vnc">
+                    <div class="tab-pane tab-inst" id="vnc_pass">
                         <p>{% trans "If you want to create password for vnc, shutdown the instance." %}</p>
                         <form class="form-horizontal" method="post" role="form">{% csrf_token %}
                             <div class="form-group">
@@ -187,6 +189,11 @@
                                     <div class="checkbox">
                                       <label>
                                         <input type="checkbox" name="auto_pass" value="true" id="vnc_passwd_gen">{% trans "Generate" %}
+                                      </label>
+                                    </div>
+                                    <div class="checkbox">
+                                      <label>
+                                        <input type="checkbox" name="clear_pass" value="true" id="vnc_passwd_clear">{% trans "Clear" %}
                                       </label>
                                     </div>
                                  </div>
@@ -205,6 +212,37 @@
                         </form>
                         <div class="clearfix"></div>
                     </div>
+                    <div class="tab-pane tab-inst" id="vnc_keymap">
+                        <p>{% trans "If you want to set a keymap for vnc, shutdown the instance." %}</p>
+                        <form class="form-horizontal" method="post" role="form">{% csrf_token %}
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <div class="checkbox">
+                                      <label>
+                                        <input type="checkbox" name="clear_keymap" value="true" id="vnc_keymap_clear">{% trans "Clear" %}
+                                      </label>
+                                    </div>
+                                 </div>
+                            </div>
+                            <div class="form-group" id="vnc_keymap_selection">
+                                <label for="vnc_select_keymap" class="col-sm-2 control-label">{% trans "Keymap" %}</label>
+                                <div class="col-sm-6">
+                                    <select id="vnc_select_keymap" class="form-control" name="vnc_keymap">
+                                        <option value="" style="font-weight: bold">{% trans "please choose" %}</option>
+                                    {% for keymap in keymaps %}
+                                        <option value="{{ keymap }}">{{ keymap }}</option>
+                                    {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            {% ifequal status 5 %}
+                                <button type="submit" class="btn btn-primary btn-lg pull-right" name="set_vnc_keymap">{% trans "Set Keymap" %}</button>
+                            {% else %}
+                                <button class="btn btn-primary btn-lg pull-right disabled" name="set_vnc_keymap">{% trans "Set Keymap" %}</button>
+                            {% endifequal %}
+                        </form>
+                        <div class="clearfix"></div>
+                    </div>
                 </div>
             </div>
             <div class="tab-pane" id="settings" style="margin-top: 20px">
@@ -212,6 +250,7 @@
                     <li class="active"><a href="#instancesettings" data-toggle="tab">{% trans "VCPU's and Memory" %}</a></li>
                     <li><a href="#instancemedia" data-toggle="tab">{% trans "Media" %}</a></li>
                     <li><a href="#instancedevice" data-toggle="tab">{% trans "Disk and Networks" %}</a></li>
+                    <li><a href="#instanceclone" data-toggle="tab">{% trans "Clone" %}</a></li>
                     <li><a href="#instancexml" data-toggle="tab">{% trans "XML" %}</a></li>
                 </ul>
                 <div class="tab-content">
@@ -356,6 +395,49 @@
                                 <p>{{ disk.image }}</p>
                             {% endfor %}
                         </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="tab-pane tab-inst" id="instanceclone">
+                        <p style="font-weight:bold;">{% trans "Create a clone" %}</p>
+                        <form class="form-horizontal" action="" method="post">{% csrf_token %}
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" style="font-weight:normal;">{% trans "Clone Name" %}</label>
+                                <div class="col-sm-3">
+                                    <input type="text" class="form-control" name="name" value="{{ vname }}-clone"/>
+                                </div>
+                            </div>
+                            <p style="font-weight:bold;">{% trans "Network devices" %}</p>
+                            <div class="col-sm-3">
+                                 {% for network in networks %}
+                                    <p style="text-align: right;">eth{{ forloop.counter0 }} ({{ network.nic }})</p>
+                                 {% endfor %}
+                            </div>
+                            <div class="col-sm-9">
+                                {% for network in networks %}
+                                    {% if network.ip %}
+                                        <p>{{ network.ip }}</p>
+                                    {% else %}
+                                        <p>{{ network.mac }}</p>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <p style="font-weight:bold;">{% trans "Storage devices" %}</p>
+                            <div class="col-sm-3">
+                                {% for disk in clone_disks %}
+                                    <p style="text-align: right;">{{ disk.dev }} ({{ disk.storage }})</p>
+                                {% endfor %}
+                            </div>
+                            <div class="col-sm-9">
+                                {% for disk in clone_disks %}
+                                    <p>{{ disk.image }}</p>
+                                {% endfor %}
+                            </div>
+                            {% ifequal status 5 %}
+                                <button type="submit" class="btn btn-primary btn-lg pull-right" name="clone">{% trans "Clone" %}</button>
+                            {% else %}
+                                <button class="btn btn-primary btn-lg pull-right disabled" name="clone">{% trans "Clone" %}</button>
+                            {% endifequal %}
+                        </form>
                         <div class="clearfix"></div>
                     </div>
                     <div class="tab-pane tab-inst" id="instancexml">
@@ -546,17 +628,41 @@
 {% endblock %}
 {% block script %}
     <script type="text/javascript">
-        function open_vnc() { window.open('{% url 'console' %}?token={{ uuid }}','','width=850,height=485') }
+        function open_vnc() { window.open('{% url 'console' %}?token={{ host_id }}-{{ uuid }}','','width=850,height=485') }
     </script>
     <script src="{% static "js/Chart.min.js" %}"></script>
     <script type="text/javascript">
         $(document).on('change','#vnc_passwd_gen',function(){
             if($(this).prop('checked')) {
                 $('#vnc_passwd_manual').hide();
+                $('#vnc_passwd_clear').prop('checked', false);
             } else {
                 $('#vnc_passwd_manual').show();
             }
         });
+        $(document).on('change','#vnc_passwd_clear',function(){
+            if($(this).prop('checked')) {
+                $('#vnc_passwd_manual').hide();
+                $('#vnc_passwd_gen').prop('checked', false);
+            } else {
+                $('#vnc_passwd_manual').show();
+            }
+        });
+        $(document).on('change','#vnc_keymap_clear',function(){
+            if($(this).prop('checked')) {
+                $('#vnc_keymap_selection').hide();
+            } else {
+                $('#vnc_keymap_selection').show();
+            }
+        });
+        $(document).ready(function() {
+            // set current vnc keymap or fall back to default
+            var keymap = "{{ vnc_keymap }}"
+
+            if(keymap != '')
+                $("#vnc_select_keymap option[value='" + keymap + "']").prop('selected', true);
+        });
+
     </script>
     {% ifequal status 1 %}
         <script type="text/javascript">

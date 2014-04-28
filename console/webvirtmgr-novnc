@@ -43,7 +43,9 @@ class NovaWebSocketProxy(wsproxy.WebSocketProxy):
         from vrtManager.instance import wvmInstance
 
         try:
-            instance = Instance.objects.get(uuid=token)
+            host = int(token[0])
+            uuid = token[2:]
+            instance = Instance.objects.get(compute_id=host, uuid=uuid)
             conn = wvmInstance(instance.compute.hostname,
                                instance.compute.login,
                                instance.compute.password,

@@ -13,7 +13,7 @@ from servers.models import Compute
 from vrtManager.instance import wvmInstances, wvmInstance
 
 from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE
-from webvirtmgr.settings import TIME_JS_REFRESH
+from webvirtmgr.settings import TIME_JS_REFRESH, QEMU_KEYMAPS
 
 
 def instusage(request, host_id, vname):
@@ -345,6 +345,7 @@ def insts_status(request, host_id):
                           'memory': conn.get_instance_memory(instance),
                           'vcpu': conn.get_instance_vcpu(instance),
                           'uuid': conn.get_uuid(instance),
+                          'host': host_id,
                           'dump': conn.get_instance_managed_save_image(instance)
                           })
 
@@ -430,12 +431,24 @@ def instance(request, host_id, vname):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
+    def show_clone_disk(disks):
+        clone_disk = []
+        for disk in disks:
+            if disk['image'].count(".") and len(disk['image'].rsplit(".", 1)[1]) <= 7:
+                name, suffix = disk['image'].rsplit(".", 1)
+                image = name + "-clone" + "." + suffix
+            else:
+                image = disk['image'] + "-clone"
+            clone_disk.append({'dev': disk['dev'], 'storage': disk['storage'], 'image': image})
+        return clone_disk
+
     errors = []
     messages = []
     time_refresh = TIME_JS_REFRESH
     compute = Compute.objects.get(id=host_id)
     computes = Compute.objects.all()
     computes_count = len(computes)
+    keymaps = QEMU_KEYMAPS
 
     try:
         conn = wvmInstance(compute.hostname,
@@ -461,9 +474,11 @@ def instance(request, host_id, vname):
         memory_host = conn.get_max_memory()
         vcpu_host = len(vcpu_range)
         vnc_port = conn.get_vnc()
+        vnc_keymap = conn.get_vnc_keymap
         snapshots = sorted(conn.get_snapshot(), reverse=True)
         inst_xml = conn._XMLDesc(VIR_DOMAIN_XML_SECURE)
         has_managed_save_image = conn.get_managed_save_image()
+        clone_disks = show_clone_disk(disks)
     except libvirtError as msg_error:
         errors.append(msg_error.message)
 
@@ -549,12 +564,23 @@ def instance(request, host_id, vname):
                     passwd = ''.join([choice(letters + digits) for i in xrange(12)])
                 else:
                     passwd = request.POST.get('vnc_passwd', '')
-                    if not passwd:
+                    clear = request.POST.get('clear_pass', False)
+                    if not passwd and not clear:
                         msg = _("Enter the VNC password or select Generate")
                         errors.append(msg)
                 if not errors:
                     conn.set_vnc_passwd(passwd)
                     return HttpResponseRedirect(request.get_full_path())
+
+            if 'set_vnc_keymap' in request.POST:
+                keymap = request.POST.get('vnc_keymap', '')
+                clear = request.POST.get('clear_keymap', False)
+                if clear:
+                    conn.set_vnc_keymap('')
+                else:
+                    conn.set_vnc_keymap(keymap)
+                return HttpResponseRedirect(request.get_full_path())
+
             if 'migrate' in request.POST:
                 compute_id = request.POST.get('compute_id', '')
                 new_compute = Compute.objects.get(id=compute_id)
@@ -576,6 +602,10 @@ def instance(request, host_id, vname):
                 msg = _("Successful revert snapshot: ")
                 msg += snap_name
                 messages.append(msg)
+            if 'clone' in request.POST:
+                clone_name = request.POST.get('name', '')
+                conn.clone_instance(clone_name)
+                return HttpResponseRedirect('/instance/%s/%s' % (host_id, clone_name))
 
         conn.close()
 
