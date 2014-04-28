@@ -296,9 +296,9 @@ class wvmInstance(wvmConnect):
         tree = ElementTree.fromstring(self._XMLDesc(0))
         for disk in tree.findall('devices/disk'):
             if disk.get('device') == 'disk':
+                dev_file = None
+                dev_bus = None
                 for elm in disk:
-                    dev_file = None
-                    dev_bus = None
                     if elm.tag == 'source':
                         if elm.get('file'):
                             dev_file = elm.get('file')
