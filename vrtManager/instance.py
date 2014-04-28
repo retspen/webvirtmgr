@@ -67,7 +67,7 @@ class wvmInstances(wvmConnect):
 
     def moveto(self, conn, name):
         dom = conn.get_instance(name)
-        self.wvm.migrate(dom, 0, name, None, 0)
+        dom.migrate(self.wvm, 0, name, None, 0)
 
     def define_move(self, name):
         dom = self.get_instance(name)
