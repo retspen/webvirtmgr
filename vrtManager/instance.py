@@ -298,8 +298,12 @@ class wvmInstance(wvmConnect):
             if disk.get('device') == 'disk':
                 dev_file = None
                 dev_bus = None
+                network_disk = True
                 for elm in disk:
                     if elm.tag == 'source':
+                        if elm.get('protocol'):
+                            dev_file = elm.get('protocol')
+                            network_disk = True
                         if elm.get('file'):
                             dev_file = elm.get('file')
                         if elm.get('dev'):
@@ -307,6 +311,8 @@ class wvmInstance(wvmConnect):
                     if elm.tag == 'target':
                             dev_bus = elm.get('dev')
                 if (dev_file and dev_bus) is not None:
+                    if network_disk:
+                        dev_file = dev_bus
                     devices.append([dev_file, dev_bus])
         for dev in devices:
             rd_use_ago = self.instance.blockStats(dev[0])[1]
