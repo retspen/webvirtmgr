@@ -2,7 +2,6 @@
 # Copyright (C) 2013 Webvirtmgr.
 #
 import time
-import re
 from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE
 from vrtManager import util
 from xml.etree import ElementTree
@@ -298,8 +297,12 @@ class wvmInstance(wvmConnect):
             if disk.get('device') == 'disk':
                 dev_file = None
                 dev_bus = None
+                network_disk = True
                 for elm in disk:
                     if elm.tag == 'source':
+                        if elm.get('protocol'):
+                            dev_file = elm.get('protocol')
+                            network_disk = True
                         if elm.get('file'):
                             dev_file = elm.get('file')
                         if elm.get('dev'):
@@ -307,6 +310,8 @@ class wvmInstance(wvmConnect):
                     if elm.tag == 'target':
                             dev_bus = elm.get('dev')
                 if (dev_file and dev_bus) is not None:
+                    if network_disk:
+                        dev_file = dev_bus
                     devices.append([dev_file, dev_bus])
         for dev in devices:
             rd_use_ago = self.instance.blockStats(dev[0])[1]
@@ -376,23 +381,30 @@ class wvmInstance(wvmConnect):
         """
         Function change ram and cpu on vds.
         """
-        xml = self._XMLDesc(VIR_DOMAIN_XML_SECURE)
         memory = int(memory) * 1024
         cur_memory = int(cur_memory) * 1024
-        xml_memory = "<memory unit='KiB'>%s</memory>" % memory
-        xml_memory_change = re.sub('<memory.*memory>', xml_memory, xml)
-        xml_curmemory = "<currentMemory unit='KiB'>%s</currentMemory>" % cur_memory
-        xml_curmemory_change = re.sub('<currentMemory.*currentMemory>', xml_curmemory, xml_memory_change)
-        xml_vcpu = "<vcpu current='%s'>%s</vcpu>" % (cur_vcpu, vcpu)
-        xml_vcpu_change = re.sub('<vcpu.*vcpu>', xml_vcpu, xml_curmemory_change)
-        xml_description = "<description>%s</description>" % description
-        find_description = re.findall('description', xml_vcpu_change)
-        if not find_description:
-            xml_description = '</uuid>\n' + xml_description
-            xml_description_change = re.sub('</uuid>', xml_description, xml_vcpu_change)
+
+        xml = self._XMLDesc(VIR_DOMAIN_XML_SECURE)
+        tree = ElementTree.fromstring(xml)
+
+        set_mem = tree.find('memory')
+        set_mem.text = str(memory)
+        set_cur_mem = tree.find('currentMemory')
+        set_cur_mem.text = str(cur_memory)
+        set_desc = tree.find('description')
+        set_vcpu = tree.find('vcpu')
+        set_vcpu.text = vcpu
+        set_vcpu.set('current', cur_vcpu)
+
+        if not set_desc:
+            tree_desc = ElementTree.Element('description')
+            tree_desc.text = description
+            tree.insert(2, tree_desc)
         else:
-            xml_description_change = re.sub('<description.*description>', xml_description, xml_vcpu_change)
-        self._defineXML(xml_description_change)
+            set_desc.text = description
+
+        new_xml = ElementTree.tostring(tree)
+        self._defineXML(new_xml)
 
     def get_iso_media(self):
         iso = []
