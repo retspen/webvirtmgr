@@ -2,7 +2,6 @@
 # Copyright (C) 2013 Webvirtmgr.
 #
 import time
-import re
 from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE
 from vrtManager import util
 from xml.etree import ElementTree
@@ -382,23 +381,30 @@ class wvmInstance(wvmConnect):
         """
         Function change ram and cpu on vds.
         """
-        xml = self._XMLDesc(VIR_DOMAIN_XML_SECURE)
         memory = int(memory) * 1024
         cur_memory = int(cur_memory) * 1024
-        xml_memory = "<memory unit='KiB'>%s</memory>" % memory
-        xml_memory_change = re.sub('<memory.*memory>', xml_memory, xml)
-        xml_curmemory = "<currentMemory unit='KiB'>%s</currentMemory>" % cur_memory
-        xml_curmemory_change = re.sub('<currentMemory.*currentMemory>', xml_curmemory, xml_memory_change)
-        xml_vcpu = "<vcpu current='%s'>%s</vcpu>" % (cur_vcpu, vcpu)
-        xml_vcpu_change = re.sub('<vcpu.*vcpu>', xml_vcpu, xml_curmemory_change)
-        xml_description = "<description>%s</description>" % description
-        find_description = re.findall('description', xml_vcpu_change)
-        if not find_description:
-            xml_description = '</uuid>\n' + xml_description
-            xml_description_change = re.sub('</uuid>', xml_description, xml_vcpu_change)
+
+        xml = self._XMLDesc(VIR_DOMAIN_XML_SECURE)
+        tree = ElementTree.fromstring(xml)
+
+        set_mem = tree.find('memory')
+        set_mem.text = str(memory)
+        set_cur_mem = tree.find('currentMemory')
+        set_cur_mem.text = str(cur_memory)
+        set_desc = tree.find('description')
+        set_vcpu = tree.find('vcpu')
+        set_vcpu.text = vcpu
+        set_vcpu.set('current', cur_vcpu)
+
+        if not set_desc:
+            tree_desc = ElementTree.Element('description')
+            tree_desc.text = description
+            tree.insert(2, tree_desc)
         else:
-            xml_description_change = re.sub('<description.*description>', xml_description, xml_vcpu_change)
-        self._defineXML(xml_description_change)
+            set_desc.text = description
+
+        new_xml = ElementTree.tostring(tree)
+        self._defineXML(new_xml)
 
     def get_iso_media(self):
         iso = []
