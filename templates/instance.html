@@ -166,18 +166,30 @@
             </div>
             <div class="tab-pane" id="access" style="margin-top: 20px">
                 <ul class="nav nav-tabs ">
-                    <li class="active"><a href="#console" data-toggle="tab">{% trans "Console" %}</a></li>
+                    <li class="active"><a href="#vnc_console" data-toggle="tab">{% trans "VNC Console" %}</a></li>
                     <li><a href="#vnc_pass" data-toggle="tab">{% trans "VNC Password" %}</a></li>
                     <li><a href="#vnc_keymap" data-toggle="tab">{% trans "VNC Keymap" %}</a></li>
+                    {% if telnet_port %}
+                        <li><a href="#telnet_console" data-toggle="tab">{% trans "Telnet Console" %}</a></li>
+                    {% endif %}
 
                 </ul>
                 <div class="tab-content">
-                    <div class="tab-pane tab-inst active" id="console">
+                    <div class="tab-pane tab-inst active" id="vnc_console">
                         <p>{% trans "This action open new window with console VNC connection to your instance." %}</p>
                         {% ifequal status 5 %}
                             <button class="btn btn-primary btn-lg pull-right disabled">{% trans "Console" %}</button>
                         {% else %}
                             <a href="#" class="btn btn-primary btn-lg pull-right" title="VNC Port: {{ vnc_port }}" onclick="open_vnc()">{% trans "Console" %}</a>
+                        {% endifequal %}
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="tab-pane tab-inst" id="telnet_console">
+                        <p>{% trans "This action open new window with console Telnet connection to your instance." %}</p>
+                        {% ifequal status 5 %}
+                            <button class="btn btn-primary btn-lg pull-right disabled">{% trans "Console" %}</button>
+                        {% else %}
+                            <a href="telnet://{{ compute.hostname }}:{{ telnet_port }}" class="btn btn-primary btn-lg pull-right" title="Telnet Port: {{ telnet_port }}">{% trans "Console" %}</a>
                         {% endifequal %}
                         <div class="clearfix"></div>
                     </div>
