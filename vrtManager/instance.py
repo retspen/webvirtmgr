@@ -230,11 +230,6 @@ class wvmInstance(wvmConnect):
             return result
         return util.get_xml_path(self._XMLDesc(0), func=disks)
 
-    def get_vnc(self):
-        vnc = util.get_xml_path(self._XMLDesc(0),
-                                "/domain/devices/graphics[@type='vnc']/@port")
-        return vnc
-
     def mount_iso(self, image):
         storages = self.get_storages()
         for storage in storages:
@@ -340,6 +335,27 @@ class wvmInstance(wvmConnect):
             tx_diff_usage = (tx_use_now - tx_use_ago) * 8
             dev_usage.append({'dev': i, 'rx': rx_diff_usage, 'tx': tx_diff_usage})
         return dev_usage
+
+    def get_telnet_port(self):
+        telnet_port = None
+        service_port = None
+        tree = ElementTree.fromstring(self._XMLDesc(0))
+        for console in tree.findall('devices/console'):
+            if console.get('type') == 'tcp':
+                for elm in console:
+                    if elm.tag == 'source':
+                        if elm.get('service'):
+                            service_port = elm.get('service')
+                    if elm.tag == 'protocol':
+                        if elm.get('type') == 'telnet':
+                            if service_port is not None:
+                                telnet_port = service_port
+        return telnet_port
+
+    def get_vnc(self):
+        vnc = util.get_xml_path(self._XMLDesc(0),
+                                "/domain/devices/graphics[@type='vnc']/@port")
+        return vnc
 
     def get_vnc_passwd(self):
         return util.get_xml_path(self._XMLDesc(VIR_DOMAIN_XML_SECURE),

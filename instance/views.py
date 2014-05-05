@@ -473,6 +473,7 @@ def instance(request, host_id, vname):
         memory_range = [256, 512, 1024, 2048, 4096, 6144, 8192, 16384]
         memory_host = conn.get_max_memory()
         vcpu_host = len(vcpu_range)
+        telnet_port = conn.get_telnet_port()
         vnc_port = conn.get_vnc()
         vnc_keymap = conn.get_vnc_keymap
         snapshots = sorted(conn.get_snapshot(), reverse=True)
