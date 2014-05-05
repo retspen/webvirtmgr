@@ -109,9 +109,9 @@
                                     <button class="btn btn-sm btn-default" type="submit" name="destroy" title="{% trans "Force Shutdown" %}" onclick="return confirm('Are you sure?')">
                                         <span class="glyphicon glyphicon-stop"></span>
                                     </button>
-                                    <button class="btn btn-sm btn-default" onclick='console("{{ host_id }}-{{ inst.uuid }}")' title="{% trans "VNC" %}">
+                                    <a href="#" class="btn btn-sm btn-default" onclick='open_vnc("{{ host_id }}-{{ inst.uuid }}")' title="{% trans "VNC" %}">
                                         <span class="glyphicon glyphicon-align-justify"></span>
-                                    </button>
+                                    </a>
                                 {% endifequal %}
                             </form>
                         </td>
@@ -162,9 +162,9 @@
                                             +"<button class='btn btn-sm btn-default' type='submit' name='destroy' title='{% trans "Force Shutdown" %}' onclick='return confirm('Are you sure?')'>"
                                                 +"<span class='glyphicon glyphicon-stop'></span>"
                                             +"</button> "
-                                            +"<button class='btn btn-sm btn-default' onclick='console(\""+data[i]['host']+"-"+data[i]['uuid']+"\")' title='{% trans "VNC" %}'>"
+                                            +"<a href='#' class='btn btn-sm btn-default' onclick='open_vnc(\""+data[i]['host']+"-"+data[i]['uuid']+"\")' title='{% trans "VNC" %}'>"
                                                 +"<span class='glyphicon glyphicon-align-justify'></span>"
-                                            +"</button> "
+                                            +"</a> "
                                         +"</form>"
                                      +"</td>");
                     }
@@ -232,7 +232,7 @@
         $(function() {
             window.setInterval('status()', {{ time_refresh }});
         });
-        function console(uuid) {
+        function open_vnc(uuid) {
             window.open("/console/?token="+uuid, "", "width=850,height=485");
         }
     </script>
