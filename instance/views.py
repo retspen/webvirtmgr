@@ -35,6 +35,8 @@ def instusage(request, host_id, vname):
     json_net = []
     cookie_net = {}
     net_error = False
+    networks = None
+    disks = None
 
     compute = Compute.objects.get(id=host_id)
 
