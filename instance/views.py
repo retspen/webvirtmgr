@@ -536,12 +536,14 @@ def instance(request, host_id, vname):
                 msg = _("Snapshot '%s' has been created successful" % name)
                 messages.append(msg)
             if 'umount_iso' in request.POST:
-                image = request.POST.get('iso_media', '')
-                conn.umount_iso(image)
+                image = request.POST.get('path', '')
+                dev = request.POST.get('umount_iso', '')
+                conn.umount_iso(dev, image)
                 return HttpResponseRedirect(request.get_full_path())
             if 'mount_iso' in request.POST:
-                image = request.POST.get('iso_media', '')
-                conn.mount_iso(image)
+                image = request.POST.get('media', '')
+                dev = request.POST.get('mount_iso', '')
+                conn.mount_iso(dev, image)
                 return HttpResponseRedirect(request.get_full_path())
             if 'set_autostart' in request.POST:
                 conn.set_autostart(1)
