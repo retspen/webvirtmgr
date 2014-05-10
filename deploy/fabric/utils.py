@@ -14,6 +14,7 @@ from fabtools import require, files
 from fabtools.rpm import is_installed
 from fabtools.supervisor import reload_config
 from fabtools.nginx import disable as disable_site
+from fabtools.python import install_requirements
 
 # Local repo path
 LOCAL_BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__),
@@ -25,6 +26,7 @@ def install_system_packages(distro):
     Install system packages based on the Linux distribution of the remote node
     """
     if distro in ["Debian", "Ubuntu"]:
+        require.deb.uptodate_index(max_age={'day': 7})
         return require.deb.packages(fsettings.DEBIAN_PKGS)
     elif distro in ["CentOS", "RHEL"]:
         if not is_installed(fsettings.CENTOS_EPEL[0]):
@@ -40,14 +42,15 @@ def get_webvirt():
     """
     Clone WebVirtMgr and Add it to installation location
     """
-    require.directory(fsettings.INSTALL_PATH)
+    require.directory(fsettings.INSTALL_PATH, use_sudo=True)
     with cd(fsettings.INSTALL_PATH):
-        require.git.working_copy(fsettings.REPO_URL)
+        require.git.working_copy(fsettings.REPO_URL, use_sudo=True)
 
     webvirt_path = os.path.join(fsettings.INSTALL_PATH, "webvirtmgr")
     with cd(webvirt_path):
-        require.python.requirements("requirements.txt")
+        install_requirements("requirements.txt", use_sudo=True)
         sudo("python manage.py syncdb")  # --noinput and load fixture?!
+        sudo("python manage.py collectstatic")
 
 
 def configure_nginx(distro):
@@ -64,7 +67,7 @@ def configure_nginx(distro):
     }
 
     # Upload template to server
-    files.upload_template(conf, conf_path, context=context)
+    files.upload_template(conf, conf_path, context=context, use_sudo=True)
 
     # Nginx, make sure `default` website is not running.
     if distro in ["Debian", "Ubuntu"]:
