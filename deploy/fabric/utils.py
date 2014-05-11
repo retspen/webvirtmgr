@@ -49,8 +49,8 @@ def get_webvirt():
     webvirt_path = os.path.join(fsettings.INSTALL_PATH, "webvirtmgr")
     with cd(webvirt_path):
         install_requirements("requirements.txt", use_sudo=True)
-        sudo("python manage.py syncdb")  # --noinput and load fixture?!
-        sudo("python manage.py collectstatic")
+        sudo("python manage.py syncdb")  # --noinput and load fixtures?!
+        sudo("python manage.py collectstatic --noinput")  # just say yes!
 
 
 def configure_nginx(distro):
@@ -123,10 +123,13 @@ def configure_supervisor(distro):
             redirect_stderr=True
         )
     elif distro in ["CentOS", "RHEL", "Fedora"]:
+        # first, ensure supervisord is running!
+        with settings(warn_only=True):
+            require.service.restart("supervisord")
         supervisord = "/etc/supervisord.conf"
         if not contains(supervisord, "[program:webvirtmgr]"):
             f = open("templates/webvirtmgr.ini")
             content = f.read()
             f.close()
-            append(supervisord, content)
+            append(supervisord, content, use_sudo=True)
             reload_config()
