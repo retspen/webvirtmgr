@@ -182,24 +182,24 @@ class wvmInstance(wvmConnect):
             dev = None
             volume = None
             storage = None
-            file = None
+            src_fl = None
             for disk in ctx.xpathEval('/domain/devices/disk'):
                 device = disk.xpathEval('@device')[0].content
                 if device == 'disk':
                     try:
                         dev = disk.xpathEval('target/@dev')[0].content
-                        file = disk.xpathEval('source/@file|source/@dev|source/@name')[0].content
+                        src_fl = disk.xpathEval('source/@file|source/@dev|source/@name')[0].content
                         try:
-                            vol = self.get_volume_by_path(file)
+                            vol = self.get_volume_by_path(src_fl)
                             volume = vol.name()
                             stg = vol.storagePoolLookupByVolume()
                             storage = stg.name()
                         except libvirtError:
-                            volume = file
+                            volume = src_fl
                     except:
                         pass
                     finally:
-                        result.append({'dev': dev, 'image': volume, 'storage': storage, 'path': file})
+                        result.append({'dev': dev, 'image': volume, 'storage': storage, 'path': src_fl})
             return result
         return util.get_xml_path(self._XMLDesc(0), func=disks)
 
@@ -209,67 +209,70 @@ class wvmInstance(wvmConnect):
             dev = None
             volume = None
             storage = None
-            file = None
+            src_fl = None
             for media in ctx.xpathEval('/domain/devices/disk'):
                 device = media.xpathEval('@device')[0].content
                 if device == 'cdrom':
                     try:
                         dev = media.xpathEval('target/@dev')[0].content
-                        file = media.xpathEval('source/@file')[0].content
                         try:
-                            vol = self.get_volume_by_path(file)
+                            src_fl = media.xpathEval('source/@file')[0].content
+                            vol = self.get_volume_by_path(src_fl)
                             volume = vol.name()
                             stg = vol.storagePoolLookupByVolume()
                             storage = stg.name()
-                        except libvirtError:
-                            volume = file
+                        except:
+                            src_fl = None
+                            volume = src_fl
                     except:
                         pass
                     finally:
-                        result.append({'dev': dev, 'image': volume, 'storage': storage, 'path': file})
+                        result.append({'dev': dev, 'image': volume, 'storage': storage, 'path': src_fl})
             return result
         return util.get_xml_path(self._XMLDesc(0), func=disks)
 
-    def mount_iso(self, image):
+    def mount_iso(self, dev, image):
         storages = self.get_storages()
         for storage in storages:
             stg = self.get_storage(storage)
             for img in stg.listVolumes():
                 if image == img:
                     vol = stg.storageVolLookupByName(image)
-                    if self.get_status() == 1:
-                        xml = """<disk type='file' device='cdrom'>
-                                    <driver name='qemu' type='raw'/>
-                                    <target dev='hda' bus='ide'/>
-                                    <source file='%s'/>
-                                 </disk>""" % vol.path()
-                        self.instance.attachDevice(xml)
-                        xmldom = self._XMLDesc(VIR_DOMAIN_XML_SECURE)
-                        self._defineXML(xmldom)
-                    if self.get_status() == 5:
-                        xml = self._XMLDesc(VIR_DOMAIN_XML_SECURE)
-                        newxml = """<disk type='file' device='cdrom'>
-                                      <driver name='qemu' type='raw'/>
-                                      <target dev='hda' bus='ide'/>
-                                      <source file='%s'/>""" % vol.path()
-                        xml_string = "<disk type='file' device='cdrom'>\n      <driver name='qemu' type='raw'/>"
-                        xmldom = xml.replace(xml_string, newxml)
-                        self._defineXML(xmldom)
-
-    def umount_iso(self, image):
+        tree = ElementTree.fromstring(self._XMLDesc(0))
+        for disk in tree.findall('devices/disk'):
+            if disk.get('device') == 'cdrom':
+                for elm in disk:
+                    if elm.tag == 'target':
+                        if elm.get('dev') == dev:
+                            src_media = ElementTree.Element('source')
+                            src_media.set('file', vol.path())
+                            disk.insert(2, src_media)
         if self.get_status() == 1:
-            xml = """<disk type='file' device='cdrom'>
-                         <driver name="qemu" type='raw'/>
-                         <target dev='hda' bus='ide'/>
-                         <readonly/>
-                      </disk>"""
+            xml = ElementTree.tostring(disk)
             self.instance.attachDevice(xml)
             xmldom = self._XMLDesc(VIR_DOMAIN_XML_SECURE)
-            self._defineXML(xmldom)
         if self.get_status() == 5:
-            xml = self._XMLDesc(VIR_DOMAIN_XML_SECURE)
-            xmldom = xml.replace("<source file='%s'/>\n" % image, '')
-            self._defineXML(xmldom)
+            xmldom = ElementTree.tostring(tree)
+        self._defineXML(xmldom)
+
+    def umount_iso(self, dev, image):
+        tree = ElementTree.fromstring(self._XMLDesc(0))
+        for disk in tree.findall('devices/disk'):
+            if disk.get('device') == 'cdrom':
+                for elm in disk:
+                    if elm.tag == 'source':
+                        if elm.get('file') == image:
+                            src_media = elm
+                    if elm.tag == 'target':
+                        if elm.get('dev') == dev:
+                            disk.remove(src_media)
+        if self.get_status() == 1:
+            xml_disk = ElementTree.tostring(disk)
+            self.instance.attachDevice(xml_disk)
+            xmldom = self._XMLDesc(VIR_DOMAIN_XML_SECURE)
+        if self.get_status() == 5:
+            xmldom = ElementTree.tostring(tree)
+        self._defineXML(xmldom)
 
     def cpu_usage(self):
         cpu_usage = {}

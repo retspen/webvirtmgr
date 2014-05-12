@@ -78,3 +78,33 @@ class ComputeAddSshForm(forms.Form):
         except Compute.DoesNotExist:
             return hostname
         raise forms.ValidationError(_('This host is already connected'))
+
+
+class ComputeEditHostForm(forms.Form):
+    host_id = forms.CharField()
+    name = forms.CharField(error_messages={'required': _('No hostname has been entered')},
+                           max_length=20)
+    hostname = forms.CharField(error_messages={'required': _('No IP / Domain name has been entered')},
+                               max_length=100)
+    login = forms.CharField(error_messages={'required': _('No login has been entered')},
+                            max_length=20)
+    password = forms.CharField(max_length=100)
+
+    def clean_name(self):
+        name = self.cleaned_data['name']
+        have_symbol = re.match('[^a-zA-Z0-9._-]+', name)
+        if have_symbol:
+            raise forms.ValidationError(_('The name of the host must not contain any special characters'))
+        elif len(name) > 20:
+            raise forms.ValidationError(_('The name of the host must not exceed 20 characters'))
+        return name
+
+    def clean_hostname(self):
+        hostname = self.cleaned_data['hostname']
+        have_symbol = re.match('[^a-zA-Z0-9._-]+', hostname)
+        wrong_ip = re.match('^0.|^255.', hostname)
+        if have_symbol:
+            raise forms.ValidationError(_('Hostname must contain only numbers, or the domain name separated by "."'))
+        elif wrong_ip:
+            raise forms.ValidationError(_('Wrong IP address'))
+        return hostname

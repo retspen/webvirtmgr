@@ -1,4 +1,4 @@
-# WebVirtMgr panel - v4.7.2
+# WebVirtMgr panel - v4.7.7
 
 ### Whats new?
 
@@ -7,6 +7,8 @@
 * Fix ajax
 * Add bootstrap for Debian
 * Fix bug in js console when mount ISO
+* Add manage multiple CDROM
+* Edit name and hostname on dashboard page
 
 ### <a href="https://github.com/retspen/webvirtmgr/wiki/Screenshots">Screenshots</a>
 
