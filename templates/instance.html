@@ -461,7 +461,7 @@
                             {% endifequal %}
                         </div>
                         <form id="viewXMLform" class="form-horizontal" method="post" role="form" style="display: none;">{% csrf_token %}
-                            <textarea style="margin-bottom: 20px;" class="form-control" rows="17" name="inst_xml">{{ inst_xml }}</textarea>
+                            <textarea id="xmltextarea" name="inst_xml">{{ inst_xml }}</textarea>
                             <button type="button" class="btn btn-lg btn-default" onclick="javascript:$('#viewXMLpre').show();$('#viewXMLform').hide();">{% trans "Close" %}</button>
                             <button type="submit" class="btn btn-lg btn-danger pull-right" name="change_xml">{% trans "Save" %}</button>
                         </form>
