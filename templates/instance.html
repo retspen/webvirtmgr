@@ -438,9 +438,9 @@
                                     <p style="text-align: right;">{{ disk.dev }} ({{ disk.storage }})</p>
                                 {% endfor %}
                             </div>
-                            <div class="col-sm-9">
+                            <div class="col-sm-3">
                                 {% for disk in clone_disks %}
-                                    <p>{{ disk.image }}</p>
+                                    <input type="text" class="form-control" name="disk-{{ disk.dev }}" value="{{ disk.image }}"/>
                                 {% endfor %}
                             </div>
                             {% ifequal status 5 %}
