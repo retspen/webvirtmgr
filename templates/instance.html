@@ -166,18 +166,30 @@
             </div>
             <div class="tab-pane" id="access" style="margin-top: 20px">
                 <ul class="nav nav-tabs ">
-                    <li class="active"><a href="#console" data-toggle="tab">{% trans "Console" %}</a></li>
+                    <li class="active"><a href="#vnc_console" data-toggle="tab">{% trans "VNC Console" %}</a></li>
                     <li><a href="#vnc_pass" data-toggle="tab">{% trans "VNC Password" %}</a></li>
                     <li><a href="#vnc_keymap" data-toggle="tab">{% trans "VNC Keymap" %}</a></li>
+                    {% if telnet_port %}
+                        <li><a href="#telnet_console" data-toggle="tab">{% trans "Telnet Console" %}</a></li>
+                    {% endif %}
 
                 </ul>
                 <div class="tab-content">
-                    <div class="tab-pane tab-inst active" id="console">
+                    <div class="tab-pane tab-inst active" id="vnc_console">
                         <p>{% trans "This action open new window with console VNC connection to your instance." %}</p>
                         {% ifequal status 5 %}
                             <button class="btn btn-primary btn-lg pull-right disabled">{% trans "Console" %}</button>
                         {% else %}
                             <a href="#" class="btn btn-primary btn-lg pull-right" title="VNC Port: {{ vnc_port }}" onclick="open_vnc()">{% trans "Console" %}</a>
+                        {% endifequal %}
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="tab-pane tab-inst" id="telnet_console">
+                        <p>{% trans "This action open new window with console Telnet connection to your instance." %}</p>
+                        {% ifequal status 5 %}
+                            <button class="btn btn-primary btn-lg pull-right disabled">{% trans "Console" %}</button>
+                        {% else %}
+                            <a href="telnet://{{ compute.hostname }}:{{ telnet_port }}" class="btn btn-primary btn-lg pull-right" title="Telnet Port: {{ telnet_port }}">{% trans "Console" %}</a>
                         {% endifequal %}
                         <div class="clearfix"></div>
                     </div>
@@ -330,41 +342,40 @@
                         <div class="clearfix"></div>
                     </div>
                     <div class="tab-pane tab-inst" id="instancemedia">
-                        {% if media.0.path %}
-                            <div class="col-sm-3">
-                                <p style="text-align: right; margin-top: 20px;"><strong>{% trans "Connected" %}</strong></p>
-                            </div>
-                            <div class="col-sm-9">
-                                {% for iso in media %}
-                                <p style="margin-top: 20px;">{{ iso.image }}</p>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
                         <form class="form-horizontal" action="" method="post">{% csrf_token %}
-                            {% if media.0.path %}
-                                <input type="hidden" name="iso_media" value="{{ media.0.path }}">
-                                <button type="submit" class="btn btn-primary btn-lg pull-right"  name="umount_iso">{% trans "Disconnect" %}</button>
-                            {% else %}
+                            {% for cd in media %}
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label">{% trans "Images" %}</label>
-                                    <div class="col-sm-6">
-                                        <select name="iso_media" class="form-control">
+                                    <label class="col-sm-3 control-label">{% trans "CDROM" %} {{ forloop.counter }}</label>
+                                    {% if not cd.image %}
+                                        <div class="col-sm-6">
+                                            <select name="media" class="form-control">
+                                                {% if media_iso %}
+                                                    {% for iso in media_iso %}
+                                                        <option value="{{ iso }}">{{ iso }}</option>
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <option value="none">{% trans "None" %}</option>
+                                                {% endif %}
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-2">
                                             {% if media_iso %}
-                                                {% for iso in media_iso %}
-                                                    <option value="{{ iso }}">{{ iso }}</option>
-                                                {% endfor %}
+                                                <button type="submit" class="btn btn-primary btn-sm pull-left" value="{{ cd.dev }}" name="mount_iso" >{% trans "Connect" %}</button>
                                             {% else %}
-                                                <option value="none">{% trans "None" %}</option>
+                                                <button class="btn btn-primary btn-sm pull-left disabled" name="mount_iso">{% trans "Connect" %}</button>
                                             {% endif %}
-                                        </select>
-                                    </div>
+                                        </div>
+                                    {% else %}
+                                        <div class="col-sm-6">
+                                            <p>{{ cd.image }}</p>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <input type="hidden" name="path" value="{{ cd.path }}">
+                                            <button type="submit" class="btn btn-primary btn-sm pull-left" value="{{ cd.dev }}" name="umount_iso">{% trans "Disconnect" %}</button>
+                                        </div>
+                                    {% endif%}
                                 </div>
-                                {% if media_iso %}
-                                    <button type="submit" class="btn btn-primary btn-lg pull-right" name="mount_iso" >{% trans "Connect" %}</button>
-                                {% else %}
-                                    <button class="btn btn-primary btn-lg pull-right disabled" name="connect">{% trans "Connect" %}</button>
-                                {% endif %}
-                            {% endif %}
+                            {% endfor %}
                         </form>
                         <div class="clearfix"></div>
                     </div>
@@ -450,7 +461,7 @@
                             {% endifequal %}
                         </div>
                         <form id="viewXMLform" class="form-horizontal" method="post" role="form" style="display: none;">{% csrf_token %}
-                            <textarea style="margin-bottom: 20px;" class="form-control" rows="17" name="inst_xml">{{ inst_xml }}</textarea>
+                            <textarea id="xmltextarea" name="inst_xml">{{ inst_xml }}</textarea>
                             <button type="button" class="btn btn-lg btn-default" onclick="javascript:$('#viewXMLpre').show();$('#viewXMLform').hide();">{% trans "Close" %}</button>
                             <button type="submit" class="btn btn-lg btn-danger pull-right" name="change_xml">{% trans "Save" %}</button>
                         </form>
