@@ -608,9 +608,15 @@ def instance(request, host_id, vname):
                 msg += snap_name
                 messages.append(msg)
             if 'clone' in request.POST:
-                clone_name = request.POST.get('name', '')
-                conn.clone_instance(clone_name)
-                return HttpResponseRedirect('/instance/%s/%s' % (host_id, clone_name))
+		clone_data = {}
+		clone_data['name'] = request.POST.get('name', '')
+
+                for post in request.POST:
+                    if 'disk' in post:
+                        clone_data[post] = request.POST.get(post, '')
+
+                conn.clone_instance(clone_data)
+                return HttpResponseRedirect('/instance/%s/%s' % (host_id, clone_data['name']))
 
         conn.close()
 
