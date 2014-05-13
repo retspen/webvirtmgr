@@ -608,8 +608,8 @@ def instance(request, host_id, vname):
                 msg += snap_name
                 messages.append(msg)
             if 'clone' in request.POST:
-		clone_data = {}
-		clone_data['name'] = request.POST.get('name', '')
+                clone_data = {}
+                clone_data['name'] = request.POST.get('name', '')
 
                 for post in request.POST:
                     if 'disk' in post:
