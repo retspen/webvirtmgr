@@ -418,31 +418,29 @@
                                 </div>
                             </div>
                             <p style="font-weight:bold;">{% trans "Network devices" %}</p>
-                            <div class="col-sm-3">
-                                 {% for network in networks %}
-                                    <p style="text-align: right;">eth{{ forloop.counter0 }} ({{ network.nic }})</p>
-                                 {% endfor %}
-                            </div>
-                            <div class="col-sm-9">
+                            <div class="form-group">
                                 {% for network in networks %}
-                                    {% if network.ip %}
-                                        <p>{{ network.ip }}</p>
-                                    {% else %}
-                                        <p>{{ network.mac }}</p>
-                                    {% endif %}
+                                    <label class="col-sm-3 control-label" style="font-weight:normal;">eth{{ forloop.counter0 }} ({{ network.nic }})</label>
+                                {% endfor %}
+                                {% for network in networks %}
+                                    <div class="col-sm-3">
+                                        {% if network.ip %}
+                                            <p>{{ network.ip }}</p>
+                                        {% else %}
+                                            <p>{{ network.mac }}</p>
+                                        {% endif %}
+                                    </div>
                                 {% endfor %}
                             </div>
                             <p style="font-weight:bold;">{% trans "Storage devices" %}</p>
-                            <div class="col-sm-3">
-                                {% for disk in clone_disks %}
-                                    <p style="text-align: right;">{{ disk.dev }} ({{ disk.storage }})</p>
-                                {% endfor %}
-                            </div>
-                            <div class="col-sm-9">
-                                {% for disk in clone_disks %}
-                                    <p>{{ disk.image }}</p>
-                                {% endfor %}
-                            </div>
+                            {% for disk in clone_disks %}
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" style=font-weight:normal;">{{ disk.dev }} ({{ disk.storage }})</label>
+                                    <div class="col-sm-3">
+                                        <input type="text" class="form-control" name="disk-{{ disk.dev }}" value="{{ disk.image }}"/>
+                                    </div>
+                                </div>
+                            {% endfor %}
                             {% ifequal status 5 %}
                                 <button type="submit" class="btn btn-primary btn-lg pull-right" name="clone">{% trans "Clone" %}</button>
                             {% else %}
