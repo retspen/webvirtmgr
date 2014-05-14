@@ -28,7 +28,7 @@
             <ul class="nav navbar-nav navbar-right">
                 {% if request.user.is_authenticated or user.is_authenticated %}
                     <li class="">
-                        <a href="{% url 'logout' %}">{% trans "Sign out" %}</a>
+                        <a href="{% url 'logout' %}">{% trans "Sign out" %} ({{ user.username }})</a>
                     </li>
                 {% else %}
                     <li class="">
