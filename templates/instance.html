@@ -418,18 +418,18 @@
                                 </div>
                             </div>
                             <p style="font-weight:bold;">{% trans "Network devices" %}</p>
-                            <div class="form-group">
+                            <div class="col-sm-3">
                                 {% for network in networks %}
-                                    <label class="col-sm-3 control-label" style="font-weight:normal;">eth{{ forloop.counter0 }} ({{ network.nic }})</label>
+                                    <p style="text-align: right;">eth{{ forloop.counter0 }} ({{ network.nic }})</p>
                                 {% endfor %}
+                            </div>
+                            <div class="col-sm-9">
                                 {% for network in networks %}
-                                    <div class="col-sm-3">
-                                        {% if network.ip %}
-                                            <p>{{ network.ip }}</p>
-                                        {% else %}
-                                            <p>{{ network.mac }}</p>
-                                        {% endif %}
-                                    </div>
+                                    {% if network.ip %}
+                                        <p>{{ network.ip }}</p>
+                                    {% else %}
+                                        <p>{{ network.mac }}</p>
+                                    {% endif %}
                                 {% endfor %}
                             </div>
                             <p style="font-weight:bold;">{% trans "Storage devices" %}</p>
