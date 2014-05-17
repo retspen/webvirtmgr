@@ -57,7 +57,7 @@ def configure_nginx(distro):
     """
     Add Nginx configuration
     """
-    # Local template
+    # Local webvirtmgr site template
     conf = os.path.join(LOCAL_BASE_DIR, "deploy", "fabric", "templates",
                         "nginx.conf")
     # Remote location
@@ -72,6 +72,22 @@ def configure_nginx(distro):
     # Nginx, make sure `default` website is not running.
     if distro in ["Debian", "Ubuntu"]:
         disable_site("default")
+    elif distro in ["Fedora"]:
+        # Fedora places the default server:80 in nginx.conf!
+        # we will replace nginx.conf
+        default = "/etc/nginx/nginx.conf"
+        default_bak = default + ".bak"
+
+        # Local default nginx.conf template
+        conf = os.path.join(LOCAL_BASE_DIR, "deploy", "fabric",
+                            "templates", "original.nginx.conf")
+
+        if not files.is_file(default_bak):
+            # only replace backup if required
+            sudo("mv %s %s" % (default, default + ".bak"))
+
+        # Upload new nginx.conf to server
+        files.upload_template(conf, default, use_sudo=True)
     else:
         default = "/etc/nginx/conf.d/default.conf"
         if files.is_file(default):
