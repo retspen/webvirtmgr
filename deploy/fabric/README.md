@@ -27,12 +27,12 @@ $ cd deploy/fabric
 $ pip install -r fab_requirements.txt
 ```
 
-Then invoke the deployment task via fabric.
+Then invoke the deployment task via fabric (**deploy_webvirt**).
 
 Assuming deployment via **username** with **sudo** permission.
 
 ```
-$ fab -H *host ip* deploy_webvirt -u *username* -p *password*
+$ fab -H *host ip* -u *username* -p *password* deploy_webvirt
 ```
 
 Deployment task will start its routine on the remote server, and will eventually prompt you with database initialization (Admin Information).
