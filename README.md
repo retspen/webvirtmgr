@@ -1,7 +1,8 @@
-# WebVirtMgr panel - v4.7.7
+# WebVirtMgr panel - v4.7.8
 
 ### Whats new?
 
+* <a href="https://github.com/retspen/webvirtmgr/tree/master/deploy/fabric">Deployment via Fabric/Fabtools</a> (Thanks: <a href="https://github.com/mohabusama">Mohab Usama</a>)
 * Add clone instance (Settings -> Clone)
 * Update status VM
 * Fix ajax
