@@ -2,6 +2,7 @@
 
 ### Whats new?
 
+* <a href="https://github.com/ITBlogger/puppet-kvm">Puppet module to control libvirt/kvm</a> (Thanks: <a href="https://github.com/ITBlogger">Alex Scoble</a>)
 * <a href="https://github.com/retspen/webvirtmgr/tree/master/deploy/fabric">Deployment via Fabric/Fabtools</a> (Thanks: <a href="https://github.com/mohabusama">Mohab Usama</a>)
 * Add clone instance (Settings -> Clone)
 * Update status VM
