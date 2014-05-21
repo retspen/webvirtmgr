@@ -671,7 +671,14 @@
         var status = {{ status }};
         var cpu_ctx = $("#cpuChart").get(0).getContext("2d");
         var cpuChart = new Chart(cpu_ctx);
-        var cpu_ptions = {animation : false, pointDotRadius : 2, scaleLabel : "<%=value%> %"}
+        var cpu_options = { animation : false,
+                            pointDotRadius : 2,
+                            scaleLabel : "<%=value%> %",
+                            scaleOverride: true,
+                            scaleSteps: 5,
+                            scaleStepWidth: 20,
+                            scaleStartValue: 0
+                          }
 
         var diskChart = {};
         {% for disk in disks %}
@@ -689,7 +696,7 @@
 
         function instusage(){
             $.getJSON('{% url 'instusage' host_id vname %}', function(data) {
-                cpuChart.Line(data['cpu'], cpu_ptions);
+                cpuChart.Line(data['cpu'], cpu_options);
                 for(var i = 0; i < data['hdd'].length; i++){
                     diskChart[data['hdd'][i].dev].Line(data['hdd'][i].data, disk_options);
                 }
