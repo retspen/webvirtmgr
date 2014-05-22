@@ -41,7 +41,9 @@
         {% endif %}
         <div class="col-md-12" role="main">
             <div class="page-header">
-                <a data-toggle="modal" href="#addHost" class="btn btn-sm btn-success pull-right">{% trans "Add Host" %}</a>
+                {% if user.is_staff %}
+                    <a data-toggle="modal" href="#addHost" class="btn btn-sm btn-success pull-right">{% trans "Add Host" %}</a>
+                {% endif %}
                 <h1>{% trans "Servers List" %}</h1>
             </div>
             {% if hosts_info %}

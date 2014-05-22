@@ -3,6 +3,7 @@ import socket
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
+from django.core.exceptions import PermissionDenied
 
 from servers.models import Compute
 from instance.models import Instance
@@ -69,6 +70,10 @@ def servers_list(request):
     form = None
 
     if request.method == 'POST':
+
+        if not request.user.is_staff:
+            raise PermissionDenied
+
         if 'host_del' in request.POST:
             compute_id = request.POST.get('host_id', '')
             try:
