@@ -74,6 +74,7 @@
                                     <a href="{% url 'instances' host.id %}" class="btn btn-primary">
                                         <span class="glyphicon glyphicon-th-large"></span>
                                     </a>
+                                    {% if user.is_staff %}
                                     <a href="{% url 'create' host.id %}" class="btn btn-primary">
                                         <span class="glyphicon glyphicon-plus"></span>
                                     </a>
@@ -83,6 +84,7 @@
                                     <a href="{% url 'networks' host.id %}" class="btn btn-primary">
                                         <span class="glyphicon glyphicon-globe"></span>
                                     </a>
+                                    {% endif %}
                                     <a href="{% url 'overview' host.id %}" class="btn btn-primary">
                                         <span class="glyphicon glyphicon-info-sign"></span>
                                     </a>
@@ -90,6 +92,7 @@
                                     <a href="#" class="btn btn-primary">
                                         <span class="glyphicon glyphicon-th-large"></span>
                                     </a>
+                                    {% if user.is_staff %}
                                     <a href="#" class="btn btn-primary">
                                         <span class="glyphicon glyphicon-plus"></span>
                                     </a>
@@ -99,12 +102,14 @@
                                     <a href="#" class="btn btn-primary">
                                         <span class="glyphicon glyphicon-globe"></span>
                                     </a>
+                                    {% endif %}
                                     <a href="#" class="btn btn-primary">
                                         <span class="glyphicon glyphicon-info-sign"></span>
                                     </a>
                                 </div>
                                 {% endifequal %}
                             </td>
+                            {% if user.is_staff %}
                             <td style="width:100px">
                                 <form action="" method="post">{% csrf_token %}
                                     <input type="hidden" name="host_id" value="{{ host.id }}">
@@ -188,6 +193,7 @@
                                     </div><!-- /.modal-dialog -->
                                 </div><!-- /.modal -->
                             </td>
+                            {% endif %}
                         </tr>
                     {% endfor %}
                     </tbody>
