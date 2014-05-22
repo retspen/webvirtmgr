@@ -50,7 +50,14 @@
     <script type="text/javascript">
         var cpu_ctx = $("#cpuChart").get(0).getContext("2d");
         var cpuChart = new Chart(cpu_ctx);
-        var cpu_options = {animation : false, pointDotRadius : 2, scaleLabel : "<%=value%> %"}
+        var cpu_options = { animation : false,
+                            pointDotRadius : 2,
+                            scaleLabel : "<%=value%> %",
+                            scaleOverride: true,
+                            scaleSteps: 10,
+                            scaleStepWidth: 10,
+                            scaleStartValue: 0
+                          }
 
         var mem_ctx = $("#memoryChart").get(0).getContext("2d");
         var memChart = new Chart(mem_ctx);
