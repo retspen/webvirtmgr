@@ -95,7 +95,7 @@
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">{% trans "Path" %}</label>
                                 <div class="col-sm-6">
-                                    <input type="text" name="target" class="form-control" value="/var/lib/libvirt/images" required pattern="[a-zA-Z0-9\/]+">
+                                    <input type="text" name="target" class="form-control" value="/var/lib/libvirt/images" required pattern="[a-zA-Z0-9\/\-_]+">
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -116,7 +116,7 @@
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">{% trans "Name" %}</label>
                                 <div class="col-sm-6">
-                                    <input type="text" class="form-control" name="name" placeholder="default" maxlength="20" required pattern="[a-zA-Z0-9\.\-_]+">
+                                    <input type="text" class="form-control" name="name" placeholder="default" maxlength="20" required pattern="[a-zA-Z0-9\.\-\_]+">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -144,7 +144,7 @@
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">{% trans "Path" %}</label>
                                 <div class="col-sm-6">
-                                    <input type="text" class="form-control" name="target" value="/var/www/webvirtmgr/images" required pattern="[a-zA-Z0-9\/]+">
+                                    <input type="text" class="form-control" name="target" value="/var/www/webvirtmgr/images" required pattern="[a-zA-Z0-9\/\-\_]+">
                                 </div>
                             </div>
                             <div class="modal-footer">

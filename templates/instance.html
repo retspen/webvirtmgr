@@ -21,7 +21,6 @@
                 </div>
             {% endfor %}
         {% endif %}
-
             <table class="table">
                 <thead>
                 <tr class="active">
@@ -90,10 +89,9 @@
             </li>
             {% endif %}
         </ul>
-
         <div class="tab-content">
             <div class="tab-pane active" id="power" style="margin-top: 20px">
-                <ul class="nav nav-tabs ">
+                <ul class="nav nav-tabs">
                     <li class="active"><a href="#shutdown" data-toggle="tab">{% trans "Shutdown" %}</a></li>
                     <li><a href="#forceshutdown" data-toggle="tab">{% trans "Force Shutdown" %}</a></li>
                     <li><a href="#suspend" data-toggle="tab">{% trans "Suspend" %}</a></li>
@@ -420,24 +418,24 @@
                                 </div>
                             </div>
                             <p style="font-weight:bold;">{% trans "Network devices" %}</p>
-                            <div class="form-group">
+                            <div class="col-sm-3">
                                 {% for network in networks %}
-                                    <label class="col-sm-3 control-label" style="font-weight:normal;">eth{{ forloop.counter0 }} ({{ network.nic }})</label>
+                                    <p style="text-align: right;">eth{{ forloop.counter0 }} ({{ network.nic }})</p>
                                 {% endfor %}
+                            </div>
+                            <div class="col-sm-9">
                                 {% for network in networks %}
-                                    <div class="col-sm-3">
-                                        {% if network.ip %}
-                                            <p>{{ network.ip }}</p>
-                                        {% else %}
-                                            <p>{{ network.mac }}</p>
-                                        {% endif %}
-                                    </div>
+                                    {% if network.ip %}
+                                        <p>{{ network.ip }}</p>
+                                    {% else %}
+                                        <p>{{ network.mac }}</p>
+                                    {% endif %}
                                 {% endfor %}
                             </div>
                             <p style="font-weight:bold;">{% trans "Storage devices" %}</p>
                             {% for disk in clone_disks %}
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label" style=font-weight:normal;">{{ disk.dev }} ({{ disk.storage }})</label>
+                                    <label class="col-sm-3 control-label" style="font-weight:normal;">{{ disk.dev }} ({{ disk.storage }})</label>
                                     <div class="col-sm-3">
                                         <input type="text" class="form-control" name="disk-{{ disk.dev }}" value="{{ disk.image }}"/>
                                     </div>
@@ -540,7 +538,6 @@
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane tab-inst active" id="statistics">
-                    {% ifequal status 1 %}
                         <div id="cpu-usage">
                             <p style="margin-left: 25px">{% trans "CPU usage" %}</p>
                             <canvas style="margin-left: 25px" id="cpuChart" width="600" height="125"></canvas>
@@ -565,9 +562,6 @@
                                </div>
                             {% endfor %}
                         </div>
-                    {% else %}
-                        <p>{% trans "Turn On your instance" %}</p>
-                    {% endifequal %}
                     </div>
                 </div>
             </div>
@@ -675,48 +669,49 @@
         });
 
     </script>
-    {% ifequal status 1 %}
-        <script type="text/javascript">
-            var cpu_ctx = $("#cpuChart").get(0).getContext("2d");
-            var cpuChart = new Chart(cpu_ctx);
-            var cpu_ptions = {animation : false, pointDotRadius : 2, scaleLabel : "<%=value%> %"}
+    <script type="text/javascript">
+        var status = {{ status }};
+        var cpu_ctx = $("#cpuChart").get(0).getContext("2d");
+        var cpuChart = new Chart(cpu_ctx);
+        var cpu_options = { animation : false,
+                            pointDotRadius : 2,
+                            scaleLabel : "<%=value%> %",
+                            scaleOverride: true,
+                            scaleSteps: 5,
+                            scaleStepWidth: 20,
+                            scaleStartValue: 0
+                          }
 
-            var diskChart = {};
-            {% for disk in disks %}
-                var disk_ctx_{{ disk.dev }} = $("#blk{{ disk.dev }}Chart").get(0).getContext("2d");
-                diskChart['{{ disk.dev }}'] = new Chart(disk_ctx_{{ disk.dev }});
-            {% endfor %}
-            var disk_options = {animation : false, pointDotRadius : 2, scaleLabel : "<%=value%> Mb/s"}
+        var diskChart = {};
+        {% for disk in disks %}
+            var disk_ctx_{{ disk.dev }} = $("#blk{{ disk.dev }}Chart").get(0).getContext("2d");
+            diskChart['{{ disk.dev }}'] = new Chart(disk_ctx_{{ disk.dev }});
+        {% endfor %}
+        var disk_options = {animation : false, pointDotRadius : 2, scaleLabel : "<%=value%> Mb/s"}
 
-            var netChart = {};
-            {% for net in networks %}
-                var net_ctx_{{ forloop.counter0 }} = $("#netEth{{ forloop.counter0 }}Chart").get(0).getContext("2d");
-                netChart['{{ forloop.counter0 }}'] = new Chart(net_ctx_{{ forloop.counter0 }});
-            {% endfor %}
-            var net_options = {animation : false, pointDotRadius : 2, scaleLabel : "<%=value%> Mbps"}
+        var netChart = {};
+        {% for net in networks %}
+            var net_ctx_{{ forloop.counter0 }} = $("#netEth{{ forloop.counter0 }}Chart").get(0).getContext("2d");
+            netChart['{{ forloop.counter0 }}'] = new Chart(net_ctx_{{ forloop.counter0 }});
+        {% endfor %}
+        var net_options = {animation : false, pointDotRadius : 2, scaleLabel : "<%=value%> Mbps"}
 
-            function instusage(){
-                $.getJSON('{% url 'instusage' host_id vname %}', function(data) {
-                    cpuChart.Line(data['cpu'], cpu_ptions);
-                    for(var i = 0; i < data['hdd'].length; i++){
-                        diskChart[data['hdd'][i].dev].Line(data['hdd'][i].data, disk_options);
-                    }
-                    for(var i = 0; i < data['net'].length; i++){
-                        netChart[[i]].Line(data['net'][i].data, net_options);
-                    }
-                    if(data['status'] == 5){
-                        $('#status').attr('class', 'text-danger');
-                        $('#status').text('Shutoff');
-                        var btnstart = $('button[data-id="shutoff"]');
-                        btnstart.attr('class', 'btn btn-lg btn-primary pull-right');
-                        btnstart.attr('name', 'start');
-                        btnstart.text('{% trans "Start" %}');
-                    }
-                });
-            }
-            $(function() {
-                window.setInterval('instusage()', {{ time_refresh }});
+        function instusage(){
+            $.getJSON('{% url 'instusage' host_id vname %}', function(data) {
+                cpuChart.Line(data['cpu'], cpu_options);
+                for(var i = 0; i < data['hdd'].length; i++){
+                    diskChart[data['hdd'][i].dev].Line(data['hdd'][i].data, disk_options);
+                }
+                for(var i = 0; i < data['net'].length; i++){
+                    netChart[[i]].Line(data['net'][i].data, net_options);
+                }
+                if(data['status'] != status){
+                    window.location.reload()
+                }
             });
-        </script>
-    {% endifequal %}
+        }
+        $(function() {
+            window.setInterval('instusage()', {{ time_refresh }});
+        });
+    </script>
 {% endblock %}
