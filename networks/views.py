@@ -46,7 +46,7 @@ def networks(request, host_id):
                         errors.append(msg)
                     if not errors:
                         conn.create_network(data['name'], data['forward'], gateway, netmask,
-                                            dhcp, data['bridge_name'], data['fixed'])
+                                            dhcp, data['bridge_name'], data['openvswitch'], data['fixed'])
                         return HttpResponseRedirect('/network/%s/%s/' % (host_id, data['name']))
         conn.close()
     except libvirtError as err:
