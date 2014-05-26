@@ -1,4 +1,4 @@
-# WebVirtMgr panel - v4.7.8
+# WebVirtMgr panel - v4.8.1
 
 ### Whats new?
 
