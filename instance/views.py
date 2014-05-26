@@ -368,6 +368,8 @@ def instances(request, host_id):
     errors = []
     instances = []
     time_refresh = 8000
+    get_instances = []
+    conn = None
     compute = Compute.objects.get(id=host_id)
 
     try:
@@ -394,34 +396,35 @@ def instances(request, host_id):
                           'vcpu': conn.get_instance_vcpu(instance),
                           'has_managed_save_image': conn.get_instance_managed_save_image(instance)})
 
-    try:
-        if request.method == 'POST':
-            name = request.POST.get('name', '')
-            if 'start' in request.POST:
-                conn.start(name)
-                return HttpResponseRedirect(request.get_full_path())
-            if 'shutdown' in request.POST:
-                conn.shutdown(name)
-                return HttpResponseRedirect(request.get_full_path())
-            if 'destroy' in request.POST:
-                conn.force_shutdown(name)
-                return HttpResponseRedirect(request.get_full_path())
-            if 'managedsave' in request.POST:
-                conn.managedsave(name)
-                return HttpResponseRedirect(request.get_full_path())
-            if 'deletesaveimage' in request.POST:
-                conn.managed_save_remove(name)
-                return HttpResponseRedirect(request.get_full_path())
-            if 'suspend' in request.POST:
-                conn.suspend(name)
-                return HttpResponseRedirect(request.get_full_path())
-            if 'resume' in request.POST:
-                conn.resume(name)
-                return HttpResponseRedirect(request.get_full_path())
+    if conn:
+        try:
+            if request.method == 'POST':
+                name = request.POST.get('name', '')
+                if 'start' in request.POST:
+                    conn.start(name)
+                    return HttpResponseRedirect(request.get_full_path())
+                if 'shutdown' in request.POST:
+                    conn.shutdown(name)
+                    return HttpResponseRedirect(request.get_full_path())
+                if 'destroy' in request.POST:
+                    conn.force_shutdown(name)
+                    return HttpResponseRedirect(request.get_full_path())
+                if 'managedsave' in request.POST:
+                    conn.managedsave(name)
+                    return HttpResponseRedirect(request.get_full_path())
+                if 'deletesaveimage' in request.POST:
+                    conn.managed_save_remove(name)
+                    return HttpResponseRedirect(request.get_full_path())
+                if 'suspend' in request.POST:
+                    conn.suspend(name)
+                    return HttpResponseRedirect(request.get_full_path())
+                if 'resume' in request.POST:
+                    conn.resume(name)
+                    return HttpResponseRedirect(request.get_full_path())
 
-        conn.close()
-    except libvirtError as msg_error:
-        errors.append(msg_error.message)
+            conn.close()
+        except libvirtError as msg_error:
+            errors.append(msg_error.message)
 
     return render_to_response('instances.html', locals(), context_instance=RequestContext(request))
 
