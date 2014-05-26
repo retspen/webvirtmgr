@@ -6,9 +6,9 @@ from django.template import RequestContext
 
 from servers.models import Compute
 from instance.models import Instance
-from servers.forms import ComputeAddTcpForm, ComputeAddSshForm, ComputeEditHostForm
+from servers.forms import ComputeAddTcpForm, ComputeAddSshForm, ComputeEditHostForm, ComputeAddTlsForm
 from vrtManager.hostdetails import wvmHostDetails
-from vrtManager.connection import CONN_SSH, CONN_TCP, SSH_PORT, TCP_PORT
+from vrtManager.connection import CONN_SSH, CONN_TCP, CONN_TLS, SSH_PORT, TCP_PORT, TLS_PORT
 from libvirt import libvirtError
 
 
@@ -50,6 +50,8 @@ def servers_list(request):
                     socket_host.connect((LIBVIRT_HOST, PORT))
                 if host.type == CONN_TCP:
                     socket_host.connect((host.hostname, TCP_PORT))
+                if host.type == CONN_TLS:
+                    socket_host.connect((host.hostname, TLS_PORT))
                 socket_host.close()
                 status = 1
             except Exception as err:
@@ -99,6 +101,17 @@ def servers_list(request):
                                        login=data['login'])
                 new_ssh_host.save()
                 return HttpResponseRedirect(request.get_full_path())
+        if 'host_tls_add' in request.POST:
+            form = ComputeAddTlsForm(request.POST)
+            if form.is_valid():
+                data = form.cleaned_data
+                new_tls_host = Compute(name=data['name'],
+                                       hostname=data['hostname'],
+                                       type=CONN_TLS,
+                                       login=data['login'],
+                                       password=data['password'])
+                new_tls_host.save()
+                return HttpResponseRedirect(request.get_full_path())
 
         if 'host_edit' in request.POST:
             form = ComputeEditHostForm(request.POST)
@@ -133,6 +146,8 @@ def infrastructure(request):
                 socket_host.connect((host.hostname, SSH_PORT))
             if host.type == CONN_TCP:
                 socket_host.connect((host.hostname, TCP_PORT))
+            if host.type == CONN_TLS:
+                socket_host.connect((host.hostname, TLS_PORT))
             socket_host.close()
             status = 1
         except Exception:
