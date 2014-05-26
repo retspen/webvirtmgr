@@ -66,6 +66,21 @@ def create(request, host_id):
                 delete_flavor = Flavor.objects.get(id=flavor_id)
                 delete_flavor.delete()
                 return HttpResponseRedirect(request.get_full_path())
+            if 'create_xml' in request.POST:
+                xml = request.POST.get('from_xml', '')
+                try:
+                    name = util.get_xml_path(xml, '/domain/name')
+                except util.libxml2.parserError:
+                    name = None
+                if name in instances:
+                    msg = _("A virtual machine with this name already exists")
+                    errors.append(msg)
+                else:
+                    try:
+                        conn._defineXML(xml)
+                        return HttpResponseRedirect('/instance/%s/%s' % (host_id, name))
+                    except libvirtError as err:
+                        errors.append(err.message)
             if 'create' in request.POST:
                 volumes = {}
                 form = NewVMForm(request.POST)
