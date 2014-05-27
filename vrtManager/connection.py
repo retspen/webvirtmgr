@@ -6,8 +6,10 @@ from vrtManager import util
 
 from libvirt import libvirtError
 
+CONN_TLS = 3
 CONN_SSH = 2
 CONN_TCP = 1
+TLS_PORT = 16514
 SSH_PORT = 22
 TCP_PORT = 16509
 
@@ -46,6 +48,27 @@ class wvmConnect(object):
                 self.wvm = libvirt.open(uri)
             except libvirtError as err:
                 raise err.message
+
+        if self.conn == CONN_TLS:
+            def creds(credentials, user_data):
+                for credential in credentials:
+                    if credential[0] == libvirt.VIR_CRED_AUTHNAME:
+                        credential[4] = self.login
+                        if len(credential[4]) == 0:
+                            credential[4] = credential[3]
+                    elif credential[0] == libvirt.VIR_CRED_PASSPHRASE:
+                        credential[4] = self.passwd
+                    else:
+                        return -1
+                return 0
+
+            flags = [libvirt.VIR_CRED_AUTHNAME, libvirt.VIR_CRED_PASSPHRASE]
+            auth = [flags, creds, None]
+            uri = 'qemu+tls://%s@%s/system' % (self.login, self.host)
+            try:
+                self.wvm = libvirt.openAuth(uri, auth, 0)
+            except libvirtError:
+                raise libvirtError('Connection Failed')
 
     def get_cap_xml(self):
         """Return xml capabilities"""

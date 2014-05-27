@@ -1,7 +1,9 @@
-# WebVirtMgr panel - v4.7.8
+# WebVirtMgr panel - v4.8.1
 
 ### Whats new?
 
+* Add create VM from XML
+* Add support <a href="http://libvirt.org/remote.html#Remote_certificates">TLS</a> connection (Thanks: <a href="https://github.com/junkb">junkb</a>)
 * <a href="https://github.com/ITBlogger/puppet-kvm">Puppet module to control libvirt/kvm</a> (Thanks: <a href="https://github.com/ITBlogger">Alex Scoble</a>)
 * <a href="https://github.com/retspen/webvirtmgr/tree/master/deploy/fabric">Deployment via Fabric/Fabtools</a> (Thanks: <a href="https://github.com/mohabusama">Mohab Usama</a>)
 * Add clone instance (Settings -> Clone)

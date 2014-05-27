@@ -102,10 +102,16 @@
                              </select>
                         </div>
                     </div>
-                    <div class="form-group" id="bridge_name_form_group">
+                    <div class="form-group bridge_name_form_group">
                         <label class="col-sm-4 control-label">{% trans "Bridge Name" %}</label>
                         <div class="col-sm-6">
                             <input type="text" class="form-control" name="bridge_name" placeholder="br0" pattern="[a-z0-9\-_]+">
+                        </div>
+                    </div>
+                    <div class="form-group bridge_name_form_group">
+                        <label class="col-sm-4 control-label">{% trans "Open vSwitch" %}</label>
+                        <div class="col-sm-6">
+                            <input type="checkbox" name="openvswitch" value="true">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -122,10 +128,10 @@
         $(document).ready(function() {
             $('#forward_select').change(function(eventObject) {
                 if($(this).val() == 'bridge') {
-                    $('#bridge_name_form_group').show();
+                    $('.bridge_name_form_group').show();
                     $('.bridge_name_form_group_dhcp').hide();
                 } else {
-                    $('#bridge_name_form_group').hide();
+                    $('.bridge_name_form_group').hide();
                     $('.bridge_name_form_group_dhcp').show();
                 }
             }).change();
