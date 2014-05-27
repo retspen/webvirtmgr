@@ -127,6 +127,9 @@ def infrastructure(request):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
+    if not request.user.is_staff:
+        raise PermissionDenied
+
     compute = Compute.objects.filter()
     hosts_vms = {}
 
