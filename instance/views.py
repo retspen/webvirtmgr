@@ -371,6 +371,7 @@ def instances(request, host_id):
     time_refresh = 8000
     get_instances = []
     conn = None
+
     compute = Compute.objects.get(id=host_id)
 
     try:
@@ -386,11 +387,12 @@ def instances(request, host_id):
         try:
             inst = Instance.objects.get(compute_id=host_id, name=instance)
             uuid = inst.uuid
-            acl = inst.acl
         except Instance.DoesNotExist:
             uuid = conn.get_uuid(instance)
             inst = Instance(compute_id=host_id, name=instance, uuid=uuid)
             inst.save()
+
+        acl = Instance.objects.get(compute_id=host_id, name=instance).acl
         if request.user in acl.all() or request.user.is_staff:
             instances.append({'name': instance,
                               'status': conn.get_instance_status(instance),
