@@ -384,16 +384,18 @@ def instances(request, host_id):
         try:
             inst = Instance.objects.get(compute_id=host_id, name=instance)
             uuid = inst.uuid
+            acl = inst.acl
         except Instance.DoesNotExist:
             uuid = conn.get_uuid(instance)
             inst = Instance(compute_id=host_id, name=instance, uuid=uuid)
             inst.save()
-        instances.append({'name': instance,
-                          'status': conn.get_instance_status(instance),
-                          'uuid': uuid,
-                          'memory': conn.get_instance_memory(instance),
-                          'vcpu': conn.get_instance_vcpu(instance),
-                          'has_managed_save_image': conn.get_instance_managed_save_image(instance)})
+        if request.user in acl.all() or request.user.is_staff:
+            instances.append({'name': instance,
+                              'status': conn.get_instance_status(instance),
+                              'uuid': uuid,
+                              'memory': conn.get_instance_memory(instance),
+                              'vcpu': conn.get_instance_vcpu(instance),
+                              'has_managed_save_image': conn.get_instance_managed_save_image(instance)})
 
     try:
         if request.method == 'POST':
@@ -433,6 +435,10 @@ def instance(request, host_id, vname):
     """
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
+
+    acl = Instance.objects.get(compute_id=host_id, name=vname).acl
+    if request.user not in acl.all() and not request.user.is_staff:
+        raise PermissionDenied
 
     def show_clone_disk(disks):
         clone_disk = []
