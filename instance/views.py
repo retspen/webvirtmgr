@@ -38,7 +38,6 @@ def instusage(request, host_id, vname):
     net_error = False
     networks = None
     disks = None
-
     compute = Compute.objects.get(id=host_id)
 
     try:
