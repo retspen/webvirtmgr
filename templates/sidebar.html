@@ -18,9 +18,9 @@
                 <li>
                     <a href="{% url 'networks' host_id %}" class="list {% active request "^/network" %}">{% trans "Networks" %}</a>
                 </li>
+                {% endif %}
                 <li>
                     <a href="{% url 'overview' host_id %}" class="list {% active request "^/host" %}">{% trans "Overview" %}</a>
                 </li>
-                {% endif %}
             </ul>
         </div>
