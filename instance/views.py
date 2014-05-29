@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 import json
+from django.core.exceptions import PermissionDenied
 
 from instance.models import Instance
 from servers.models import Compute
@@ -37,7 +38,6 @@ def instusage(request, host_id, vname):
     net_error = False
     networks = None
     disks = None
-
     compute = Compute.objects.get(id=host_id)
 
     try:
@@ -370,6 +370,7 @@ def instances(request, host_id):
     time_refresh = 8000
     get_instances = []
     conn = None
+
     compute = Compute.objects.get(id=host_id)
 
     try:
@@ -389,12 +390,15 @@ def instances(request, host_id):
             uuid = conn.get_uuid(instance)
             inst = Instance(compute_id=host_id, name=instance, uuid=uuid)
             inst.save()
-        instances.append({'name': instance,
-                          'status': conn.get_instance_status(instance),
-                          'uuid': uuid,
-                          'memory': conn.get_instance_memory(instance),
-                          'vcpu': conn.get_instance_vcpu(instance),
-                          'has_managed_save_image': conn.get_instance_managed_save_image(instance)})
+
+        acl = Instance.objects.get(compute_id=host_id, name=instance).acl
+        if request.user in acl.all() or request.user.is_staff:
+            instances.append({'name': instance,
+                              'status': conn.get_instance_status(instance),
+                              'uuid': uuid,
+                              'memory': conn.get_instance_memory(instance),
+                              'vcpu': conn.get_instance_vcpu(instance),
+                              'has_managed_save_image': conn.get_instance_managed_save_image(instance)})
 
     if conn:
         try:
@@ -435,6 +439,10 @@ def instance(request, host_id, vname):
     """
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
+
+    acl = Instance.objects.get(compute_id=host_id, name=vname).acl
+    if request.user not in acl.all() and not request.user.is_staff:
+        raise PermissionDenied
 
     def show_clone_disk(disks):
         clone_disk = []

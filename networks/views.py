@@ -2,6 +2,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
+from django.core.exceptions import PermissionDenied
 
 from servers.models import Compute
 from networks.forms import AddNetPool
@@ -18,6 +19,9 @@ def networks(request, host_id):
     """
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
+
+    if not request.user.is_staff:
+        raise PermissionDenied
 
     errors = []
     compute = Compute.objects.get(id=host_id)
@@ -61,6 +65,9 @@ def network(request, host_id, pool):
     """
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
+
+    if not request.user.is_staff:
+        raise PermissionDenied
 
     errors = []
     compute = Compute.objects.get(id=host_id)

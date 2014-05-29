@@ -82,10 +82,12 @@
                     <span class="glyphicon glyphicon-cloud-download"></span><br>{% trans "Migrate" %}
                 </a>
             </li>
+            {% if user.is_staff %}
             <li><a class="inst-btn" href="#delete" data-toggle="tab">
                     <span class="glyphicon glyphicon-trash"></span><br>{% trans "Destroy" %}
                 </a>
             </li>
+            {% endif %}
         </ul>
         <div class="tab-content">
             <div class="tab-pane active" id="power" style="margin-top: 20px">
