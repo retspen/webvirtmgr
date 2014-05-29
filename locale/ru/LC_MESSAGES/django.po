@@ -422,53 +422,53 @@ msgstr ""
 msgid "Add"
 msgstr ""
 
-#: templates/hostdeatil.html:4 templates/hostdeatil.html.py:21
+#: templates/hostdetail.html:4 templates/hostdetail.html.py:21
 msgid "Overview"
 msgstr ""
 
-#: templates/hostdeatil.html:23
+#: templates/hostdetail.html:23
 msgid "Basic details"
 msgstr ""
 
-#: templates/hostdeatil.html:26
+#: templates/hostdetail.html:26
 msgid "Connection"
 msgstr ""
 
-#: templates/hostdeatil.html:27 templates/servers.html:149
+#: templates/hostdetail.html:27 templates/servers.html:149
 #: templates/servers.html.py:182
 msgid "Hostname"
 msgstr ""
 
-#: templates/hostdeatil.html:28
+#: templates/hostdetail.html:28
 msgid "Hypervisor"
 msgstr ""
 
-#: templates/hostdeatil.html:29 templates/infrastructure.html:25
+#: templates/hostdetail.html:29 templates/infrastructure.html:25
 #: templates/instance.html:142
 msgid "Memory"
 msgstr ""
 
-#: templates/hostdeatil.html:30
+#: templates/hostdetail.html:30
 msgid "Logical CPUs"
 msgstr ""
 
-#: templates/hostdeatil.html:31 templates/instance.html:141
+#: templates/hostdetail.html:31 templates/instance.html:141
 msgid "Processor"
 msgstr ""
 
-#: templates/hostdeatil.html:32
+#: templates/hostdetail.html:32
 msgid "Architecture"
 msgstr ""
 
-#: templates/hostdeatil.html:44
+#: templates/hostdetail.html:44
 msgid "Performance"
 msgstr ""
 
-#: templates/hostdeatil.html:47 templates/instance.html:84
+#: templates/hostdetail.html:47 templates/instance.html:84
 msgid "CPU usage"
 msgstr ""
 
-#: templates/hostdeatil.html:49
+#: templates/hostdetail.html:49
 msgid "Memory usage"
 msgstr ""
 
