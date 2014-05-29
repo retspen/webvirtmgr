@@ -142,4 +142,4 @@ def overview(request, host_id):
     except libvirtError as err:
         errors.append(err.message)
 
-    return render_to_response('hostdeatil.html', locals(), context_instance=RequestContext(request))
+    return render_to_response('hostdetail.html', locals(), context_instance=RequestContext(request))

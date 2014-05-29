@@ -19,7 +19,7 @@
                 <tr class="active">
                     <th>{% trans "Name" %}</th>
                     <th>{% trans "Status" %}</th>
-                    <th>{% trans "VPU's" %}</th>
+                    <th>{% trans "VCPUs" %}</th>
                     <th>{% trans "Memory" %}</th>
                     <th style="width:252px;">{% trans "Action" %}</th>
                 </tr>
@@ -35,11 +35,11 @@
                                 {% ifequal inst.has_managed_save_image 1 %}
                                     <span class="text-warning">{% trans "Saved" %}</span>
                                 {% else %}
-                                    <span class="text-danger">{% trans "Shutoff" %}</span>
+                                    <span class="text-danger">{% trans "Off" %}</span>
                                 {% endifequal %}
                             {% endifequal %}
                             {% ifequal inst.status 3 %}
-                                <span class="text-warning">{% trans "Suspend" %}</span>
+                                <span class="text-warning">{% trans "Suspended" %}</span>
                             {% endifequal %}
                         </td>
                         <td>{{ inst.vcpu }}</td>
@@ -51,7 +51,7 @@
                                     <button class="btn btn-sm btn-default" type="submit" name="start" title="Start">
                                         <span class="glyphicon glyphicon-play"></span>
                                     </button>
-                                    <button class="btn btn-sm btn-default disabled" title="{% trans "Pause" %}">
+                                    <button class="btn btn-sm btn-default disabled" title="{% trans "Suspend" %}">
                                         <span class="glyphicon glyphicon-pause"></span>
                                     </button>
                                     <button class="btn btn-sm btn-default disabled" title="{% trans "Save" %}">
@@ -77,7 +77,7 @@
                                     <button class="btn btn-sm btn-default" type="submit" name="resume" title="{% trans "Resume" %}">
                                         <span class="glyphicon glyphicon-play"></span>
                                     </button>
-                                    <button class="btn btn-sm btn-default disabled" title="{% trans "Pause" %}">
+                                    <button class="btn btn-sm btn-default disabled" title="{% trans "Suspend" %}">
                                         <span class="glyphicon glyphicon-pause"></span>
                                     </button>
                                     <button class="btn btn-sm btn-default" type="submit" name="managedsave" title="{% trans "Save" %}">
@@ -97,7 +97,7 @@
                                     <button class="btn btn-sm btn-default disabled" title="{% trans "Start" %}">
                                         <span class="glyphicon glyphicon-play"></span>
                                     </button>
-                                    <button class="btn btn-sm btn-default" type="submit" name="suspend" title="{% trans "Pause" %}">
+                                    <button class="btn btn-sm btn-default" type="submit" name="suspend" title="{% trans "Suspend" %}">
                                         <span class="glyphicon glyphicon-pause"></span>
                                     </button>
                                     <button class="btn btn-sm btn-default" type="submit" name="managedsave" title="{% trans "Save" %}">
@@ -152,7 +152,7 @@
                                             +"<button class='btn btn-sm btn-default disabled' title='{% trans "Start" %}'>"
                                                 +"<span class='glyphicon glyphicon-play'></span>"
                                             +"</button> "
-                                            +"<button class='btn btn-sm btn-default' type='submit' name='suspend' title='{% trans "Pause" %}'>"
+                                            +"<button class='btn btn-sm btn-default' type='submit' name='suspend' title='{% trans "Suspend" %}'>"
                                                 +"<span class='glyphicon glyphicon-pause'></span>"
                                             +"</button> "
                                             +"<button class='btn btn-sm btn-default' type='submit' name='managedsave' title='{% trans "Save" %}'>"
@@ -179,7 +179,7 @@
                                             +"<button class='btn btn-sm btn-default' type='submit' name='resume' title='{% trans "Resume" %}'>"
                                                 +"<span class='glyphicon glyphicon-play'></span>"
                                             +"</button> "
-                                            +"<button class='btn btn-sm btn-default disabled' title='{% trans "Pause" %}'>"
+                                            +"<button class='btn btn-sm btn-default disabled' title='{% trans "Suspend" %}'>"
                                                 +"<span class='glyphicon glyphicon-pause'></span>"
                                             +"</button> "
                                             +"<button class='btn btn-sm btn-default' type='submit' name='managedsave' title='{% trans "Save" %}'>"
@@ -208,7 +208,7 @@
                                             +"<button class='btn btn-sm btn-default' type='submit' name='start' title='{% trans "Start" %}'>"
                                                 +"<span class='glyphicon glyphicon-play'></span>"
                                             +"</button> "
-                                            +"<button class='btn btn-sm btn-default disabled' title='{% trans "Pause" %}'>"
+                                            +"<button class='btn btn-sm btn-default disabled' title='{% trans "Suspend" %}'>"
                                                 +"<span class='glyphicon glyphicon-pause'></span>"
                                             +"</button> "
                                             +"<button class='btn btn-sm btn-default disabled' title='{% trans "Save" %}'>"

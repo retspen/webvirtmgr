@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load staticfiles %}
-{% block title %}{% trans "VM's" %} - {{ vname }}{% endblock %}
+{% block title %}{% trans "VMs" %} - {{ vname }}{% endblock %}
 {% block content %}
     {% include 'sidebar.html' %}
     <div class="main">
@@ -26,7 +26,7 @@
                 <tr class="active">
                     <th>{% trans "Name" %}</th>
                     <th>{% trans "Status" %}</th>
-                    <th>{% trans "VPU's" %}</th>
+                    <th>{% trans "VCPUs" %}</th>
                     <th>{% trans "Memory" %}</th>
                     <th>{% trans "Description" %}</th>
                 </tr>
@@ -71,7 +71,7 @@
                 </a>
             </li>
             <li><a class="inst-btn" href="#graph" data-toggle="tab">
-                    <span class="glyphicon glyphicon-signal"></span><br>{% trans "Graphics" %}
+                    <span class="glyphicon glyphicon-signal"></span><br>{% trans "Statistics" %}
                 </a>
             </li>
             <li><a class="inst-btn" href="#settings" data-toggle="tab">
@@ -99,7 +99,7 @@
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane tab-inst active" id="shutdown">
-                        <p>{% trans "This action sends ACPI shutdown signal to instance." %}</p>
+                        <p>{% trans "This action sends an ACPI shutdown signal to the instance." %}</p>
                         <form action="" method="post">{% csrf_token %}
                             {% ifequal status 5 %}
                                 <button type="submit" name="start" class="btn btn-lg btn-primary pull-right">{% trans "Start" %}</button>
@@ -114,7 +114,7 @@
                         <div class="clearfix"></div>
                     </div>
                     <div class="tab-pane tab-inst" id="forceshutdown">
-                        <p>{% trans "This action forces power off the instance and may cause data corruption." %}</p>
+                        <p>{% trans "This action forcibly powers off the instance and may cause data corruption." %}</p>
                         <form action="" method="post">{% csrf_token %}
                             {% ifequal status 5 %}
                                 <button type="submit" name="start" class="btn btn-lg btn-primary pull-right">{% trans "Start" %}</button>
@@ -129,7 +129,7 @@
                         <div class="clearfix"></div>
                     </div>
                     <div class="tab-pane tab-inst" id="suspend">
-                        <p>{% trans "This action suspend or restore the instance." %}</p>
+                        <p>{% trans "This action suspends or restores the instance." %}</p>
                         <form action="" method="post">{% csrf_token %}
                             {% ifequal status 5 %}
                                 <button type="submit" name="start" class="btn btn-lg btn-primary pull-right">{% trans "Start" %}</button>
@@ -176,7 +176,7 @@
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane tab-inst active" id="vnc_console">
-                        <p>{% trans "This action open new window with console VNC connection to your instance." %}</p>
+                        <p>{% trans "This action opens a new window with a VNC connection to the console of the instance." %}</p>
                         {% ifequal status 5 %}
                             <button class="btn btn-primary btn-lg pull-right disabled">{% trans "Console" %}</button>
                         {% else %}
@@ -194,7 +194,7 @@
                         <div class="clearfix"></div>
                     </div>
                     <div class="tab-pane tab-inst" id="vnc_pass">
-                        <p>{% trans "If you want to create password for vnc, shutdown the instance." %}</p>
+                        <p>{% trans "To create password for VNC, shutdown the instance." %}</p>
                         <form class="form-horizontal" method="post" role="form">{% csrf_token %}
                             <div class="form-group">
                                 <div class="col-sm-offset-2 col-sm-10">
@@ -225,7 +225,7 @@
                         <div class="clearfix"></div>
                     </div>
                     <div class="tab-pane tab-inst" id="vnc_keymap">
-                        <p>{% trans "If you want to set a keymap for vnc, shutdown the instance." %}</p>
+                        <p>{% trans "To set a keymap for vnc, shutdown the instance." %}</p>
                         <form class="form-horizontal" method="post" role="form">{% csrf_token %}
                             <div class="form-group">
                                 <div class="col-sm-offset-2 col-sm-10">
@@ -261,7 +261,7 @@
                 <ul class="nav nav-tabs" style="margin-top: 20px">
                     <li class="active"><a href="#instancesettings" data-toggle="tab">{% trans "VCPU's and Memory" %}</a></li>
                     <li><a href="#instancemedia" data-toggle="tab">{% trans "Media" %}</a></li>
-                    <li><a href="#instancedevice" data-toggle="tab">{% trans "Disk and Networks" %}</a></li>
+                    <li><a href="#instancedevice" data-toggle="tab">{% trans "Disks and Networks" %}</a></li>
                     <li><a href="#instanceclone" data-toggle="tab">{% trans "Clone" %}</a></li>
                     <li><a href="#instancexml" data-toggle="tab">{% trans "XML" %}</a></li>
                 </ul>
@@ -470,11 +470,11 @@
             <div class="tab-pane" id="snapshots">
                 <ul class="nav nav-tabs" style="margin-top: 20px">
                     <li class="active"><a href="#createsnapshot" data-toggle="tab">{% trans "Create Snapshot" %}</a></li>
-                    <li><a href="#istaceshapshosts" data-toggle="tab">{% trans "Restore from Snapshots" %}</a></li>
+                    <li><a href="#istaceshapshosts" data-toggle="tab">{% trans "Restore from Snapshot" %}</a></li>
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane tab-inst active" id="createsnapshot">
-                        <p>{% trans "To take a snapshot please shutdown your instance." %}</p>
+                        <p>{% trans "To take a snapshot, shutdown the instance." %}</p>
                         <form class="form-horizontal" method="post" role="form">{% csrf_token %}
                             <div class="form-group">
                                 <label for="snapshot" class="col-sm-2 control-label">{% trans "Name" %}</label>
@@ -491,7 +491,7 @@
                         <div class="clearfix"></div>
                     </div>
                     <div class="tab-pane tab-inst" id="istaceshapshosts">
-                        <p>{% trans "If you want to revert a snapshot shutdown the instance" %}</p>
+                        <p>{% trans "To revert to a snapshot, shutdown the instance" %}</p>
                         {% if snapshots %}
                             <table class="table table-bordered">
                                 <thead>

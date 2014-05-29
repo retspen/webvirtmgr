@@ -13,7 +13,7 @@
                 </li>
                 {% if user.is_staff %}
                 <li>
-                    <a href="{% url 'storages' host_id %}" class="list {% active request "^/storage" %}">{% trans "Storages" %}</a>
+                    <a href="{% url 'storages' host_id %}" class="list {% active request "^/storage" %}">{% trans "Storage Pools" %}</a>
                 </li>
                 <li>
                     <a href="{% url 'networks' host_id %}" class="list {% active request "^/network" %}">{% trans "Networks" %}</a>
