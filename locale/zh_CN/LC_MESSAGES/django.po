@@ -421,53 +421,53 @@ msgstr "添加收藏"
 msgid "Add"
 msgstr "添加"
 
-#: templates/hostdeatil.html:4 templates/hostdeatil.html.py:21
+#: templates/hostdetail.html:4 templates/hostdetail.html.py:21
 msgid "Overview"
 msgstr "概览"
 
-#: templates/hostdeatil.html:23
+#: templates/hostdetail.html:23
 msgid "Basic details"
 msgstr "基本信息"
 
-#: templates/hostdeatil.html:26
+#: templates/hostdetail.html:26
 msgid "Connection"
 msgstr "连接"
 
-#: templates/hostdeatil.html:27 templates/servers.html:149
+#: templates/hostdetail.html:27 templates/servers.html:149
 #: templates/servers.html.py:182
 msgid "Hostname"
 msgstr "主机名"
 
-#: templates/hostdeatil.html:28
+#: templates/hostdetail.html:28
 msgid "Hypervisor"
 msgstr "虚拟化层"
 
-#: templates/hostdeatil.html:29 templates/infrastructure.html:25
+#: templates/hostdetail.html:29 templates/infrastructure.html:25
 #: templates/instance.html:142
 msgid "Memory"
 msgstr "内存"
 
-#: templates/hostdeatil.html:30
+#: templates/hostdetail.html:30
 msgid "Logical CPUs"
 msgstr "逻辑CPU"
 
-#: templates/hostdeatil.html:31 templates/instance.html:141
+#: templates/hostdetail.html:31 templates/instance.html:141
 msgid "Processor"
 msgstr "处理器"
 
-#: templates/hostdeatil.html:32
+#: templates/hostdetail.html:32
 msgid "Architecture"
 msgstr "架构"
 
-#: templates/hostdeatil.html:44
+#: templates/hostdetail.html:44
 msgid "Performance"
 msgstr "性能"
 
-#: templates/hostdeatil.html:47 templates/instance.html:84
+#: templates/hostdetail.html:47 templates/instance.html:84
 msgid "CPU usage"
 msgstr "CPU占用"
 
-#: templates/hostdeatil.html:49
+#: templates/hostdetail.html:49
 msgid "Memory usage"
 msgstr "内存占用"
 
