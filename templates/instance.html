@@ -56,7 +56,7 @@
                 </tbody>
             </table>
         <hr>
-        <ul class="nav nav-tabs" style="height: 61px;">
+        <ul id="btnsection" class="nav nav-tabs" style="height: 61px;">
             <li class="active">
                 <a class="inst-btn" href="#power" data-toggle="tab">
                     <span class="glyphicon glyphicon-off"></span><br>{% trans "Power" %}
@@ -634,6 +634,59 @@
         function open_vnc() { window.open('{% url 'console' %}?token={{ host_id }}-{{ uuid }}','','width=850,height=485') }
     </script>
     <script src="{% static "js/Chart.min.js" %}"></script>
+    <script type="text/javascript">
+        var hash = location.hash;
+        if(~ $.inArray(hash, ['#shutdown', '#forceshutdown', '#managedsave', '#suspend'])){
+            var btn = $('#power>ul>li>a');
+            $(btn).each(function(){
+                if ($(this).attr('href') === hash){
+                    $(this).trigger('click');
+                }
+            });
+        }
+        if(~ $.inArray(hash, ['#vnc_pass', '#vnc_keymap'])){
+            var btnsect = $('#btnsection>li>a');
+            $(btnsect).each(function(){
+                if ($(this).attr('href') === '#access'){
+                    $(this).trigger('click');
+                }
+            });
+            var btn = $('#access>ul>li>a');
+            $(btn).each(function(){
+                if ($(this).attr('href') === hash){
+                    $(this).trigger('click');
+                }
+            });
+        }
+        if(~ $.inArray(hash, ['#createsnapshot','#istaceshapshosts'])){
+            var btnsect = $('#btnsection>li>a');
+            $(btnsect).each(function(){
+                if ($(this).attr('href') === '#snapshots'){
+                    $(this).trigger('click');
+                }
+            });
+            var btn = $('#snapshots>ul>li>a');
+            $(btn).each(function(){
+                if ($(this).attr('href') === hash){
+                    $(this).trigger('click');
+                }
+            });
+        }
+        if(~ $.inArray(hash, ['#instancesettings','#instancemedia','#instancexml'])){
+            var btnsect = $('#btnsection>li>a');
+            $(btnsect).each(function(){
+                if ($(this).attr('href') === '#settings'){
+                    $(this).trigger('click');
+                }
+            });
+            var btn = $('#settings>ul>li>a');
+            $(btn).each(function(){
+                if ($(this).attr('href') === hash){
+                    $(this).trigger('click');
+                }
+            });
+        }
+    </script>
     <script type="text/javascript">
         $(document).on('change','#vnc_passwd_gen',function(){
             if($(this).prop('checked')) {

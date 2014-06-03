@@ -47,13 +47,13 @@ def instusage(request, host_id, vname):
                            compute.type,
                            vname)
         status = conn.get_status()
-        if status == 5:
+        if status == 3 or status == 5:
             networks = conn.get_net_device()
             disks = conn.get_disk_device()
     except libvirtError:
         status = None
 
-    if status == 1 and status:
+    if status and status == 1:
         try:
             blk_usage = conn.disk_usage()
             cpu_usage = conn.cpu_usage()
@@ -501,27 +501,26 @@ def instance(request, host_id, vname):
         if request.method == 'POST':
             if 'start' in request.POST:
                 conn.start()
-
                 return HttpResponseRedirect(request.get_full_path())
             if 'power' in request.POST:
                 if 'shutdown' == request.POST.get('power', ''):
                     conn.shutdown()
-                    return HttpResponseRedirect(request.get_full_path())
+                    return HttpResponseRedirect(request.get_full_path() + '#shutdown')
                 if 'destroy' == request.POST.get('power', ''):
                     conn.force_shutdown()
-                    return HttpResponseRedirect(request.get_full_path())
+                    return HttpResponseRedirect(request.get_full_path() + '#forceshutdown')
                 if 'managedsave' == request.POST.get('power', ''):
                     conn.managedsave()
-                    return HttpResponseRedirect(request.get_full_path())
+                    return HttpResponseRedirect(request.get_full_path() + '#managedsave')
             if 'deletesaveimage' in request.POST:
                 conn.managed_save_remove()
-                return HttpResponseRedirect(request.get_full_path())
+                return HttpResponseRedirect(request.get_full_path() + '#managedsave')
             if 'suspend' in request.POST:
                 conn.suspend()
-                return HttpResponseRedirect(request.get_full_path())
+                return HttpResponseRedirect(request.get_full_path() + '#suspend')
             if 'resume' in request.POST:
                 conn.resume()
-                return HttpResponseRedirect(request.get_full_path())
+                return HttpResponseRedirect(request.get_full_path() + '#suspend')
             if 'delete' in request.POST:
                 if conn.get_status() == 1:
                     conn.force_shutdown()
@@ -536,24 +535,23 @@ def instance(request, host_id, vname):
             if 'snapshot' in request.POST:
                 name = request.POST.get('name', '')
                 conn.create_snapshot(name)
-                msg = _("Snapshot '%s' has been created successful" % name)
-                messages.append(msg)
+                return HttpResponseRedirect(request.get_full_path() + '#istaceshapshosts')
             if 'umount_iso' in request.POST:
                 image = request.POST.get('path', '')
                 dev = request.POST.get('umount_iso', '')
                 conn.umount_iso(dev, image)
-                return HttpResponseRedirect(request.get_full_path())
+                return HttpResponseRedirect(request.get_full_path() + '#instancemedia')
             if 'mount_iso' in request.POST:
                 image = request.POST.get('media', '')
                 dev = request.POST.get('mount_iso', '')
                 conn.mount_iso(dev, image)
-                return HttpResponseRedirect(request.get_full_path())
+                return HttpResponseRedirect(request.get_full_path() + '#instancemedia')
             if 'set_autostart' in request.POST:
                 conn.set_autostart(1)
-                return HttpResponseRedirect(request.get_full_path())
+                return HttpResponseRedirect(request.get_full_path() + '#instancesettings')
             if 'unset_autostart' in request.POST:
                 conn.set_autostart(0)
-                return HttpResponseRedirect(request.get_full_path())
+                return HttpResponseRedirect(request.get_full_path() + '#instancesettings')
             if 'change_settings' in request.POST:
                 description = request.POST.get('description', '')
                 vcpu = request.POST.get('vcpu', '')
@@ -561,12 +559,12 @@ def instance(request, host_id, vname):
                 memory = request.POST.get('memory', '')
                 cur_memory = request.POST.get('cur_memory', '')
                 conn.change_settings(description, cur_memory, memory, cur_vcpu, vcpu)
-                return HttpResponseRedirect(request.get_full_path())
+                return HttpResponseRedirect(request.get_full_path() + '#instancesettings')
             if 'change_xml' in request.POST:
                 xml = request.POST.get('inst_xml', '')
                 if xml:
                     conn._defineXML(xml)
-                    return HttpResponseRedirect(request.get_full_path())
+                    return HttpResponseRedirect(request.get_full_path() + '#instancexml')
             if 'set_vnc_passwd' in request.POST:
                 if request.POST.get('auto_pass', ''):
                     passwd = ''.join([choice(letters + digits) for i in xrange(12)])
@@ -578,7 +576,7 @@ def instance(request, host_id, vname):
                         errors.append(msg)
                 if not errors:
                     conn.set_vnc_passwd(passwd)
-                    return HttpResponseRedirect(request.get_full_path())
+                    return HttpResponseRedirect(request.get_full_path() + '#vnc_pass')
 
             if 'set_vnc_keymap' in request.POST:
                 keymap = request.POST.get('vnc_keymap', '')
@@ -587,7 +585,7 @@ def instance(request, host_id, vname):
                     conn.set_vnc_keymap('')
                 else:
                     conn.set_vnc_keymap(keymap)
-                return HttpResponseRedirect(request.get_full_path())
+                return HttpResponseRedirect(request.get_full_path() + '#vnc_keymap')
 
             if 'migrate' in request.POST:
                 compute_id = request.POST.get('compute_id', '')
@@ -603,7 +601,7 @@ def instance(request, host_id, vname):
             if 'delete_snapshot' in request.POST:
                 snap_name = request.POST.get('name', '')
                 conn.snapshot_delete(snap_name)
-                return HttpResponseRedirect(request.get_full_path())
+                return HttpResponseRedirect(request.get_full_path() + '#istaceshapshosts')
             if 'revert_snapshot' in request.POST:
                 snap_name = request.POST.get('name', '')
                 conn.snapshot_revert(snap_name)
