@@ -508,7 +508,8 @@ msgstr ""
 msgid "Suspend"
 msgstr ""
 
-#: templates/infrastructure.html:49 templates/instances.html:42
+#: templates/infrastructure.html:49 templates/instance.html:125
+#: templates/instances.html:42
 msgid "Shutoff"
 msgstr ""
 
@@ -596,10 +597,6 @@ msgstr ""
 #: templates/instance.html:120 templates/network.html:53
 #: templates/storage.html:64
 msgid "Disable"
-msgstr ""
-
-#: templates/instance.html:125
-msgid "Shuttoff"
 msgstr ""
 
 #: templates/instance.html:137
