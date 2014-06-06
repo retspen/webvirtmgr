@@ -125,7 +125,7 @@ class ComputeEditHostForm(forms.Form):
     hostname = forms.CharField(error_messages={'required': _('No IP / Domain name has been entered')},
                                max_length=100)
     login = forms.CharField(error_messages={'required': _('No login has been entered')},
-                            max_length=20)
+                            max_length=100)
     password = forms.CharField(max_length=100)
 
     def clean_name(self):
