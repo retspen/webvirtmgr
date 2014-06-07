@@ -375,17 +375,18 @@ msgstr "关闭"
 #: templates/create.html:152 templates/create.html.py:154
 #: templates/create.html:161 templates/create.html.py:257
 #: templates/create.html:259 templates/networks.html:9
-#: templates/networks.html.py:116 templates/sidebar.html:15
-#: templates/storage.html:237 templates/storages.html:9
-#: templates/storages.html.py:106 templates/storages.html:133
-#: templates/storages.html.py:155
+#: templates/networks.html.py:116 templates/servers.html:75
+#: templates/sidebar.html:15 templates/storage.html:237
+#: templates/storages.html:9 templates/storages.html.py:106
+#: templates/storages.html:133 templates/storages.html.py:155
 msgid "Create"
 msgstr "创建"
 
 #: templates/create.html:166 templates/instance.html:52
 #: templates/instance.html.py:281 templates/network.html:42
-#: templates/snapshot.html:57 templates/storage.html:53
-#: templates/storage.html.py:99 templates/storage.html:186
+#: templates/servers.html:112 templates/snapshot.html:57
+#: templates/storage.html:53 templates/storage.html.py:99
+#: templates/storage.html:186
 msgid "Delete"
 msgstr "删除"
 
@@ -422,6 +423,7 @@ msgid "Add"
 msgstr "添加"
 
 #: templates/hostdetail.html:4 templates/hostdetail.html.py:21
+#: templates/servers.html:84
 msgid "Overview"
 msgstr "概览"
 
@@ -561,7 +563,7 @@ msgid "Statistics"
 msgstr "统计"
 
 #: templates/instance.html:71 templates/instance.html.py:73
-#: templates/instance.html:365
+#: templates/instance.html:365 templates/servers.html:109
 msgid "Edit"
 msgstr "编辑"
 
@@ -705,7 +707,7 @@ msgid "Save"
 msgstr "保存"
 
 #: templates/instances.html:4 templates/instances.html.py:13
-#: templates/sidebar.html:12
+#: templates/servers.html:72 templates/sidebar.html:12
 msgid "Instances"
 msgstr "虚机实例"
 
@@ -891,12 +893,12 @@ msgstr "********"
 msgid "Need create ssh authorization key"
 msgstr "需要创建SSH认证密钥"
 
-#: templates/sidebar.html:18 templates/storages.html:3
-#: templates/storages.html.py:10
+#: templates/servers.html:78 templates/sidebar.html:18
+#: templates/storages.html:3 templates/storages.html.py:10
 msgid "Storages"
 msgstr "存储池"
 
-#: templates/sidebar.html:21
+#: templates/servers.html:81 templates/sidebar.html:21
 msgid "Networks"
 msgstr "网络池"
 
