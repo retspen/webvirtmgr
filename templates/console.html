@@ -19,6 +19,19 @@
                 </td>
                 <td width="1%">
                     <div id="noVNC_buttons">
+                        <!-- dirty fix for keyboard on iOS devices -->
+                        <input type="button" id="showKeyboard" value="Keyboard" title="Show Keyboard"/>
+                        <!-- Note that Google Chrome on Android doesn't respect any of these,
+                        html attributes which attempt to disable text suggestions on the
+                        on-screen keyboard. Let's hope Chrome implements the ime-mode
+                        style for example -->
+                        <!-- TODO: check if this is needed on iOS -->
+                        <textarea id="keyboardinput" autocapitalize="off"
+                          autocorrect="off" autocomplete="off" spellcheck="false"
+                          mozactionhint="Enter" onsubmit="return false;"
+                          style="ime-mode: disabled;">
+                        </textarea>
+                        
                         <input type=button value="Ctrl+Alt+Del" id="sendCtrlAltDelButton">
                     </div>
                 </td>
@@ -33,6 +46,11 @@
     /*jslint white: false */
     /*global window, $, Util, RFB, */
     "use strict";
+    
+    // dirty fix for keyboard on iOS devices
+    var keyboardVisible = false;
+    var isTouchDevice = false;
+    isTouchDevice = 'ontouchstart' in document.documentElement;
 
     // Load supporting scripts
     Util.load_scripts(["webutil.js", "base64.js", "websock.js", "des.js",
@@ -58,6 +76,26 @@
         rfb.sendCtrlAltDel();
         return false;
     }
+    
+    // dirty fix for keyboard on iOS devices
+    function showKeyboard() {
+        var kbi, skb, l;
+        kbi = $D('keyboardinput');
+        skb = $D('showKeyboard');
+        l = kbi.value.length;
+        if(keyboardVisible === false) {
+            kbi.focus();
+            try { kbi.setSelectionRange(l, l); } // Move the caret to the end
+            catch (err) {} // setSelectionRange is undefined in Google Chrome
+            keyboardVisible = true;
+            //skb.className = "noVNC_status_button_selected";
+        } else if(keyboardVisible === true) {
+            kbi.blur();
+            //skb.className = "noVNC_status_button";
+            keyboardVisible = false;
+        }
+    }
+
     function updateState(rfb, state, oldstate, msg) {
         var s, sb, cad, level;
         s = $D('noVNC_status');
@@ -86,6 +124,15 @@
 
         $D('sendCtrlAltDelButton').style.display = "inline";
         $D('sendCtrlAltDelButton').onclick = sendCtrlAltDel;
+
+        // dirty fix for keyboard on iOS devices
+        if (isTouchDevice) {
+            $D('showKeyboard').onclick = showKeyboard;
+            // Remove the address bar
+            setTimeout(function() { window.scrollTo(0, 1); }, 100);
+        } else {
+            $D('showKeyboard').style.display = "none";
+        }
 
         WebUtil.init_logging(WebUtil.getQueryVar('logging', 'warn'));
         document.title = unescape(WebUtil.getQueryVar('title', 'noVNC'));
