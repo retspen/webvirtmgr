@@ -596,6 +596,15 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="live_migrate" value="true" id="vm_live_migrate">{% trans "Live Migration" %}
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
                             {% if computes_count != 1 %}
                                 <button type="submit" class="btn btn-lg btn-primary pull-right" name="migrate">{% trans "Migrate" %}</button>
                             {% else %}
