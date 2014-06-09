@@ -71,21 +71,21 @@
                             <td style="width:280px">
                                 <div class="btn-group btn-group-sm">
                                 {% ifequal host.status 1 %}
-                                    <a href="{% url 'instances' host.id %}" class="btn btn-primary">
+                                    <a href="{% url 'instances' host.id %}" class="btn btn-primary" title="{% trans "Instances" %}">
                                         <span class="glyphicon glyphicon-th-large"></span>
                                     </a>
                                     {% if user.is_staff %}
-                                    <a href="{% url 'create' host.id %}" class="btn btn-primary">
+                                    <a href="{% url 'create' host.id %}" class="btn btn-primary" title="{% trans "Create" %}">
                                         <span class="glyphicon glyphicon-plus"></span>
                                     </a>
-                                    <a href="{% url 'storages' host.id %}" class="btn btn-primary">
+                                    <a href="{% url 'storages' host.id %}" class="btn btn-primary" title="{% trans "Storages" %}">
                                         <span class="glyphicon glyphicon-hdd"></span>
                                     </a>
-                                    <a href="{% url 'networks' host.id %}" class="btn btn-primary">
+                                    <a href="{% url 'networks' host.id %}" class="btn btn-primary" title="{% trans "Networks" %}">
                                         <span class="glyphicon glyphicon-globe"></span>
                                     </a>
                                     {% endif %}
-                                    <a href="{% url 'overview' host.id %}" class="btn btn-primary">
+                                    <a href="{% url 'overview' host.id %}" class="btn btn-primary" title="{% trans "Overview" %}">
                                         <span class="glyphicon glyphicon-info-sign"></span>
                                     </a>
                                 {% else %}
@@ -106,17 +106,17 @@
                                     <a href="#" class="btn btn-primary">
                                         <span class="glyphicon glyphicon-info-sign"></span>
                                     </a>
-                                </div>
                                 {% endifequal %}
+                                </div>
                             </td>
                             {% if user.is_staff %}
                             <td style="width:100px">
                                 <form action="" method="post">{% csrf_token %}
                                     <input type="hidden" name="host_id" value="{{ host.id }}">
-                                    <a data-toggle="modal" href="#editHost{{ host.id }}" class="btn btn-sm btn-primary" title="Edit">
+                                     <a data-toggle="modal" href="#editHost{{ host.id }}" class="btn btn-sm btn-primary" title="{% trans "Edit" %}">
                                         <span class="glyphicon glyphicon-pencil"></span>
                                     </a>
-                                    <button type="submit" class="btn btn-sm btn-danger" name="host_del" title="Delete" onclick="return confirm('{% trans "Are you sure?"%}')">
+                                    <button type="submit" class="btn btn-sm btn-danger" name="host_del" title="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?"%}')">
                                         <span class="glyphicon glyphicon-trash"></span>
                                     </button>
                                 </form>
