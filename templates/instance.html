@@ -583,7 +583,7 @@
                         </div>
                         <form class="form-horizontal" method="post" role="form">{% csrf_token %}
                             <div class="form-group">
-                                <label class="col-sm-3 control-label">{% trans "New host" %}</label>
+                                <label class="col-sm-3 control-label">{% trans "Host migration" %}</label>
                                 <div class="col-sm-6">
                                     <select name="compute_id" class="form-control">
                                     {% if computes_count != 1 %}
@@ -597,12 +597,9 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <div class="col-sm-offset-2 col-sm-10">
-                                    <div class="checkbox">
-                                        <label>
-                                            <input type="checkbox" name="live_migrate" value="true" id="vm_live_migrate">{% trans "Live Migration" %}
-                                        </label>
-                                    </div>
+                                <label class="col-sm-3 control-label">{% trans "Live migration" %}</label>
+                                <div class="col-sm-6">
+                                    <input type="checkbox" name="live_migrate" value="true" id="vm_live_migrate">
                                 </div>
                             </div>
                             {% if computes_count != 1 %}
