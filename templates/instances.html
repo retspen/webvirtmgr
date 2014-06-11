@@ -35,11 +35,11 @@
                                 {% ifequal inst.has_managed_save_image 1 %}
                                     <span class="text-warning">{% trans "Saved" %}</span>
                                 {% else %}
-                                    <span class="text-danger">{% trans "Off" %}</span>
+                                    <span class="text-danger">{% trans "Shutoff" %}</span>
                                 {% endifequal %}
                             {% endifequal %}
                             {% ifequal inst.status 3 %}
-                                <span class="text-warning">{% trans "Suspended" %}</span>
+                                <span class="text-warning">{% trans "Suspend" %}</span>
                             {% endifequal %}
                         </td>
                         <td>{{ inst.vcpu }}</td>
