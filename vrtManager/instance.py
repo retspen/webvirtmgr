@@ -239,9 +239,10 @@ class wvmInstance(wvmConnect):
         storages = self.get_storages()
         for storage in storages:
             stg = self.get_storage(storage)
-            for img in stg.listVolumes():
-                if image == img:
-                    vol = stg.storageVolLookupByName(image)
+            if stg.info()[0] != 0:
+                for img in stg.listVolumes():
+                    if image == img:
+                        vol = stg.storageVolLookupByName(image)
         tree = ElementTree.fromstring(self._XMLDesc(0))
         for disk in tree.findall('devices/disk'):
             if disk.get('device') == 'cdrom':
