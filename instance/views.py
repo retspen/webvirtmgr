@@ -440,10 +440,6 @@ def instance(request, host_id, vname):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
-    acl = Instance.objects.get(compute_id=host_id, name=vname).acl
-    if request.user not in acl.all() and not request.user.is_staff:
-        raise PermissionDenied
-
     def show_clone_disk(disks):
         clone_disk = []
         for disk in disks:
@@ -504,6 +500,10 @@ def instance(request, host_id, vname):
     except Instance.DoesNotExist:
         instance = Instance(compute_id=host_id, name=vname, uuid=uuid)
         instance.save()
+
+    acl = Instance.objects.get(compute_id=host_id, name=vname).acl
+    if request.user not in acl.all() and not request.user.is_staff:
+        raise PermissionDenied
 
     try:
         if request.method == 'POST':
