@@ -63,6 +63,8 @@ class wvmCreate(wvmConnect):
     def get_volume_type(self, path):
         vol = self.get_volume_by_path(path)
         vol_type = util.get_xml_path(vol.XMLDesc(0), "/volume/target/format/@type")
+        if vol_type == 'unknown':
+            return 'raw'
         if vol_type:
             return vol_type
         else:
@@ -142,10 +144,10 @@ class wvmCreate(wvmConnect):
                   <devices>"""
 
         disk_letters = list(string.lowercase)
-        for image, type in images.items():
+        for image, img_type in images.items():
             xml += """  <disk type='file' device='disk'>
                           <driver name='qemu' type='%s'/>
-                          <source file='%s'/>""" % (type, image)
+                          <source file='%s'/>""" % (img_type, image)
             if virtio:
                 xml += """<target dev='vd%s' bus='virtio'/>""" % (disk_letters.pop(0),)
             else:
