@@ -26,18 +26,18 @@ class wvmStorages(wvmConnect):
     def define_storage(self, xml, flag):
         self.wvm.storagePoolDefineXML(xml, flag)
 
-    def create_storage(self, type, name, source, target):
+    def create_storage(self, stg_type, name, source, target):
         xml = """
                 <pool type='%s'>
-                <name>%s</name>""" % (type, name)
-        if type == 'logical':
+                <name>%s</name>""" % (stg_type, name)
+        if stg_type == 'logical':
             xml += """
                   <source>
                     <device path='%s'/>
                     <name>%s</name>
                     <format type='lvm2'/>
                   </source>""" % (source, name)
-        if type == 'logical':
+        if stg_type == 'logical':
             target = '/dev/' + name
         xml += """
                   <target>
@@ -46,8 +46,25 @@ class wvmStorages(wvmConnect):
                 </pool>""" % target
         self.define_storage(xml, 0)
         stg = self.get_storage(name)
-        if type == 'logical':
+        if stg_type == 'logical':
             stg.build(0)
+        stg.create(0)
+        stg.setAutostart(1)
+
+    def create_storage_ceph(self, stg_type, name, ceph_pool, ceph_host, ceph_user, secret):
+        xml = """
+                <pool type='%s'>
+                <name>%s</name>
+                <source>
+                    <name>%s</name>
+                    <host name='%s' port='6789'/>
+                    <auth username='%s' type='ceph'>
+                        <secret uuid='%s'/>
+                    </auth>
+                </source>
+                </pool>""" % (stg_type, name, ceph_pool, ceph_host, ceph_user, secret)
+        self.define_storage(xml, 0)
+        stg = self.get_storage(name)
         stg.create(0)
         stg.setAutostart(1)
 
@@ -161,14 +178,15 @@ class wvmStorage(wvmConnect):
             )
         return vol_list
 
-    def create_volume(self, name, size, format='qcow2'):
+    def create_volume(self, name, size, vol_fmt='qcow2'):
         size = int(size) * 1073741824
         storage_type = self.get_type()
+        alloc = size
+        if vol_fmt == 'unknown':
+            vol_fmt = 'raw'
         if storage_type == 'dir':
             name += '.img'
             alloc = 0
-        else:
-            alloc = size
         xml = """
             <volume>
                 <name>%s</name>
@@ -177,16 +195,16 @@ class wvmStorage(wvmConnect):
                 <target>
                     <format type='%s'/>
                 </target>
-            </volume>""" % (name, size, alloc, format)
+            </volume>""" % (name, size, alloc, vol_fmt)
         self._createXML(xml, 0)
 
-    def clone_volume(self, name, clone, format=None):
+    def clone_volume(self, name, clone, vol_fmt=None):
         storage_type = self.get_type()
         if storage_type == 'dir':
             clone += '.img'
         vol = self.get_volume(name)
-        if not format:
-            format = self.get_volume_type(name)
+        if not vol_fmt:
+            vol_fmt = self.get_volume_type(name)
         xml = """
             <volume>
                 <name>%s</name>
@@ -195,5 +213,5 @@ class wvmStorage(wvmConnect):
                 <target>
                     <format type='%s'/>
                 </target>
-            </volume>""" % (clone, format)
+            </volume>""" % (clone, vol_fmt)
         self._createXMLFrom(xml, vol, 0)
