@@ -1,6 +1,7 @@
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
+from django.core.exceptions import PermissionDenied
 
 from servers.models import Compute
 from secrets.forms import AddSecret
@@ -16,6 +17,9 @@ def secrets(request, host_id):
     """
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
+
+    if not request.user.is_staff:
+        raise PermissionDenied
 
     errors = []
     secrets_all = []
