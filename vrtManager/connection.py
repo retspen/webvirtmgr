@@ -94,6 +94,12 @@ class wvmConnect(object):
             virtnet.append(net)
         return virtnet
 
+    def get_secrets(self):
+        return self.wvm.listSecrets()
+
+    def get_secret(self, uuid):
+        return self.wvm.secretLookupByUUIDString(uuid)
+
     def get_storage(self, name):
         return self.wvm.storagePoolLookupByName(name)
 

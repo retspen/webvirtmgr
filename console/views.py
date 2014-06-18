@@ -22,8 +22,9 @@ def console(request):
         token = request.GET.get('token', '')
 
     try:
-        host = int(token[0])
-        uuid = token[2:]
+        temptoken = token.split('-', 1)
+        host = int(temptoken[0])
+        uuid = temptoken[1]
         instance = Instance.objects.get(compute_id=host, uuid=uuid)
         conn = wvmInstance(instance.compute.hostname,
                            instance.compute.login,

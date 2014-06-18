@@ -63,7 +63,7 @@
                 </p>
             </div>
         </div>
-        {% if path %}
+        {% if state %}
             {% ifequal pool "iso" %}
                 <h3>{% trans "Images" %}</h3>
                 <hr>
@@ -210,7 +210,7 @@
                             <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}" required pattern="[a-zA-Z0-9\.\-_]+">
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="image_format">
                         <label class="col-sm-3 control-label">{% trans "Format" %}</label>
                         <div class="col-sm-6">
                             <select name="format" class="form-control">
@@ -269,5 +269,8 @@
                 $('.format-convert').hide();
             }
         });
+        {% ifnotequal type 'dir' %}
+            $('#image_format').hide();
+        {% endifnotequal %}
     </script>
 {% endblock %}

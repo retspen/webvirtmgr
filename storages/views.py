@@ -31,6 +31,7 @@ def storages(request, host_id):
                            compute.password,
                            compute.type)
         storages = conn.get_storages_info()
+        secrets = conn.get_secrets()
 
         if request.method == 'POST':
             if 'create' in request.POST:
@@ -40,12 +41,24 @@ def storages(request, host_id):
                     if data['name'] in storages:
                         msg = _("Pool name already use")
                         errors.append(msg)
+                    if data['stg_type'] == 'rbd':
+                        if not data['secret']:
+                            msg = _("You need create secret for pool")
+                            errors.append(msg)
+                        if not data['ceph_pool'] and not data['ceph_host'] and not data['ceph_user']:
+                            msg = _("You need input all fields for creating ceph pool")
+                            errors.append(msg)
                     if not errors:
-                        conn.create_storage(data['stg_type'], data['name'], data['source'], data['target'])
+                        if data['stg_type'] == 'rbd':
+                            conn.create_storage_ceph(data['stg_type'], data['name'],
+                                                     data['ceph_pool'], data['ceph_host'],
+                                                     data['ceph_user'], data['secret'])
+                        else:
+                            conn.create_storage(data['stg_type'], data['name'], data['source'], data['target'])
                         return HttpResponseRedirect('/storage/%s/%s/' % (host_id, data['name']))
         conn.close()
     except libvirtError as err:
-        errors.append(err.message)
+        errors.append(err)
 
     return render_to_response('storages.html', locals(), context_instance=RequestContext(request))
 
