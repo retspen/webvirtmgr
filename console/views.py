@@ -22,7 +22,7 @@ def console(request):
         token = request.GET.get('token', '')
 
     try:
-        temptoken = token.split('-', 1 );
+        temptoken = token.split('-', 1 )
         host = int(temptoken[0])
         uuid = temptoken[1]
         instance = Instance.objects.get(compute_id=host, uuid=uuid)
