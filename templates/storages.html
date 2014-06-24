@@ -169,15 +169,23 @@
                                 <label class="col-sm-3 control-label">{% trans "Secrets" %}</label>
                                 <div class="col-sm-6">
                                     <select name="secret" class="form-control">
+                                    {% if secrets %}
                                         {% for secret in secrets %}
                                             <option value="{{ secret }}">{{ secret }}</option>
                                         {% endfor %}
+                                    {% else %}
+                                        <option value="None">{% trans "None" %}</option>
+                                    {% endif %}
                                     </select>
                                 </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-                                <button type="submit" class="btn btn-primary" name="create">{% trans "Create" %}</button>
+                                {% if secrets %}
+                                    <button type="submit" class="btn btn-primary" name="create">{% trans "Create" %}</button>
+                                {% else %}
+                                    <button class="btn btn-primary disabled" name="create">{% trans "Create" %}</button>
+                                {% endif %}
                             </div>
                         </form>
                     </div>
