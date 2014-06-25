@@ -58,7 +58,7 @@
                     {% for host in hosts_info %}
                         <tr>
                             <td>{{ forloop.counter }}</td>
-                            <td><strong>{{ host.name }}</strong> [<a href="ssh://{{ host.hostname }}">{{ host.hostname }}]</a></td>
+                            <td><strong>{{ host.name }}</strong> [<a href="ssh://{{ host.login }}@{{ host.hostname }}">{{ host.hostname }}]</a></td>
                             <td>
                                 {% ifequal host.status 1 %}
                                     <span class="text-success">{% trans "connected" %}</span>
