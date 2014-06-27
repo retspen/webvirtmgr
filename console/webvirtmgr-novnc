@@ -29,8 +29,14 @@ try:
     else:
         USE_HANDLER = True
 except ImportError:
-    from novnc.wsproxy import WebSocketProxy
-    USE_HANDLER = False
+    try:
+        from novnc.wsproxy import WebSocketProxy
+    except ImportError:
+        print('Unable to import a websockify implementation, please install one')
+        sys.exit(1)
+    else:
+        USE_HANDLER = False
+
 
 
 def get_connection_infos(token):
