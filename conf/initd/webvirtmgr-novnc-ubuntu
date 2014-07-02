@@ -13,25 +13,32 @@
 # PATH should only include /usr/* if it runs after the mountnfs.sh script
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="WebVirtMgr NoVNC proxy"
-NAME=webvirtmgr-novnc
-DAEMON=/var/www/webvirtmgr/console/webvirtmgr-novnc
-PIDFILE=/var/run/$NAME.pid
-SCRIPTNAME=/etc/init.d/$NAME
-LOCK_DIR=/var/lock/webvirtmgr/
+NAME='webvirtmgr-novnc'
+DAEMON_PREFIX='/var/www/webvirtmgr/console'
+PIDFILE="/run/${NAME}.pid"
+SCRIPTNAME="/etc/init.d/${NAME}"
+LOCK_DIR="/run/lock/${NAME}"
+USER='www-data'
+GROUP='www-data'
+
+# read in defaults if available
+[ -f "/etc/default/${NAME}" ] && . "/etc/default/${NAME}"
+
+DAEMON="${DAEMON_PREFIX}/${NAME}"
 
 # Exit if the package is not installed
 [ -x $DAEMON ] || exit 0
 
 mkdir -p ${LOCK_DIR}
-chown www-data ${LOCK_DIR}
+chown "${USER}:${GROUP}"  ${LOCK_DIR}
 
 . /lib/lsb/init-functions
 
 do_start()
 {
-	start-stop-daemon --start --background --quiet --chuid www-data:www-data --make-pidfile --pidfile $PIDFILE --startas $DAEMON --test > /dev/null \
+	start-stop-daemon --start --background --quiet --chuid "${USER}:${GROUP}" --make-pidfile --pidfile $PIDFILE --startas $DAEMON --test > /dev/null \
 		|| return 1
-	start-stop-daemon --start --background --quiet --chuid www-data:www-data --make-pidfile --pidfile $PIDFILE --startas $DAEMON -- \
+	start-stop-daemon --start --background --quiet --chuid "${USER}:${GROUP}" --make-pidfile --pidfile $PIDFILE --startas $DAEMON -- \
 		$DAEMON_ARGS \
 		|| return 2
 }
