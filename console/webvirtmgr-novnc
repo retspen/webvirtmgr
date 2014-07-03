@@ -38,7 +38,6 @@ except ImportError:
         USE_HANDLER = False
 
 
-
 def get_connection_infos(token):
     from instance.models import Instance
     from vrtManager.instance import wvmInstance
@@ -86,7 +85,6 @@ class CompatibilityMixIn(object):
                 self.vmsg("%s:%s: Target closed" % (host, port))
             raise
 
-
 if USE_HANDLER:
     class NovaProxyRequestHandler(ProxyRequestHandler, CompatibilityMixIn):
         def msg(self, *args, **kwargs):
@@ -118,7 +116,6 @@ else:
             socket_factory = self.socket
 
             self._new_client(daemon, socket_factory)
-
 
 if __name__ == '__main__':
     if USE_HANDLER:

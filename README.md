@@ -1,19 +1,14 @@
-# WebVirtMgr panel - v4.8.3
+# WebVirtMgr panel - v4.8.4
 
 ### Whats new?
 
-* Add support CEPH
-* Add create VM from XML
-* Add support <a href="http://libvirt.org/remote.html#Remote_certificates">TLS</a> connection (Thanks: <a href="https://github.com/junkb">junkb</a>)
+* Added novnc proxy supporting new websockify versions (Thanks: <a href="https://github.com/casell">casell</a>)
+* Added support CEPH
+* Added instance creating from XML
+* Added support <a href="http://libvirt.org/remote.html#Remote_certificates">TLS</a> connection (Thanks: <a href="https://github.com/junkb">junkb</a>)
 * <a href="https://github.com/ITBlogger/puppet-kvm">Puppet module to control libvirt/kvm</a> (Thanks: <a href="https://github.com/ITBlogger">Alex Scoble</a>)
 * <a href="https://github.com/retspen/webvirtmgr/tree/master/deploy/fabric">Deployment via Fabric/Fabtools</a> (Thanks: <a href="https://github.com/mohabusama">Mohab Usama</a>)
-* Add clone instance (Settings -> Clone)
-* Update status VM
-* Fix ajax
-* Add bootstrap for Debian
-* Fix bug in js console when mount ISO
-* Add manage multiple CDROM
-* Edit name and hostname on dashboard page
+* Added instance cloning (Settings -> Clone)
 
 ### <a href="https://github.com/retspen/webvirtmgr/wiki/Screenshots">Screenshots</a>
 
