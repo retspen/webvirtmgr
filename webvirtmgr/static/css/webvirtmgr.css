@@ -82,6 +82,12 @@ pre {
 .panel-success {
     margin-top: 20px;
 }
+.panel-danger {
+    margin-top: 20px;
+}
+.panel-body:after {
+    clear: none;
+}
 .well {
     margin-top: 20px;
     text-align: center;
