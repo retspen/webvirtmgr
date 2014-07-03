@@ -43,6 +43,7 @@ def interfaces(request, host_id):
                                       data['ipv6_type'], data['ipv6_addr'], data['ipv6_gw'],
                                       data['stp'], data['delay'])
                     return HttpResponseRedirect(request.get_full_path())
+        conn.close()
     except libvirtError as err:
         errors.append(err)
 
@@ -87,6 +88,7 @@ def interface(request, host_id, iface):
             if 'delete' in request.POST:
                 conn.delete_iface()
                 return HttpResponseRedirect('/interfaces/%s' % host_id)
+        conn.close()
     except libvirtError as err:
         errors.append(err)
 
