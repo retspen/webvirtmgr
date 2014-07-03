@@ -20,7 +20,7 @@ WebVirtMgr is a libvirt-based Web interface for managing virtual machines. It al
 
 The application logic is written in Python & Django. The LIBVIRT Python bindings are used to interacting with the underlying hypervisor.
 
-## Installation
+## Installation (Only web panel)
 
 ### <a href="https://github.com/retspen/webvirtmgr/wiki/Install-WebVirtMgr">Install WebVirtMgr</a>
 
