@@ -15,7 +15,7 @@
         {% endif %}
         <div class="row show-grid">
             <div class="col-md-6">
-                <p>{% trans "Interface name" %}</p>
+                <p>{% trans "Interface" %}</p>
                 <p>{% trans "IPv4" %} ({% ifequal ipv4 None %}None{% else %}{{ ipv4_type }}{% endifequal %})</p>
                 <p>{% trans "IPv6" %} ({% ifequal ipv6 None %}None{% else %}{{ ipv6_type }}{% endifequal %})</p>
                 <p>{% trans "MAC Adress" %}</p>
@@ -27,7 +27,7 @@
                 <p>{% trans "State" %}</p>
             </div>
             <div class="col-md-6">
-                <p>{{ iface }}</p>
+                <p><strong>{{ iface }}</strong></p>
                 <p>{{ ipv4 }}</p>
                 <p>{{ ipv6 }}</p>
                 <p>{{ mac }}</p>
