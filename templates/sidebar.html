@@ -10,10 +10,13 @@
                     <a href="{% url 'instances' host_id %}" class="list {% active request "^/instance" %}">{% trans "Instances" %}</a>
                 </li>
                 <li>
-                    <a href="{% url 'storages' host_id %}" class="list {% active request "^/storage" %}">{% trans "Storage Pools" %}</a>
+                    <a href="{% url 'storages' host_id %}" class="list {% active request "^/storage" %}">{% trans "Storages" %}</a>
                 </li>
                 <li>
                     <a href="{% url 'networks' host_id %}" class="list {% active request "^/network" %}">{% trans "Networks" %}</a>
+                </li>
+                <li>
+                    <a href="{% url 'interfaces' host_id %}" class="list {% active request "^/interface" %}">{% trans "Interfaces" %}</a>
                 </li>
                 <li>
                     <a href="{% url 'secrets' host_id %}" class="list {% active request "^/secrets" %}">{% trans "Secrets" %}</a>

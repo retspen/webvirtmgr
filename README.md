@@ -2,6 +2,7 @@
 
 ### Whats new?
 
+* Added page interfaces
 * Added novnc proxy supporting new websockify versions (Thanks: <a href="https://github.com/casell">casell</a>)
 * Added support CEPH
 * Added instance creating from XML

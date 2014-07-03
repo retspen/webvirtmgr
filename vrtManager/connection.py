@@ -94,6 +94,17 @@ class wvmConnect(object):
             virtnet.append(net)
         return virtnet
 
+    def get_ifaces(self):
+        interface = []
+        for inface in self.wvm.listInterfaces():
+            interface.append(inface)
+        for inface in self.wvm.listDefinedInterfaces():
+            interface.append(inface)
+        return interface
+
+    def get_iface(self, name):
+        return self.wvm.interfaceLookupByName(name)
+
     def get_secrets(self):
         return self.wvm.listSecrets()
 
@@ -132,6 +143,15 @@ class wvmConnect(object):
             if dom.snapshotNum(0) != 0:
                 instance.append(dom.name())
         return instance
+
+    def get_net_device(self):
+        netdevice = []
+        for dev in self.wvm.listAllDevices(0):
+            xml = dev.XMLDesc(0)
+            dev_type = util.get_xml_path(xml, '/device/capability/@type')
+            if dev_type == 'net':
+                netdevice.append(util.get_xml_path(xml, '/device/capability/interface'))
+        return netdevice
 
     def get_host_instances(self):
         vname = {}
