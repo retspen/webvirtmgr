@@ -161,7 +161,7 @@ def infrastructure(request):
                 hosts_vms[host.id, host.name, status, host_info[3], host_info[2],
                           host_mem['percent']] = conn.get_host_instances()
                 conn.close()
-            except libvirtError as e:
+            except libvirtError:
                 hosts_vms[host.id, host.name, 3, 0, 0, 0] = None
         else:
             hosts_vms[host.id, host.name, status, 0, 0, 0] = None
