@@ -21,48 +21,59 @@ import Cookie
 import socket
 import django
 try:
-    import websockify as wsproxy
-except:
-    from novnc import wsproxy
+    from websockify import WebSocketProxy
+    try:
+        from websockify import ProxyRequestHandler
+    except ImportError:
+        USE_HANDLER = False
+    else:
+        USE_HANDLER = True
+except ImportError:
+    try:
+        from novnc.wsproxy import WebSocketProxy
+    except ImportError:
+        print('Unable to import a websockify implementation, please install one')
+        sys.exit(1)
+    else:
+        USE_HANDLER = False
 
 
-class NovaWebSocketProxy(wsproxy.WebSocketProxy):
-    def __init__(self, *args, **kwargs):
-        wsproxy.WebSocketProxy.__init__(self, *args, **kwargs)
 
-    def new_client(self):
-        """
-        Called after a new WebSocket connection has been established.
-        """
+def get_connection_infos(token):
+    from instance.models import Instance
+    from vrtManager.instance import wvmInstance
 
+    try:
+        temptoken = token.split('-', 1)
+        host = int(temptoken[0])
+        uuid = temptoken[1]
+        instance = Instance.objects.get(compute_id=host, uuid=uuid)
+        conn = wvmInstance(instance.compute.hostname,
+                           instance.compute.login,
+                           instance.compute.password,
+                           instance.compute.type,
+                           instance.name)
+        port = conn.get_vnc()
+        host = instance.compute.hostname
+    except:
+        port = None
+        host = None
+    return host, port
+
+
+class CompatibilityMixIn(object):
+    def _new_client(self, daemon, socket_factory):
         cookie = Cookie.SimpleCookie()
         cookie.load(self.headers.getheader('cookie'))
         token = cookie['token'].value
 
-        from instance.models import Instance
-        from vrtManager.instance import wvmInstance
-
-        try:
-            temptoken = token.split('-', 1)
-            host = int(temptoken[0])
-            uuid = temptoken[1]
-            instance = Instance.objects.get(compute_id=host, uuid=uuid)
-            conn = wvmInstance(instance.compute.hostname,
-                               instance.compute.login,
-                               instance.compute.password,
-                               instance.compute.type,
-                               instance.name)
-            port = conn.get_vnc()
-            host = instance.compute.hostname
-        except:
-            port = None
-            host = None
+        host, port = get_connection_infos(token)
 
         # Connect to the target
         self.msg("connecting to: %s:%s" % (host, port))
-        tsock = self.socket(host, port, connect=True)
+        tsock = socket_factory(host, port, connect=True)
 
-        if self.verbose and not self.daemon:
+        if self.verbose and not daemon:
             print(self.traffic_legend)
 
         # Start proxying
@@ -75,9 +86,45 @@ class NovaWebSocketProxy(wsproxy.WebSocketProxy):
                 self.vmsg("%s:%s: Target closed" % (host, port))
             raise
 
+
+if USE_HANDLER:
+    class NovaProxyRequestHandler(ProxyRequestHandler, CompatibilityMixIn):
+        def msg(self, *args, **kwargs):
+            self.log_message(*args, **kwargs)
+
+        def vmsg(self, *args, **kwargs):
+            if self.verbose:
+                self.msg(*args, **kwargs)
+
+        def new_websocket_client(self):
+            """
+            Called after a new WebSocket connection has been established.
+            """
+            # Setup variable for compatibility
+            daemon = self.server.daemon
+            socket_factory = self.server.socket
+
+            self._new_client(daemon, socket_factory)
+
+else:
+    class NovaWebSocketProxy(WebSocketProxy, CompatibilityMixIn):
+
+        def new_client(self):
+            """
+            Called after a new WebSocket connection has been established.
+            """
+            # Setup variable for compatibility
+            daemon = self.daemon
+            socket_factory = self.socket
+
+            self._new_client(daemon, socket_factory)
+
+
 if __name__ == '__main__':
-    # Create and start the NovaWebSockets proxy
-    server = NovaWebSocketProxy(listen_host=LISTEN_HOST,
+    if USE_HANDLER:
+        # Create the WebSocketProxy with NovaProxyRequestHandler handler
+        server = WebSocketProxy(RequestHandlerClass=NovaProxyRequestHandler,
+                                listen_host=LISTEN_HOST,
                                 listen_port=LISTEN_PORT,
                                 source_is_ipv6=False,
                                 verbose=False,
@@ -87,8 +134,25 @@ if __name__ == '__main__':
                                 daemon=False,
                                 record=False,
                                 web=False,
+                                traffic=False,
                                 target_host='ignore',
                                 target_port='ignore',
                                 wrap_mode='exit',
                                 wrap_cmd=None)
+    else:
+        # Create the NovaWebSockets proxy
+        server = NovaWebSocketProxy(listen_host=LISTEN_HOST,
+                                    listen_port=LISTEN_PORT,
+                                    source_is_ipv6=False,
+                                    verbose=False,
+                                    cert=CERT,
+                                    key=None,
+                                    ssl_only=False,
+                                    daemon=False,
+                                    record=False,
+                                    web=False,
+                                    target_host='ignore',
+                                    target_port='ignore',
+                                    wrap_mode='exit',
+                                    wrap_cmd=None)
     server.start_server()
