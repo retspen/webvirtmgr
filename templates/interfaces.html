@@ -23,8 +23,8 @@
                         <h3 class="panel-title"><a href="{% url 'interface' host_id iface.name %}">{{ iface.name }}</a></h3>
                     </div>
                     <div class="panel-body">
-                        <p>{% trans "MAC" %}: {{ iface.mac }}</p>
                         <p>{% trans "Type" %}: {{ iface.type }}</p>
+                        <p>{% trans "MAC" %}: {{ iface.mac }}</p>
                     </div>
                 </div>
             {% endfor %}
