@@ -54,7 +54,7 @@ def networks(request, host_id):
                         return HttpResponseRedirect('/network/%s/%s/' % (host_id, data['name']))
         conn.close()
     except libvirtError as err:
-        errors.append(err.message)
+        errors.append(err)
 
     return render_to_response('networks.html', locals(), context_instance=RequestContext(request))
 
@@ -87,7 +87,7 @@ def network(request, host_id, pool):
         ipv4_network = conn.get_ipv4_network()
         fixed_address = conn.get_mac_ipaddr()
     except libvirtError as err:
-        errors.append(err.message)
+        errors.append(err)
 
     if request.method == 'POST':
         if 'start' in request.POST:

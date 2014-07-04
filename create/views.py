@@ -44,7 +44,7 @@ def create(request, host_id):
         get_images = sorted(conn.get_storages_images())
         mac_auto = util.randomMAC()
     except libvirtError as err:
-        errors.append(err.message)
+        errors.append(err)
 
     if conn:
         if not storages:
@@ -128,10 +128,10 @@ def create(request, host_id):
                                 create_instance = Instance(compute_id=host_id, name=data['name'], uuid=uuid)
                                 create_instance.save()
                                 return HttpResponseRedirect('/instance/%s/%s/' % (host_id, data['name']))
-                            except libvirtError as msg_error:
+                            except libvirtError as err:
                                 if data['hdd_size']:
                                     conn.delete_volume(volumes.keys()[0])
-                                errors.append(msg_error.message)
+                                errors.append(err)
 
         conn.close()
 

@@ -107,7 +107,7 @@ def storage(request, host_id, pool):
         else:
             volumes = None
     except libvirtError as err:
-        errors.append(err.message)
+        errors.append(err)
 
     if request.method == 'POST':
         if 'start' in request.POST:
@@ -182,8 +182,8 @@ def storage(request, host_id, pool):
                     try:
                         conn.clone_volume(data['image'], data['name'], format)
                         return HttpResponseRedirect(request.get_full_path())
-                    except libvirtError as error_msg:
-                        errors.append(error_msg.message)
+                    except libvirtError as err:
+                        errors.append(err)
     conn.close()
 
     return render_to_response('storage.html', locals(), context_instance=RequestContext(request))

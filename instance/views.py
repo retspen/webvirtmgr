@@ -338,8 +338,8 @@ def insts_status(request, host_id):
                             compute.password,
                             compute.type)
         get_instances = conn.get_instances()
-    except libvirtError as msg_error:
-        errors.append(msg_error.message)
+    except libvirtError as err:
+        errors.append(err)
 
     for instance in get_instances:
         instances.append({'name': instance,
@@ -379,8 +379,8 @@ def instances(request, host_id):
                             compute.password,
                             compute.type)
         get_instances = conn.get_instances()
-    except libvirtError as msg_error:
-        errors.append(msg_error.message)
+    except libvirtError as err:
+        errors.append(err)
 
     for instance in get_instances:
         try:
@@ -427,8 +427,8 @@ def instances(request, host_id):
                     return HttpResponseRedirect(request.get_full_path())
 
             conn.close()
-        except libvirtError as msg_error:
-            errors.append(msg_error.message)
+        except libvirtError as err:
+            errors.append(err)
 
     return render_to_response('instances.html', locals(), context_instance=RequestContext(request))
 
@@ -489,8 +489,8 @@ def instance(request, host_id, vname):
         inst_xml = conn._XMLDesc(VIR_DOMAIN_XML_SECURE)
         has_managed_save_image = conn.get_managed_save_image()
         clone_disks = show_clone_disk(disks)
-    except libvirtError as msg_error:
-        errors.append(msg_error.message)
+    except libvirtError as err:
+        errors.append(err)
 
     try:
         instance = Instance.objects.get(compute_id=host_id, name=vname)
@@ -630,7 +630,7 @@ def instance(request, host_id, vname):
 
         conn.close()
 
-    except libvirtError as msg_error:
-        errors.append(msg_error.message)
+    except libvirtError as err:
+        errors.append(err)
 
     return render_to_response('instance.html', locals(), context_instance=RequestContext(request))

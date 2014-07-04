@@ -45,7 +45,7 @@
             </div>
         {% else %}
             {% for pool in storages %}
-                <div class="panel {% if pool.status %}panel-success{% else %}panel-danger{% endif %}">
+                <div class="panel {% if pool.status %}panel-success{% else %}panel-danger{% endif %} panel-data">
                     <div class="panel-heading">
                         <h3 class="panel-title"><a href="{% url 'storage' host_id pool.name %}">{{ pool.name }}</a></h3>
                     </div>

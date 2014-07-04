@@ -72,7 +72,7 @@ class wvmStorages(wvmConnect):
 class wvmStorage(wvmConnect):
     def __init__(self, host, login, passwd, conn, pool):
         wvmConnect.__init__(self, host, login, passwd, conn)
-        self.pool = self.wvm.storagePoolLookupByName(pool)
+        self.pool = self.get_storage(pool)
 
     def get_name(self):
         return self.pool.name()
