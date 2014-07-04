@@ -18,7 +18,7 @@
         </div>
         {% if ifaces_all %}
             {% for iface in ifaces_all %}
-                <div class="panel {% ifequal iface.state 1 %}panel-success{% else %}panel-danger{% endifequal %}">
+                <div class="panel {% ifequal iface.state 1 %}panel-success{% else %}panel-danger{% endifequal %} panel-data">
                     <div class="panel-heading">
                         <h3 class="panel-title"><a href="{% url 'interface' host_id iface.name %}">{{ iface.name }}</a></h3>
                     </div>
