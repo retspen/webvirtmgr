@@ -5,13 +5,7 @@
     <div class="row">
         <div class="col-md-12" role="main">
             <div class="page-header">
-                <div class="input-append form-inline pull-right" style="">
-                    <div id="hide_vms_bystate" class="text-right">
-                        <span>Hide:</span>
-                        <label class="text-success"><input type="checkbox" data-value="1">{% trans "Running" %}</input></label>
-                        <label class="text-warning"><input type="checkbox" data-value="3">{% trans "Suspend" %}</input></label>
-                        <label class="text-danger"><input type="checkbox" data-value="5">{% trans "Shutoff" %}</input></label>
-                    </div>
+                <div class="input-append form-inline pull-right">
                     <div class="form-group">
                         <input type="text" class="form-control" id="filter_input" style="margin-top:-28px;">
                     </div>
@@ -21,6 +15,20 @@
                 <h1>{% trans "Infrastructure" %}</h1>
             </div>
             {% if hosts_vms %}
+                <div id="hide_vms_bystate" class="text-right">
+                    <div class="form-group">
+                        <span>Hide:</span>
+                        <label class="text-success">
+                            <input type="checkbox" data-value="1"> {% trans "Running" %}</input>
+                        </label>
+                        <label class="text-warning">
+                            <input type="checkbox" data-value="3"> {% trans "Suspend" %}</input>
+                        </label>
+                        <label class="text-danger">
+                            <input type="checkbox" data-value="5"> {% trans "Shutoff" %}</input>
+                        </label>
+                    </div>
+                </div>
                 <table class="table table-hover">
                     <thead>
                     <tr>
