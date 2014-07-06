@@ -77,6 +77,13 @@ class wvmStorage(wvmConnect):
     def get_name(self):
         return self.pool.name()
 
+    def get_status(self):
+        status = ['Not running', 'Initializing pool, not available', 'Running normally', 'Running degraded']
+        try:
+            return status[self.pool.info()[0]]
+        except ValueError:
+            return 'Unknown'
+
     def get_size(self):
         return [self.pool.info()[1], self.pool.info()[3]]
 

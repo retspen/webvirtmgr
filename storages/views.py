@@ -91,6 +91,7 @@ def storage(request, host_id, pool):
             percent = (used * 100) / size
         else:
             percent = 0
+        status = conn.get_status()
         path = conn.get_target_path()
         type = conn.get_type()
         autostart = conn.get_autostart()

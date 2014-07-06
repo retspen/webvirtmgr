@@ -25,6 +25,7 @@
                 <p>{% trans "Pool name" %}</p>
                 <p>{% trans "Pool type" %}</p>
                 <p>{% trans "Pool path" %}</p>
+                <p>{% trans "Pool status" %}</p>
                 <p>{% trans "Size" %} ({{ size|filesizeformat }} / {{ used|filesizeformat }})</p>
                 <p>{% trans "State" %}</p>
                 <p>{% trans "Autostart" %}</p>
@@ -41,6 +42,7 @@
                 </p>
                 <p>{% if not type %}{% trans "None" %}{% else %}{{ type }}{% endif %}</p>
                 <p>{% if not path %}{% trans "None" %}{% else %}{{ path }}{% endif %}</p>
+                <p>{% if not status %}{% trans "None" %}{% else %}{{ status }}{% endif %}</p>
                 <p>{% trans "Usage" %}: {{ percent }}%</p>
                 <p>
                     <form action="" method="post">{% csrf_token %}
