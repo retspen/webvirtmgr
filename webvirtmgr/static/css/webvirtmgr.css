@@ -21,6 +21,9 @@ pre {
     margin-left: auto;
     margin-right: auto;
 }
+.page-header {
+    margin-top: 0;
+}
 .pagehead {
     position: relative;
     margin-bottom: 20px;
