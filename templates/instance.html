@@ -602,6 +602,12 @@
                                     <input type="checkbox" name="live_migrate" value="true" id="vm_live_migrate">
                                 </div>
                             </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">{% trans "Delete original" %}</label>
+                                <div class="col-sm-6">
+                                    <input type="checkbox" name="xml_delete" value="true" id="xml_delete">
+                                </div>
+                            </div>
                             {% if computes_count != 1 %}
                                 <button type="submit" class="btn btn-lg btn-primary pull-right" name="migrate">{% trans "Migrate" %}</button>
                             {% else %}

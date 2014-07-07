@@ -590,12 +590,13 @@ def instance(request, host_id, vname):
             if 'migrate' in request.POST:
                 compute_id = request.POST.get('compute_id', '')
                 live = request.POST.get('live_migrate', False)
+                xml_del = request.POST.get('xml_delete', False)
                 new_compute = Compute.objects.get(id=compute_id)
                 conn_migrate = wvmInstances(new_compute.hostname,
                                             new_compute.login,
                                             new_compute.password,
                                             new_compute.type)
-                conn_migrate.moveto(conn, vname, live)
+                conn_migrate.moveto(conn, vname, live, xml_del)
                 conn_migrate.define_move(vname)
                 conn_migrate.close()
                 return HttpResponseRedirect('/instance/%s/%s' % (compute_id, vname))
