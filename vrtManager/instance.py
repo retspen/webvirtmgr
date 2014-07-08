@@ -65,12 +65,14 @@ class wvmInstances(wvmConnect):
         dom = self.get_instance(name)
         dom.resume()
 
-    def moveto(self, conn, name, live):
+    def moveto(self, conn, name, live, undefine):
         flags = 0
         if live and conn.get_status() == 1:
             flags |= VIR_MIGRATE_LIVE
         dom = conn.get_instance(name)
         dom.migrate(self.wvm, flags, name, None, 0)
+        if undefine:
+            dom.undefine()
 
     def define_move(self, name):
         dom = self.get_instance(name)
