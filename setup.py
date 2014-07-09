@@ -1,3 +1,36 @@
+"""
+=================
+WebVirtMgr panel
+=================
+
+Introduction
+------------
+
+WebVirtMgr is a libvirt-based Web interface for managing virtual machines. It allows you to create and configure new domains, and adjust a domain's resource allocation. A VNC viewer presents a full graphical console to the guest domain. KVM is currently the only hypervisor supported.
+
+Technology:
+***********
+
+The application logic is written in Python & Django. The LIBVIRT Python bindings are used to interacting with the underlying hypervisor.
+
+Installation (Only web panel)
+-----------------------------
+
+`Install WebVirtMgr <https://github.com/retspen/webvirtmgr/wiki/Install-WebVirtMgr>`_
+
+
+Setup host server (Server for VM's)
+-----------------------------------
+
+`Setup Host Server <https://github.com/retspen/webvirtmgr/wiki/Setup-Host-Server>`_
+
+Links
+------
+- `Website <https://github.com/retspen/webvirtmgr>`_
+- `Screenshots <https://github.com/retspen/webvirtmgr/wiki/Screenshots>`_
+- `Wiki <https://github.com/retspen/webvirtmgr/wiki>`_
+"""
+
 import os
 from setuptools import setup, find_packages
 
@@ -15,7 +48,7 @@ setup(
     # extract version from module.
     version=__version__,
     description="WebVirtMgr panel for manage virtual machine",
-    long_description=read('README.rst'),
+    long_description=__doc__,
     classifiers=[],
     keywords='',
     author='Anatoliy Guskov',
