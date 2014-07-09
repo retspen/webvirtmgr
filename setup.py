@@ -1,7 +1,12 @@
+import os
 from setuptools import setup, find_packages
 
 
 __version__ = "4.8.4"
+
+
+def read(fname):
+    return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 
 setup(
@@ -10,7 +15,7 @@ setup(
     # extract version from module.
     version=__version__,
     description="WebVirtMgr panel for manage virtual machine",
-    long_description="",
+    long_description=read('README.rst'),
     classifiers=[],
     keywords='',
     author='Aktivcorp, LLC',
