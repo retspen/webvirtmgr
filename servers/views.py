@@ -121,7 +121,7 @@ def servers_list(request):
                 compute_edit.name = data['name']
                 compute_edit.hostname = data['hostname']
                 compute_edit.login = data['login']
-                compute_edit.passowrd = data['password']
+                compute_edit.password = data['password']
                 compute_edit.save()
                 return HttpResponseRedirect(request.get_full_path())
 
