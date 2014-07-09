@@ -18,9 +18,9 @@ setup(
     long_description=read('README.rst'),
     classifiers=[],
     keywords='',
-    author='Aktivcorp, LLC',
+    author='Anatoliy Guskov',
     author_email='anatoliy.guskov@gmail.com',
-    url='http://retspen.github.io',
+    url='http://github.com/retspen/webvirtmgr',
     license='Apache Licence, Version 2.0.',
     # include all packages in the egg, except the test package.
     packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
