@@ -1,0 +1,28 @@
+include *.rst
+
+include images/README.md
+include console/webvirtmgr-novnc
+
+recursive-include console *.pem
+recursive-include create *.json
+recursive-include locale *.po
+recursive-include templates *.html
+recursive-include webvirtmgr *.css
+recursive-include webvirtmgr *.eot
+recursive-include webvirtmgr *.example
+recursive-include webvirtmgr *.gif
+recursive-include webvirtmgr *.ico
+recursive-include webvirtmgr *.js
+recursive-include webvirtmgr *.svg
+recursive-include webvirtmgr *.swf
+recursive-include webvirtmgr *.ttf
+recursive-include webvirtmgr *.txt
+recursive-include webvirtmgr *.woff
+
+# ignore these directories
+prune deploy
+prune conf
+
+# ignore files that match these patterns
+exclude *.txt
+exclude .travis.yml
