@@ -157,11 +157,17 @@
                                                     <div class="form-group format-convert">
                                                         <label class="col-sm-3 control-label">{% trans "Format" %}</label>
                                                         <div class="col-sm-6">
-                                                            <select name="format" class="form-control">
+                                                            <select name="format" class="form-control image-format">
                                                                 <option value="raw">{% trans "raw" %}</option>
                                                                 <option value="qcow">{% trans "qcow" %}</option>
                                                                 <option value="qcow2">{% trans "qcow2" %}</option>
                                                             </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group meta-prealloc" style="display: none;">
+                                                        <label class="col-sm-3 control-label">{% trans "Metadata" %}</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="checkbox" name="meta_prealloc" value="true" checked>
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">
@@ -215,7 +221,7 @@
                     <div class="form-group" id="image_format">
                         <label class="col-sm-3 control-label">{% trans "Format" %}</label>
                         <div class="col-sm-6">
-                            <select name="format" class="form-control">
+                            <select name="format" class="form-control image-format">
                                 <option value="qcow2">{% trans "qcow2" %}</option>
                                 <option value="qcow">{% trans "qcow" %}</option>
                                 <option value="raw">{% trans "raw" %}</option>
@@ -228,6 +234,12 @@
                             <input type="text" class="form-control" name="size" value="10" maxlength="3" required pattern="[0-9]+">
                         </div>
                         <label class="col-sm-1 control-label">{% trans "GB" %}</label>
+                    </div>
+                    <div class="form-group meta-prealloc">
+                        <label class="col-sm-3 control-label">{% trans "Metadata" %}</label>
+                        <div class="col-sm-6">
+                            <input type="checkbox" name="meta_prealloc" value="true" checked>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
@@ -267,8 +279,19 @@
         $(document).on('change','.volume-convert',function(){
             if($(this).prop('checked')) {
                 $('.format-convert').show();
+                if($('.image-format').val() == 'qcow2') {
+                    $('.meta-prealloc').show();
+                }
             } else {
                 $('.format-convert').hide();
+                $('.meta-prealloc').hide();
+            }
+        });
+        $(document).on('change','.image-format',function(){
+            if($(this).val() == "qcow2") {
+                $('.meta-prealloc').show();
+            } else {
+                $('.meta-prealloc').hide();
             }
         });
         {% ifnotequal type 'dir' %}
