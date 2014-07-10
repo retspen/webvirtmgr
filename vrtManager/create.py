@@ -42,7 +42,7 @@ class wvmCreate(wvmConnect):
         """Get guest capabilities"""
         return util.get_xml_path(self.get_cap_xml(), "/capabilities/host/cpu/arch")
 
-    def create_volume(self, storage, name, size, format='qcow2'):
+    def create_volume(self, storage, name, size, format='qcow2', meta_prealloc=0):
         size = int(size) * 1073741824
         stg = self.get_storage(storage)
         storage_type = util.get_xml_path(stg.XMLDesc(0), "/pool/@type")
@@ -51,6 +51,7 @@ class wvmCreate(wvmConnect):
             alloc = 0
         else:
             alloc = size
+            meta_prealloc = 0
         xml = """
             <volume>
                 <name>%s</name>
@@ -60,7 +61,7 @@ class wvmCreate(wvmConnect):
                     <format type='%s'/>
                 </target>
             </volume>""" % (name, size, alloc, format)
-        stg.createXML(xml, 0)
+        stg.createXML(xml, meta_prealloc)
         try:
             stg.refresh(0)
         except:
@@ -93,13 +94,15 @@ class wvmCreate(wvmConnect):
         vol = self.get_volume_by_path(vol_path)
         return vol.storagePoolLookupByVolume()
 
-    def clone_from_template(self, clone, template):
+    def clone_from_template(self, clone, template, meta_prealloc=0):
         vol = self.get_volume_by_path(template)
         stg = vol.storagePoolLookupByVolume()
         storage_type = util.get_xml_path(stg.XMLDesc(0), "/pool/@type")
         format = util.get_xml_path(vol.XMLDesc(0), "/volume/target/format/@type")
         if storage_type == 'dir':
             clone += '.img'
+        else:
+            meta_prealloc = 0
         xml = """
             <volume>
                 <name>%s</name>
@@ -109,7 +112,7 @@ class wvmCreate(wvmConnect):
                     <format type='%s'/>
                 </target>
             </volume>""" % (clone, format)
-        stg.createXMLFrom(xml, vol, 0)
+        stg.createXMLFrom(xml, vol, meta_prealloc)
         clone_vol = stg.storageVolLookupByName(clone)
         return clone_vol.path()
 
