@@ -401,7 +401,7 @@
                         </div>
                         <div class="col-sm-9">
                             {% for disk in disks %}
-                                <p>{{ disk.image }}</p>
+                                <p>{{ disk.image }} ({{ disk.format }})</p>
                             {% endfor %}
                         </div>
                         <div class="clearfix"></div>
