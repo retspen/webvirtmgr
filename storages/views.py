@@ -139,14 +139,12 @@ def storage(request, host_id, pool):
             form = AddImage(request.POST)
             if form.is_valid():
                 data = form.cleaned_data
-                img_name = data['name'] + '.img'
                 meta_prealloc = 1 if data['meta_prealloc'] and data['format'] == 'qcow2' else 0
-                if img_name in conn.update_volumes():
-                    msg = _("Volume name already use")
-                    errors.append(msg)
-                if not errors:
+                try:
                     conn.create_volume(data['name'], data['size'], data['format'], meta_prealloc)
                     return HttpResponseRedirect(request.get_full_path())
+                except libvirtError as err:
+                    errors.append(err)
         if 'del_volume' in request.POST:
             volname = request.POST.get('volname', '')
             try:
