@@ -502,6 +502,10 @@ class wvmInstance(wvmConnect):
                 device_name = elm.get('dev')
                 if device_name:
                     target_file = clone_data['disk-' + device_name]
+                    try:
+                        meta_prealloc = clone_data['meta-' + device_name]
+                    except:
+                        meta_prealloc = 0
                     elm.set('dev', device_name)
 
                 elm = disk.find('source')
@@ -516,6 +520,8 @@ class wvmInstance(wvmConnect):
                     vol_format = util.get_xml_path(vol.XMLDesc(0),
                                                    "/volume/target/format/@type")
 
+                    if vol_format == 'qcow2' and meta_prealloc:
+                        meta_prealloc = 1
                     vol_clone_xml = """
                                     <volume>
                                         <name>%s</name>
@@ -526,6 +532,6 @@ class wvmInstance(wvmConnect):
                                         </target>
                                     </volume>""" % (target_file, vol_format)
                     stg = vol.storagePoolLookupByVolume()
-                    stg.createXMLFrom(vol_clone_xml, vol, 0)
+                    stg.createXMLFrom(vol_clone_xml, vol, meta_prealloc)
 
         self._defineXML(ElementTree.tostring(tree))

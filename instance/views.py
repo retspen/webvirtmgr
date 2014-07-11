@@ -615,7 +615,7 @@ def instance(request, host_id, vname):
                 clone_data['name'] = request.POST.get('name', '')
 
                 for post in request.POST:
-                    if 'disk' in post:
+                    if 'disk' or 'meta' in post:
                         clone_data[post] = request.POST.get(post, '')
 
                 conn.clone_instance(clone_data)
