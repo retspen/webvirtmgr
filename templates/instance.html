@@ -437,6 +437,12 @@
                                     <div class="col-sm-3">
                                         <input type="text" class="form-control" name="disk-{{ disk.dev }}" value="{{ disk.image }}"/>
                                     </div>
+                                    {% ifequal disk.format 'qcow2' %}
+                                    <label class="col-sm-2 control-label" style="font-weight:normal;">Metadata</label>
+                                    <div class="col-sm-1">
+                                        <input type="checkbox" name="meta-{{ disk.dev }}" value="true" checked>
+                                    </div>
+                                    {% endifequal %}
                                 </div>
                             {% endfor %}
                             {% ifequal status 5 %}

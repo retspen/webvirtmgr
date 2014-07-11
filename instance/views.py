@@ -444,7 +444,7 @@ def instance(request, host_id, vname):
                 image = name + "-clone" + "." + suffix
             else:
                 image = disk['image'] + "-clone"
-            clone_disk.append({'dev': disk['dev'], 'storage': disk['storage'], 'image': image})
+            clone_disk.append({'dev': disk['dev'], 'storage': disk['storage'], 'image': image, 'format': disk['format']})
         return clone_disk
 
     errors = []

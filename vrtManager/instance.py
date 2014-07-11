@@ -189,12 +189,14 @@ class wvmInstance(wvmConnect):
             volume = None
             storage = None
             src_fl = None
+            disk_format = None
             for disk in ctx.xpathEval('/domain/devices/disk'):
                 device = disk.xpathEval('@device')[0].content
                 if device == 'disk':
                     try:
                         dev = disk.xpathEval('target/@dev')[0].content
                         src_fl = disk.xpathEval('source/@file|source/@dev|source/@name')[0].content
+                        disk_format = disk.xpathEval('driver/@type')[0].content
                         try:
                             vol = self.get_volume_by_path(src_fl)
                             volume = vol.name()
@@ -205,7 +207,7 @@ class wvmInstance(wvmConnect):
                     except:
                         pass
                     finally:
-                        result.append({'dev': dev, 'image': volume, 'storage': storage, 'path': src_fl})
+                        result.append({'dev': dev, 'image': volume, 'storage': storage, 'path': src_fl, 'format': disk_format})
             return result
         return util.get_xml_path(self._XMLDesc(0), func=disks)
 
