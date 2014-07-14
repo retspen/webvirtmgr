@@ -189,12 +189,14 @@ class wvmInstance(wvmConnect):
             volume = None
             storage = None
             src_fl = None
+            disk_format = None
             for disk in ctx.xpathEval('/domain/devices/disk'):
                 device = disk.xpathEval('@device')[0].content
                 if device == 'disk':
                     try:
                         dev = disk.xpathEval('target/@dev')[0].content
                         src_fl = disk.xpathEval('source/@file|source/@dev|source/@name')[0].content
+                        disk_format = disk.xpathEval('driver/@type')[0].content
                         try:
                             vol = self.get_volume_by_path(src_fl)
                             volume = vol.name()
@@ -205,7 +207,7 @@ class wvmInstance(wvmConnect):
                     except:
                         pass
                     finally:
-                        result.append({'dev': dev, 'image': volume, 'storage': storage, 'path': src_fl})
+                        result.append({'dev': dev, 'image': volume, 'storage': storage, 'path': src_fl, 'format': disk_format})
             return result
         return util.get_xml_path(self._XMLDesc(0), func=disks)
 
@@ -502,6 +504,10 @@ class wvmInstance(wvmConnect):
                 device_name = elm.get('dev')
                 if device_name:
                     target_file = clone_data['disk-' + device_name]
+                    try:
+                        meta_prealloc = clone_data['meta-' + device_name]
+                    except:
+                        meta_prealloc = 0
                     elm.set('dev', device_name)
 
                 elm = disk.find('source')
@@ -516,6 +522,8 @@ class wvmInstance(wvmConnect):
                     vol_format = util.get_xml_path(vol.XMLDesc(0),
                                                    "/volume/target/format/@type")
 
+                    if vol_format == 'qcow2' and meta_prealloc:
+                        meta_prealloc = 1
                     vol_clone_xml = """
                                     <volume>
                                         <name>%s</name>
@@ -526,6 +534,6 @@ class wvmInstance(wvmConnect):
                                         </target>
                                     </volume>""" % (target_file, vol_format)
                     stg = vol.storagePoolLookupByVolume()
-                    stg.createXMLFrom(vol_clone_xml, vol, 0)
+                    stg.createXMLFrom(vol_clone_xml, vol, meta_prealloc)
 
         self._defineXML(ElementTree.tostring(tree))
