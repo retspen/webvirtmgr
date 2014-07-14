@@ -42,7 +42,7 @@ class wvmCreate(wvmConnect):
         """Get guest capabilities"""
         return util.get_xml_path(self.get_cap_xml(), "/capabilities/host/cpu/arch")
 
-    def create_volume(self, storage, name, size, format='qcow2', meta_prealloc=0):
+    def create_volume(self, storage, name, size, format='qcow2', metadata=False):
         size = int(size) * 1073741824
         stg = self.get_storage(storage)
         storage_type = util.get_xml_path(stg.XMLDesc(0), "/pool/@type")
@@ -51,7 +51,7 @@ class wvmCreate(wvmConnect):
             alloc = 0
         else:
             alloc = size
-            meta_prealloc = 0
+            metadata = False
         xml = """
             <volume>
                 <name>%s</name>
@@ -61,7 +61,7 @@ class wvmCreate(wvmConnect):
                     <format type='%s'/>
                 </target>
             </volume>""" % (name, size, alloc, format)
-        stg.createXML(xml, meta_prealloc)
+        stg.createXML(xml, metadata)
         try:
             stg.refresh(0)
         except:
@@ -94,7 +94,7 @@ class wvmCreate(wvmConnect):
         vol = self.get_volume_by_path(vol_path)
         return vol.storagePoolLookupByVolume()
 
-    def clone_from_template(self, clone, template, meta_prealloc=0):
+    def clone_from_template(self, clone, template, metadata=False):
         vol = self.get_volume_by_path(template)
         stg = vol.storagePoolLookupByVolume()
         storage_type = util.get_xml_path(stg.XMLDesc(0), "/pool/@type")
@@ -102,7 +102,7 @@ class wvmCreate(wvmConnect):
         if storage_type == 'dir':
             clone += '.img'
         else:
-            meta_prealloc = 0
+            metadata = False
         xml = """
             <volume>
                 <name>%s</name>
@@ -112,7 +112,7 @@ class wvmCreate(wvmConnect):
                     <format type='%s'/>
                 </target>
             </volume>""" % (clone, format)
-        stg.createXMLFrom(xml, vol, meta_prealloc)
+        stg.createXMLFrom(xml, vol, metadata)
         clone_vol = stg.storageVolLookupByName(clone)
         return clone_vol.path()
 

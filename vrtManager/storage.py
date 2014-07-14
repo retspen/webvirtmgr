@@ -185,7 +185,7 @@ class wvmStorage(wvmConnect):
             )
         return vol_list
 
-    def create_volume(self, name, size, vol_fmt='qcow2', meta_prealloc=0):
+    def create_volume(self, name, size, vol_fmt='qcow2', metadata=False):
         size = int(size) * 1073741824
         storage_type = self.get_type()
         alloc = size
@@ -203,9 +203,9 @@ class wvmStorage(wvmConnect):
                     <format type='%s'/>
                 </target>
             </volume>""" % (name, size, alloc, vol_fmt)
-        self._createXML(xml, meta_prealloc)
+        self._createXML(xml, metadata)
 
-    def clone_volume(self, name, clone, vol_fmt=None, meta_prealloc=0):
+    def clone_volume(self, name, clone, vol_fmt=None, metadata=False):
         storage_type = self.get_type()
         if storage_type == 'dir':
             clone += '.img'
@@ -221,4 +221,4 @@ class wvmStorage(wvmConnect):
                     <format type='%s'/>
                 </target>
             </volume>""" % (clone, vol_fmt)
-        self._createXMLFrom(xml, vol, meta_prealloc)
+        self._createXMLFrom(xml, vol, metadata)

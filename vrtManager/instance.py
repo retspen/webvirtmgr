@@ -507,7 +507,7 @@ class wvmInstance(wvmConnect):
                     try:
                         meta_prealloc = clone_data['meta-' + device_name]
                     except:
-                        meta_prealloc = 0
+                        meta_prealloc = False
                     elm.set('dev', device_name)
 
                 elm = disk.find('source')
@@ -523,7 +523,7 @@ class wvmInstance(wvmConnect):
                                                    "/volume/target/format/@type")
 
                     if vol_format == 'qcow2' and meta_prealloc:
-                        meta_prealloc = 1
+                        meta_prealloc = True
                     vol_clone_xml = """
                                     <volume>
                                         <name>%s</name>

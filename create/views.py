@@ -25,6 +25,7 @@ def create(request, host_id):
     errors = []
     storages = []
     networks = []
+    meta_prealloc = False
     compute = Compute.objects.get(id=host_id)
     flavors = Flavor.objects.filter().order_by('id')
 
@@ -86,7 +87,8 @@ def create(request, host_id):
                 form = NewVMForm(request.POST)
                 if form.is_valid():
                     data = form.cleaned_data
-                    meta_prealloc = 1 if data['meta_prealloc'] else 0
+                    if data['meta_prealloc']:
+                        meta_prealloc = True
                     if instances:
                         if data['name'] in instances:
                             msg = _("A virtual machine with this name already exists")
@@ -98,13 +100,13 @@ def create(request, host_id):
                                 errors.append(msg)
                             else:
                                 try:
-                                    path = conn.create_volume(data['storage'], data['name'], data['hdd_size'], meta_prealloc=meta_prealloc)
+                                    path = conn.create_volume(data['storage'], data['name'], data['hdd_size'], metadata=meta_prealloc)
                                     volumes[path] = conn.get_volume_type(path)
                                 except libvirtError as msg_error:
                                     errors.append(msg_error.message)
                         elif data['template']:
                             templ_path = conn.get_volume_path(data['template'])
-                            clone_path = conn.clone_from_template(data['name'], templ_path, meta_prealloc)
+                            clone_path = conn.clone_from_template(data['name'], templ_path, metadata=meta_prealloc)
                             volumes[clone_path] = conn.get_volume_type(clone_path)
                         else:
                             if not data['images']:
