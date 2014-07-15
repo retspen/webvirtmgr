@@ -1,11 +1,13 @@
 =========================
-WebVirtMgr panel - v4.8.4
+WebVirtMgr panel - v4.8.5
 =========================
 
 ----------
 Whats new?
 ----------
 
+- Added webvirtmgr to pypi
+- Update Chart.js
 - Added page interfaces
 - Added novnc proxy supporting new websockify versions (Thanks: `casell <https://github.com/casell>`_)
 - Added support CEPH
@@ -15,7 +17,10 @@ Whats new?
 - `Deployment via Fabric/Fabtools <https://github.com/retspen/webvirtmgr/tree/master/deploy/fabric>`_ (Thanks: `Mohab Usama <https://github.com/mohabusama>`_)
 - Added instance cloning (Settings -> Clone)
 
-`Screenshots <https://github.com/retspen/webvirtmgr/wiki/Screenshots>`_
+Screenshots
+-----------
+`Show <https://github.com/retspen/webvirtmgr/wiki/Screenshots>`_
+
 
 Introduction
 ------------

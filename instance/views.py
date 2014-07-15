@@ -94,13 +94,6 @@ def instusage(request, host_id, vname):
             datasets['cpu'].append(int(cpu_usage['cpu']))
             del datasets['cpu'][0]
 
-        # Some fix division by 0 Chart.js
-        if len(datasets['cpu']) == 10:
-            if sum(datasets['cpu']) == 0:
-                datasets['cpu'][9] += 0.1
-            if sum(datasets['cpu']) / 10 == datasets['cpu'][0]:
-                datasets['cpu'][9] += 0.1
-
         cpu = {
             'labels': [""] * 10,
             'datasets': [
@@ -149,13 +142,6 @@ def instusage(request, host_id, vname):
                 if len(datasets_wr) == 10:
                     datasets_wr.append(int(blk['wr']) / 1048576)
                     del datasets_wr[0]
-
-                # Some fix division by 0 Chart.js
-                if len(datasets_rd) == 10:
-                    if sum(datasets_rd) == 0:
-                        datasets_rd[9] += 0.01
-                    if sum(datasets_rd) / 10 == datasets_rd[0]:
-                        datasets_rd[9] += 0.01
 
                 disk = {
                     'labels': [""] * 10,
@@ -215,13 +201,6 @@ def instusage(request, host_id, vname):
                 if len(datasets_tx) == 10:
                     datasets_tx.append(int(net['tx']) / 1048576)
                     del datasets_tx[0]
-
-                # Some fix division by 0 Chart.js
-                if len(datasets_rx) == 10:
-                    if sum(datasets_rx) == 0:
-                        datasets_rx[9] += 0.01
-                    if sum(datasets_rx) / 10 == datasets_rx[0]:
-                        datasets_rx[9] += 0.01
 
                 network = {
                     'labels': [""] * 10,
@@ -448,7 +427,7 @@ def instance(request, host_id, vname):
                 image = name + "-clone" + "." + suffix
             else:
                 image = disk['image'] + "-clone"
-            clone_disk.append({'dev': disk['dev'], 'storage': disk['storage'], 'image': image})
+            clone_disk.append({'dev': disk['dev'], 'storage': disk['storage'], 'image': image, 'format': disk['format']})
         return clone_disk
 
     errors = []
@@ -623,7 +602,7 @@ def instance(request, host_id, vname):
                 clone_data['name'] = request.POST.get('name', '')
 
                 for post in request.POST:
-                    if 'disk' in post:
+                    if 'disk' or 'meta' in post:
                         clone_data[post] = request.POST.get(post, '')
 
                 conn.clone_instance(clone_data)

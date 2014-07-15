@@ -82,6 +82,7 @@ def storage(request, host_id, pool):
 
     errors = []
     compute = Compute.objects.get(id=host_id)
+    meta_prealloc = False
 
     try:
         conn = wvmStorage(compute.hostname,
@@ -146,13 +147,13 @@ def storage(request, host_id, pool):
             form = AddImage(request.POST)
             if form.is_valid():
                 data = form.cleaned_data
-                img_name = data['name'] + '.img'
-                if img_name in conn.update_volumes():
-                    msg = _("Volume name already use")
-                    errors.append(msg)
-                if not errors:
-                    conn.create_volume(data['name'], data['size'], data['format'])
+                if data['meta_prealloc'] and data['format'] == 'qcow2':
+                    meta_prealloc = True
+                try:
+                    conn.create_volume(data['name'], data['size'], data['format'], meta_prealloc)
                     return HttpResponseRedirect(request.get_full_path())
+                except libvirtError as err:
+                    errors.append(err)
         if 'del_volume' in request.POST:
             volname = request.POST.get('volname', '')
             try:
@@ -173,16 +174,19 @@ def storage(request, host_id, pool):
             if form.is_valid():
                 data = form.cleaned_data
                 img_name = data['name'] + '.img'
+                meta_prealloc = 0
                 if img_name in conn.update_volumes():
                     msg = _("Name of volume name already use")
                     errors.append(msg)
                 if not errors:
                     if data['convert']:
                         format = data['format']
+                        if data['meta_prealloc'] and data['format'] == 'qcow2':
+                            meta_prealloc = True
                     else:
                         format = None
                     try:
-                        conn.clone_volume(data['image'], data['name'], format)
+                        conn.clone_volume(data['image'], data['name'], format, meta_prealloc)
                         return HttpResponseRedirect(request.get_full_path())
                     except libvirtError as err:
                         errors.append(err)

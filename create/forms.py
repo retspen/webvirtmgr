@@ -43,6 +43,7 @@ class NewVMForm(forms.Form):
     template = forms.CharField(required=False)
     images = forms.CharField(required=False)
     hdd_size = forms.IntegerField(required=False)
+    meta_prealloc = forms.BooleanField(required=False)
     virtio = forms.BooleanField(required=False)
     mac = forms.CharField(required=False)
 
