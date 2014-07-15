@@ -20,15 +20,17 @@
         </div>
         <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
             <ul class="nav navbar-nav">
+                {% if request.user.is_staff %}
                 <li>
                        <a href="{% url 'infrastructure' %}" title="{% trans "Show all host and vm's" %}">{% trans "Infrastructure" %}</a>
                 </li>
+                {% endif %}
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
                 {% if request.user.is_authenticated or user.is_authenticated %}
                     <li class="">
-                        <a href="{% url 'logout' %}">{% trans "Sign out" %}</a>
+                        <a href="{% url 'logout' %}">{% trans "Sign out" %} ({{ user.username }})</a>
                     </li>
                 {% else %}
                     <li class="">

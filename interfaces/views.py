@@ -1,6 +1,7 @@
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
+from django.core.exceptions import PermissionDenied
 
 from servers.models import Compute
 from interfaces.forms import AddInterface
@@ -17,6 +18,9 @@ def interfaces(request, host_id):
     """
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/')
+
+    if not request.user.is_staff:
+        raise PermissionDenied
 
     errors = []
     ifaces_all = []
