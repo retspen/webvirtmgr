@@ -143,7 +143,13 @@ def infrastructure(request):
             socket_host = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             socket_host.settimeout(1)
             if host.type == CONN_SSH:
-                socket_host.connect((host.hostname, SSH_PORT))
+                if ':' in host.hostname:
+                    LIBVIRT_HOST, PORT = (host.hostname).split(":")
+                    PORT = int(PORT)
+                else:
+                    PORT = SSH_PORT
+                    LIBVIRT_HOST = host.hostname
+                socket_host.connect((LIBVIRT_HOST, PORT))
             if host.type == CONN_TCP:
                 socket_host.connect((host.hostname, TCP_PORT))
             if host.type == CONN_TLS:
