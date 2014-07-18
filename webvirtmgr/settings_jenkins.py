@@ -22,8 +22,6 @@ DATABASES = {
     }
 }
 
-TIME_JS_REFRESH = 2000
-
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = ['*']
@@ -148,6 +146,11 @@ QEMU_KEYMAPS = ['ar', 'da', 'de', 'de-ch', 'en-gb', 'en-us', 'es', 'et', 'fi',
                 'fo', 'fr', 'fr-be', 'fr-ca', 'fr-ch', 'hr', 'hu', 'is', 'it',
                 'ja', 'lt', 'lv', 'mk', 'nl', 'nl-be', 'no', 'pl', 'pt',
                 'pt-br', 'ru', 'sl', 'sv', 'th', 'tr']
+
+# WebVirtMgr settings
+TIME_JS_REFRESH = 2000
+WS_PORT = 6080
+WS_HOST = '0.0.0.0'
 
 # Installed Apps shouldn't be overridden
 INSTALLED_APPS = (

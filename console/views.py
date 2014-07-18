@@ -7,8 +7,7 @@ from django.http import HttpResponseRedirect
 from instance.models import Instance
 from vrtManager.instance import wvmInstance
 
-
-WS_PORT = 6080
+from webvirtmgr.settings import WS_PORT
 
 
 def console(request):
@@ -37,6 +36,7 @@ def console(request):
 
     wsproxy_port = WS_PORT
     wsproxy_host = request.get_host()
+
     if ':' in wsproxy_host:
         wsproxy_host = re.sub(':[0-9]+', '', wsproxy_host)
 
