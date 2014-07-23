@@ -24,8 +24,6 @@ DATABASES = {
     }
 }
 
-TIME_JS_REFRESH = 2000
-
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = ['*']
@@ -142,8 +140,12 @@ LOGGING = {
     }
 }
 
+# WebVirtMgr settings
 SECRET_KEY = None
 LOCAL_PATH = None
+TIME_JS_REFRESH = 2000
+WS_PORT = 6080
+WS_HOST = '0.0.0.0'
 
 try:
     from local.local_settings import *  # noqa
