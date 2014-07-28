@@ -28,7 +28,10 @@ def interfaces(request, host_id):
                              compute.password,
                              compute.type)
         ifaces = conn.get_ifaces()
-        netdevs = conn.get_net_device()
+        try:
+            netdevs = conn.get_net_device()
+        except:
+            netdevs = ['eth0', 'eth1']
 
         for iface in ifaces:
             ifaces_all.append(conn.get_iface_info(iface))
