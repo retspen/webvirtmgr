@@ -480,7 +480,7 @@ def instance(request, host_id, vname):
         if request.method == 'POST':
             if 'start' in request.POST:
                 conn.start()
-                return HttpResponseRedirect(request.get_full_path())
+                return HttpResponseRedirect(request.get_full_path() + '#shutdown')
             if 'power' in request.POST:
                 if 'shutdown' == request.POST.get('power', ''):
                     conn.shutdown()
