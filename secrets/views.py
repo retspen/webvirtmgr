@@ -37,7 +37,7 @@ def secrets(request, host_id):
                                 'uuid': secrt.UUIDString(),
                                 'usageType': secrt.usageType(),
                                 'value': secret_value
-                                })
+            })
         if request.method == 'POST':
             if 'create' in request.POST:
                 form = AddSecret(request.POST)

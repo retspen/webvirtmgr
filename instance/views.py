@@ -328,7 +328,7 @@ def insts_status(request, host_id):
                           'uuid': conn.get_uuid(instance),
                           'host': host_id,
                           'dump': conn.get_instance_managed_save_image(instance)
-                          })
+        })
 
     data = json.dumps(instances)
     response = HttpResponse()
@@ -423,7 +423,8 @@ def instance(request, host_id, vname):
                 image = name + "-clone" + "." + suffix
             else:
                 image = disk['image'] + "-clone"
-            clone_disk.append({'dev': disk['dev'], 'storage': disk['storage'], 'image': image, 'format': disk['format']})
+            clone_disk.append(
+                {'dev': disk['dev'], 'storage': disk['storage'], 'image': image, 'format': disk['format']})
         return clone_disk
 
     errors = []

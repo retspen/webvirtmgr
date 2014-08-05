@@ -100,7 +100,8 @@ def create(request, host_id):
                                 errors.append(msg)
                             else:
                                 try:
-                                    path = conn.create_volume(data['storage'], data['name'], data['hdd_size'], metadata=meta_prealloc)
+                                    path = conn.create_volume(data['storage'], data['name'], data['hdd_size'],
+                                                              metadata=meta_prealloc)
                                     volumes[path] = conn.get_volume_type(path)
                                 except libvirtError as msg_error:
                                     errors.append(msg_error.message)

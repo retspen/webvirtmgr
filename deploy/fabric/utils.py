@@ -18,7 +18,7 @@ from fabtools.python import install_requirements
 
 # Local repo path
 LOCAL_BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                 "..", ".."))
+                                              "..", ".."))
 
 
 def install_system_packages(distro):

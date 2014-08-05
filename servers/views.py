@@ -63,7 +63,7 @@ def servers_list(request):
                               'type': host.type,
                               'login': host.login,
                               'password': host.password
-                              })
+            })
         return all_hosts
 
     computes = Compute.objects.filter()

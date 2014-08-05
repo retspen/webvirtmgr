@@ -16,35 +16,48 @@
         <div class="row show-grid">
             <div class="col-md-6">
                 <p>{% trans "Interface" %}</p>
+
                 <p>{% trans "IPv4" %} ({% ifequal ipv4 None %}None{% else %}{{ ipv4_type }}{% endifequal %})</p>
+
                 <p>{% trans "IPv6" %} ({% ifequal ipv6 None %}None{% else %}{{ ipv6_type }}{% endifequal %})</p>
+
                 <p>{% trans "MAC Adress" %}</p>
+
                 <p>{% trans "Interface type" %}</p>
-                {% ifequal itype 'bridge' %} 
+                {% ifequal itype 'bridge' %}
                     <p>{% trans "Bridge device" %}</p>
                 {% endifequal %}
                 <p>{% trans "Boot mode" %}</p>
+
                 <p>{% trans "State" %}</p>
             </div>
             <div class="col-md-6">
                 <p><strong>{{ iface }}</strong></p>
+
                 <p>{{ ipv4 }}</p>
+
                 <p>{{ ipv6 }}</p>
+
                 <p>{{ mac }}</p>
+
                 <p>{{ itype }}</p>
-                {% ifequal itype 'bridge' %} 
+                {% ifequal itype 'bridge' %}
                     <p>{{ bridge }}</p>
                 {% endifequal %}
                 <p>{{ start_mode }}</p>
+
                 <p>
-                    <form action="" method="post">{% csrf_token %}
-                        {% ifequal state 0 %}
-                            <input type="submit" class="btn btn-xs btn-default" name="start" value="{% trans "Start" %}">
-                            <input type="submit" class="btn btn-xs btn-default" name="delete" value="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
-                        {% else %}
-                            <input type="submit" class="btn btn-xs btn-default" name="stop" value="{% trans "Stop" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
-                        {% endifequal %}
-                    </form>
+
+                <form action="" method="post">{% csrf_token %}
+                    {% ifequal state 0 %}
+                        <input type="submit" class="btn btn-xs btn-default" name="start" value="{% trans "Start" %}">
+                        <input type="submit" class="btn btn-xs btn-default" name="delete" value="{% trans "Delete" %}"
+                               onclick="return confirm('{% trans "Are you sure?" %}')">
+                    {% else %}
+                        <input type="submit" class="btn btn-xs btn-default" name="stop" value="{% trans "Stop" %}"
+                               onclick="return confirm('{% trans "Are you sure?" %}')">
+                    {% endifequal %}
+                </form>
                 </p>
             </div>
         </div>

@@ -1,6 +1,6 @@
 # Copyright 2012 Nebula, Inc.
 #
-#    Licensed under the Apache License, Version 2.0 (the "License"); you may
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
 #    a copy of the License at
 #
@@ -35,7 +35,7 @@ def generate_key(key_length=64):
     else:
         choice = random.choice
     return ''.join(map(lambda x: choice(string.digits + string.ascii_letters),
-                   range(key_length)))
+                       range(key_length)))
 
 
 def generate_or_read_from_file(key_file='.secret_key', key_length=64):

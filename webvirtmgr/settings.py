@@ -161,8 +161,9 @@ if not SECRET_KEY:
                                   'local')
 
     from webvirtmgr.utils import secret_key
+
     SECRET_KEY = secret_key.generate_or_read_from_file(os.path.join(LOCAL_PATH,
-                                                       '.secret_key_store'))
+                                                                    '.secret_key_store'))
 
 # list taken from http://qemu.weilnetz.de/qemu-doc.html#sec_005finvocation
 QEMU_KEYMAPS = ['ar', 'da', 'de', 'de-ch', 'en-gb', 'en-us', 'es', 'et', 'fi',
