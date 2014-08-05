@@ -328,7 +328,7 @@ def insts_status(request, host_id):
                           'uuid': conn.get_uuid(instance),
                           'host': host_id,
                           'dump': conn.get_instance_managed_save_image(instance)
-        })
+                          })
 
     data = json.dumps(instances)
     response = HttpResponse()

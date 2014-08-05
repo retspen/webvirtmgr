@@ -52,8 +52,9 @@ class AddStgPool(forms.Form):
 
 class AddImage(forms.Form):
     name = forms.CharField(max_length=20)
-    format = forms.ChoiceField(required=True, choices=(
-    ('raw', 'raw'), ('qcow', 'qcow'), ('qcow2', 'qcow2 (recommended due to snapshots and thin privisioning)')))
+    format = forms.ChoiceField(required=True, choices=(('qcow2', 'qcow2 (recommended)'),
+                                                       ('qcow', 'qcow'),
+                                                       ('raw', 'raw')))
     size = forms.IntegerField()
     meta_prealloc = forms.BooleanField(required=False)
 
@@ -71,8 +72,9 @@ class CloneImage(forms.Form):
     name = forms.CharField(max_length=20)
     image = forms.CharField(max_length=20)
     convert = forms.BooleanField(required=False)
-    format = forms.ChoiceField(required=False, choices=(
-    ('qcow2', 'qcow2 (recommended due to snapshots and thin privisioning)'), ('qcow', 'qcow'), ('raw', 'raw')))
+    format = forms.ChoiceField(required=False, choices=(('qcow2', 'qcow2 (recommended)'),
+                                                        ('qcow', 'qcow'),
+                                                        ('raw', 'raw')))
     meta_prealloc = forms.BooleanField(required=False)
 
     def clean_name(self):
