@@ -53,7 +53,7 @@ def get_connection_infos(token):
                            instance.compute.password,
                            instance.compute.type,
                            instance.name)
-        port = conn.get_vnc()
+        port = conn.get_vnc_port()
         host = instance.compute.hostname
     except:
         port = None

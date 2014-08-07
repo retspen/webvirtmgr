@@ -369,10 +369,15 @@ class wvmInstance(wvmConnect):
                                 telnet_port = service_port
         return telnet_port
 
-    def get_vnc(self):
-        vnc = util.get_xml_path(self._XMLDesc(0),
-                                "/domain/devices/graphics[@type='vnc']/@port")
-        return vnc
+    def get_vnc_port(self):
+        vnc_port = util.get_xml_path(self._XMLDesc(0),
+                                     "/domain/devices/graphics[@type='vnc']/@port")
+        return vnc_port
+
+    def get_vnc_websocket_port(self):
+        vnc_websocket_port = util.get_xml_path(self._XMLDesc(0),
+                                               "/domain/devices/graphics[@type='vnc']/@websocket")
+        return vnc_websocket_port
 
     def get_vnc_passwd(self):
         return util.get_xml_path(self._XMLDesc(VIR_DOMAIN_XML_SECURE),
