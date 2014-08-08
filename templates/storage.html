@@ -23,45 +23,62 @@
         <div class="row show-grid">
             <div class="col-md-6">
                 <p>{% trans "Pool name" %}</p>
+
                 <p>{% trans "Pool type" %}</p>
+
                 <p>{% trans "Pool path" %}</p>
+
                 <p>{% trans "Pool status" %}</p>
+
                 <p>{% trans "Size" %} ({{ size|filesizeformat }} / {{ used|filesizeformat }})</p>
+
                 <p>{% trans "State" %}</p>
+
                 <p>{% trans "Autostart" %}</p>
             </div>
             <div class="col-md-6">
                 <p>
                     [{% for storage in storages %}
-                        {% ifequal storage pool %}
-                            <b>{{ pool }}</b>
-                        {% else %}
-                            <a href="{% url 'storage' host_id storage %}">{{ storage }}</a>
-                        {% endifequal %}
-                    {% endfor %} ]
+                    {% ifequal storage pool %}
+                        <b>{{ pool }}</b>
+                    {% else %}
+                        <a href="{% url 'storage' host_id storage %}">{{ storage }}</a>
+                    {% endifequal %}
+                {% endfor %} ]
                 </p>
+
                 <p>{% if not type %}{% trans "None" %}{% else %}{{ type }}{% endif %}</p>
+
                 <p>{% if not path %}{% trans "None" %}{% else %}{{ path }}{% endif %}</p>
+
                 <p>{% if not status %}{% trans "None" %}{% else %}{{ status }}{% endif %}</p>
+
                 <p>{% trans "Usage" %}: {{ percent }}%</p>
+
                 <p>
-                    <form action="" method="post">{% csrf_token %}
-                        {% ifequal state 0 %}
-                            <input type="submit" class="btn btn-xs btn-default" name="start" value="{% trans "Start" %}">
-                            <input type="submit" class="btn btn-xs btn-default" name="delete" value="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
-                        {% else %}
-                            <input type="submit" class="btn btn-xs btn-default" name="stop" value="{% trans "Stop" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
-                        {% endifequal %}
-                    </form>
+
+                <form action="" method="post">{% csrf_token %}
+                    {% ifequal state 0 %}
+                        <input type="submit" class="btn btn-xs btn-default" name="start" value="{% trans "Start" %}">
+                        <input type="submit" class="btn btn-xs btn-default" name="delete" value="{% trans "Delete" %}"
+                               onclick="return confirm('{% trans "Are you sure?" %}')">
+                    {% else %}
+                        <input type="submit" class="btn btn-xs btn-default" name="stop" value="{% trans "Stop" %}"
+                               onclick="return confirm('{% trans "Are you sure?" %}')">
+                    {% endifequal %}
+                </form>
                 </p>
                 <p>
-                    <form action="" method="post">{% csrf_token %}
-                        {% ifequal autostart 0 %}
-                            <input type="submit" class="btn btn-xs btn-default" name="set_autostart" value="{% trans "Enable" %}">
-                        {% else %}
-                            <input type="submit" class="btn btn-xs btn-default" name="unset_autostart" onclick="return confirm('{% trans "Are you sure?" %}')" value="{% trans "Disable" %}">
-                        {% endifequal %}
-                    </form>
+
+                <form action="" method="post">{% csrf_token %}
+                    {% ifequal autostart 0 %}
+                        <input type="submit" class="btn btn-xs btn-default" name="set_autostart"
+                               value="{% trans "Enable" %}">
+                    {% else %}
+                        <input type="submit" class="btn btn-xs btn-default" name="unset_autostart"
+                               onclick="return confirm('{% trans "Are you sure?" %}')" value="{% trans "Disable" %}">
+                    {% endifequal %}
+                </form>
                 </p>
             </div>
         </div>
@@ -70,7 +87,8 @@
                 <h3>{% trans "Images" %}</h3>
                 <hr>
                 {% ifnotequal state 0 %}
-                    <a href="#IsoUpload" class="btn btn-success" data-toggle="modal">{% trans "Upload ISO" %}</a><br><br>
+                    <a href="#IsoUpload" class="btn btn-success" data-toggle="modal">{% trans "Upload ISO" %}</a><br>
+                    <br>
                 {% endifnotequal %}
 
                 {% if volumes %}
@@ -94,7 +112,9 @@
                                 <td style="width:30px;">
                                     <form action="" method="post">{% csrf_token %}
                                         <input type="hidden" name="volname" value="{{ volume.name }}">
-                                        <input type="submit" class="btn btn-sm btn-danger" name="del_volume" value="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
+                                        <input type="submit" class="btn btn-sm btn-danger" name="del_volume"
+                                               value="{% trans "Delete" %}"
+                                               onclick="return confirm('{% trans "Are you sure?" %}')">
                                     </form>
                                 </td>
                             </tr>
@@ -132,30 +152,39 @@
                                 <td>{{ volume.size|filesizeformat }}</td>
                                 <td>{{ volume.type }}</td>
                                 <td style="width:30px;">
-                                    <div class="modal fade" id="Clone{{ forloop.counter }}" tabindex="-1" role="dialog" aria-labelledby="addHostLabel" aria-hidden="true">
+                                    <div class="modal fade" id="Clone{{ forloop.counter }}" tabindex="-1" role="dialog"
+                                         aria-labelledby="addHostLabel" aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                                    <h4 class="modal-title">{% trans "Clone image" %} <span class="text-danger">{{ volume.name }}</span></h4>
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                            aria-hidden="true">&times;</button>
+                                                    <h4 class="modal-title">{% trans "Clone image" %} <span
+                                                            class="text-danger">{{ volume.name }}</span></h4>
                                                 </div>
                                                 <form class="form-horizontal" method="post" role="form">{% csrf_token %}
                                                     <div class="form-group">
                                                         <label class="col-sm-3 control-label">{% trans "Name" %}</label>
+
                                                         <div class="col-sm-6">
-                                                            <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}" required pattern="[a-zA-Z0-9\.\-_]+">
+                                                            <input type="text" class="form-control" name="name"
+                                                                   placeholder="{% trans "Name" %}" required
+                                                                   pattern="[a-zA-Z0-9\.\-_]+">
                                                             <input type="hidden" name="image" value="{{ volume.name }}">
                                                         </div>
                                                         <label class="col-sm-1 control-label">.img</label>
                                                     </div>
                                                     <div class="form-group" id="image_format">
                                                         <label class="col-sm-3 control-label">{% trans "Convert" %}</label>
+
                                                         <div class="col-sm-6">
-                                                            <input class="volume-convert" type="checkbox" name="convert" value="true">
+                                                            <input class="volume-convert" type="checkbox" name="convert"
+                                                                   value="true">
                                                         </div>
                                                     </div>
                                                     <div class="form-group format-convert">
                                                         <label class="col-sm-3 control-label">{% trans "Format" %}</label>
+
                                                         <div class="col-sm-6">
                                                             <select name="format" class="form-control image-format">
                                                                 <option value="raw">{% trans "raw" %}</option>
@@ -166,20 +195,28 @@
                                                     </div>
                                                     <div class="form-group meta-prealloc" style="display: none;">
                                                         <label class="col-sm-3 control-label">{% trans "Metadata" %}</label>
+
                                                         <div class="col-sm-6">
-                                                            <input type="checkbox" name="meta_prealloc" value="true" checked>
+                                                            <input type="checkbox" name="meta_prealloc" value="true"
+                                                                   checked>
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">
-                                                        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-                                                        <button type="submit" class="btn btn-primary" name="cln_volume">{% trans "Clone" %}</button>
+                                                        <button type="button" class="btn btn-default"
+                                                                data-dismiss="modal">{% trans "Close" %}</button>
+                                                        <button type="submit" class="btn btn-primary"
+                                                                name="cln_volume">{% trans "Clone" %}</button>
                                                     </div>
                                                 </form>
-                                            </div><!-- /.modal-content -->
-                                        </div><!-- /.modal-dialog -->
-                                    </div><!-- /.modal -->
+                                            </div>
+                                            <!-- /.modal-content -->
+                                        </div>
+                                        <!-- /.modal-dialog -->
+                                    </div>
+                                    <!-- /.modal -->
                                     {% ifnotequal volume.type "iso" %}
-                                        <a data-toggle="modal" href="#Clone{{ forloop.counter }}" class="btn btn-sm btn-primary">{% trans "Clone" %}</a>
+                                        <a data-toggle="modal" href="#Clone{{ forloop.counter }}"
+                                           class="btn btn-sm btn-primary">{% trans "Clone" %}</a>
                                     {% else %}
                                         <a class="btn btn-sm btn-primary disabled">{% trans "Clone" %}</a>
                                     {% endifnotequal %}
@@ -187,7 +224,9 @@
                                 <td style="width:30px;">
                                     <form action="" method="post" style="height:10px;">{% csrf_token %}
                                         <input type="hidden" name="volname" value="{{ volume.name }}">
-                                        <input type="submit" class="btn btn-sm btn-danger" name="del_volume" value="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
+                                        <input type="submit" class="btn btn-sm btn-danger" name="del_volume"
+                                               value="{% trans "Delete" %}"
+                                               onclick="return confirm('{% trans "Are you sure?" %}')">
                                     </form>
                                 </td>
                             </tr>
@@ -204,7 +243,8 @@
     </div>
 
     <!-- Modal Image -->
-    <div class="modal fade" id="AddImage" tabindex="-1" role="dialog" aria-labelledby="AddImageLabel" aria-hidden="true">
+    <div class="modal fade" id="AddImage" tabindex="-1" role="dialog" aria-labelledby="AddImageLabel"
+         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -214,12 +254,15 @@
                 <form class="form-horizontal" method="post" role="form">{% csrf_token %}
                     <div class="form-group">
                         <label class="col-sm-3 control-label">{% trans "Name" %}</label>
+
                         <div class="col-sm-6">
-                            <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}" required pattern="[a-zA-Z0-9\.\-_]+">
+                            <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}"
+                                   required pattern="[a-zA-Z0-9\.\-_]+">
                         </div>
                     </div>
                     <div class="form-group" id="image_format">
                         <label class="col-sm-3 control-label">{% trans "Format" %}</label>
+
                         <div class="col-sm-6">
                             <select name="format" class="form-control image-format">
                                 <option value="qcow2">{% trans "qcow2" %}</option>
@@ -230,13 +273,16 @@
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">{% trans "Size" %}</label>
+
                         <div class="col-sm-6">
-                            <input type="text" class="form-control" name="size" value="10" maxlength="3" required pattern="[0-9]+">
+                            <input type="text" class="form-control" name="size" value="10" maxlength="3" required
+                                   pattern="[0-9]+">
                         </div>
                         <label class="col-sm-1 control-label">{% trans "GB" %}</label>
                     </div>
                     <div class="form-group meta-prealloc">
                         <label class="col-sm-3 control-label">{% trans "Metadata" %}</label>
+
                         <div class="col-sm-6">
                             <input type="checkbox" name="meta_prealloc" value="true" checked>
                         </div>
@@ -246,21 +292,25 @@
                         <button type="submit" class="btn btn-primary" name="add_volume">{% trans "Create" %}</button>
                     </div>
                 </form>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
     </div><!-- /.modal -->
 
     <!-- Modal Upload -->
-    <div class="modal fade" id="IsoUpload" tabindex="-1" role="dialog" aria-labelledby="IsoUploadLabel" aria-hidden="true">
+    <div class="modal fade" id="IsoUpload" tabindex="-1" role="dialog" aria-labelledby="IsoUploadLabel"
+         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h4 class="modal-title">{% trans "Upload ISO Image" %}</h4>
                 </div>
-                <form class="form-horizontal" enctype="multipart/form-data"  method="post" role="form">{% csrf_token %}
+                <form class="form-horizontal" enctype="multipart/form-data" method="post" role="form">{% csrf_token %}
                     <div class="form-group">
                         <label class="col-sm-3 control-label">{% trans "Name" %}</label>
+
                         <div class="col-sm-6">
                             <input type="file" name="file" id="id_file">
                         </div>
@@ -270,16 +320,18 @@
                         <button type="submit" class="btn btn-primary" name="iso_upload">{% trans "Upload" %}</button>
                     </div>
                 </form>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
     </div><!-- /.modal -->
 {% endblock %}
 {% block script %}
     <script type="text/javascript">
-        $(document).on('change','.volume-convert',function(){
-            if($(this).prop('checked')) {
+        $(document).on('change', '.volume-convert', function () {
+            if ($(this).prop('checked')) {
                 $('.format-convert').show();
-                if($('.image-format').val() == 'qcow2') {
+                if ($('.image-format').val() == 'qcow2') {
                     $('.meta-prealloc').show();
                 }
             } else {
@@ -287,8 +339,8 @@
                 $('.meta-prealloc').hide();
             }
         });
-        $(document).on('change','.image-format',function(){
-            if($(this).val() == "qcow2") {
+        $(document).on('change', '.image-format', function () {
+            if ($(this).val() == "qcow2") {
                 $('.meta-prealloc').show();
             } else {
                 $('.meta-prealloc').hide();

@@ -3,10 +3,12 @@ table#sortTable th {
     background-repeat: no-repeat;
     background-position: center right;
     cursor: pointer;
- }
- table#sortTable thead tr .headerSortUp {
+}
+
+table#sortTable thead tr .headerSortUp {
     background-image: url('../img/asc.gif');
- }
- table#sortTable thead tr .headerSortDown {
+}
+
+table#sortTable thead tr .headerSortDown {
     background-image: url('../img/desc.gif');
- }
+}

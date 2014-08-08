@@ -27,11 +27,11 @@
                         style for example -->
                         <!-- TODO: check if this is needed on iOS -->
                         <textarea id="keyboardinput" autocapitalize="off"
-                          autocorrect="off" autocomplete="off" spellcheck="false"
-                          mozactionhint="Enter" onsubmit="return false;"
-                          style="ime-mode: disabled;">
+                                  autocorrect="off" autocomplete="off" spellcheck="false"
+                                  mozactionhint="Enter" onsubmit="return false;"
+                                  style="ime-mode: disabled;">
                         </textarea>
-                        
+
                         <input type=button value="Ctrl+Alt+Del" id="sendCtrlAltDelButton">
                     </div>
                 </td>
@@ -46,7 +46,7 @@
     /*jslint white: false */
     /*global window, $, Util, RFB, */
     "use strict";
-    
+
     // dirty fix for keyboard on iOS devices
     var keyboardVisible = false;
     var isTouchDevice = false;
@@ -76,20 +76,23 @@
         rfb.sendCtrlAltDel();
         return false;
     }
-    
+
     // dirty fix for keyboard on iOS devices
     function showKeyboard() {
         var kbi, skb, l;
         kbi = $D('keyboardinput');
         skb = $D('showKeyboard');
         l = kbi.value.length;
-        if(keyboardVisible === false) {
+        if (keyboardVisible === false) {
             kbi.focus();
-            try { kbi.setSelectionRange(l, l); } // Move the caret to the end
-            catch (err) {} // setSelectionRange is undefined in Google Chrome
+            try {
+                kbi.setSelectionRange(l, l);
+            } // Move the caret to the end
+            catch (err) {
+            } // setSelectionRange is undefined in Google Chrome
             keyboardVisible = true;
             //skb.className = "noVNC_status_button_selected";
-        } else if(keyboardVisible === true) {
+        } else if (keyboardVisible === true) {
             kbi.blur();
             //skb.className = "noVNC_status_button";
             keyboardVisible = false;
@@ -102,16 +105,32 @@
         sb = $D('noVNC_status_bar');
         cad = $D('sendCtrlAltDelButton');
         switch (state) {
-            case 'failed':       level = "error";  break;
-            case 'fatal':        level = "error";  break;
-            case 'normal':       level = "normal"; break;
-            case 'disconnected': level = "normal"; break;
-            case 'loaded':       level = "normal"; break;
-            default:             level = "warn";   break;
+            case 'failed':
+                level = "error";
+                break;
+            case 'fatal':
+                level = "error";
+                break;
+            case 'normal':
+                level = "normal";
+                break;
+            case 'disconnected':
+                level = "normal";
+                break;
+            case 'loaded':
+                level = "normal";
+                break;
+            default:
+                level = "warn";
+                break;
         }
 
-        if (state === "normal") { cad.disabled = false; }
-        else                    { cad.disabled = true; }
+        if (state === "normal") {
+            cad.disabled = false;
+        }
+        else {
+            cad.disabled = true;
+        }
 
         if (typeof(msg) !== 'undefined') {
             sb.setAttribute("class", "noVNC_status_" + level);
@@ -129,7 +148,9 @@
         if (isTouchDevice) {
             $D('showKeyboard').onclick = showKeyboard;
             // Remove the address bar
-            setTimeout(function() { window.scrollTo(0, 1); }, 100);
+            setTimeout(function () {
+                window.scrollTo(0, 1);
+            }, 100);
         } else {
             $D('showKeyboard').style.display = "none";
         }
@@ -147,16 +168,16 @@
             return;
         }
 
-        rfb = new RFB({'target':       $D('noVNC_canvas'),
-            'encrypt':      WebUtil.getQueryVar('encrypt',
+        rfb = new RFB({'target': $D('noVNC_canvas'),
+            'encrypt': WebUtil.getQueryVar('encrypt',
                     (window.location.protocol === "https:")),
-            'repeaterID':   WebUtil.getQueryVar('repeaterID', ''),
-            'true_color':   WebUtil.getQueryVar('true_color', true),
+            'repeaterID': WebUtil.getQueryVar('repeaterID', ''),
+            'true_color': WebUtil.getQueryVar('true_color', true),
             'local_cursor': WebUtil.getQueryVar('cursor', true),
-            'shared':       WebUtil.getQueryVar('shared', true),
-            'view_only':    WebUtil.getQueryVar('view_only', false),
-            'updateState':  updateState,
-            'onPasswordRequired':  passwordRequired});
+            'shared': WebUtil.getQueryVar('shared', true),
+            'view_only': WebUtil.getQueryVar('view_only', false),
+            'updateState': updateState,
+            'onPasswordRequired': passwordRequired});
         rfb.connect(host, port, password, path);
     };
 </script>

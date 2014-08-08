@@ -45,9 +45,12 @@
                         <tr style="font-size:18px;">
                             <td>{{ forloop.counter }}</td>
                             <td><a href="{% url 'instances' host.0 %}">{{ host.1 }}</a></td>
-                            <td>{% ifequal host.2 1 %}<span class="text-success">{% trans "Active" %}</span>{% endifequal %}
-                                {% ifequal host.2 2 %}<span class="text-danger">{% trans "Not Active" %}</span>{% endifequal %}
-                                {% ifequal host.2 3 %}<span class="text-danger">{% trans "Connection Failed" %}</span>{% endifequal %}
+                            <td>{% ifequal host.2 1 %}<span class="text-success">{% trans "Active" %}
+                                </span>{% endifequal %}
+                                {% ifequal host.2 2 %}<span class="text-danger">{% trans "Not Active" %}
+                                    </span>{% endifequal %}
+                                {% ifequal host.2 3 %}<span class="text-danger">{% trans "Connection Failed" %}
+                                    </span>{% endifequal %}
                             </td>
                             <td style="text-align:center;">{{ host.3 }}</td>
                             <td style="text-align:center;">{{ host.4|filesizeformat }}</td>
@@ -57,10 +60,14 @@
                             {% for vm, info in vms.items %}
                                 <tr data-status="{{ info.0 }}">
                                     <td></td>
-                                    <td>{{ forloop.counter }} &emsp; <a href="{% url 'instance' host.0 vm %}">{{ vm }}</a></td>
-                                    <td>{% ifequal info.0 1 %}<span class="text-success">{% trans "Running" %}</span>{% endifequal %}
-                                        {% ifequal info.0 3 %}<span class="text-warning">{% trans "Suspend" %}</span>{% endifequal %}
-                                        {% ifequal info.0 5 %}<span class="text-danger">{% trans "Shutoff" %}</span>{% endifequal %}
+                                    <td>{{ forloop.counter }} &emsp; <a
+                                            href="{% url 'instance' host.0 vm %}">{{ vm }}</a></td>
+                                    <td>{% ifequal info.0 1 %}<span class="text-success">{% trans "Running" %}
+                                        </span>{% endifequal %}
+                                        {% ifequal info.0 3 %}<span class="text-warning">{% trans "Suspend" %}
+                                            </span>{% endifequal %}
+                                        {% ifequal info.0 5 %}<span class="text-danger">{% trans "Shutoff" %}
+                                            </span>{% endifequal %}
                                     </td>
                                     <td style="text-align:center;">{{ info.1 }}</td>
                                     <td style="text-align:center;">{{ info.2|filesizeformat }}</td>

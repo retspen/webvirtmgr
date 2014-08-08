@@ -1,5 +1,5 @@
 =========================
-WebVirtMgr panel - v4.8.5
+WebVirtMgr panel - v4.8.6
 =========================
 
 ----------
@@ -7,7 +7,7 @@ Whats new?
 ----------
 
 - Added webvirtmgr to pypi
-- Update Chart.js
+- Updated Chart.js
 - Added page interfaces
 - Added novnc proxy supporting new websockify versions (Thanks: `casell <https://github.com/casell>`_)
 - Added support CEPH

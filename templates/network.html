@@ -16,39 +16,52 @@
             <div class="row show-grid">
                 <div class="col-md-6">
                     <p>{% trans "Pool name" %}</p>
+
                     <p>{% trans "Device pool" %}</p>
+
                     <p>{% trans "State" %}</p>
+
                     <p>{% trans "Autostart" %}</p>
                 </div>
                 <div class="col-md-6">
                     <p>
                         [{% for net in networks %}
-                            {% ifequal net pool %}
-                                <b>{{ net }}</b>
-                            {% else %}
-                                <a href="{% url 'network' host_id net %}">{{ net }}</a>
-                            {% endifequal %}
-                        {% endfor %} ]
+                        {% ifequal net pool %}
+                            <b>{{ net }}</b>
+                        {% else %}
+                            <a href="{% url 'network' host_id net %}">{{ net }}</a>
+                        {% endifequal %}
+                    {% endfor %} ]
                     </p>
+
                     <p>{{ device }}</p>
+
                     <p>
-                        <form action="" method="post">{% csrf_token %}
-                            {% ifequal state 0 %}
-                                <input type="submit" class="btn btn-xs btn-default" name="start" value="{% trans "Start" %}">
-                                <input type="submit" class="btn btn-xs btn-default" name="delete" value="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
-                            {% else %}
-                                <input type="submit" class="btn btn-xs btn-default" name="stop" value="{% trans "Stop" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
-                            {% endifequal %}
-                        </form>
+
+                    <form action="" method="post">{% csrf_token %}
+                        {% ifequal state 0 %}
+                            <input type="submit" class="btn btn-xs btn-default" name="start"
+                                   value="{% trans "Start" %}">
+                            <input type="submit" class="btn btn-xs btn-default" name="delete"
+                                   value="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?" %}')">
+                        {% else %}
+                            <input type="submit" class="btn btn-xs btn-default" name="stop" value="{% trans "Stop" %}"
+                                   onclick="return confirm('{% trans "Are you sure?" %}')">
+                        {% endifequal %}
+                    </form>
                     </p>
                     <p>
-                        <form action="" method="post">{% csrf_token %}
-                            {% ifequal autostart 0 %}
-                                <input type="submit" class="btn btn-xs btn-default" name="set_autostart" value="{% trans "Enable" %}">
-                            {% else %}
-                                <input type="submit" class="btn btn-xs btn-default" name="unset_autostart" onclick="return confirm('{% trans "Are you sure?" %}')" value="{% trans "Disable" %}">
-                            {% endifequal %}
-                        </form>
+
+                    <form action="" method="post">{% csrf_token %}
+                        {% ifequal autostart 0 %}
+                            <input type="submit" class="btn btn-xs btn-default" name="set_autostart"
+                                   value="{% trans "Enable" %}">
+                        {% else %}
+                            <input type="submit" class="btn btn-xs btn-default" name="unset_autostart"
+                                   onclick="return confirm('{% trans "Are you sure?" %}')"
+                                   value="{% trans "Disable" %}">
+                        {% endifequal %}
+                    </form>
                     </p>
                 </div>
             </div>
@@ -57,7 +70,9 @@
             <div class="row show-grid">
                 <div class="col-md-6">
                     <p>{% trans "IPv4 Forwarding" %}</p>
+
                     <p>{% trans "Network" %}</p>
+
                     <p>{% trans "DHCP" %}</p>
                     {% if ipv4_dhcp_range %}
                         <p>{% trans "Start" %}</p>
@@ -66,20 +81,22 @@
                 </div>
                 <div class="col-md-6">
                     <p>
-                       {% ifequal ipv4_forward.0 'nat' %}
-                           {% trans "NAT" %}
-                       {% endifequal %}
-                       {% ifequal ipv4_forward.0 'route' %}
-                           {% trans "ROUTE" %}
-                       {% endifequal %}
-                       {% ifequal ipv4_forward.0 'bridge' %}
-                           {% trans "BRIDGE" %}
-                       {% endifequal %}
-                       {% if not ipv4_forward.0 %}
-                           {% trans "ISOLATE" %}
-                       {% endif %}
+                        {% ifequal ipv4_forward.0 'nat' %}
+                            {% trans "NAT" %}
+                        {% endifequal %}
+                        {% ifequal ipv4_forward.0 'route' %}
+                            {% trans "ROUTE" %}
+                        {% endifequal %}
+                        {% ifequal ipv4_forward.0 'bridge' %}
+                            {% trans "BRIDGE" %}
+                        {% endifequal %}
+                        {% if not ipv4_forward.0 %}
+                            {% trans "ISOLATE" %}
+                        {% endif %}
                     </p>
+
                     <p>{{ ipv4_network }}</p>
+
                     <p>
                         {% if ipv4_dhcp_range %}
                             <span class="text-success">{% trans "ON" %}</span>
@@ -104,35 +121,36 @@
                                 Show
                             </a>
                         </div>
-                    <div id="collapseOne" class="panel-collapse collapse">
-                        <div class="panel-body">
-                            <div class="input-append form-inline pull-right" style="">
-                                <div class="form-group">
-                                    <input type="text" class="form-control" id="filter_input" style="margin-top:-28px;">
+                        <div id="collapseOne" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="input-append form-inline pull-right" style="">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" id="filter_input"
+                                               style="margin-top:-28px;">
+                                    </div>
+                                    <input type="button" class="btn btn-default" id="filter_button" value="Filter">
+                                    <button type="button" class="btn btn-default" id="filter_clear">Clear</button>
                                 </div>
-                                <input type="button" class="btn btn-default" id="filter_button" value="Filter">
-                                <button type="button" class="btn btn-default" id="filter_clear">Clear</button>
-                            </div>
-                            <table class="table table-hover">
-                                <thead>
+                                <table class="table table-hover">
+                                    <thead>
                                     <tr>
                                         <th style="text-align: center">{% trans "Address" %}</th>
                                         <th style="text-align: center">{% trans "MAC" %}</th>
                                     </tr>
-                                </thead>
-                                <tbody style="text-align: center">
+                                    </thead>
+                                    <tbody style="text-align: center">
                                     {% for fix in fixed_address %}
                                         <tr>
                                             <td>{{ fix.host }}</td>
                                             <td>{{ fix.mac }}</td>
                                         </tr>
                                     {% endfor %}
-                                </tbody>
-                            </table>
-                             </div>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
-                  </div>
+                </div>
                 </div>
             {% endif %}
         {% endif %}
@@ -140,18 +158,18 @@
 {% endblock %}
 {% block script %}
     <script type="text/javascript">
-        $.expr[':'].Contains = $.expr.createPseudo(function(arg) {
-        return function( elem ) {
-            return $(elem).text().toUpperCase().indexOf(arg.toUpperCase()) >= 0;
-        };
+        $.expr[':'].Contains = $.expr.createPseudo(function (arg) {
+            return function (elem) {
+                return $(elem).text().toUpperCase().indexOf(arg.toUpperCase()) >= 0;
+            };
         });
 
-        $(document).ready(function() {
+        $(document).ready(function () {
             // add event button labeled "filter"
-            $('#filter_button').click(function(event) {
+            $('#filter_button').click(function (event) {
                 // get value
                 var filter_val = $('#filter_input').val();
-                if(filter_val == '') {
+                if (filter_val == '') {
                     // show all
                     $('tbody tr').show();
                 } else {
@@ -163,14 +181,14 @@
             });
 
             // add event button labeled "clear"
-            $('#filter_clear').click(function(event) {
+            $('#filter_clear').click(function (event) {
                 $('#filter_input').val('');
                 $('#filter_button').click();
             });
 
             // trigger filter when enter key pressed
-            $('#filter_input').keyup(function(event){
-                if(event.keyCode == 13){
+            $('#filter_input').keyup(function (event) {
+                if (event.keyCode == 13) {
                     $('#filter_button').click();
                 }
             });

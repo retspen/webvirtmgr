@@ -1,62 +1,62 @@
 [
-  {
-    "model": "create.Flavor",
-    "pk": 1,
-    "fields": {
-      "label": "micro",
-      "vcpu": "1",
-      "memory":  "512",
-      "disk":  "20"
+    {
+        "model": "create.Flavor",
+        "pk": 1,
+        "fields": {
+            "label": "micro",
+            "vcpu": "1",
+            "memory": "512",
+            "disk": "20"
+        }
+    },
+    {
+        "model": "create.Flavor",
+        "pk": 2,
+        "fields": {
+            "label": "mini",
+            "vcpu": "2",
+            "memory": "1024",
+            "disk": "30"
+        }
+    },
+    {
+        "model": "create.Flavor",
+        "pk": 3,
+        "fields": {
+            "label": "small",
+            "vcpu": "2",
+            "memory": "2048",
+            "disk": "40"
+        }
+    },
+    {
+        "model": "create.Flavor",
+        "pk": 4,
+        "fields": {
+            "label": "medium",
+            "vcpu": "2",
+            "memory": "4096",
+            "disk": "60"
+        }
+    },
+    {
+        "model": "create.Flavor",
+        "pk": 5,
+        "fields": {
+            "label": "large",
+            "vcpu": "4",
+            "memory": "8192",
+            "disk": "80"
+        }
+    },
+    {
+        "model": "create.Flavor",
+        "pk": 6,
+        "fields": {
+            "label": "xlarge",
+            "vcpu": "8",
+            "memory": "16384",
+            "disk": "160"
+        }
     }
-  },
-  {
-    "model": "create.Flavor",
-    "pk": 2,
-    "fields": {
-      "label": "mini",
-      "vcpu": "2",
-      "memory":  "1024",
-      "disk":  "30"
-    }
-  },
-  {
-    "model": "create.Flavor",
-    "pk": 3,
-    "fields": {
-      "label": "small",
-      "vcpu": "2",
-      "memory":  "2048",
-      "disk":  "40"
-    }
-  },
-  {
-    "model": "create.Flavor",
-    "pk": 4,
-    "fields": {
-      "label": "medium",
-      "vcpu": "2",
-      "memory":  "4096",
-      "disk":  "60"
-    }
-  },
-  {
-    "model": "create.Flavor",
-    "pk": 5,
-    "fields": {
-      "label": "large",
-      "vcpu": "4",
-      "memory":  "8192",
-      "disk":  "80"
-    }
-  },
-  {
-    "model": "create.Flavor",
-    "pk": 6,
-    "fields": {
-      "label": "xlarge",
-      "vcpu": "8",
-      "memory":  "16384",
-      "disk":  "160"
-    }
-  }
 ]

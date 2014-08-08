@@ -35,7 +35,7 @@ import os
 from setuptools import setup, find_packages
 
 
-__version__ = "4.8.5"
+__version__ = "4.8.6"
 
 
 def read(fname):
@@ -70,8 +70,8 @@ setup(
         'lockfile>=0.9',
     ],
     # mark test target to require extras.
-    extras_require = {
-        'ldap':  ["django-auth-ldap>=1.2.0"]
+    extras_require={
+        'ldap': ["django-auth-ldap>=1.2.0"]
     },
     scripts=[
         'manage.py',

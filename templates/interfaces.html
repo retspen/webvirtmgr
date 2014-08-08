@@ -20,19 +20,22 @@
             {% for iface in ifaces_all %}
                 <div class="panel {% ifequal iface.state 1 %}panel-success{% else %}panel-danger{% endifequal %} panel-data">
                     <div class="panel-heading">
-                        <h3 class="panel-title"><a href="{% url 'interface' host_id iface.name %}">{{ iface.name }}</a></h3>
+                        <h3 class="panel-title"><a href="{% url 'interface' host_id iface.name %}">{{ iface.name }}</a>
+                        </h3>
                     </div>
                     <div class="panel-body">
                         <p>{% trans "Type" %}: {{ iface.type }}</p>
+
                         <p>{% trans "MAC" %}: {{ iface.mac }}</p>
                     </div>
                 </div>
             {% endfor %}
         {% endif %}
     </div>
-    
+
     <!-- Modal Secret -->
-    <div class="modal fade" id="AddInterface" tabindex="-1" role="dialog" aria-labelledby="AddInterface" aria-hidden="true">
+    <div class="modal fade" id="AddInterface" tabindex="-1" role="dialog" aria-labelledby="AddInterface"
+         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -43,12 +46,15 @@
                     <form class="form-horizontal" method="post" action="" role="form">{% csrf_token %}
                         <div class="form-group">
                             <label class="col-sm-3 control-label">{% trans "Name" %}</label>
+
                             <div class="col-sm-6">
-                                <input type="text" name="name" class="form-control" placeholder="br0" maxlength="10" required pattern="[a-z0-9\. ]+" />
+                                <input type="text" name="name" class="form-control" placeholder="br0" maxlength="10"
+                                       required pattern="[a-z0-9\. ]+"/>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-3 control-label">{% trans "Start mode" %}</label>
+
                             <div class="col-sm-6">
                                 <select name="start_mode" class="form-control">
                                     <option value="none">{% trans "none" %}</option>
@@ -59,6 +65,7 @@
                         </div>
                         <div class="form-group">
                             <label class="col-sm-3 control-label">{% trans "Device" %}</label>
+
                             <div class="col-sm-6">
                                 <select name="netdev" class="form-control">
                                     {% for dev in netdevs %}
@@ -69,6 +76,7 @@
                         </div>
                         <div class="form-group">
                             <label class="col-sm-3 control-label">{% trans "Type" %}</label>
+
                             <div class="col-sm-6">
                                 <select name="itype" class="form-control" id="itype">
                                     <option value="bridge">{% trans "bridge" %}</option>
@@ -78,6 +86,7 @@
                         </div>
                         <div class="form-group bridge_name_form_group">
                             <label class="col-sm-3 control-label">{% trans "STP" %}</label>
+
                             <div class="col-sm-6">
                                 <select name="stp" class="form-control">
                                     <option value="on">{% trans "on" %}</option>
@@ -87,8 +96,10 @@
                         </div>
                         <div class="form-group bridge_name_form_group">
                             <label class="col-sm-3 control-label">{% trans "Delay" %}</label>
+
                             <div class="col-sm-6">
-                                <input type="text" name="delay" class="form-control" value="0" maxlength="3" required pattern="[0-9]+" />
+                                <input type="text" name="delay" class="form-control" value="0" maxlength="3" required
+                                       pattern="[0-9]+"/>
                             </div>
                         </div>
                         <div class="tabbable">
@@ -103,6 +114,7 @@
                             <div class="tab-pane active" id="1">
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">{% trans "IPv4 Mode" %}</label>
+
                                     <div class="col-sm-6">
                                         <select name="ipv4_type" class="form-control" id="ipv4">
                                             <option value="dhcp">{% trans "DHCP" %}</option>
@@ -110,23 +122,28 @@
                                             <option value="none">{% trans "No configuration" %}</option>
                                         </select>
                                     </div>
-                                </div>                           
+                                </div>
                                 <div class="form-group static_ipv4_form_group">
                                     <label class="col-sm-3 control-label">{% trans "IPv4 Address" %}</label>
+
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control" name="ipv4_addr" maxlength="19" pattern="[0-9\.\/]+">
+                                        <input type="text" class="form-control" name="ipv4_addr" maxlength="19"
+                                               pattern="[0-9\.\/]+">
                                     </div>
                                 </div>
                                 <div class="form-group static_ipv4_form_group">
                                     <label class="col-sm-3 control-label">{% trans "IPv4 Gateway" %}</label>
+
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control" name="ipv4_gw" maxlength="16" pattern="[0-9\.]+">
+                                        <input type="text" class="form-control" name="ipv4_gw" maxlength="16"
+                                               pattern="[0-9\.]+">
                                     </div>
                                 </div>
                             </div>
                             <div class="tab-pane" id="2">
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">{% trans "IPv6 Mode" %}</label>
+
                                     <div class="col-sm-6">
                                         <select name="ipv6_type" class="form-control" id="ipv6">
                                             <option value="none">{% trans "No configuration" %}</option>
@@ -134,50 +151,57 @@
                                             <option value="static">{% trans "Static" %}</option>
                                         </select>
                                     </div>
-                                </div>                           
+                                </div>
                                 <div class="form-group static_ipv6_form_group">
                                     <label class="col-sm-3 control-label">{% trans "IPv6 Address" %}</label>
+
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control" name="ipv6_addr" maxlength="100" pattern="[0-9a-f\:\/]+">
+                                        <input type="text" class="form-control" name="ipv6_addr" maxlength="100"
+                                               pattern="[0-9a-f\:\/]+">
                                     </div>
                                 </div>
                                 <div class="form-group static_ipv6_form_group">
                                     <label class="col-sm-3 control-label">{% trans "IPv6 Gateway" %}</label>
+
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control" name="ipv6_gw" maxlength="100" pattern="[0-9a-f\:]+">
+                                        <input type="text" class="form-control" name="ipv6_gw" maxlength="100"
+                                               pattern="[0-9a-f\:]+">
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+                            <button type="button" class="btn btn-default"
+                                    data-dismiss="modal">{% trans "Close" %}</button>
                             <button type="submit" class="btn btn-primary" name="create">{% trans "Create" %}</button>
                         </div>
                     </form>
                 </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
     </div><!-- /.modal -->
 {% endblock %}
 {% block script %}
     <script>
-        $(document).ready(function() {
-            $('#itype').change(function(eventObject) {
-                if($(this).val() == 'bridge') {
+        $(document).ready(function () {
+            $('#itype').change(function (eventObject) {
+                if ($(this).val() == 'bridge') {
                     $('.bridge_name_form_group').show();
                 } else {
                     $('.bridge_name_form_group').hide();
                 }
             }).change();
-            $('#ipv4').change(function(eventObject) {
-                if($(this).val() == 'static') {
+            $('#ipv4').change(function (eventObject) {
+                if ($(this).val() == 'static') {
                     $('.static_ipv4_form_group').show();
                 } else {
                     $('.static_ipv4_form_group').hide();
                 }
             }).change();
-            $('#ipv6').change(function(eventObject) {
-                if($(this).val() == 'static') {
+            $('#ipv6').change(function (eventObject) {
+                if ($(this).val() == 'static') {
                     $('.static_ipv6_form_group').show();
                 } else {
                     $('.static_ipv6_form_group').hide();

@@ -3,6 +3,7 @@ body {
     color: #333333;
     background-color: #fff;
 }
+
 pre {
     font-size: 12px;
 }
@@ -14,30 +15,36 @@ input[type="radio"], input[type="checkbox"] {
 label input[type="radio"], label input[type="checkbox"] {
     margin: 0;
 }
+
 .navbar-inverse {
-    text-shadow: 0 -1px 0 rgba(0,0,0,.15);
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, .15);
     background-color: #563d7c;
     border-color: #463265;
-    box-shadow: 0 1px 0 rgba(255,255,255,.1);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, .1);
 }
+
 .navbar-inverse .navbar-brand:hover, .navbar-inverse .navbar-brand:focus {
     color: #ffffff;
     background-color: transparent;
 }
+
 .container {
     width: 980px;
     margin-left: auto;
     margin-right: auto;
 }
+
 .page-header {
     margin-top: 0;
 }
+
 .pagehead {
     position: relative;
     margin-bottom: 20px;
     padding-bottom: 20px;
     border-bottom: 1px solid #eee;
 }
+
 .pagehead h1 {
     margin-top: 0;
     margin-bottom: 0;
@@ -45,11 +52,13 @@ label input[type="radio"], label input[type="checkbox"] {
     font-weight: bold;
     line-height: 28px;
 }
+
 .sidebar {
     float: left;
     width: 220px;
     padding: 0;
 }
+
 .sidebar ul .list {
     display: block;
     padding: 8px 10px;
@@ -63,118 +72,145 @@ label input[type="radio"], label input[type="checkbox"] {
     text-overflow: ellipsis;
     cursor: pointer;
 }
+
 .sidebar ul {
     padding-left: 0;
     list-style: none
 }
+
 .sidebar .list.selected {
     color: #fff;
     background: #4183c4;
 }
+
 .sidebar .list:hover {
     color: #777;
     background: #eee;
 }
+
 .main {
     margin-left: 240px;
     padding: 0;
     float: none;
 }
+
 .form-group {
     margin-top: 25px;
 }
+
 .table {
     margin-top: 20px;
 }
-.table thead>tr>th {
+
+.table thead > tr > th {
     vertical-align: bottom;
     border-bottom: 1px solid #ddd;
 }
+
 .panel-success {
     margin-top: 20px;
 }
+
 .panel-danger {
     margin-top: 20px;
 }
+
 .panel-data {
     width: 30%;
     float: left;
     margin-right: 5%;
 }
+
 div.panel:nth-child(3n+4) {
     margin-right: 0
 }
+
 .panel-body:after {
     clear: none;
 }
+
 .well {
     margin-top: 20px;
     text-align: center;
 }
+
 .modal-body {
     padding-left: 10px;
     padding-bottom: 0;
 }
+
 #error {
     text-align: center;
 }
+
 .format-convert {
     display: none;
 }
+
 .inst-btn {
     width: 95px;
     text-align: center;
 }
+
 #lineLegend {
     margin-bottom: 20px;
     padding-left: 25px
 }
+
 .netIN {
-    border-color: rgb(83,191,189);
+    border-color: rgb(83, 191, 189);
     margin: 0.5em;
     border-style: solid;
     border-width: 0 0 0 1em;
     padding: 0 0.3em;
     border-style: solid;
 }
+
 .netOUT {
-    border-color: rgb(151,187,205);
+    border-color: rgb(151, 187, 205);
     margin: 0.5em;
     border-style: solid;
     border-width: 0 0 0 1em;
     padding: 0 0.3em;
     border-style: solid;
 }
+
 .diskRD {
-    border-color: rgb(83,191,189);
+    border-color: rgb(83, 191, 189);
     margin: 0.5em;
     border-style: solid;
     border-width: 0 0 0 1em;
     padding: 0 0.3em;
     border-style: solid;
 }
+
 .diskWR {
-    border-color: rgb(249,134,33);
+    border-color: rgb(249, 134, 33);
     margin: 0.5em;
     border-style: solid;
     border-width: 0 0 0 1em;
     padding: 0 0.3em;
     border-style: solid;
 }
+
 p {
     margin: 10px 10px 10px 10px;
 }
+
 .nav-tabs {
     background-color: #eee;
 }
+
 .nav-btn-act {
     height: 42px;
 }
+
 .tab-inst {
     padding: 15px;
     border: 1px solid #eee;
     border-top: 0;
 }
+
 #xmltextarea {
     font-family: Monaco, Menlo, Consolas, "Courier New", monospace;
     font-size: 12px;

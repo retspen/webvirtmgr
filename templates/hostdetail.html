@@ -14,27 +14,41 @@
             {% endfor %}
         {% endif %}
         <h4>{% trans "Basic details" %}</h4>
+
         <div class="row show-grid">
             <div class="col-md-6">
                 <p>{% trans "Connection" %}</p>
+
                 <p>{% trans "Hostname" %}</p>
+
                 <p>{% trans "Hypervisor" %}</p>
+
                 <p>{% trans "Memory" %}</p>
+
                 <p>{% trans "Logical CPUs" %}</p>
+
                 <p>{% trans "Processor" %}</p>
+
                 <p>{% trans "Architecture" %}</p>
             </div>
             <div class="col-md-6">
                 <p>{{ uri_conn }}</p>
+
                 <p>{{ hostname }}</p>
+
                 <p>{{ hypervisor }}</p>
+
                 <p>{{ host_memory|filesizeformat }}</p>
+
                 <p>{{ logical_cpu }}</p>
+
                 <p>{{ model_cpu }}</p>
+
                 <p>{{ host_arch }}</p>
             </div>
         </div>
         <h4>{% trans "Performance" %}</h4>
+
         <div class="row show-grid">
             <div class="col-md-6">
                 <p>{% trans "CPU usage" %}</p>
@@ -50,26 +64,26 @@
     <script type="text/javascript">
         var cpu_ctx = $("#cpuChart").get(0).getContext("2d");
         var cpuChart = new Chart(cpu_ctx);
-        var cpu_options = { animation : false,
-                            pointDotRadius : 2,
-                            scaleLabel : "<%=value%> %",
-                            scaleOverride: true,
-                            scaleSteps: 10,
-                            scaleStepWidth: 10,
-                            scaleStartValue: 0
-                          }
+        var cpu_options = { animation: false,
+            pointDotRadius: 2,
+            scaleLabel: "<%=value%> %",
+            scaleOverride: true,
+            scaleSteps: 10,
+            scaleStepWidth: 10,
+            scaleStartValue: 0
+        }
 
         var mem_ctx = $("#memoryChart").get(0).getContext("2d");
         var memChart = new Chart(mem_ctx);
-        var mem_options = {animation : false, pointDotRadius : 2, scaleLabel : "<%=value%> Mb"}
+        var mem_options = {animation: false, pointDotRadius: 2, scaleLabel: "<%=value%> Mb"}
 
-        function hostusage(){
-            $.getJSON('{%  url 'hostusage' host_id %}', function(data) {
+        function hostusage() {
+            $.getJSON('{%  url 'hostusage' host_id %}', function (data) {
                 cpuChart.Line(data['cpu'], cpu_options);
                 memChart.Line(data['memory'], mem_options);
             });
         }
-        $(function() {
+        $(function () {
             window.setInterval('hostusage()', {{ time_refresh }});
         });
     </script>

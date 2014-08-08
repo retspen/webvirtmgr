@@ -12,15 +12,17 @@ CERT = DIR_PATH + '/cert.pem'
 if ROOT_PATH not in sys.path:
     sys.path.append(ROOT_PATH)
 # if VENV_PATH not in sys.path:
-#     sys.path.append(VENV_PATH)
+# sys.path.append(VENV_PATH)
 
 import Cookie
 import socket
 import django
 from webvirtmgr.settings import WS_PORT
 from webvirtmgr.settings import WS_HOST
+
 try:
     from websockify import WebSocketProxy
+
     try:
         from websockify import ProxyRequestHandler
     except ImportError:
@@ -83,6 +85,7 @@ class CompatibilityMixIn(object):
                 tsock.close()
                 self.vmsg("%s:%s: Target closed" % (host, port))
             raise
+
 
 if USE_HANDLER:
     class NovaProxyRequestHandler(ProxyRequestHandler, CompatibilityMixIn):
