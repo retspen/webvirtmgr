@@ -163,8 +163,8 @@ def instusage(request, host_id, vname):
                     ]
                 }
 
-            json_blk.append({'dev': blk['dev'], 'data': disk})
-            cookie_blk[blk['dev']] = [datasets_rd, datasets_wr]
+                json_blk.append({'dev': blk['dev'], 'data': disk})
+                cookie_blk[blk['dev']] = [datasets_rd, datasets_wr]
 
         for net in net_usage:
             if cookies['net'] == '{}' or not cookies['net'] or not net_usage:
@@ -427,7 +427,8 @@ def instance(request, host_id, vname):
                 image = name + "-clone" + "." + suffix
             else:
                 image = disk['image'] + "-clone"
-            clone_disk.append({'dev': disk['dev'], 'storage': disk['storage'], 'image': image, 'format': disk['format']})
+            clone_disk.append(
+                {'dev': disk['dev'], 'storage': disk['storage'], 'image': image, 'format': disk['format']})
         return clone_disk
 
     errors = []

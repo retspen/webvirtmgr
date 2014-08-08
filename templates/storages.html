@@ -51,7 +51,9 @@
                     </div>
                     <div class="panel-body">
                         <p>{% trans "Type" %}: {{ pool.type|upper }}</p>
+
                         <p>{% trans "Size" %}: {{ pool.size|filesizeformat }}</p>
+
                         <p>{% trans "Volumes" %}: {{ pool.volumes }}</p>
                     </div>
                 </div>
@@ -60,7 +62,8 @@
     </div>
 
     <!-- Modal Storage pool -->
-    <div class="modal fade" id="AddStgPool" tabindex="-1" role="dialog" aria-labelledby="AddStgPoolLabel" aria-hidden="true">
+    <div class="modal fade" id="AddStgPool" tabindex="-1" role="dialog" aria-labelledby="AddStgPoolLabel"
+         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -82,6 +85,7 @@
                         <form class="form-horizontal" method="post" action="" role="form">{% csrf_token %}
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">{% trans "Type" %}</label>
+
                                 <div class="col-sm-6">
                                     <input type="text" class="form-control" name="stg_type" value="dir" disabled>
                                     <input type="hidden" name="stg_type" value="dir">
@@ -89,19 +93,25 @@
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">{% trans "Name" %}</label>
+
                                 <div class="col-sm-6">
-                                    <input type="text" class="form-control" name="name" placeholder="default" maxlength="20" required pattern="[a-zA-Z0-9\.\-_]+">
+                                    <input type="text" class="form-control" name="name" placeholder="default"
+                                           maxlength="20" required pattern="[a-zA-Z0-9\.\-_]+">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">{% trans "Path" %}</label>
+
                                 <div class="col-sm-6">
-                                    <input type="text" name="target" class="form-control" value="/var/lib/libvirt/images" required pattern="[a-zA-Z0-9\/\-_]+">
+                                    <input type="text" name="target" class="form-control"
+                                           value="/var/lib/libvirt/images" required pattern="[a-zA-Z0-9\/\-_]+">
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-                                <button type="submit" class="btn btn-primary" name="create">{% trans "Create" %}</button>
+                                <button type="button" class="btn btn-default"
+                                        data-dismiss="modal">{% trans "Close" %}</button>
+                                <button type="submit" class="btn btn-primary"
+                                        name="create">{% trans "Create" %}</button>
                             </div>
                         </form>
                     </div>
@@ -109,6 +119,7 @@
                         <form class="form-horizontal" method="post" action="" role="form">{% csrf_token %}
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">{% trans "Type" %}</label>
+
                                 <div class="col-sm-6">
                                     <input type="text" class="form-control" name="stg_type" value="logical" disabled>
                                     <input type="hidden" name="stg_type" value="logical">
@@ -116,19 +127,25 @@
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">{% trans "Name" %}</label>
+
                                 <div class="col-sm-6">
-                                    <input type="text" class="form-control" name="name" placeholder="default" maxlength="20" required pattern="[a-zA-Z0-9\.\-\_]+">
+                                    <input type="text" class="form-control" name="name" placeholder="default"
+                                           maxlength="20" required pattern="[a-zA-Z0-9\.\-\_]+">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">{% trans "Device" %}</label>
+
                                 <div class="col-sm-6">
-                                    <input type="text" class="form-control" name="source" value="/dev/sdb" required pattern="[a-z0-9\/]+">
+                                    <input type="text" class="form-control" name="source" value="/dev/sdb" required
+                                           pattern="[a-z0-9\/]+">
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-                                <button type="submit" class="btn btn-primary" name="create">{% trans "Create" %}</button>
+                                <button type="button" class="btn btn-default"
+                                        data-dismiss="modal">{% trans "Close" %}</button>
+                                <button type="submit" class="btn btn-primary"
+                                        name="create">{% trans "Create" %}</button>
                             </div>
                         </form>
                     </div>
@@ -136,6 +153,7 @@
                         <form class="form-horizontal" method="post" action="" role="form">{% csrf_token %}
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">{% trans "Type" %}</label>
+
                                 <div class="col-sm-6">
                                     <input type="text" class="form-control" name="stg_type" value="rbd" disabled>
                                     <input type="hidden" name="stg_type" value="rbd">
@@ -143,46 +161,58 @@
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">{% trans "Name" %}</label>
+
                                 <div class="col-sm-6">
-                                    <input type="text" class="form-control" name="name" placeholder="rbdpool" maxlength="20" required pattern="[a-zA-Z0-9\.\-_]+">
+                                    <input type="text" class="form-control" name="name" placeholder="rbdpool"
+                                           maxlength="20" required pattern="[a-zA-Z0-9\.\-_]+">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">{% trans "Ceph User" %}</label>
+
                                 <div class="col-sm-6">
-                                    <input type="text" class="form-control" name="ceph_user" placeholder="libvirt" maxlength="20" required pattern="[a-zA-Z0-9\.\-_]+">
+                                    <input type="text" class="form-control" name="ceph_user" placeholder="libvirt"
+                                           maxlength="20" required pattern="[a-zA-Z0-9\.\-_]+">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">{% trans "Ceph Pool" %}</label>
+
                                 <div class="col-sm-6">
-                                    <input type="text" class="form-control" name="ceph_pool" placeholder="libvirt-pool" maxlength="20" required pattern="[a-zA-Z0-9\.\-_]+">
+                                    <input type="text" class="form-control" name="ceph_pool" placeholder="libvirt-pool"
+                                           maxlength="20" required pattern="[a-zA-Z0-9\.\-_]+">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">{% trans "Ceph Host" %}</label>
+
                                 <div class="col-sm-6">
-                                    <input type="text" class="form-control" name="ceph_host" placeholder="mon0.ceph.host" maxlength="20" required pattern="[a-zA-Z0-9\.\-_]+">
+                                    <input type="text" class="form-control" name="ceph_host"
+                                           placeholder="mon0.ceph.host" maxlength="20" required
+                                           pattern="[a-zA-Z0-9\.\-_]+">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">{% trans "Secrets" %}</label>
+
                                 <div class="col-sm-6">
                                     <select name="secret" class="form-control">
-                                    {% if secrets %}
-                                        {% for secret in secrets %}
-                                            <option value="{{ secret }}">{{ secret }}</option>
-                                        {% endfor %}
-                                    {% else %}
-                                        <option value="None">{% trans "None" %}</option>
-                                    {% endif %}
+                                        {% if secrets %}
+                                            {% for secret in secrets %}
+                                                <option value="{{ secret }}">{{ secret }}</option>
+                                            {% endfor %}
+                                        {% else %}
+                                            <option value="None">{% trans "None" %}</option>
+                                        {% endif %}
                                     </select>
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+                                <button type="button" class="btn btn-default"
+                                        data-dismiss="modal">{% trans "Close" %}</button>
                                 {% if secrets %}
-                                    <button type="submit" class="btn btn-primary" name="create">{% trans "Create" %}</button>
+                                    <button type="submit" class="btn btn-primary"
+                                            name="create">{% trans "Create" %}</button>
                                 {% else %}
                                     <button class="btn btn-primary disabled" name="create">{% trans "Create" %}</button>
                                 {% endif %}
@@ -193,6 +223,7 @@
                         <form class="form-horizontal" method="post" action="" role="form">{% csrf_token %}
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">{% trans "Name" %}</label>
+
                                 <div class="col-sm-6">
                                     <input type="text" class="form-control" name="name" value="iso" disabled>
                                     <input type="hidden" name="name" value="iso">
@@ -201,18 +232,24 @@
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">{% trans "Path" %}</label>
+
                                 <div class="col-sm-6">
-                                    <input type="text" class="form-control" name="target" value="/var/www/webvirtmgr/images" required pattern="[a-zA-Z0-9\/\-\_]+">
+                                    <input type="text" class="form-control" name="target"
+                                           value="/var/www/webvirtmgr/images" required pattern="[a-zA-Z0-9\/\-\_]+">
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-                                <button type="submit" class="btn btn-primary" name="create">{% trans "Create" %}</button>
+                                <button type="button" class="btn btn-default"
+                                        data-dismiss="modal">{% trans "Close" %}</button>
+                                <button type="submit" class="btn btn-primary"
+                                        name="create">{% trans "Create" %}</button>
                             </div>
                         </form>
                     </div>
                 </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
     </div><!-- /.modal -->
 {% endblock %}

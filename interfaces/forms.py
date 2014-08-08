@@ -6,7 +6,8 @@ from django import forms
 class AddInterface(forms.Form):
     name = forms.CharField(max_length=10, required=True)
     itype = forms.ChoiceField(required=True, choices=(('bridge', 'bridge'), ('ethernet', 'ethernet')))
-    start_mode = forms.ChoiceField(required=True, choices=(('none', 'none'), ('onboot', 'onboot'), ('hotplug', 'hotplug')))
+    start_mode = forms.ChoiceField(required=True,
+                                   choices=(('none', 'none'), ('onboot', 'onboot'), ('hotplug', 'hotplug')))
     netdev = forms.CharField(max_length=15, required=True)
     ipv4_type = forms.ChoiceField(required=True, choices=(('dhcp', 'dhcp'), ('static', 'static'), ('none', 'none')))
     ipv4_addr = forms.CharField(max_length=18, required=False)

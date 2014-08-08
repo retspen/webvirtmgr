@@ -22,7 +22,8 @@
             <ul class="nav navbar-nav">
                 {% if request.user.is_staff %}
                 <li>
-                       <a href="{% url 'infrastructure' %}" title="{% trans "Show all host and vm's" %}">{% trans "Infrastructure" %}</a>
+                    <a href="{% url 'infrastructure' %}"
+                       title="{% trans "Show all host and vm's" %}">{% trans "Infrastructure" %}</a>
                 </li>
                 {% endif %}
             </ul>

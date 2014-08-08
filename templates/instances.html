@@ -27,10 +27,11 @@
                 <tbody>
                 {% for inst in instances %}
                     <tr id="{{ inst.name }}">
-                        <td><a href="{% url 'instance' host_id inst.name %}"><i class="icon-th-large"></i> {{ inst.name }}</a></td>
+                        <td><a href="{% url 'instance' host_id inst.name %}"><i
+                                class="icon-th-large"></i> {{ inst.name }}</a></td>
                         <td>{% ifequal inst.status 1 %}
-                                <span class="text-success">{% trans "Running" %}</span>
-                            {% endifequal %}
+                            <span class="text-success">{% trans "Running" %}</span>
+                        {% endifequal %}
                             {% ifequal inst.status 5 %}
                                 {% ifequal inst.has_managed_save_image 1 %}
                                     <span class="text-warning">{% trans "Saved" %}</span>
@@ -46,7 +47,7 @@
                         <td>{{ inst.memory }}{% trans "MB" %}</td>
                         <td>
                             <form action="" method="post">{% csrf_token %}
-                                <input type="hidden" name="name" value="{{ inst.name }}" />
+                                <input type="hidden" name="name" value="{{ inst.name }}"/>
                                 {% ifequal inst.status 5 %}
                                     <button class="btn btn-sm btn-default" type="submit" name="start" title="Start">
                                         <span class="glyphicon glyphicon-play"></span>
@@ -58,7 +59,8 @@
                                         <span class="glyphicon glyphicon-download-alt"></span>
                                     </button>
                                     {% ifequal inst.has_managed_save_image 1 %}
-                                        <button class="btn btn-sm btn-default" type="submit" name="deletesaveimage" title="{% trans "Delete Save Image" %}">
+                                        <button class="btn btn-sm btn-default" type="submit" name="deletesaveimage"
+                                                title="{% trans "Delete Save Image" %}">
                                             <span class="glyphicon glyphicon-remove"></span>
                                         </button>
                                     {% else %}
@@ -66,7 +68,8 @@
                                             <span class="glyphicon glyphicon-off"></span>
                                         </button>
                                     {% endifequal %}
-                                    <button class="btn btn-sm btn-default disabled" title="{% trans "Force Shutdown" %}">
+                                    <button class="btn btn-sm btn-default disabled"
+                                            title="{% trans "Force Shutdown" %}">
                                         <span class="glyphicon glyphicon-stop"></span>
                                     </button>
                                     <button class="btn btn-sm btn-default disabled" title="{% trans "VNC" %}">
@@ -74,19 +77,22 @@
                                     </button>
                                 {% endifequal %}
                                 {% ifequal inst.status 3 %}
-                                    <button class="btn btn-sm btn-default" type="submit" name="resume" title="{% trans "Resume" %}">
+                                    <button class="btn btn-sm btn-default" type="submit" name="resume"
+                                            title="{% trans "Resume" %}">
                                         <span class="glyphicon glyphicon-play"></span>
                                     </button>
                                     <button class="btn btn-sm btn-default disabled" title="{% trans "Suspend" %}">
                                         <span class="glyphicon glyphicon-pause"></span>
                                     </button>
-                                    <button class="btn btn-sm btn-default" type="submit" name="managedsave" title="{% trans "Save" %}">
+                                    <button class="btn btn-sm btn-default" type="submit" name="managedsave"
+                                            title="{% trans "Save" %}">
                                         <span class="glyphicon glyphicon-download-alt"></span>
                                     </button>
                                     <button class="btn btn-sm btn-default disabled" title="{% trans "Shutdown" %}">
                                         <span class="glyphicon glyphicon-off"></span>
                                     </button>
-                                    <button class="btn btn-sm btn-default disabled" title="{% trans "Force Shutdown" %}">
+                                    <button class="btn btn-sm btn-default disabled"
+                                            title="{% trans "Force Shutdown" %}">
                                         <span class="glyphicon glyphicon-stop"></span>
                                     </button>
                                     <button class="btn btn-sm btn-default disabled" title="{% trans "VNC" %}">
@@ -97,19 +103,25 @@
                                     <button class="btn btn-sm btn-default disabled" title="{% trans "Start" %}">
                                         <span class="glyphicon glyphicon-play"></span>
                                     </button>
-                                    <button class="btn btn-sm btn-default" type="submit" name="suspend" title="{% trans "Suspend" %}">
+                                    <button class="btn btn-sm btn-default" type="submit" name="suspend"
+                                            title="{% trans "Suspend" %}">
                                         <span class="glyphicon glyphicon-pause"></span>
                                     </button>
-                                    <button class="btn btn-sm btn-default" type="submit" name="managedsave" title="{% trans "Save" %}">
+                                    <button class="btn btn-sm btn-default" type="submit" name="managedsave"
+                                            title="{% trans "Save" %}">
                                         <span class="glyphicon glyphicon-download-alt"></span>
                                     </button>
-                                    <button class="btn btn-sm btn-default" type="submit" name="shutdown" title="{% trans "Shutdown" %}">
+                                    <button class="btn btn-sm btn-default" type="submit" name="shutdown"
+                                            title="{% trans "Shutdown" %}">
                                         <span class="glyphicon glyphicon-off"></span>
                                     </button>
-                                    <button class="btn btn-sm btn-default" type="submit" name="destroy" title="{% trans "Force Shutdown" %}" onclick="return confirm('Are you sure?')">
+                                    <button class="btn btn-sm btn-default" type="submit" name="destroy"
+                                            title="{% trans "Force Shutdown" %}"
+                                            onclick="return confirm('Are you sure?')">
                                         <span class="glyphicon glyphicon-stop"></span>
                                     </button>
-                                    <a href="#" class="btn btn-sm btn-default" onclick='open_vnc("{{ host_id }}-{{ inst.uuid }}")' title="{% trans "VNC" %}">
+                                    <a href="#" class="btn btn-sm btn-default"
+                                       onclick='open_vnc("{{ host_id }}-{{ inst.uuid }}")' title="{% trans "VNC" %}">
                                         <span class="glyphicon glyphicon-align-justify"></span>
                                     </a>
                                 {% endifequal %}
@@ -128,112 +140,112 @@
 {% endblock %}
 {% block script %}
     <script type="text/javascript">
-        function status () {
-            $.getJSON('{% url 'insts_status' host_id %}', function(data) {
-                for(var i = 0; i < data.length; i++){
+        function status() {
+            $.getJSON('{% url 'insts_status' host_id %}', function (data) {
+                for (var i = 0; i < data.length; i++) {
                     var elem = '#' + data[i]['name']
-                    if(data[i]['status'] === 1) {
-                        if(data[i]['dump'] === 1) {
+                    if (data[i]['status'] === 1) {
+                        if (data[i]['dump'] === 1) {
                             var btn = "<button class='btn btn-sm btn-default' type='submit' name='deletesaveimage' title='{% trans "Delete Save Image" %}'>"
-                                        +"<span class='glyphicon glyphicon-remove'></span>"
-                                      +"</button> ";
+                                    + "<span class='glyphicon glyphicon-remove'></span>"
+                                    + "</button> ";
                         } else {
                             var btn = "<button class='btn btn-sm btn-default' type='submit' name='shutdown' title='{% trans "Shutdown" %}'>"
-                                        +"<span class='glyphicon glyphicon-off'></span>"
-                                      +"</button> ";
+                                    + "<span class='glyphicon glyphicon-off'></span>"
+                                    + "</button> ";
                         }
-                        $(elem).html("<td><a href='/instance/{{ host_id }}/"+data[i]['name']+"'><i class='icon-th-large'></i> "+data[i]['name']+"</a></td>"
-                                     +"<td><span class='text-success'>{% trans "Running" %}</span></td>"
-                                     +"<td>"+data[i]['vcpu']+"</td>"
-                                     +"<td>"+data[i]['memory']+"{% trans "MB" %}</td>"
-                                     +"<td>"
-                                        +"<form action='' method='post'>{% csrf_token %}"
-                                            +"<input type='hidden' name='name' value='"+data[i]['name']+"' />"
-                                            +"<button class='btn btn-sm btn-default disabled' title='{% trans "Start" %}'>"
-                                                +"<span class='glyphicon glyphicon-play'></span>"
-                                            +"</button> "
-                                            +"<button class='btn btn-sm btn-default' type='submit' name='suspend' title='{% trans "Suspend" %}'>"
-                                                +"<span class='glyphicon glyphicon-pause'></span>"
-                                            +"</button> "
-                                            +"<button class='btn btn-sm btn-default' type='submit' name='managedsave' title='{% trans "Save" %}'>"
-                                                +"<span class='glyphicon glyphicon-download-alt'></span>"
-                                            +"</button> "
-                                            +btn
-                                            +"<button class='btn btn-sm btn-default' type='submit' name='destroy' title='{% trans "Force Shutdown" %}' onclick='return confirm('Are you sure?')'>"
-                                                +"<span class='glyphicon glyphicon-stop'></span>"
-                                            +"</button> "
-                                            +"<a href='#' class='btn btn-sm btn-default' onclick='open_vnc(\""+data[i]['host']+"-"+data[i]['uuid']+"\")' title='{% trans "VNC" %}'>"
-                                                +"<span class='glyphicon glyphicon-align-justify'></span>"
-                                            +"</a> "
-                                        +"</form>"
-                                     +"</td>");
+                        $(elem).html("<td><a href='/instance/{{ host_id }}/" + data[i]['name'] + "'><i class='icon-th-large'></i> " + data[i]['name'] + "</a></td>"
+                                + "<td><span class='text-success'>{% trans "Running" %}</span></td>"
+                                + "<td>" + data[i]['vcpu'] + "</td>"
+                                + "<td>" + data[i]['memory'] + "{% trans "MB" %}</td>"
+                                + "<td>"
+                                + "<form action='' method='post'>{% csrf_token %}"
+                                + "<input type='hidden' name='name' value='" + data[i]['name'] + "' />"
+                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Start" %}'>"
+                                + "<span class='glyphicon glyphicon-play'></span>"
+                                + "</button> "
+                                + "<button class='btn btn-sm btn-default' type='submit' name='suspend' title='{% trans "Suspend" %}'>"
+                                + "<span class='glyphicon glyphicon-pause'></span>"
+                                + "</button> "
+                                + "<button class='btn btn-sm btn-default' type='submit' name='managedsave' title='{% trans "Save" %}'>"
+                                + "<span class='glyphicon glyphicon-download-alt'></span>"
+                                + "</button> "
+                                + btn
+                                + "<button class='btn btn-sm btn-default' type='submit' name='destroy' title='{% trans "Force Shutdown" %}' onclick='return confirm('Are you sure?')'>"
+                                + "<span class='glyphicon glyphicon-stop'></span>"
+                                + "</button> "
+                                + "<a href='#' class='btn btn-sm btn-default' onclick='open_vnc(\"" + data[i]['host'] + "-" + data[i]['uuid'] + "\")' title='{% trans "VNC" %}'>"
+                                + "<span class='glyphicon glyphicon-align-justify'></span>"
+                                + "</a> "
+                                + "</form>"
+                                + "</td>");
                     }
-                    if(data[i]['status'] === 3) {
-                        $(elem).html("<td><a href='/instance/{{ host_id }}/"+data[i]['name']+"'><i class='icon-th-large'></i> "+data[i]['name']+"</a></td>"
-                                    +"<td><span class='text-warning'>{% trans "Suspend" %}</span></td>"
-                                    +"<td>"+data[i]['vcpu']+"</td>"
-                                    +"<td>"+data[i]['memory']+"{% trans "MB" %}</td>"
-                                    +"<td>"
-                                        +"<form action='' method='post'>{% csrf_token %}"
-                                            +"<input type='hidden' name='name' value='"+data[i]['name']+"' />"
-                                            +"<button class='btn btn-sm btn-default' type='submit' name='resume' title='{% trans "Resume" %}'>"
-                                                +"<span class='glyphicon glyphicon-play'></span>"
-                                            +"</button> "
-                                            +"<button class='btn btn-sm btn-default disabled' title='{% trans "Suspend" %}'>"
-                                                +"<span class='glyphicon glyphicon-pause'></span>"
-                                            +"</button> "
-                                            +"<button class='btn btn-sm btn-default' type='submit' name='managedsave' title='{% trans "Save" %}'>"
-                                                +"<span class='glyphicon glyphicon-download-alt'></span>"
-                                            +"</button> "
-                                            +"<button class='btn btn-sm btn-default disabled' title='{% trans "Shutdown" %}'>"
-                                                +"<span class='glyphicon glyphicon-off''></span>"
-                                            +"</button> "
-                                            +"<button class='btn btn-sm btn-default disabled' title='{% trans "Force Shutdown" %}'>"
-                                                +"<span class='glyphicon glyphicon-stop'></span>"
-                                            +"</button> "
-                                            +"<button class='btn btn-sm btn-default disabled' title='{% trans "VNC" %}'>"
-                                                +"<span class='glyphicon glyphicon-align-justify'></span>"
-                                            +"</button> "
-                                        +"</form>"
-                                    +"</td>");
+                    if (data[i]['status'] === 3) {
+                        $(elem).html("<td><a href='/instance/{{ host_id }}/" + data[i]['name'] + "'><i class='icon-th-large'></i> " + data[i]['name'] + "</a></td>"
+                                + "<td><span class='text-warning'>{% trans "Suspend" %}</span></td>"
+                                + "<td>" + data[i]['vcpu'] + "</td>"
+                                + "<td>" + data[i]['memory'] + "{% trans "MB" %}</td>"
+                                + "<td>"
+                                + "<form action='' method='post'>{% csrf_token %}"
+                                + "<input type='hidden' name='name' value='" + data[i]['name'] + "' />"
+                                + "<button class='btn btn-sm btn-default' type='submit' name='resume' title='{% trans "Resume" %}'>"
+                                + "<span class='glyphicon glyphicon-play'></span>"
+                                + "</button> "
+                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Suspend" %}'>"
+                                + "<span class='glyphicon glyphicon-pause'></span>"
+                                + "</button> "
+                                + "<button class='btn btn-sm btn-default' type='submit' name='managedsave' title='{% trans "Save" %}'>"
+                                + "<span class='glyphicon glyphicon-download-alt'></span>"
+                                + "</button> "
+                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Shutdown" %}'>"
+                                + "<span class='glyphicon glyphicon-off''></span>"
+                                + "</button> "
+                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Force Shutdown" %}'>"
+                                + "<span class='glyphicon glyphicon-stop'></span>"
+                                + "</button> "
+                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "VNC" %}'>"
+                                + "<span class='glyphicon glyphicon-align-justify'></span>"
+                                + "</button> "
+                                + "</form>"
+                                + "</td>");
                     }
-                    if(data[i]['status'] == 5) {
-                        $(elem).html("<td><a href='/instance/{{ host_id }}/"+data[i]['name']+"'><i class='icon-th-large'></i> "+data[i]['name']+"</a></td>"
-                                    +"<td><span class='text-danger'>{% trans "Shutoff" %}</span></td>"
-                                    +"<td>"+data[i]['vcpu']+"</td>"
-                                    +"<td>"+data[i]['memory']+"{% trans "MB" %}</td>"
-                                    +"<td>"
-                                        +"<form action='' method='post'>{% csrf_token %}"
-                                            +"<input type='hidden' name='name' value='" + data[i]['name'] + "' />"
-                                            +"<button class='btn btn-sm btn-default' type='submit' name='start' title='{% trans "Start" %}'>"
-                                                +"<span class='glyphicon glyphicon-play'></span>"
-                                            +"</button> "
-                                            +"<button class='btn btn-sm btn-default disabled' title='{% trans "Suspend" %}'>"
-                                                +"<span class='glyphicon glyphicon-pause'></span>"
-                                            +"</button> "
-                                            +"<button class='btn btn-sm btn-default disabled' title='{% trans "Save" %}'>"
-                                                +"<span class='glyphicon glyphicon-download-alt'></span>"
-                                            +"</button> "
-                                            +"<button class='btn btn-sm btn-default disabled' title='{% trans "Shutdown" %}'>"
-                                                +"<span class='glyphicon glyphicon-off'></span>"
-                                            +"</button> "
-                                            +"<button class='btn btn-sm btn-default disabled' title='{% trans "Force Shutdown" %}'>"
-                                                +"<span class='glyphicon glyphicon-stop'></span>"
-                                            +"</button> "
-                                            +"<button class='btn btn-sm btn-default disabled' title='{% trans "VNC" %}'>"
-                                                +"<span class='glyphicon glyphicon-align-justify'></span>"
-                                            +"</button> "
-                                        +"</form>"
-                                    +"</td>");
+                    if (data[i]['status'] == 5) {
+                        $(elem).html("<td><a href='/instance/{{ host_id }}/" + data[i]['name'] + "'><i class='icon-th-large'></i> " + data[i]['name'] + "</a></td>"
+                                + "<td><span class='text-danger'>{% trans "Shutoff" %}</span></td>"
+                                + "<td>" + data[i]['vcpu'] + "</td>"
+                                + "<td>" + data[i]['memory'] + "{% trans "MB" %}</td>"
+                                + "<td>"
+                                + "<form action='' method='post'>{% csrf_token %}"
+                                + "<input type='hidden' name='name' value='" + data[i]['name'] + "' />"
+                                + "<button class='btn btn-sm btn-default' type='submit' name='start' title='{% trans "Start" %}'>"
+                                + "<span class='glyphicon glyphicon-play'></span>"
+                                + "</button> "
+                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Suspend" %}'>"
+                                + "<span class='glyphicon glyphicon-pause'></span>"
+                                + "</button> "
+                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Save" %}'>"
+                                + "<span class='glyphicon glyphicon-download-alt'></span>"
+                                + "</button> "
+                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Shutdown" %}'>"
+                                + "<span class='glyphicon glyphicon-off'></span>"
+                                + "</button> "
+                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Force Shutdown" %}'>"
+                                + "<span class='glyphicon glyphicon-stop'></span>"
+                                + "</button> "
+                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "VNC" %}'>"
+                                + "<span class='glyphicon glyphicon-align-justify'></span>"
+                                + "</button> "
+                                + "</form>"
+                                + "</td>");
                     }
                 }
             });
         }
-        $(function() {
+        $(function () {
             window.setInterval('status()', {{ time_refresh }});
         });
         function open_vnc(uuid) {
-            window.open("/console/?token="+uuid, "", "width=850,height=485");
+            window.open("/console/?token=" + uuid, "", "width=850,height=485");
         }
     </script>
 {% endblock %}

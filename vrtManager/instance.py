@@ -166,6 +166,7 @@ class wvmInstance(wvmConnect):
                     if mac == mac_host:
                         return host
                 return None
+
             return util.get_xml_path(net.XMLDesc(0), func=fixed)
 
         def networks(ctx):
@@ -180,6 +181,7 @@ class wvmInstance(wvmConnect):
                     ip = None
                 result.append({'mac': mac_host, 'nic': nic_host, 'ip': ip})
             return result
+
         return util.get_xml_path(self._XMLDesc(0), func=networks)
 
     def get_disk_device(self):
@@ -207,8 +209,10 @@ class wvmInstance(wvmConnect):
                     except:
                         pass
                     finally:
-                        result.append({'dev': dev, 'image': volume, 'storage': storage, 'path': src_fl, 'format': disk_format})
+                        result.append(
+                            {'dev': dev, 'image': volume, 'storage': storage, 'path': src_fl, 'format': disk_format})
             return result
+
         return util.get_xml_path(self._XMLDesc(0), func=disks)
 
     def get_media_device(self):
@@ -237,6 +241,7 @@ class wvmInstance(wvmConnect):
                     finally:
                         result.append({'dev': dev, 'image': volume, 'storage': storage, 'path': src_fl})
             return result
+
         return util.get_xml_path(self._XMLDesc(0), func=disks)
 
     def mount_iso(self, dev, image):
@@ -315,7 +320,7 @@ class wvmInstance(wvmConnect):
                         if elm.get('dev'):
                             dev_file = elm.get('dev')
                     if elm.tag == 'target':
-                            dev_bus = elm.get('dev')
+                        dev_bus = elm.get('dev')
                 if (dev_file and dev_bus) is not None:
                     if network_disk:
                         dev_file = dev_bus

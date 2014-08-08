@@ -166,4 +166,5 @@ class wvmNetwork(wvmConnect):
                 mac = net.xpathEval('@mac')[0].content
                 result.append({'host': host, 'mac': mac})
             return result
+
         return util.get_xml_path(self._XMLDesc(0), func=network)
