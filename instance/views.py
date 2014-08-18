@@ -459,7 +459,7 @@ def instance(request, host_id, vname):
         memory_host = conn.get_max_memory()
         vcpu_host = len(vcpu_range)
         telnet_port = conn.get_telnet_port()
-        vnc_port = conn.get_vnc()
+        vnc_port = conn.get_vnc_port()
         vnc_keymap = conn.get_vnc_keymap
         snapshots = sorted(conn.get_snapshot(), reverse=True)
         inst_xml = conn._XMLDesc(VIR_DOMAIN_XML_SECURE)
