@@ -1,11 +1,12 @@
 =========================
-WebVirtMgr panel - v4.8.6
+WebVirtMgr panel - v4.8.7
 =========================
 
 ----------
 Whats new?
 ----------
 
+- Added VNC WebSocket support (Thanks: `Tolbkni Kao <https://github.com/tolbkni>`_)
 - Added webvirtmgr to pypi
 - Updated Chart.js
 - Added page interfaces
