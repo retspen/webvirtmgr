@@ -1,6 +1,4 @@
-import socket
-
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, HttpResponse
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 
@@ -8,7 +6,7 @@ from servers.models import Compute
 from instance.models import Instance
 from servers.forms import ComputeAddTcpForm, ComputeAddSshForm, ComputeEditHostForm, ComputeAddTlsForm
 from vrtManager.hostdetails import wvmHostDetails
-from vrtManager.connection import CONN_SSH, CONN_TCP, CONN_TLS, SSH_PORT, TCP_PORT, TLS_PORT
+from vrtManager.connection import CONN_SSH, CONN_TCP, CONN_TLS, connection_manager
 from libvirt import libvirtError
 
 
@@ -37,25 +35,11 @@ def servers_list(request):
         """
         all_hosts = []
         for host in hosts:
-            try:
-                socket_host = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                socket_host.settimeout(1)
-                if host.type == CONN_SSH:
-                    if ':' in host.hostname:
-                        LIBVIRT_HOST, PORT = (host.hostname).split(":")
-                        PORT = int(PORT)
-                    else:
-                        PORT = SSH_PORT
-                        LIBVIRT_HOST = host.hostname
-                    socket_host.connect((LIBVIRT_HOST, PORT))
-                if host.type == CONN_TCP:
-                    socket_host.connect((host.hostname, TCP_PORT))
-                if host.type == CONN_TLS:
-                    socket_host.connect((host.hostname, TLS_PORT))
-                socket_host.close()
+            if (connection_manager.host_is_up(host.hostname, host.login, host.password, host.type)):
                 status = 1
-            except Exception as err:
-                status = err
+            else:
+                status = 'Unknown Error'
+                
             all_hosts.append({'id': host.id,
                               'name': host.name,
                               'hostname': host.hostname,
@@ -139,37 +123,17 @@ def infrastructure(request):
     hosts_vms = {}
 
     for host in compute:
-        try:
-            socket_host = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            socket_host.settimeout(1)
-            if host.type == CONN_SSH:
-                if ':' in host.hostname:
-                    LIBVIRT_HOST, PORT = (host.hostname).split(":")
-                    PORT = int(PORT)
-                else:
-                    PORT = SSH_PORT
-                    LIBVIRT_HOST = host.hostname
-                socket_host.connect((LIBVIRT_HOST, PORT))
-            if host.type == CONN_TCP:
-                socket_host.connect((host.hostname, TCP_PORT))
-            if host.type == CONN_TLS:
-                socket_host.connect((host.hostname, TLS_PORT))
-            socket_host.close()
-            status = 1
-        except Exception:
-            status = 2
-
-        if status == 1:
+        if connection_manager.host_is_up(host.hostname, host.login, host.password, host.type):
             try:
                 conn = wvmHostDetails(host, host.login, host.password, host.type)
                 host_info = conn.get_node_info()
                 host_mem = conn.get_memory_usage()
-                hosts_vms[host.id, host.name, status, host_info[3], host_info[2],
+                hosts_vms[host.id, host.name, 1, host_info[3], host_info[2],
                           host_mem['percent']] = conn.get_host_instances()
                 conn.close()
             except libvirtError:
                 hosts_vms[host.id, host.name, 3, 0, 0, 0] = None
         else:
-            hosts_vms[host.id, host.name, status, 0, 0, 0] = None
+            hosts_vms[host.id, host.name, 2, 0, 0, 0] = None
 
     return render_to_response('infrastructure.html', locals(), context_instance=RequestContext(request))
