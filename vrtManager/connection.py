@@ -19,29 +19,30 @@ TLS_PORT = 16514
 SSH_PORT = 22
 TCP_PORT = 16509
 
+
 class wvmEventLoop(threading.Thread):
-    def __init__(self, group=None, target=None, name=None, args=(), kwargs={}):        
+    def __init__(self, group=None, target=None, name=None, args=(), kwargs={}):
         # register the default event implementation
         # of libvirt, as we do not have an existing
         # event loop.
         libvirt.virEventRegisterDefaultImpl()
-        
+
         if name is None:
             name = 'libvirt event loop'
 
         super(wvmEventLoop, self).__init__(group, target, name, args, kwargs)
-        
+
         # we run this thread in deamon mode, so it does
         # not block shutdown of the server
         self.daemon = True
-        
+
     def run(self):
         while True:
             # if this method will fail it raises libvirtError
             # we do not catch the exception here so it will show up
             # in the logs. Not sure when this call will ever fail
             libvirt.virEventRunDefaultImpl()
-                
+
 
 class wvmConnection(object):
     '''
@@ -50,27 +51,27 @@ class wvmConnection(object):
     '''
     def __init__(self, host, login, passwd, conn):
         '''
-        Sets all class attributes and tries to open the connection 
+        Sets all class attributes and tries to open the connection
         '''
         # connection lock is used to lock all changes to the connection state attributes
         # (connection and last_error)
         self.connection_state_lock = threading.Lock()
         self.connection = None
         self.last_error = None
-        
+
         # credentials
-        self.host   = host
-        self.login  = login
+        self.host = host
+        self.login = login
         self.passwd = passwd
-        self.type   = conn
-        
+        self.type = conn
+
         # connect
         self.connect()
-    
+
     def connect(self):
         self.connection_state_lock.acquire()
         try:
-            # recheck if we have a connection (it may have been 
+            # recheck if we have a connection (it may have been
             if not self.connected:
                 if self.type == CONN_TCP:
                     self.__connect_tcp()
@@ -80,7 +81,7 @@ class wvmConnection(object):
                     self.__connect_tls()
                 else:
                     raise ValueError('"{type}" is not a valid connection type'.format(type=self.type))
-                
+
                 if self.connected:
                     # do some preprocessing of the connection:
                     #     * set keep alive interval
@@ -93,17 +94,15 @@ class wvmConnection(object):
                         self.last_error = str(e)
         finally:
             self.connection_state_lock.release()
-        
-        
+
     @property
     def connected(self):
         try:
             return self.connection is not None and self.connection.isAlive()
-        except libvirtError as e:
+        except libvirtError:
             # isAlive failed for some reason
             return False
-            
-            
+
     def __libvirt_auth_credentials_callback(self, credentials, user_data):
         for credential in credentials:
             if credential[0] == libvirt.VIR_CRED_AUTHNAME:
@@ -115,7 +114,7 @@ class wvmConnection(object):
             else:
                 return -1
             return 0
-        
+
     def __connection_close_callback(self, connection, reason, opaque=None):
         self.connection_state_lock.acquire()
         try:
@@ -132,49 +131,49 @@ class wvmConnection(object):
                     self.last_error = 'connection closed: Client requested it'
                 else:
                     self.last_error = 'connection closed: Unknown error'
-                
+
             # prevent other threads from using the connection (in the future)
             self.connection = None
         finally:
             self.connection_state_lock.release()
-            
+
     def __connect_tcp(self):
         flags = [libvirt.VIR_CRED_AUTHNAME, libvirt.VIR_CRED_PASSPHRASE]
         auth = [flags, self.__libvirt_auth_credentials_callback, None]
         uri = 'qemu+tcp://%s/system' % self.host
-        
+
         try:
             self.connection = libvirt.openAuth(uri, auth, 0)
             self.last_error = None
-            
+
         except libvirtError as e:
             self.last_error = 'Connection Failed: ' + str(e)
             self.connection = None
-            
+
     def __connect_ssh(self):
         uri = 'qemu+ssh://%s@%s/system' % (self.login, self.host)
-        
+
         try:
             self.connection = libvirt.open(uri)
             self.last_error = None
-            
+
         except libvirtError as e:
             self.last_error = 'Connection Failed: ' + str(e) + ' --- ' + repr(libvirt.virGetLastError())
             self.connection = None
-            
+
     def __connect_tls(self):
         flags = [libvirt.VIR_CRED_AUTHNAME, libvirt.VIR_CRED_PASSPHRASE]
         auth = [flags, self._libvirt_auth_credentials_callback, None]
         uri = 'qemu+tls://%s@%s/system' % (self.login, self.host)
-        
+
         try:
             self.connection = libvirt.openAuth(uri, auth, 0)
             self.last_error = None
-            
+
         except libvirtError as e:
             self.last_error = 'Connection Failed: ' + str(e)
             self.connection = None
-    
+
     def close(self):
         '''
         closes the connection (if it is active)
@@ -187,12 +186,12 @@ class wvmConnection(object):
                     self.connection.close()
                 except libvirtError:
                     pass
-        
+
             self.connection = None
             self.last_error = None
         finally:
             self.connection_state_lock.release()
-            
+
     def __del__(self):
         if self.connection is not None:
             # unregister callback (as it is no longer valid if this instance gets deleted)
@@ -200,7 +199,7 @@ class wvmConnection(object):
                 self.connection.unregisterCloseCallback()
             except libvirtError:
                 pass
-        
+
     def __unicode__(self):
         if self.type == CONN_TCP:
             type_str = u'tcp'
@@ -210,17 +209,18 @@ class wvmConnection(object):
             type_str = u'tls'
         else:
             type_str = u'invalid_type'
-            
+
         return u'qemu+{type}://{user}@{host}/system'.format(type=type_str, user=self.login, host=self.host)
-    
+
     def __repr__(self):
         return '<wvmConnection {connection_str}>'.format(connection_str=unicode(self))
+
 
 class wvmConnectionManager(object):
     def __init__(self, keepalive_interval=5, keepalive_count=5):
         self.keepalive_interval = keepalive_interval
-        self.keepalive_count    = keepalive_count
-    
+        self.keepalive_count = keepalive_count
+
         # connection dict
         # maps hostnames to a list of connection objects for this hostname
         # atm it is possible to create more than one connection per hostname
@@ -229,11 +229,11 @@ class wvmConnectionManager(object):
         #     http://wiki.libvirt.org/page/FAQ#Is_libvirt_thread_safe.3F
         self._connections = dict()
         self._connections_lock = ReadWriteLock()
-        
+
         # start event loop to handle keepalive requests and other events
         self._event_loop = wvmEventLoop()
         self._event_loop.start()
-        
+
     def _search_connection(self, host, login, passwd, conn):
         '''
         search the connection dict for a connection with the given credentials
@@ -241,61 +241,61 @@ class wvmConnectionManager(object):
         '''
         self._connections_lock.acquireRead()
         try:
-            if (self._connections.has_key(host)):
+            if (host in self._connections):
                 connections = self._connections[host]
-        
+
                 for connection in connections:
-                    if (connection.login == login and connection.passwd == passwd and connection.type==conn):
+                    if (connection.login == login and connection.passwd == passwd and connection.type == conn):
                         return connection
         finally:
             self._connections_lock.release()
-            
+
         return None
-        
+
     def get_connection(self, host, login, passwd, conn):
         '''
         returns a connection object (as returned by the libvirt.open* methods) for the given host and credentials
         raises libvirtError if (re)connecting fails
         '''
         # force all string values to unicode
-        host   = unicode(host)
-        login  = unicode(login)
-        passwd = unicode(passwd) if passwd is not None else None 
-        
+        host = unicode(host)
+        login = unicode(login)
+        passwd = unicode(passwd) if passwd is not None else None
+
         connection = self._search_connection(host, login, passwd, conn)
-        
+
         if (connection is None):
             self._connections_lock.acquireWrite()
             try:
                 # we have to search for the connection again after aquireing the write lock
                 # as the thread previously holding the write lock may have already added our connection
                 connection = self._search_connection(host, login, passwd, conn)
-                if (connection is None): 
+                if (connection is None):
                     # create a new connection if a matching connection does not already exist
                     connection = wvmConnection(host, login, passwd, conn)
-            
+
                     # add new connection to connection dict
-                    if self._connections.has_key(host):
+                    if host in self._connections:
                         self._connections[host].append(connection)
                     else:
                         self._connections[host] = [connection]
             finally:
                 self._connections_lock.release()
-            
+
         elif not connection.connected:
             # try to (re-)connect if connection is closed
             connection.connect()
-            
+
         if connection.connected:
             # return libvirt connection object
             return connection.connection
         else:
             # raise libvirt error
             raise libvirtError(connection.last_error)
-        
+
     def host_is_up(self, host, login, passwd, conn):
         '''
-        returns True if the given host is up and we are able to establish 
+        returns True if the given host is up and we are able to establish
         a connection using the given credentials.
         '''
         try:
@@ -303,11 +303,12 @@ class wvmConnectionManager(object):
             return True
         except libvirtError:
             return False
-        
+
 connection_manager = wvmConnectionManager(
     settings.LIBVIRT_KEEPALIVE_INTERVAL if hasattr(settings, 'LIBVIRT_KEEPALIVE_INTERVAL') else 5,
-    settings.LIBVIRT_KEEPALIVE_COUNT    if hasattr(settings, 'LIBVIRT_KEEPALIVE_COUNT')    else 5
+    settings.LIBVIRT_KEEPALIVE_COUNT if hasattr(settings, 'LIBVIRT_KEEPALIVE_COUNT') else 5
 )
+
 
 class wvmConnect(object):
     def __init__(self, host, login, passwd, conn):

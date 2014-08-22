@@ -1,4 +1,4 @@
-from django.shortcuts import render_to_response, HttpResponse
+from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 
@@ -39,7 +39,7 @@ def servers_list(request):
                 status = 1
             else:
                 status = 'Unknown Error'
-                
+
             all_hosts.append({'id': host.id,
                               'name': host.name,
                               'hostname': host.hostname,

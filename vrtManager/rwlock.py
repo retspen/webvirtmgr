@@ -60,7 +60,7 @@ class ReadWriteLock(object):
         # Initialize with no readers.
         self.__readers = {}
 
-    def acquireRead(self,timeout=None):
+    def acquireRead(self, timeout=None):
         """Acquire a read lock for the current thread, waiting at most
         timeout seconds or doing a non-blocking check in case timeout is <= 0.
 
@@ -94,7 +94,7 @@ class ReadWriteLock(object):
                     else:
                         # Grant a new read lock, always, in case there are
                         # no pending writers (and no writer).
-                        self.__readers[me] = self.__readers.get(me,0) + 1
+                        self.__readers[me] = self.__readers.get(me, 0) + 1
                         return
                 if timeout is not None:
                     remaining = endtime - time()
@@ -107,7 +107,7 @@ class ReadWriteLock(object):
         finally:
             self.__condition.release()
 
-    def acquireWrite(self,timeout=None):
+    def acquireWrite(self, timeout=None):
         """Acquire a write lock for the current thread, waiting at most
         timeout seconds or doing a non-blocking check in case timeout is <= 0.
 
@@ -139,7 +139,7 @@ class ReadWriteLock(object):
                     # Signal this to user.
                     raise ValueError(
                         "Inevitable dead lock, denying write lock"
-                        )
+                    )
                 upgradewriter = True
                 self.__upgradewritercount = self.__readers.pop(me)
             else:
