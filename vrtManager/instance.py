@@ -400,7 +400,11 @@ class wvmInstance(wvmConnect):
     def set_vnc_keymap(self, keymap):
         xml = self._XMLDesc(VIR_DOMAIN_XML_SECURE)
         root = ElementTree.fromstring(xml)
-        graphics_vnc = root.find("devices/graphics[@type='vnc']")
+        try:
+            graphics_vnc = root.find("devices/graphics[@type='vnc']")
+        except:
+            # Little fix for old version ElementTree
+            graphics_vnc = root.find("devices/graphics")
         if keymap:
             graphics_vnc.set('keymap', keymap)
         else:
@@ -408,7 +412,7 @@ class wvmInstance(wvmConnect):
                 graphics_vnc.attrib.pop('keymap')
             except:
                 pass
-        newxml = ElementTree.tostring(root, encoding='utf-8', method='xml')
+        newxml = ElementTree.tostring(root)
         self._defineXML(newxml)
 
     def get_vnc_keymap(self):
