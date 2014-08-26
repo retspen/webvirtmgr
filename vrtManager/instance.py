@@ -3,7 +3,7 @@
 #
 import time
 import os.path
-from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE, VIR_MIGRATE_LIVE
+from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE, VIR_MIGRATE_LIVE, VIR_MIGRATE_UNSAFE
 from vrtManager import util
 from xml.etree import ElementTree
 from datetime import datetime
@@ -65,10 +65,12 @@ class wvmInstances(wvmConnect):
         dom = self.get_instance(name)
         dom.resume()
 
-    def moveto(self, conn, name, live, undefine):
+    def moveto(self, conn, name, live, unsafe, undefine):
         flags = 0
         if live and conn.get_status() == 1:
             flags |= VIR_MIGRATE_LIVE
+        if unsafe and conn.get_status() == 1:
+            flags |= VIR_MIGRATE_UNSAFE
         dom = conn.get_instance(name)
         dom.migrate(self.wvm, flags, name, None, 0)
         if undefine:
