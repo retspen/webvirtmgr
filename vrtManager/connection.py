@@ -89,7 +89,11 @@ class wvmConnection(object):
                     #     * set connection close/fail handler
                     try:
                         self.connection.setKeepAlive(connection_manager.keepalive_interval, connection_manager.keepalive_count)
-                        self.connection.registerCloseCallback(self.__connection_close_callback, None)
+                        try:
+                            self.connection.registerCloseCallback(self.__connection_close_callback, None)
+                        except TypeError:
+                            # Temporary fix for libvirt > libvirt-0.10.2-41
+                            pass
                     except libvirtError as e:
                         # hypervisor driver does not seem to support persistent connections
                         self.last_error = str(e)
