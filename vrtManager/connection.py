@@ -45,14 +45,15 @@ class wvmEventLoop(threading.Thread):
 
 
 class wvmConnection(object):
-    '''
+    """
     class representing a single connection stored in the Connection Manager
     # to-do: may also need some locking to ensure to not connect simultaniously in 2 threads
-    '''
+    """
+
     def __init__(self, host, login, passwd, conn):
-        '''
+        """
         Sets all class attributes and tries to open the connection
-        '''
+        """
         # connection lock is used to lock all changes to the connection state attributes
         # (connection and last_error)
         self.connection_state_lock = threading.Lock()
@@ -175,9 +176,9 @@ class wvmConnection(object):
             self.connection = None
 
     def close(self):
-        '''
+        """
         closes the connection (if it is active)
-        '''
+        """
         self.connection_state_lock.acquire()
         try:
             if self.connected:
@@ -235,10 +236,10 @@ class wvmConnectionManager(object):
         self._event_loop.start()
 
     def _search_connection(self, host, login, passwd, conn):
-        '''
+        """
         search the connection dict for a connection with the given credentials
         if it does not exist return None
-        '''
+        """
         self._connections_lock.acquireRead()
         try:
             if (host in self._connections):
@@ -253,10 +254,10 @@ class wvmConnectionManager(object):
         return None
 
     def get_connection(self, host, login, passwd, conn):
-        '''
+        """
         returns a connection object (as returned by the libvirt.open* methods) for the given host and credentials
         raises libvirtError if (re)connecting fails
-        '''
+        """
         # force all string values to unicode
         host = unicode(host)
         login = unicode(login)
@@ -294,10 +295,10 @@ class wvmConnectionManager(object):
             raise libvirtError(connection.last_error)
 
     def host_is_up(self, host, login, passwd, conn):
-        '''
+        """
         returns True if the given host is up and we are able to establish
         a connection using the given credentials.
-        '''
+        """
         try:
             self.get_connection(host, login, passwd, conn)
             return True
