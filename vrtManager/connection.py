@@ -114,7 +114,7 @@ class wvmConnection(object):
                 credential[4] = self.passwd
             else:
                 return -1
-            return 0
+        return 0
 
     def __connection_close_callback(self, connection, reason, opaque=None):
         self.connection_state_lock.acquire()
@@ -164,7 +164,7 @@ class wvmConnection(object):
 
     def __connect_tls(self):
         flags = [libvirt.VIR_CRED_AUTHNAME, libvirt.VIR_CRED_PASSPHRASE]
-        auth = [flags, self._libvirt_auth_credentials_callback, None]
+        auth = [flags, self.__libvirt_auth_credentials_callback, None]
         uri = 'qemu+tls://%s@%s/system' % (self.login, self.host)
 
         try:
