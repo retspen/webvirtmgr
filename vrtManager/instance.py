@@ -388,7 +388,11 @@ class wvmInstance(wvmConnect):
     def set_vnc_passwd(self, passwd):
         xml = self._XMLDesc(VIR_DOMAIN_XML_SECURE)
         root = ElementTree.fromstring(xml)
-        graphics_vnc = root.find("devices/graphics[@type='vnc']")
+        try:
+            graphics_vnc = root.find("devices/graphics[@type='vnc']")
+        except SyntaxError:
+            # Little fix for old version ElementTree
+            graphics_vnc = root.find("devices/graphics")
         if passwd:
             graphics_vnc.set('passwd', passwd)
         else:
@@ -404,7 +408,7 @@ class wvmInstance(wvmConnect):
         root = ElementTree.fromstring(xml)
         try:
             graphics_vnc = root.find("devices/graphics[@type='vnc']")
-        except:
+        except SyntaxError:
             # Little fix for old version ElementTree
             graphics_vnc = root.find("devices/graphics")
         if keymap:
