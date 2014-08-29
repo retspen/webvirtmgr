@@ -1,3 +1,5 @@
+import socket
+
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
@@ -35,19 +37,14 @@ def servers_list(request):
         """
         all_hosts = []
         for host in hosts:
-            if (connection_manager.host_is_up(host.hostname, host.login, host.password, host.type)):
-                status = 1
-            else:
-                status = 'Unknown Error'
-
             all_hosts.append({'id': host.id,
                               'name': host.name,
                               'hostname': host.hostname,
-                              'status': status,
+                              'status': connection_manager.host_is_up(host.type, host.hostname),
                               'type': host.type,
                               'login': host.login,
                               'password': host.password
-                              })
+            })
         return all_hosts
 
     computes = Compute.objects.filter()
@@ -123,16 +120,17 @@ def infrastructure(request):
     hosts_vms = {}
 
     for host in compute:
-        if connection_manager.host_is_up(host.hostname, host.login, host.password, host.type):
+        status = connection_manager.host_is_up(host.type, host.hostname)
+        if status:
             try:
                 conn = wvmHostDetails(host, host.login, host.password, host.type)
                 host_info = conn.get_node_info()
                 host_mem = conn.get_memory_usage()
-                hosts_vms[host.id, host.name, 1, host_info[3], host_info[2],
+                hosts_vms[host.id, host.name, status, host_info[3], host_info[2],
                           host_mem['percent']] = conn.get_host_instances()
                 conn.close()
             except libvirtError:
-                hosts_vms[host.id, host.name, 3, 0, 0, 0] = None
+                hosts_vms[host.id, host.name, status, 0, 0, 0] = None
         else:
             hosts_vms[host.id, host.name, 2, 0, 0, 0] = None
 

@@ -3,6 +3,7 @@
 #
 import libvirt
 import threading
+import socket
 
 from vrtManager import util
 
@@ -298,16 +299,30 @@ class wvmConnectionManager(object):
             # raise libvirt error
             raise libvirtError(connection.last_error)
 
-    def host_is_up(self, host, login, passwd, conn):
+    def host_is_up(self, conn_type, hostname):
         """
         returns True if the given host is up and we are able to establish
         a connection using the given credentials.
         """
         try:
-            self.get_connection(host, login, passwd, conn)
+            socket_host = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            socket_host.settimeout(1)
+            if conn_type == CONN_SSH:
+                if ':' in hostname:
+                    LIBVIRT_HOST, PORT = (hostname).split(":")
+                    PORT = int(PORT)
+                else:
+                    PORT = SSH_PORT
+                    LIBVIRT_HOST = hostname
+                socket_host.connect((LIBVIRT_HOST, PORT))
+            if conn_type == CONN_TCP:
+                socket_host.connect((hostname, TCP_PORT))
+            if conn_type == CONN_TLS:
+                socket_host.connect((hostname, TLS_PORT))
+            socket_host.close()
             return True
-        except libvirtError:
-            return False
+        except Exception as err:
+            return err
 
 connection_manager = wvmConnectionManager(
     settings.LIBVIRT_KEEPALIVE_INTERVAL if hasattr(settings, 'LIBVIRT_KEEPALIVE_INTERVAL') else 5,

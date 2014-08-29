@@ -87,7 +87,7 @@
                             </p>
 
                             <p><strong>{% trans "Host" %}:</strong> <a
-                                    href="ssh://{{ host.hostname }}">{{ host.hostname }}</a></p>
+                                    href="ssh://{{ host.hostname }}" title="{{ host.status }}">{{ host.hostname }}</a></p>
                             <!-- Modal Edit -->
                             <div class="modal fade" id="editHost{{ host.id }}" tabindex="-1" role="dialog"
                                  aria-labelledby="editHostLabel" aria-hidden="true">
