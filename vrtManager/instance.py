@@ -400,7 +400,7 @@ class wvmInstance(wvmConnect):
                 graphics_vnc.attrib.pop('passwd')
             except:
                 pass
-        newxml = ElementTree.tostring(root, encoding='utf-8', method='xml')
+        newxml = ElementTree.tostring(root)
         self._defineXML(newxml)
 
     def set_vnc_keymap(self, keymap):
