@@ -37,13 +37,13 @@
             <td>{% if status %}
                 <span id="status" class={% ifequal status 5 %}
                     {% ifequal has_managed_save_image 1 %}
-                        "text-warning">{% trans "Saved" %}
+                        "label label-warning">{% trans "Saved" %}
                     {% else %}
                         "text-danger">{% trans "Shutoff" %}
                     {% endifequal %}
                 {% endifequal %}
-                {% ifequal status 1 %}"text-success">{% trans "Running" %}{% endifequal %}
-                {% ifequal status 3 %}"text-warning">{% trans "Suspend" %}{% endifequal %}
+                {% ifequal status 1 %}"label label-success">{% trans "Running" %}{% endifequal %}
+                {% ifequal status 3 %}"label label-warning">{% trans "Suspend" %}{% endifequal %}
                             </span>
             {% else %}
                 {% trans "None" %}
@@ -639,7 +639,7 @@
         <div class="tab-content">
             <div class="tab-pane tab-inst active" id="instancemigate">
                 <p style="text-align:center;">
-                    <span class="text-danger">{% trans "Warning:" %}</span> {% trans "Both host servers must have equal settings and OS type" %}
+                    <span class="label label-danger">{% trans "Warning:" %}</span> {% trans "Both host servers must have equal settings and OS type" %}
                 </p>
                 <br>
 
@@ -712,7 +712,7 @@
                         <label>
                             <input type="checkbox" name="delete_disk" value="true">
                             <strong><span
-                                    class="text-danger">{% trans "Warning:" %}</span> {% trans "if you check this box, Instance's data will be lost!" %}
+                                    class="label label-danger">{% trans "Warning:" %}</span> {% trans "if you check this box, Instance's data will be lost!" %}
                             </strong>
                         </label>
                     </div>
