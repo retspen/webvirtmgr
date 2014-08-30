@@ -151,6 +151,12 @@ class wvmNetwork(wvmConnect):
 
         return [IP(dhcpstart), IP(dhcpend)]
 
+    def get_ipv4_dhcp_range_start(self):
+        return self.get_ipv4_dhcp_range()[0]
+
+    def get_ipv4_dhcp_range_end(self):
+        return self.get_ipv4_dhcp_range()[1]
+
     def can_pxe(self):
         xml = self.get_xml()
         forward = self.get_ipv4_forward()[0]

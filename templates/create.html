@@ -7,7 +7,7 @@
 {% endblock %}
 {% block content %}
     {% include 'sidebar.html' %}
-    <div class="main">
+    <div class="main col-xs-12 col-sm-9">
         {% if errors %}
             {% for error in errors %}
                 <div class="alert alert-danger">
@@ -181,7 +181,7 @@
                                class="btn btn-sm btn-success">{% trans "Create" %}</a>
                         </td>
                         <td style="width:5px;">
-                            <form class="form-horizontal" action="" method="post">{% csrf_token %}
+                            <form class="form-horizontal" action="" method="post" role="form">{% csrf_token %}
                                 <input type="hidden" name="flavor" value="{{ flavor.id }}">
                                 <input type="submit" class="btn btn-sm btn-danger" name="delete_flavor"
                                        value="{% trans "Delete" %}"
@@ -553,4 +553,5 @@
             });
         });
     </script>
+    {% include 'sidebar_close.html' %}
 {% endblock %}

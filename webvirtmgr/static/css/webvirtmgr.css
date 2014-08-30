@@ -1,6 +1,5 @@
 body {
-    min-width: 1010px;
-    color: #333333;
+    color: #333;
     background-color: #fff;
 }
 
@@ -16,6 +15,10 @@ label input[type="radio"], label input[type="checkbox"] {
     margin: 0;
 }
 
+.container {
+    max-width: 980px;
+}
+
 .navbar-inverse {
     text-shadow: 0 -1px 0 rgba(0, 0, 0, .15);
     background-color: #563d7c;
@@ -23,19 +26,27 @@ label input[type="radio"], label input[type="checkbox"] {
     box-shadow: 0 1px 0 rgba(255, 255, 255, .1);
 }
 
-.navbar-inverse .navbar-brand:hover, .navbar-inverse .navbar-brand:focus {
-    color: #ffffff;
-    background-color: transparent;
+.navbar-inverse .navbar-brand,
+.navbar-inverse .navbar-nav > li > a {
+    color: #ccc;
 }
 
-.container {
-    width: 980px;
-    margin-left: auto;
-    margin-right: auto;
+.navbar-inverse .navbar-brand:hover, .navbar-inverse .navbar-brand:focus {
+    color: #fff;
+    background-color: transparent;
 }
 
 .page-header {
     margin-top: 0;
+}
+
+@media (min-width: 769px) {
+    .page-header__filter h1 {
+        float: left;
+    }
+    .page-header__filter .form-inline {
+        float: right;
+    }
 }
 
 .pagehead {
@@ -51,12 +62,6 @@ label input[type="radio"], label input[type="checkbox"] {
     font-size: 20px;
     font-weight: bold;
     line-height: 28px;
-}
-
-.sidebar {
-    float: left;
-    width: 220px;
-    padding: 0;
 }
 
 .sidebar ul .list {
@@ -75,7 +80,15 @@ label input[type="radio"], label input[type="checkbox"] {
 
 .sidebar ul {
     padding-left: 0;
-    list-style: none
+    list-style: none;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 25px;
+}
+@media (min-width: 981px) {
+    .sidebar ul {
+        border-bottom: 0;
+        margin-bottom: 0;
+    }
 }
 
 .sidebar .list.selected {
@@ -88,23 +101,22 @@ label input[type="radio"], label input[type="checkbox"] {
     background: #eee;
 }
 
-.main {
-    margin-left: 240px;
-    padding: 0;
-    float: none;
-}
-
 .form-group {
     margin-top: 25px;
-}
-
-.table {
-    margin-top: 20px;
 }
 
 .table thead > tr > th {
     vertical-align: bottom;
     border-bottom: 1px solid #ddd;
+}
+
+.table-nolines > thead > tr > th,
+.table-nolines > tbody > tr > th,
+.table-nolines > tfoot > tr > th,
+.table-nolines > thead > tr > td,
+.table-nolines > tbody > tr > td,
+.table-nolines > tfoot > tr > td {
+    border-top: 0;
 }
 
 .panel-success {
@@ -115,16 +127,6 @@ label input[type="radio"], label input[type="checkbox"] {
     margin-top: 20px;
 }
 
-.panel-data {
-    width: 30%;
-    float: left;
-    margin-right: 5%;
-}
-
-div.panel:nth-child(3n+4) {
-    margin-right: 0
-}
-
 .panel-body:after {
     clear: none;
 }
@@ -132,6 +134,10 @@ div.panel:nth-child(3n+4) {
 .well {
     margin-top: 20px;
     text-align: center;
+}
+
+.dl-horizontal dt {
+    text-align: left;
 }
 
 .modal-body {
@@ -163,7 +169,6 @@ div.panel:nth-child(3n+4) {
     border-style: solid;
     border-width: 0 0 0 1em;
     padding: 0 0.3em;
-    border-style: solid;
 }
 
 .netOUT {
@@ -172,7 +177,6 @@ div.panel:nth-child(3n+4) {
     border-style: solid;
     border-width: 0 0 0 1em;
     padding: 0 0.3em;
-    border-style: solid;
 }
 
 .diskRD {
@@ -181,7 +185,6 @@ div.panel:nth-child(3n+4) {
     border-style: solid;
     border-width: 0 0 0 1em;
     padding: 0 0.3em;
-    border-style: solid;
 }
 
 .diskWR {
@@ -190,7 +193,6 @@ div.panel:nth-child(3n+4) {
     border-style: solid;
     border-width: 0 0 0 1em;
     padding: 0 0.3em;
-    border-style: solid;
 }
 
 p {
@@ -216,9 +218,13 @@ p {
     font-size: 12px;
     width: 100%;
     height: 340px;
-    padding: 9.5px 0px 0px 9.5px;
+    padding: 9.5px 0 0 9.5px;
     margin-bottom: 10px;
     background-color: rgb(245, 245, 245);
     border: 1px solid rgb(204, 204, 204);
     border-radius: 4px;
+}
+
+#viewXMLpre .pre-scrollable {
+    width: 100%;
 }

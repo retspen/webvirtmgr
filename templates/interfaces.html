@@ -4,7 +4,7 @@
 {% block title %}{% trans "Interface" %}{% endblock %}
 {% block content %}
     {% include 'sidebar.html' %}
-    <div class="main">
+    <div class="main col-xs-12 col-sm-9">
         {% if errors %}
             {% for error in errors %}
                 <div class="alert alert-danger">
@@ -17,19 +17,23 @@
             <a href="#AddInterface" class="btn btn-success" data-toggle="modal">New Interface</a>
         </div>
         {% if ifaces_all %}
+            <div class="row" role="main">
             {% for iface in ifaces_all %}
-                <div class="panel {% ifequal iface.state 1 %}panel-success{% else %}panel-danger{% endifequal %} panel-data">
-                    <div class="panel-heading">
-                        <h3 class="panel-title"><a href="{% url 'interface' host_id iface.name %}">{{ iface.name }}</a>
-                        </h3>
-                    </div>
-                    <div class="panel-body">
-                        <p>{% trans "Type" %}: {{ iface.type }}</p>
+                <div class="col-xs-12 col-sm-4">
+                    <div class="panel {% ifequal iface.state 1 %}panel-success{% else %}panel-danger{% endifequal %} panel-data">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><a href="{% url 'interface' host_id iface.name %}">{{ iface.name }}</a>
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+                            <p>{% trans "Type" %}: {{ iface.type }}</p>
 
-                        <p>{% trans "MAC" %}: {{ iface.mac }}</p>
+                            <p>{% trans "MAC" %}: {{ iface.mac }}</p>
+                        </div>
                     </div>
                 </div>
             {% endfor %}
+            </div>
         {% endif %}
     </div>
 
@@ -182,6 +186,7 @@
         </div>
         <!-- /.modal-dialog -->
     </div><!-- /.modal -->
+    {% include 'sidebar_close.html' %}
 {% endblock %}
 {% block script %}
     <script>

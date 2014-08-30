@@ -3,7 +3,7 @@
 {% block title %}{% trans "Storage Pool" %}{% endblock %}
 {% block content %}
     {% include 'sidebar.html' %}
-    <div class="main">
+    <div class="main col-xs-12 col-sm-9">
         {% if errors %}
             {% for error in errors %}
                 <div class="alert alert-danger">
@@ -20,68 +20,67 @@
                 {% endfor %}
             </div>
         {% endif %}
-        <div class="row show-grid">
-            <div class="col-md-6">
-                <p>{% trans "Pool name" %}</p>
-
-                <p>{% trans "Pool type" %}</p>
-
-                <p>{% trans "Pool path" %}</p>
-
-                <p>{% trans "Pool status" %}</p>
-
-                <p>{% trans "Size" %} ({{ size|filesizeformat }} / {{ used|filesizeformat }})</p>
-
-                <p>{% trans "State" %}</p>
-
-                <p>{% trans "Autostart" %}</p>
-            </div>
-            <div class="col-md-6">
-                <p>
-                    [{% for storage in storages %}
-                    {% ifequal storage pool %}
-                        <b>{{ pool }}</b>
-                    {% else %}
-                        <a href="{% url 'storage' host_id storage %}">{{ storage }}</a>
-                    {% endifequal %}
-                {% endfor %} ]
-                </p>
-
-                <p>{% if not type %}{% trans "None" %}{% else %}{{ type }}{% endif %}</p>
-
-                <p>{% if not path %}{% trans "None" %}{% else %}{{ path }}{% endif %}</p>
-
-                <p>{% if not status %}{% trans "None" %}{% else %}{{ status }}{% endif %}</p>
-
-                <p>{% trans "Usage" %}: {{ percent }}%</p>
-
-                <p>
-
-                <form action="" method="post">{% csrf_token %}
-                    {% ifequal state 0 %}
-                        <input type="submit" class="btn btn-xs btn-default" name="start" value="{% trans "Start" %}">
-                        <input type="submit" class="btn btn-xs btn-default" name="delete" value="{% trans "Delete" %}"
-                               onclick="return confirm('{% trans "Are you sure?" %}')">
-                    {% else %}
-                        <input type="submit" class="btn btn-xs btn-default" name="stop" value="{% trans "Stop" %}"
-                               onclick="return confirm('{% trans "Are you sure?" %}')">
-                    {% endifequal %}
-                </form>
-                </p>
-                <p>
-
-                <form action="" method="post">{% csrf_token %}
-                    {% ifequal autostart 0 %}
-                        <input type="submit" class="btn btn-xs btn-default" name="set_autostart"
-                               value="{% trans "Enable" %}">
-                    {% else %}
-                        <input type="submit" class="btn btn-xs btn-default" name="unset_autostart"
-                               onclick="return confirm('{% trans "Are you sure?" %}')" value="{% trans "Disable" %}">
-                    {% endifequal %}
-                </form>
-                </p>
-            </div>
-        </div>
+        <table class="table table-hover table-nolines" role="main">
+            <tbody>
+                <tr>
+                    <td>{% trans "Pool name" %}</td>
+                    <td>
+                        [{% for storage in storages %}
+                            {% ifequal storage pool %}
+                                <b>{{ pool }}</b>
+                            {% else %}
+                                <a href="{% url 'storage' host_id storage %}">{{ storage }}</a>
+                            {% endifequal %}
+                        {% endfor %} ]
+                    </td>
+                </tr>
+                <tr>
+                    <td>{% trans "Pool type" %}</td>
+                    <td>{% if not type %}{% trans "None" %}{% else %}{{ type }}{% endif %}</td>
+                </tr>
+                <tr>
+                    <td>{% trans "Pool path" %}</td>
+                    <td>{% if not path %}{% trans "None" %}{% else %}{{ path }}{% endif %}</td>
+                </tr>
+                <tr>
+                    <td>{% trans "Pool status" %}</td>
+                    <td>{% if not status %}{% trans "None" %}{% else %}{{ status }}{% endif %}</td>
+                </tr>
+                <tr>
+                    <td>{% trans "Size" %} ({{ size|filesizeformat }} / {{ used|filesizeformat }})</td>
+                    <td>{% trans "Usage" %}: {{ percent }}%</td>
+                </tr>
+                <tr>
+                    <td>{% trans "State" %}</td>
+                    <td>
+                        <form action="" method="post" role="form">{% csrf_token %}
+                            {% ifequal state 0 %}
+                                <input type="submit" class="btn btn-xs btn-default" name="start" value="{% trans "Start" %}">
+                                <input type="submit" class="btn btn-xs btn-default" name="delete" value="{% trans "Delete" %}"
+                                       onclick="return confirm('{% trans "Are you sure?" %}')">
+                            {% else %}
+                                <input type="submit" class="btn btn-xs btn-default" name="stop" value="{% trans "Stop" %}"
+                                       onclick="return confirm('{% trans "Are you sure?" %}')">
+                            {% endifequal %}
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <td>{% trans "Autostart" %}</td>
+                    <td>
+                        <form action="" method="post" role="form">{% csrf_token %}
+                            {% ifequal autostart 0 %}
+                                <input type="submit" class="btn btn-xs btn-default" name="set_autostart"
+                                       value="{% trans "Enable" %}">
+                            {% else %}
+                                <input type="submit" class="btn btn-xs btn-default" name="unset_autostart"
+                                       onclick="return confirm('{% trans "Are you sure?" %}')" value="{% trans "Disable" %}">
+                            {% endifequal %}
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
         {% if state %}
             {% ifequal pool "iso" %}
                 <h3>{% trans "Images" %}</h3>
@@ -92,35 +91,37 @@
                 {% endifnotequal %}
 
                 {% if volumes %}
-                    <table class="table table-striped table-bordered">
-                        <thead>
-                        <tr>
-                            <th style="width:20px;">#</th>
-                            <th>{% trans "Name" %}</th>
-                            <th style="width:90px;">{% trans "Size" %}</th>
-                            <th style="width:30px;">{% trans "Format" %}</th>
-                            <th colspan="2">{% trans "Action" %}</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for volume in volumes %}
-                            <tr>
-                                <td>{{ forloop.counter }}</td>
-                                <td>{{ volume.name }}</td>
-                                <td style="width:65px;">{{ volume.size|filesizeformat }}</td>
-                                <td>{{ volume.type }}</td>
-                                <td style="width:30px;">
-                                    <form action="" method="post">{% csrf_token %}
-                                        <input type="hidden" name="volname" value="{{ volume.name }}">
-                                        <input type="submit" class="btn btn-sm btn-danger" name="del_volume"
-                                               value="{% trans "Delete" %}"
-                                               onclick="return confirm('{% trans "Are you sure?" %}')">
-                                    </form>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th style="width:20px;">#</th>
+                                    <th>{% trans "Name" %}</th>
+                                    <th style="width:90px;">{% trans "Size" %}</th>
+                                    <th style="width:30px;">{% trans "Format" %}</th>
+                                    <th colspan="2">{% trans "Action" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for volume in volumes %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ volume.name }}</td>
+                                        <td style="width:65px;">{{ volume.size|filesizeformat }}</td>
+                                        <td>{{ volume.type }}</td>
+                                        <td style="width:30px;">
+                                            <form action="" method="post" role="form">{% csrf_token %}
+                                                <input type="hidden" name="volname" value="{{ volume.name }}">
+                                                <input type="submit" class="btn btn-sm btn-danger" name="del_volume"
+                                                       value="{% trans "Delete" %}"
+                                                       onclick="return confirm('{% trans "Are you sure?" %}')">
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 {% else %}
                     <div class="well">
                         <h4>{% trans "You do not have any ISO images or storage pool not active" %}</h4>
@@ -134,105 +135,107 @@
                 {% endifnotequal %}
 
                 {% if volumes %}
-                    <table class="table table-striped table-bordered">
-                        <thead>
-                        <tr>
-                            <th style="width:20px;">#</th>
-                            <th>{% trans "Name" %}</th>
-                            <th style="width:80px;">{% trans "Size" %}</th>
-                            <th style="width:30px;">{% trans "Format" %}</th>
-                            <th colspan="2">{% trans "Action" %}</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for volume in volumes %}
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered">
+                            <thead>
                             <tr>
-                                <td>{{ forloop.counter }}</td>
-                                <td>{{ volume.name }}</td>
-                                <td>{{ volume.size|filesizeformat }}</td>
-                                <td>{{ volume.type }}</td>
-                                <td style="width:30px;">
-                                    <div class="modal fade" id="Clone{{ forloop.counter }}" tabindex="-1" role="dialog"
-                                         aria-labelledby="addHostLabel" aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <button type="button" class="close" data-dismiss="modal"
-                                                            aria-hidden="true">&times;</button>
-                                                    <h4 class="modal-title">{% trans "Clone image" %} <span
-                                                            class="text-danger">{{ volume.name }}</span></h4>
-                                                </div>
-                                                <form class="form-horizontal" method="post" role="form">{% csrf_token %}
-                                                    <div class="form-group">
-                                                        <label class="col-sm-3 control-label">{% trans "Name" %}</label>
-
-                                                        <div class="col-sm-6">
-                                                            <input type="text" class="form-control" name="name"
-                                                                   placeholder="{% trans "Name" %}" required
-                                                                   pattern="[a-zA-Z0-9\.\-_]+">
-                                                            <input type="hidden" name="image" value="{{ volume.name }}">
-                                                        </div>
-                                                        <label class="col-sm-1 control-label">.img</label>
-                                                    </div>
-                                                    <div class="form-group" id="image_format">
-                                                        <label class="col-sm-3 control-label">{% trans "Convert" %}</label>
-
-                                                        <div class="col-sm-6">
-                                                            <input class="volume-convert" type="checkbox" name="convert"
-                                                                   value="true">
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group format-convert">
-                                                        <label class="col-sm-3 control-label">{% trans "Format" %}</label>
-
-                                                        <div class="col-sm-6">
-                                                            <select name="format" class="form-control image-format">
-                                                                <option value="raw">{% trans "raw" %}</option>
-                                                                <option value="qcow">{% trans "qcow" %}</option>
-                                                                <option value="qcow2">{% trans "qcow2" %}</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group meta-prealloc" style="display: none;">
-                                                        <label class="col-sm-3 control-label">{% trans "Metadata" %}</label>
-
-                                                        <div class="col-sm-6">
-                                                            <input type="checkbox" name="meta_prealloc" value="true"
-                                                                   checked>
-                                                        </div>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-default"
-                                                                data-dismiss="modal">{% trans "Close" %}</button>
-                                                        <button type="submit" class="btn btn-primary"
-                                                                name="cln_volume">{% trans "Clone" %}</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                            <!-- /.modal-content -->
-                                        </div>
-                                        <!-- /.modal-dialog -->
-                                    </div>
-                                    <!-- /.modal -->
-                                    {% ifnotequal volume.type "iso" %}
-                                        <a data-toggle="modal" href="#Clone{{ forloop.counter }}"
-                                           class="btn btn-sm btn-primary">{% trans "Clone" %}</a>
-                                    {% else %}
-                                        <a class="btn btn-sm btn-primary disabled">{% trans "Clone" %}</a>
-                                    {% endifnotequal %}
-                                </td>
-                                <td style="width:30px;">
-                                    <form action="" method="post" style="height:10px;">{% csrf_token %}
-                                        <input type="hidden" name="volname" value="{{ volume.name }}">
-                                        <input type="submit" class="btn btn-sm btn-danger" name="del_volume"
-                                               value="{% trans "Delete" %}"
-                                               onclick="return confirm('{% trans "Are you sure?" %}')">
-                                    </form>
-                                </td>
+                                <th style="width:20px;">#</th>
+                                <th>{% trans "Name" %}</th>
+                                <th style="width:80px;">{% trans "Size" %}</th>
+                                <th style="width:30px;">{% trans "Format" %}</th>
+                                <th colspan="2">{% trans "Action" %}</th>
                             </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                            {% for volume in volumes %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ volume.name }}</td>
+                                    <td>{{ volume.size|filesizeformat }}</td>
+                                    <td>{{ volume.type }}</td>
+                                    <td style="width:30px;">
+                                        <div class="modal fade" id="Clone{{ forloop.counter }}" tabindex="-1" role="dialog"
+                                             aria-labelledby="addHostLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                                aria-hidden="true">&times;</button>
+                                                        <h4 class="modal-title">{% trans "Clone image" %} <span
+                                                                class="text-danger">{{ volume.name }}</span></h4>
+                                                    </div>
+                                                    <form class="form-horizontal" method="post" role="form">{% csrf_token %}
+                                                        <div class="form-group">
+                                                            <label class="col-sm-3 control-label">{% trans "Name" %}</label>
+
+                                                            <div class="col-sm-6">
+                                                                <input type="text" class="form-control" name="name"
+                                                                       placeholder="{% trans "Name" %}" required
+                                                                       pattern="[a-zA-Z0-9\.\-_]+">
+                                                                <input type="hidden" name="image" value="{{ volume.name }}">
+                                                            </div>
+                                                            <label class="col-sm-1 control-label">.img</label>
+                                                        </div>
+                                                        <div class="form-group" id="image_format">
+                                                            <label class="col-sm-3 control-label">{% trans "Convert" %}</label>
+
+                                                            <div class="col-sm-6">
+                                                                <input class="volume-convert" type="checkbox" name="convert"
+                                                                       value="true">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group format-convert">
+                                                            <label class="col-sm-3 control-label">{% trans "Format" %}</label>
+
+                                                            <div class="col-sm-6">
+                                                                <select name="format" class="form-control image-format">
+                                                                    <option value="raw">{% trans "raw" %}</option>
+                                                                    <option value="qcow">{% trans "qcow" %}</option>
+                                                                    <option value="qcow2">{% trans "qcow2" %}</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group meta-prealloc" style="display: none;">
+                                                            <label class="col-sm-3 control-label">{% trans "Metadata" %}</label>
+
+                                                            <div class="col-sm-6">
+                                                                <input type="checkbox" name="meta_prealloc" value="true"
+                                                                       checked>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-default"
+                                                                    data-dismiss="modal">{% trans "Close" %}</button>
+                                                            <button type="submit" class="btn btn-primary"
+                                                                    name="cln_volume">{% trans "Clone" %}</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <!-- /.modal-content -->
+                                            </div>
+                                            <!-- /.modal-dialog -->
+                                        </div>
+                                        <!-- /.modal -->
+                                        {% ifnotequal volume.type "iso" %}
+                                            <a data-toggle="modal" href="#Clone{{ forloop.counter }}"
+                                               class="btn btn-sm btn-primary">{% trans "Clone" %}</a>
+                                        {% else %}
+                                            <a class="btn btn-sm btn-primary disabled">{% trans "Clone" %}</a>
+                                        {% endifnotequal %}
+                                    </td>
+                                    <td style="width:30px;">
+                                        <form action="" method="post" style="height:10px" role="form">{% csrf_token %}
+                                            <input type="hidden" name="volname" value="{{ volume.name }}">
+                                            <input type="submit" class="btn btn-sm btn-danger" name="del_volume"
+                                                   value="{% trans "Delete" %}"
+                                                   onclick="return confirm('{% trans "Are you sure?" %}')">
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 {% else %}
                     <div class="well pagination-centered">
                         <h4>{% trans "You do not have any volumes or storage pools active" %}</h4>
@@ -325,9 +328,10 @@
         </div>
         <!-- /.modal-dialog -->
     </div><!-- /.modal -->
+    {% include 'sidebar_close.html' %}
 {% endblock %}
 {% block script %}
-    <script type="text/javascript">
+    <script>
         $(document).on('change', '.volume-convert', function () {
             if ($(this).prop('checked')) {
                 $('.format-convert').show();

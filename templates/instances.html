@@ -4,7 +4,7 @@
 {% block title %}{% trans "Instances" %}{% endblock %}
 {% block content %}
     {% include 'sidebar.html' %}
-    <div class="main">
+    <div class="main col-xs-12 col-sm-9" role="main">
         {% if errors %}
             {% for error in errors %}
                 <div class="alert alert-danger">
@@ -46,7 +46,7 @@
                         <td>{{ inst.vcpu }}</td>
                         <td>{{ inst.memory }}{% trans "MB" %}</td>
                         <td>
-                            <form action="" method="post">{% csrf_token %}
+                            <form action="" method="post" role="form">{% csrf_token %}
                                 <input type="hidden" name="name" value="{{ inst.name }}"/>
                                 {% ifequal inst.status 5 %}
                                     <button class="btn btn-sm btn-default" type="submit" name="start" title="Start">
@@ -137,9 +137,10 @@
             </div>
         {% endif %}
     </div>
+    {% include 'sidebar_close.html' %}
 {% endblock %}
 {% block script %}
-    <script type="text/javascript">
+    <script>
         function status() {
             $.getJSON('{% url 'insts_status' host_id %}', function (data) {
                 for (var i = 0; i < data.length; i++) {

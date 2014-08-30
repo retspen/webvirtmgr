@@ -5,20 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="{% static "img/favicon.ico" %}">
     <title>{% block title %}{% endblock %}</title>
-    <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <link href="{% static "css/webvirtmgr.css" %}" rel="stylesheet">
     {% block style %}{% endblock %}
 </head>
+
 <body>
-<div class="navbar navbar-inverse navbar-static-top">
+<nav class="navbar navbar-inverse navbar-static-top" role="navigation">
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                 <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
             </button>
             <a class="navbar-brand" href="/">WebVirtMgr</a>
         </div>
-        <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
+        <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
                 <li>
                     <a href="{% url 'infrastructure' %}"
@@ -37,14 +40,14 @@
                     </li>
                 {% endif %}
             </ul>
-        </nav>
+        </div>
     </div>
-</div>
+</nav>
 <div class="container">
     {% block content %}{% endblock %}
 </div>
 <script src="{% static "js/jquery-1.10.2.js" %}"></script>
-<script src="{% static "js/bootstrap.min.js" %}"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 {% block script %}{% endblock %}
 </body>
 </html>
