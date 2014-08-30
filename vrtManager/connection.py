@@ -442,5 +442,5 @@ class wvmConnect(object):
     def close(self):
         """Close connection"""
         # to-do: do not close connection ;)
-        #self.wvm.close()
+        # self.wvm.close()
         pass
