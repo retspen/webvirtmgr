@@ -13,6 +13,7 @@ from rwlock import ReadWriteLock
 from django.conf import settings
 
 
+CONN_SOCKET = 4
 CONN_TLS = 3
 CONN_SSH = 2
 CONN_TCP = 1
@@ -81,6 +82,8 @@ class wvmConnection(object):
                     self.__connect_ssh()
                 elif self.type == CONN_TLS:
                     self.__connect_tls()
+                elif self.type == CONN_SOCKET:
+                    self.__connect_socket()
                 else:
                     raise ValueError('"{type}" is not a valid connection type'.format(type=self.type))
 
@@ -174,6 +177,17 @@ class wvmConnection(object):
 
         try:
             self.connection = libvirt.openAuth(uri, auth, 0)
+            self.last_error = None
+
+        except libvirtError as e:
+            self.last_error = 'Connection Failed: ' + str(e)
+            self.connection = None
+
+    def __connect_socket(self):
+        uri = 'qemu:///system'
+
+        try:
+            self.connection = libvirt.open(uri)
             self.last_error = None
 
         except libvirtError as e:
@@ -442,5 +456,5 @@ class wvmConnect(object):
     def close(self):
         """Close connection"""
         # to-do: do not close connection ;)
-        #self.wvm.close()
+        # self.wvm.close()
         pass

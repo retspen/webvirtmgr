@@ -83,7 +83,8 @@
                             <p><strong>{% trans "Type" %}:</strong> [
                                 {% ifequal host.type 1 %}TCP{% endifequal %}
                                 {% ifequal host.type 2 %}SSH{% endifequal %}
-                                {% ifequal host.type 3 %}TLS{% endifequal %}]
+                                {% ifequal host.type 3 %}TLS{% endifequal %}
+                                {% ifequal host.type 4 %}SOCKET{% endifequal %} ]
                             </p>
 
                             <p><strong>{% trans "Host" %}:</strong> <a
@@ -100,6 +101,7 @@
                                                 {% ifequal host.type 1 %}({% trans "TCP" %}){% endifequal %}
                                                 {% ifequal host.type 2 %}({% trans "SSH" %}){% endifequal %}
                                                 {% ifequal host.type 3 %}({% trans "TLS" %}){% endifequal %}
+                                                {% ifequal host.type 4 %}({% trans "SOCKET" %}){% endifequal %}
                                             </h4>
                                         </div>
                                         <div class="tab-content">
@@ -265,6 +267,7 @@
                         </li>
                         <li><a href="#2" data-toggle="tab">{% trans "SSH Connections" %}</a></li>
                         <li><a href="#3" data-toggle="tab">{% trans "TLS Connection" %}</a></li>
+                        <li><a href="#4" data-toggle="tab">{% trans "Local Socket" %}</a></li>
                     </ul>
                 </div>
                 <div class="tab-content">
@@ -388,6 +391,24 @@
                                         data-dismiss="modal">{% trans "Close" %}</button>
                                 <button type="submit" class="btn btn-primary"
                                         name="host_tls_add">{% trans "Add" %}</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane" id="4">
+                        <form class="form-horizontal" method="post" role="form">{% csrf_token %}
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">{% trans "Label" %}</label>
+
+                                <div class="col-sm-6">
+                                    <input type="text" name="name" class="form-control" placeholder="Label Name"
+                                           maxlength="20" required pattern="[a-z0-9\.\-_]+">
+                                </div>
+                            </div>
+                           <div class="modal-footer">
+                                <button type="button" class="btn btn-default"
+                                        data-dismiss="modal">{% trans "Close" %}</button>
+                                <button type="submit" class="btn btn-primary"
+                                        name="host_socket_add">{% trans "Add" %}</button>
                             </div>
                         </form>
                     </div>
