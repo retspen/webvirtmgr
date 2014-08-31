@@ -3,7 +3,7 @@
 #
 import time
 import os.path
-from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE, VIR_MIGRATE_LIVE
+from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE, VIR_MIGRATE_LIVE, VIR_MIGRATE_UNSAFE
 from vrtManager import util
 from xml.etree import ElementTree
 from datetime import datetime
@@ -65,10 +65,12 @@ class wvmInstances(wvmConnect):
         dom = self.get_instance(name)
         dom.resume()
 
-    def moveto(self, conn, name, live, undefine):
+    def moveto(self, conn, name, live, unsafe, undefine):
         flags = 0
         if live and conn.get_status() == 1:
             flags |= VIR_MIGRATE_LIVE
+        if unsafe and conn.get_status() == 1:
+            flags |= VIR_MIGRATE_UNSAFE
         dom = conn.get_instance(name)
         dom.migrate(self.wvm, flags, name, None, 0)
         if undefine:
@@ -369,10 +371,15 @@ class wvmInstance(wvmConnect):
                                 telnet_port = service_port
         return telnet_port
 
-    def get_vnc(self):
-        vnc = util.get_xml_path(self._XMLDesc(0),
-                                "/domain/devices/graphics[@type='vnc']/@port")
-        return vnc
+    def get_vnc_port(self):
+        vnc_port = util.get_xml_path(self._XMLDesc(0),
+                                     "/domain/devices/graphics[@type='vnc']/@port")
+        return vnc_port
+
+    def get_vnc_websocket_port(self):
+        vnc_websocket_port = util.get_xml_path(self._XMLDesc(0),
+                                               "/domain/devices/graphics[@type='vnc']/@websocket")
+        return vnc_websocket_port
 
     def get_vnc_passwd(self):
         return util.get_xml_path(self._XMLDesc(VIR_DOMAIN_XML_SECURE),
@@ -381,7 +388,11 @@ class wvmInstance(wvmConnect):
     def set_vnc_passwd(self, passwd):
         xml = self._XMLDesc(VIR_DOMAIN_XML_SECURE)
         root = ElementTree.fromstring(xml)
-        graphics_vnc = root.find("devices/graphics[@type='vnc']")
+        try:
+            graphics_vnc = root.find("devices/graphics[@type='vnc']")
+        except SyntaxError:
+            # Little fix for old version ElementTree
+            graphics_vnc = root.find("devices/graphics")
         if passwd:
             graphics_vnc.set('passwd', passwd)
         else:
@@ -395,7 +406,11 @@ class wvmInstance(wvmConnect):
     def set_vnc_keymap(self, keymap):
         xml = self._XMLDesc(VIR_DOMAIN_XML_SECURE)
         root = ElementTree.fromstring(xml)
-        graphics_vnc = root.find("devices/graphics[@type='vnc']")
+        try:
+            graphics_vnc = root.find("devices/graphics[@type='vnc']")
+        except SyntaxError:
+            # Little fix for old version ElementTree
+            graphics_vnc = root.find("devices/graphics")
         if keymap:
             graphics_vnc.set('keymap', keymap)
         else:
@@ -403,7 +418,7 @@ class wvmInstance(wvmConnect):
                 graphics_vnc.attrib.pop('keymap')
             except:
                 pass
-        newxml = ElementTree.tostring(root, encoding='utf-8', method='xml')
+        newxml = ElementTree.tostring(root)
         self._defineXML(newxml)
 
     def get_vnc_keymap(self):

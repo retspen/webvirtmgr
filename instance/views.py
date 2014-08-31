@@ -463,7 +463,7 @@ def instance(request, host_id, vname):
         memory_host = conn.get_max_memory()
         vcpu_host = len(vcpu_range)
         telnet_port = conn.get_telnet_port()
-        vnc_port = conn.get_vnc()
+        vnc_port = conn.get_vnc_port()
         vnc_keymap = conn.get_vnc_keymap
         snapshots = sorted(conn.get_snapshot(), reverse=True)
         inst_xml = conn._XMLDesc(VIR_DOMAIN_XML_SECURE)
@@ -578,13 +578,14 @@ def instance(request, host_id, vname):
             if 'migrate' in request.POST:
                 compute_id = request.POST.get('compute_id', '')
                 live = request.POST.get('live_migrate', False)
+                unsafe = request.POST.get('unsafe_migrate', False)
                 xml_del = request.POST.get('xml_delete', False)
                 new_compute = Compute.objects.get(id=compute_id)
                 conn_migrate = wvmInstances(new_compute.hostname,
                                             new_compute.login,
                                             new_compute.password,
                                             new_compute.type)
-                conn_migrate.moveto(conn, vname, live, xml_del)
+                conn_migrate.moveto(conn, vname, live, unsafe, xml_del)
                 conn_migrate.define_move(vname)
                 conn_migrate.close()
                 return HttpResponseRedirect('/instance/%s/%s' % (compute_id, vname))
