@@ -460,7 +460,7 @@ def instance(request, host_id, vname):
         vcpu_host = len(vcpu_range)
         telnet_port = conn.get_telnet_port()
         vnc_port = conn.get_vnc_port()
-        vnc_keymap = conn.get_vnc_keymap
+        vnc_keymap = conn.get_vnc_keymap()
         snapshots = sorted(conn.get_snapshot(), reverse=True)
         inst_xml = conn._XMLDesc(VIR_DOMAIN_XML_SECURE)
         has_managed_save_image = conn.get_managed_save_image()
