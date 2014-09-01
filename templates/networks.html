@@ -3,7 +3,7 @@
 {% block title %}{% trans "Virtual Networks" %}{% endblock %}
 {% block content %}
     {% include 'sidebar.html' %}
-    <div class="main">
+    <div class="main col-xs-12 col-sm-9">
         <div class="btn-group-sm">
             <a href="#AddNetPool" class="btn btn-success" data-toggle="modal">{% trans "New Network" %}</a>
         </div>
@@ -44,18 +44,22 @@
                 <h4>{% trans "You do not have any virtual networks" %}</h4>
             </div>
         {% else %}
-            {% for pool in networks %}
-                <div class="panel {% if pool.status %}panel-success{% else %}panel-danger{% endif %} panel-data">
-                    <div class="panel-heading">
-                        <h3 class="panel-title"><a href="{% url 'network' host_id pool.name %}">{{ pool.name }}</a></h3>
-                    </div>
-                    <div class="panel-body">
-                        <p>{% trans "Device" %}: {{ pool.device }}</p>
+            <div class="row" role="main">
+                {% for pool in networks %}
+                    <div class="col-xs-12 col-sm-4">
+                        <div class="panel {% if pool.status %}panel-success{% else %}panel-danger{% endif %} panel-data">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><a href="{% url 'network' host_id pool.name %}">{{ pool.name }}</a></h3>
+                            </div>
+                            <div class="panel-body">
+                                <p>{% trans "Device" %}: {{ pool.device }}</p>
 
-                        <p>{% trans "Forward" %}: {{ pool.forward|upper }}</p>
+                                <p>{% trans "Forward" %}: {{ pool.forward|upper }}</p>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            {% endfor %}
+                {% endfor %}
+            </div>
         {% endif %}
     </div>
 
@@ -136,6 +140,7 @@
         </div>
         <!-- /.modal-dialog -->
     </div><!-- /.modal -->
+    {% include 'sidebar_close.html' %}
 {% endblock %}
 {% block script %}
     <script>

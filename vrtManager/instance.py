@@ -400,7 +400,7 @@ class wvmInstance(wvmConnect):
                 graphics_vnc.attrib.pop('passwd')
             except:
                 pass
-        newxml = ElementTree.tostring(root, encoding='utf-8', method='xml')
+        newxml = ElementTree.tostring(root)
         self._defineXML(newxml)
 
     def set_vnc_keymap(self, keymap):
@@ -517,6 +517,10 @@ class wvmInstance(wvmConnect):
         name.text = clone_data['name']
         uuid = tree.find('uuid')
         tree.remove(uuid)
+
+        for num, net in enumerate(tree.findall('devices/interface')):
+            elm = net.find('mac')
+            elm.set('address', clone_data['net-' + str(num)])
 
         for disk in tree.findall('devices/disk'):
             if disk.get('device') == 'disk':

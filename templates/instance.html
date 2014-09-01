@@ -4,7 +4,7 @@
 {% block title %}{% trans "VMs" %} - {{ vname }}{% endblock %}
 {% block content %}
     {% include 'sidebar.html' %}
-    <div class="main">
+    <div class="main col-xs-12 col-sm-9">
     {% if errors %}
         {% for error in errors %}
             <div class="alert alert-danger">
@@ -37,13 +37,13 @@
             <td>{% if status %}
                 <span id="status" class={% ifequal status 5 %}
                     {% ifequal has_managed_save_image 1 %}
-                        "text-warning">{% trans "Saved" %}
+                        "label label-warning">{% trans "Saved" %}
                     {% else %}
-                        "text-danger">{% trans "Shutoff" %}
+                        "label label-danger">{% trans "Shutoff" %}
                     {% endifequal %}
                 {% endifequal %}
-                {% ifequal status 1 %}"text-success">{% trans "Running" %}{% endifequal %}
-                {% ifequal status 3 %}"text-warning">{% trans "Suspend" %}{% endifequal %}
+                {% ifequal status 1 %}"label label-success">{% trans "Running" %}{% endifequal %}
+                {% ifequal status 3 %}"label label-warning">{% trans "Suspend" %}{% endifequal %}
                             </span>
             {% else %}
                 {% trans "None" %}
@@ -56,7 +56,7 @@
         </tbody>
     </table>
     <hr>
-    <ul id="btnsection" class="nav nav-tabs" style="height: 61px;">
+    <ul id="btnsection" class="nav nav-tabs">
         <li class="active">
             <a class="inst-btn" href="#power" data-toggle="tab">
                 <span class="glyphicon glyphicon-off"></span><br>{% trans "Power" %}
@@ -101,7 +101,7 @@
             <div class="tab-pane tab-inst active" id="shutdown">
                 <p>{% trans "This action sends an ACPI shutdown signal to the instance." %}</p>
 
-                <form action="" method="post">{% csrf_token %}
+                <form action="" method="post" role="form">{% csrf_token %}
                     {% ifequal status 5 %}
                         <button type="submit" name="start"
                                 class="btn btn-lg btn-primary pull-right">{% trans "Start" %}</button>
@@ -119,7 +119,7 @@
             <div class="tab-pane tab-inst" id="forceshutdown">
                 <p>{% trans "This action forcibly powers off the instance and may cause data corruption." %}</p>
 
-                <form action="" method="post">{% csrf_token %}
+                <form action="" method="post" role="form">{% csrf_token %}
                     {% ifequal status 5 %}
                         <button type="submit" name="start"
                                 class="btn btn-lg btn-primary pull-right">{% trans "Start" %}</button>
@@ -137,7 +137,7 @@
             <div class="tab-pane tab-inst" id="suspend">
                 <p>{% trans "This action suspends or restores the instance." %}</p>
 
-                <form action="" method="post">{% csrf_token %}
+                <form action="" method="post" role="form">{% csrf_token %}
                     {% ifequal status 5 %}
                         <button type="submit" name="start"
                                 class="btn btn-lg btn-primary pull-right">{% trans "Start" %}</button>
@@ -156,7 +156,7 @@
             <div class="tab-pane tab-inst" id="managedsave">
                 <p>{% trans "This action saves the state of the instance." %}</p>
 
-                <form action="" method="post">{% csrf_token %}
+                <form action="" method="post" role="form">{% csrf_token %}
                     {% ifequal status 5 %}
                         <button data-id="shutoff" type="submit" name="start"
                                 class="btn btn-lg btn-primary pull-right">{% trans "Start" %}</button>
@@ -234,9 +234,17 @@
                         <label for="inputPassword1" class="col-sm-2 control-label">{% trans "Password" %}</label>
 
                         <div class="col-sm-6">
-                            <input type="password" class="form-control" name="vnc_passwd"
-                                   placeholder="{% trans "Password" %}" maxlength="14">
+                            <input id="vnc_show_pass" type="password" class="form-control" name="vnc_passwd"
+                                   {% if vnc_passwd %}
+                                        value="{{ vnc_passwd }}"
+                                   {% else %}
+                                        placeholder="{% trans "Password" %}"
+                                   {% endif %} maxlength="14">
                         </div>
+                        {% if vnc_passwd %}
+                            <a href="#" name="vnc_show" class="btn btn-primary btn-md"
+                                onclick="show_vnc()">{% trans "Show" %}</a>
+                        {% endif %}
                     </div>
                     {% ifequal status 5 %}
                         <button type="submit" class="btn btn-primary btn-lg pull-right"
@@ -298,7 +306,7 @@
     <div class="tab-pane tab-inst active" id="instancesettings">
         <p style="font-weight:bold;">{% trans "Description and Autostart" %}</p>
 
-        <form class="form-horizontal" action="" method="post">{% csrf_token %}
+        <form class="form-horizontal" action="" method="post" role="form">{% csrf_token %}
             <div class="form-group">
                 <label class="col-sm-4 control-label" style="font-weight:normal;"> {% trans "Autostart" %}</label>
 
@@ -389,7 +397,7 @@
         <div class="clearfix"></div>
     </div>
     <div class="tab-pane tab-inst" id="instancemedia">
-        <form class="form-horizontal" action="" method="post">{% csrf_token %}
+        <form class="form-horizontal" action="" method="post" role="form">{% csrf_token %}
             {% for cd in media %}
                 <div class="form-group">
                     <label class="col-sm-3 control-label">{% trans "CDROM" %} {{ forloop.counter }}</label>
@@ -463,7 +471,7 @@
     <div class="tab-pane tab-inst" id="instanceclone">
         <p style="font-weight:bold;">{% trans "Create a clone" %}</p>
 
-        <form class="form-horizontal" action="" method="post">{% csrf_token %}
+        <form class="form-horizontal" action="" method="post" role="form">{% csrf_token %}
             <div class="form-group">
                 <label class="col-sm-3 control-label" style="font-weight:normal;">{% trans "Clone Name" %}</label>
 
@@ -472,21 +480,15 @@
                 </div>
             </div>
             <p style="font-weight:bold;">{% trans "Network devices" %}</p>
+            {% for network in networks %}
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" style="font-weight:normal;">eth{{ forloop.counter0 }} ({{ network.nic }})</label>
 
-            <div class="col-sm-3">
-                {% for network in networks %}
-                    <p style="text-align: right;">eth{{ forloop.counter0 }} ({{ network.nic }})</p>
-                {% endfor %}
-            </div>
-            <div class="col-sm-9">
-                {% for network in networks %}
-                    {% if network.ip %}
-                        <p>{{ network.ip }}</p>
-                    {% else %}
-                        <p>{{ network.mac }}</p>
-                    {% endif %}
-                {% endfor %}
-            </div>
+                    <div class="col-sm-3">
+                        <input type="text" class="form-control" name="net-{{ forloop.counter0 }}" value="{{ network.mac }}"/>
+                    </div>
+                </div>
+            {% endfor %}
             <p style="font-weight:bold;">{% trans "Storage devices" %}</p>
             {% for disk in clone_disks %}
                 <div class="form-group">
@@ -498,7 +500,7 @@
                     {% ifequal disk.format 'qcow2' %}
                         <label class="col-sm-2 control-label" style="font-weight:normal;">Metadata</label>
                         <div class="col-sm-1">
-                            <input type="checkbox" name="meta-{{ disk.dev }}" value="true" checked>
+                            <input type="checkbox" name="meta-{{ disk.dev }}" value="true">
                         </div>
                     {% endifequal %}
                 </div>
@@ -522,7 +524,7 @@
                 <button type="button" class="btn btn-lg btn-primary pull-right disabled">{% trans "Edit" %}</button>
             {% endifequal %}
         </div>
-        <form id="viewXMLform" class="form-horizontal" method="post" role="form" style="display: none;">{% csrf_token %}
+        <form id="viewXMLform" class="form-horizontal" method="post" role="form" style="display: none">{% csrf_token %}
             <textarea id="xmltextarea" name="inst_xml">{{ inst_xml }}</textarea>
             <button type="button" class="btn btn-lg btn-default"
                     onclick="javascript:$('#viewXMLpre').show();$('#viewXMLform').hide();">{% trans "Close" %}</button>
@@ -576,7 +578,7 @@
                                 <td><strong>{{ snap.name }}</strong></td>
                                 <td>{{ snap.date|date:"M d H:i:s" }}</td>
                                 <td style="width:30px;">
-                                    <form action="" method="post" style="height:10px;">{% csrf_token %}
+                                    <form action="" method="post" style="height:10px" role="form">{% csrf_token %}
                                         <input type="hidden" name="name" value="{{ snap.name }}">
                                         {% ifequal status 5 %}
                                             <button type="submit" class="btn btn-sm btn-primary" name="revert_snapshot"
@@ -588,7 +590,7 @@
                                     </form>
                                 </td>
                                 <td style="width:30px;">
-                                    <form action="" method="post">{% csrf_token %}
+                                    <form action="" method="post" role="form">{% csrf_token %}
                                         <input type="hidden" name="name" value="{{ snap.name }}">
                                         <button type="submit" class="btn btn-sm btn-danger" name="delete_snapshot"
                                                 onclick="return confirm('{% trans "Are you sure?" %}')">{% trans "Delete" %}</button>
@@ -612,11 +614,13 @@
             <div class="tab-pane tab-inst active" id="statistics">
                 <div id="cpu-usage">
                     <p style="margin-left: 25px">{% trans "CPU usage" %}</p>
+                    <!-- TODO: adaptive width -->
                     <canvas style="margin-left: 25px" id="cpuChart" width="600" height="125"></canvas>
                 </div>
                 <div id="net-usage">
                     {% for network in networks %}
                         <p style="margin-left: 25px">{% trans "Bandwidth" %} - Eth{{ forloop.counter0 }}</p>
+                        <!-- TODO: adaptive width -->
                         <canvas style="margin-left: 25px" id="netEth{{ forloop.counter0 }}Chart" width="600"
                                 height="125"></canvas>
                         <div id="lineLegend">
@@ -645,7 +649,7 @@
         <div class="tab-content">
             <div class="tab-pane tab-inst active" id="instancemigate">
                 <p style="text-align:center;">
-                    <span class="text-danger">{% trans "Warning:" %}</span> {% trans "Both host servers must have equal settings and OS type" %}
+                    <span class="label label-danger">{% trans "Warning:" %}</span> {% trans "Both host servers must have equal settings and OS type" %}
                 </p>
                 <br>
 
@@ -718,7 +722,7 @@
                         <label>
                             <input type="checkbox" name="delete_disk" value="true">
                             <strong><span
-                                    class="text-danger">{% trans "Warning:" %}</span> {% trans "if you check this box, Instance's data will be lost!" %}
+                                    class="label label-danger">{% trans "Warning:" %}</span> {% trans "if you check this box, Instance's data will be lost!" %}
                             </strong>
                         </label>
                     </div>
@@ -731,15 +735,23 @@
     </div>
     </div>
     </div>
+    {% include 'sidebar_close.html' %}
 {% endblock %}
 {% block script %}
-    <script type="text/javascript">
+    <script>
         function open_vnc() {
             window.open('{% url 'console' %}?token={{ host_id }}-{{ uuid }}', '', 'width=850,height=485')
         }
+        function show_vnc() {
+            if ($('#vnc_show_pass').attr('type') == 'password') {
+                $('#vnc_show_pass').attr('type', 'text');
+            } else {
+                $('#vnc_show_pass').attr('type', 'password');
+            }
+        }
     </script>
     <script src="{% static "js/Chart.min.js" %}"></script>
-    <script type="text/javascript">
+    <script>
         var hash = location.hash;
         if (~$.inArray(hash, ['#shutdown', '#forceshutdown', '#managedsave', '#suspend'])) {
             var btn = $('#power>ul>li>a');
@@ -792,7 +804,7 @@
             });
         }
     </script>
-    <script type="text/javascript">
+    <script>
         $(document).on('change', '#vnc_passwd_gen', function () {
             if ($(this).prop('checked')) {
                 $('#vnc_passwd_manual').hide();
@@ -823,9 +835,8 @@
             if (keymap != '')
                 $("#vnc_select_keymap option[value='" + keymap + "']").prop('selected', true);
         });
-
     </script>
-    <script type="text/javascript">
+    <script>
         var status = {{ status }};
         var cpu_ctx = $("#cpuChart").get(0).getContext("2d");
         var cpuChart = new Chart(cpu_ctx);

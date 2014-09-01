@@ -5,9 +5,9 @@ from django.core.exceptions import PermissionDenied
 
 from servers.models import Compute
 from instance.models import Instance
-from servers.forms import ComputeAddTcpForm, ComputeAddSshForm, ComputeEditHostForm, ComputeAddTlsForm
+from servers.forms import ComputeAddTcpForm, ComputeAddSshForm, ComputeEditHostForm, ComputeAddTlsForm, ComputeAddSocketForm
 from vrtManager.hostdetails import wvmHostDetails
-from vrtManager.connection import CONN_SSH, CONN_TCP, CONN_TLS, connection_manager
+from vrtManager.connection import CONN_SSH, CONN_TCP, CONN_TLS, CONN_SOCKET, connection_manager
 from libvirt import libvirtError
 
 
@@ -107,6 +107,18 @@ def servers_list(request):
                 compute_edit.login = data['login']
                 compute_edit.password = data['password']
                 compute_edit.save()
+                return HttpResponseRedirect(request.get_full_path())
+
+        if 'host_socket_add' in request.POST:
+            form = ComputeAddSocketForm(request.POST)
+            if form.is_valid():
+                data = form.cleaned_data
+                new_socket_host = Compute(name=data['name'],
+                                          hostname='localhost',
+                                          type=CONN_SOCKET,
+                                          login='',
+                                          password='')
+                new_socket_host.save()
                 return HttpResponseRedirect(request.get_full_path())
 
     return render_to_response('servers.html', locals(), context_instance=RequestContext(request))

@@ -464,11 +464,12 @@ def instance(request, host_id, vname):
         vcpu_host = len(vcpu_range)
         telnet_port = conn.get_telnet_port()
         vnc_port = conn.get_vnc_port()
-        vnc_keymap = conn.get_vnc_keymap
+        vnc_keymap = conn.get_vnc_keymap()
         snapshots = sorted(conn.get_snapshot(), reverse=True)
         inst_xml = conn._XMLDesc(VIR_DOMAIN_XML_SECURE)
         has_managed_save_image = conn.get_managed_save_image()
         clone_disks = show_clone_disk(disks)
+        vnc_passwd = conn.get_vnc_passwd()
     except libvirtError as err:
         errors.append(err)
 
@@ -559,6 +560,8 @@ def instance(request, host_id, vname):
                 else:
                     passwd = request.POST.get('vnc_passwd', '')
                     clear = request.POST.get('clear_pass', False)
+                    if clear:
+                        passwd = ''
                     if not passwd and not clear:
                         msg = _("Enter the VNC password or select Generate")
                         errors.append(msg)
