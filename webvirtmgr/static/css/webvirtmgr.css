@@ -28,7 +28,7 @@ label input[type="radio"], label input[type="checkbox"] {
 
 .navbar-inverse .navbar-brand,
 .navbar-inverse .navbar-nav > li > a {
-    color: #ccc;
+    color: #f3ecff;
 }
 
 .navbar-inverse .navbar-brand:hover, .navbar-inverse .navbar-brand:focus {
@@ -47,21 +47,6 @@ label input[type="radio"], label input[type="checkbox"] {
     .page-header__filter .form-inline {
         float: right;
     }
-}
-
-.pagehead {
-    position: relative;
-    margin-bottom: 20px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid #eee;
-}
-
-.pagehead h1 {
-    margin-top: 0;
-    margin-bottom: 0;
-    font-size: 20px;
-    font-weight: bold;
-    line-height: 28px;
 }
 
 .sidebar ul .list {
