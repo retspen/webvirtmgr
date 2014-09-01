@@ -1,22 +1,17 @@
 =========================
-WebVirtMgr panel - v4.8.7
+WebVirtMgr panel - v4.8.8
 =========================
 
 ----------
 Whats new?
 ----------
 
+- Responsive design (Thanks: `Michel Käser <https://github.com/MaddinXx>`_)
 - Added VNC WebSocket support (Thanks: `Tolbkni Kao <https://github.com/tolbkni>`_)
-- Added webvirtmgr to pypi
-- Updated Chart.js
-- Added page interfaces
 - Added novnc proxy supporting new websockify versions (Thanks: `casell <https://github.com/casell>`_)
-- Added support CEPH
-- Added instance creating from XML
 - Added support `TLS <http://libvirt.org/remote.html#Remote_certificates>`_ connection (Thanks: `junkb <https://github.com/junkb>`_)
 - `Puppet module to control libvirt/kvm <https://github.com/ITBlogger/puppet-kvm>`_ (Thanks: `Alex Scoble <https://github.com/ITBlogger>`_)
 - `Deployment via Fabric/Fabtools <https://github.com/retspen/webvirtmgr/tree/master/deploy/fabric>`_ (Thanks: `Mohab Usama <https://github.com/mohabusama>`_)
-- Added instance cloning (Settings -> Clone)
 
 Screenshots
 -----------
