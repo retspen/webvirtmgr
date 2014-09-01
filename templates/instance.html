@@ -39,7 +39,7 @@
                     {% ifequal has_managed_save_image 1 %}
                         "label label-warning">{% trans "Saved" %}
                     {% else %}
-                        "text-danger">{% trans "Shutoff" %}
+                        "label label-danger">{% trans "Shutoff" %}
                     {% endifequal %}
                 {% endifequal %}
                 {% ifequal status 1 %}"label label-success">{% trans "Running" %}{% endifequal %}
