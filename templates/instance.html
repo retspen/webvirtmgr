@@ -604,13 +604,11 @@
             <div class="tab-pane tab-inst active" id="statistics">
                 <div id="cpu-usage">
                     <p style="margin-left: 25px">{% trans "CPU usage" %}</p>
-                    <!-- TODO: adaptive width -->
                     <canvas style="margin-left: 25px" id="cpuChart" width="600" height="125"></canvas>
                 </div>
                 <div id="net-usage">
                     {% for network in networks %}
                         <p style="margin-left: 25px">{% trans "Bandwidth" %} - Eth{{ forloop.counter0 }}</p>
-                        <!-- TODO: adaptive width -->
                         <canvas style="margin-left: 25px" id="netEth{{ forloop.counter0 }}Chart" width="600"
                                 height="125"></canvas>
                         <div id="lineLegend">
@@ -814,9 +812,9 @@
         $(document).ready(function () {
             // set current vnc keymap or fall back to default
             var keymap = "{{ vnc_keymap }}"
-
-            if (keymap != '')
+            if (keymap != '') {
                 $("#vnc_select_keymap option[value='" + keymap + "']").prop('selected', true);
+            }
         });
 
     </script>
@@ -830,22 +828,33 @@
             scaleOverride: true,
             scaleSteps: 5,
             scaleStepWidth: 20,
-            scaleStartValue: 0
-        }
+            scaleStartValue: 0,
+            responsive: true
+        };
 
         var diskChart = {};
         {% for disk in disks %}
             var disk_ctx_{{ disk.dev }} = $("#blk{{ disk.dev }}Chart").get(0).getContext("2d");
             diskChart['{{ disk.dev }}'] = new Chart(disk_ctx_{{ disk.dev }});
         {% endfor %}
-        var disk_options = {animation: false, pointDotRadius: 2, scaleLabel: "<%=value%> Mb/s"}
+        var disk_options = {
+            animation: false,
+            pointDotRadius: 2,
+            scaleLabel: "<%=value%> Mb/s",
+            responsive: true
+        };
 
         var netChart = {};
         {% for net in networks %}
             var net_ctx_{{ forloop.counter0 }} = $("#netEth{{ forloop.counter0 }}Chart").get(0).getContext("2d");
             netChart['{{ forloop.counter0 }}'] = new Chart(net_ctx_{{ forloop.counter0 }});
         {% endfor %}
-        var net_options = {animation: false, pointDotRadius: 2, scaleLabel: "<%=value%> Mbps"}
+        var net_options = {
+            animation: false,
+            pointDotRadius: 2,
+            scaleLabel: "<%=value%> Mbps",
+            responsive: true
+        };
 
         function instusage() {
             $.getJSON('{% url 'instusage' host_id vname %}', function (data) {
