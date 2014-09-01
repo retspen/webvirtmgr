@@ -76,7 +76,6 @@ def network(request, host_id, pool):
         device = conn.get_bridge_device()
         autostart = conn.get_autostart()
         ipv4_forward = conn.get_ipv4_forward()
-        ipv4_dhcp_range = conn.get_ipv4_dhcp_range()  # TODO: remove?
         ipv4_dhcp_range_start = conn.get_ipv4_dhcp_range_start()
         ipv4_dhcp_range_end = conn.get_ipv4_dhcp_range_end()
         ipv4_network = conn.get_ipv4_network()

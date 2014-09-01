@@ -93,14 +93,14 @@
                     <tr>
                         <td>{% trans "DHCP" %}</td>
                         <td>
-                            {% if ipv4_dhcp_range %}
+                            {% if ipv4_dhcp_range_start and ipv4_dhcp_range_end %}
                                 <span class="text-success">{% trans "ON" %}</span>
                             {% else %}
                                 <span class="text-danger">{% trans "OFF" %}</span>
                             {% endif %}
                         </td>
                     </tr>
-                    {% if ipv4_dhcp_range %}
+                    {% if ipv4_dhcp_range_start and ipv4_dhcp_range_end %}
                         <tr>
                             <td>{% trans "Start" %}</td>
                             <td>{{ ipv4_dhcp_range_start }}</td>
