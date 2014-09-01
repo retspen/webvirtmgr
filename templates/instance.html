@@ -470,21 +470,15 @@
                 </div>
             </div>
             <p style="font-weight:bold;">{% trans "Network devices" %}</p>
+            {% for network in networks %}
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" style="font-weight:normal;">eth{{ forloop.counter0 }} ({{ network.nic }})</label>
 
-            <div class="col-sm-3">
-                {% for network in networks %}
-                    <p style="text-align: right;">eth{{ forloop.counter0 }} ({{ network.nic }})</p>
-                {% endfor %}
-            </div>
-            <div class="col-sm-9">
-                {% for network in networks %}
-                    {% if network.ip %}
-                        <p>{{ network.ip }}</p>
-                    {% else %}
-                        <p>{{ network.mac }}</p>
-                    {% endif %}
-                {% endfor %}
-            </div>
+                    <div class="col-sm-3">
+                        <input type="text" class="form-control" name="net-{{ forloop.counter0 }}" value="{{ network.mac }}"/>
+                    </div>
+                </div>
+            {% endfor %}
             <p style="font-weight:bold;">{% trans "Storage devices" %}</p>
             {% for disk in clone_disks %}
                 <div class="form-group">
@@ -496,7 +490,7 @@
                     {% ifequal disk.format 'qcow2' %}
                         <label class="col-sm-2 control-label" style="font-weight:normal;">Metadata</label>
                         <div class="col-sm-1">
-                            <input type="checkbox" name="meta-{{ disk.dev }}" value="true" checked>
+                            <input type="checkbox" name="meta-{{ disk.dev }}" value="true">
                         </div>
                     {% endifequal %}
                 </div>

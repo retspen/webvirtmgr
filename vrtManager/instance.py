@@ -518,6 +518,10 @@ class wvmInstance(wvmConnect):
         uuid = tree.find('uuid')
         tree.remove(uuid)
 
+        for num, net in enumerate(tree.findall('devices/interface')):
+            elm = net.find('mac')
+            elm.set('address', clone_data['net-' + str(num)])
+
         for disk in tree.findall('devices/disk'):
             if disk.get('device') == 'disk':
                 elm = disk.find('target')
