@@ -95,7 +95,7 @@ class wvmConnection(object):
                         self.connection.setKeepAlive(connection_manager.keepalive_interval, connection_manager.keepalive_count)
                         try:
                             self.connection.registerCloseCallback(self.__connection_close_callback, None)
-                        except TypeError:
+                        except:
                             # Temporary fix for libvirt > libvirt-0.10.2-41
                             pass
                     except libvirtError as e:
@@ -217,7 +217,7 @@ class wvmConnection(object):
             # unregister callback (as it is no longer valid if this instance gets deleted)
             try:
                 self.connection.unregisterCloseCallback()
-            except libvirtError:
+            except:
                 pass
 
     def __unicode__(self):
