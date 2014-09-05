@@ -505,11 +505,11 @@ def instance(request, host_id, vname):
             if 'delete' in request.POST:
                 if conn.get_status() == 1:
                     conn.force_shutdown()
-                if request.POST.get('delete_disk', ''):
-                    conn.delete_disk()
                 try:
                     instance = Instance.objects.get(compute_id=host_id, name=vname)
                     instance.delete()
+                    if request.POST.get('delete_disk', ''):
+                        conn.delete_disk()
                 finally:
                     conn.delete()
                 return HttpResponseRedirect('/instances/%s/' % host_id)
