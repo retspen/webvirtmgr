@@ -455,7 +455,7 @@ def instance(request, host_id, vname):
         networks = conn.get_net_device()
         media_iso = sorted(conn.get_iso_media())
         vcpu_range = conn.get_max_cpus()
-        memory_range = [256, 512, 1024, 2048, 4096, 6144, 8192, 16384]
+        memory_range = [256, 512, 1024, 2048, 3072, 4096, 6144, 8192, 16384]
         memory_host = conn.get_max_memory()
         vcpu_host = len(vcpu_range)
         telnet_port = conn.get_telnet_port()
