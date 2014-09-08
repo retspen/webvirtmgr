@@ -465,6 +465,7 @@ def instance(request, host_id, vname):
         inst_xml = conn._XMLDesc(VIR_DOMAIN_XML_SECURE)
         has_managed_save_image = conn.get_managed_save_image()
         clone_disks = show_clone_disk(disks)
+        vnc_passwd = conn.get_vnc_passwd()
     except libvirtError as err:
         errors.append(err)
 
@@ -504,11 +505,11 @@ def instance(request, host_id, vname):
             if 'delete' in request.POST:
                 if conn.get_status() == 1:
                     conn.force_shutdown()
-                if request.POST.get('delete_disk', ''):
-                    conn.delete_disk()
                 try:
                     instance = Instance.objects.get(compute_id=host_id, name=vname)
                     instance.delete()
+                    if request.POST.get('delete_disk', ''):
+                        conn.delete_disk()
                 finally:
                     conn.delete()
                 return HttpResponseRedirect('/instances/%s/' % host_id)
@@ -551,6 +552,8 @@ def instance(request, host_id, vname):
                 else:
                     passwd = request.POST.get('vnc_passwd', '')
                     clear = request.POST.get('clear_pass', False)
+                    if clear:
+                        passwd = ''
                     if not passwd and not clear:
                         msg = _("Enter the VNC password or select Generate")
                         errors.append(msg)

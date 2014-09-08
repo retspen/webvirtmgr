@@ -37,13 +37,13 @@
             <td>{% if status %}
                 <span id="status" class={% ifequal status 5 %}
                     {% ifequal has_managed_save_image 1 %}
-                        "text-warning">{% trans "Saved" %}
+                        "label label-warning">{% trans "Saved" %}
                     {% else %}
-                        "text-danger">{% trans "Shutoff" %}
+                        "label label-danger">{% trans "Shutoff" %}
                     {% endifequal %}
                 {% endifequal %}
-                {% ifequal status 1 %}"text-success">{% trans "Running" %}{% endifequal %}
-                {% ifequal status 3 %}"text-warning">{% trans "Suspend" %}{% endifequal %}
+                {% ifequal status 1 %}"label label-success">{% trans "Running" %}{% endifequal %}
+                {% ifequal status 3 %}"label label-warning">{% trans "Suspend" %}{% endifequal %}
                             </span>
             {% else %}
                 {% trans "None" %}
@@ -232,9 +232,17 @@
                         <label for="inputPassword1" class="col-sm-2 control-label">{% trans "Password" %}</label>
 
                         <div class="col-sm-6">
-                            <input type="password" class="form-control" name="vnc_passwd"
-                                   placeholder="{% trans "Password" %}" maxlength="14">
+                            <input id="vnc_show_pass" type="password" class="form-control" name="vnc_passwd"
+                                   {% if vnc_passwd %}
+                                        value="{{ vnc_passwd }}"
+                                   {% else %}
+                                        placeholder="{% trans "Password" %}"
+                                   {% endif %} maxlength="14">
                         </div>
+                        {% if vnc_passwd %}
+                            <a href="#" name="vnc_show" class="btn btn-primary btn-md"
+                                onclick="show_vnc()">{% trans "Show" %}</a>
+                        {% endif %}
                     </div>
                     {% ifequal status 5 %}
                         <button type="submit" class="btn btn-primary btn-lg pull-right"
@@ -637,7 +645,7 @@
         <div class="tab-content">
             <div class="tab-pane tab-inst active" id="instancemigate">
                 <p style="text-align:center;">
-                    <span class="text-danger">{% trans "Warning:" %}</span> {% trans "Both host servers must have equal settings and OS type" %}
+                    <span class="label label-danger">{% trans "Warning:" %}</span> {% trans "Both host servers must have equal settings and OS type" %}
                 </p>
                 <br>
 
@@ -710,7 +718,7 @@
                         <label>
                             <input type="checkbox" name="delete_disk" value="true">
                             <strong><span
-                                    class="text-danger">{% trans "Warning:" %}</span> {% trans "if you check this box, Instance's data will be lost!" %}
+                                    class="label label-danger">{% trans "Warning:" %}</span> {% trans "if you check this box, Instance's data will be lost!" %}
                             </strong>
                         </label>
                     </div>
@@ -729,6 +737,13 @@
     <script>
         function open_vnc() {
             window.open('{% url 'console' %}?token={{ host_id }}-{{ uuid }}', '', 'width=850,height=485')
+        }
+        function show_vnc() {
+            if ($('#vnc_show_pass').attr('type') == 'password') {
+                $('#vnc_show_pass').attr('type', 'text');
+            } else {
+                $('#vnc_show_pass').attr('type', 'password');
+            }
         }
     </script>
     <script src="{% static "js/Chart.min.js" %}"></script>
@@ -816,7 +831,6 @@
                 $("#vnc_select_keymap option[value='" + keymap + "']").prop('selected', true);
             }
         });
-
     </script>
     <script>
         var status = {{ status }};
