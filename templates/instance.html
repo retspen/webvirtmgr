@@ -371,7 +371,7 @@
                         {% endfor %}
                     </select>
                     <input type="text" name="cur_memory_custom" class="form-control js-custom__toggle" style="display: none" />
-                    <small><input type="checkbox" class="js-custom__checkbox" /> custom value</small>
+                    <small><input type="checkbox" class="js-custom__checkbox" /> {% trans "Custom value" %}</small>
                 </div>
             </div>
             <div class="form-group">
@@ -386,7 +386,7 @@
                         {% endfor %}
                     </select>
                     <input type="text" name="memory_custom" class="form-control js-custom__toggle" style="display: none" />
-                    <small><input type="checkbox" class="js-custom__checkbox" /> custom value</small>
+                    <small><input type="checkbox" class="js-custom__checkbox" /> {% trans "Custom value" %}</small>
                 </div>
             </div>
             {% ifequal status 5 %}
