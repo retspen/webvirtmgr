@@ -361,28 +361,32 @@
 
             <div class="form-group">
                 <label class="col-sm-4 control-label"
-                       style="font-weight:normal;">{% trans "Current allocation" %}</label>
+                       style="font-weight:normal;">{% trans "Current allocation" %} ({% trans "MB" %})</label>
 
-                <div class="col-sm-4">
-                    <select name="cur_memory" class="form-control">
+                <div class="col-sm-4 js-custom__container">
+                    <select name="cur_memory" class="form-control js-custom__toggle">
                         {% for mem in memory_range %}
                             <option value="{{ mem }}"
-                                    {% if mem == cur_memory %}selected{% endif %}>{{ mem }} {% trans "MB" %}</option>
+                                    {% if mem == cur_memory %}selected{% endif %}>{{ mem }}</option>
                         {% endfor %}
                     </select>
+                    <input type="text" name="cur_memory_custom" class="form-control js-custom__toggle" style="display: none" />
+                    <small><input type="checkbox" class="js-custom__checkbox" /> custom value</small>
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-4 control-label"
-                       style="font-weight:normal;">{% trans "Maximum allocation" %}</label>
+                       style="font-weight:normal;">{% trans "Maximum allocation" %} ({% trans "MB" %})</label>
 
-                <div class="col-sm-4">
-                    <select name="memory" class="form-control">
+                <div class="col-sm-4 js-custom__container">
+                    <select name="memory" class="form-control js-custom__toggle">
                         {% for mem in memory_range %}
                             <option value="{{ mem }}"
-                                    {% if mem == memory %}selected{% endif %}>{{ mem }} {% trans "MB" %}</option>
+                                    {% if mem == memory %}selected{% endif %}>{{ mem }}</option>
                         {% endfor %}
                     </select>
+                    <input type="text" name="memory_custom" class="form-control js-custom__toggle" style="display: none" />
+                    <small><input type="checkbox" class="js-custom__checkbox" /> custom value</small>
                 </div>
             </div>
             {% ifequal status 5 %}
@@ -886,6 +890,15 @@
         }
         $(function () {
             window.setInterval('instusage()', {{ time_refresh }});
+        });
+    </script>
+    <script>
+        $(function () {
+            $('.js-custom__checkbox').change(function () {
+                var container  = $(this).closest('.js-custom__container');
+                var toggles     = container.find('.js-custom__toggle');
+                toggles.toggle();
+            });
         });
     </script>
 {% endblock %}
