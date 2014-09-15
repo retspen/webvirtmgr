@@ -247,6 +247,16 @@ class wvmInstance(wvmConnect):
         return util.get_xml_path(self._XMLDesc(0), func=disks)
 
     def mount_iso(self, dev, image):
+        def attach_iso(dev, disk, vol):
+            if disk.get('device') == 'cdrom':
+                for elm in disk:
+                    if elm.tag == 'target':
+                        if elm.get('dev') == dev:
+                            src_media = ElementTree.Element('source')
+                            src_media.set('file', vol.path())
+                            disk.insert(2, src_media)
+                            return
+
         storages = self.get_storages()
         for storage in storages:
             stg = self.get_storage(storage)
@@ -256,13 +266,7 @@ class wvmInstance(wvmConnect):
                         vol = stg.storageVolLookupByName(image)
         tree = ElementTree.fromstring(self._XMLDesc(0))
         for disk in tree.findall('devices/disk'):
-            if disk.get('device') == 'cdrom':
-                for elm in disk:
-                    if elm.tag == 'target':
-                        if elm.get('dev') == dev:
-                            src_media = ElementTree.Element('source')
-                            src_media.set('file', vol.path())
-                            disk.insert(2, src_media)
+            attach_iso(dev, disk, vol)
         if self.get_status() == 1:
             xml = ElementTree.tostring(disk)
             self.instance.attachDevice(xml)
