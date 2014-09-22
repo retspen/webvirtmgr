@@ -374,7 +374,12 @@ __check_end_of_life_versions
 #   CentOS Install Functions
 #
 install_centos() {
-    yum -y install kvm libvirt bridge-utils || return 1
+    if [ $DISTRO_MAJOR_VERSION -eq 6 ]; then
+        yum -y install kvm libvirt bridge-utils || return 1
+    fi
+    if [ $DISTRO_MAJOR_VERSION -eq 7 ]; then
+        yum -y install qemu-kvm libvirt bridge-utils || return 1
+    fi
     return 0
 }
 
