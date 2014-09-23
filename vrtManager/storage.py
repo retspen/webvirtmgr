@@ -26,18 +26,18 @@ class wvmStorages(wvmConnect):
     def define_storage(self, xml, flag):
         self.wvm.storagePoolDefineXML(xml, flag)
 
-    def create_storage(self, type, name, source, target):
+    def create_storage(self, stg_type, name, source, target):
         xml = """
                 <pool type='%s'>
-                <name>%s</name>""" % (type, name)
-        if type == 'logical':
+                <name>%s</name>""" % (stg_type, name)
+        if stg_type == 'logical':
             xml += """
                   <source>
                     <device path='%s'/>
                     <name>%s</name>
                     <format type='lvm2'/>
                   </source>""" % (source, name)
-        if type == 'logical':
+        if stg_type == 'logical':
             target = '/dev/' + name
         xml += """
                   <target>
@@ -46,8 +46,25 @@ class wvmStorages(wvmConnect):
                 </pool>""" % target
         self.define_storage(xml, 0)
         stg = self.get_storage(name)
-        if type == 'logical':
+        if stg_type == 'logical':
             stg.build(0)
+        stg.create(0)
+        stg.setAutostart(1)
+
+    def create_storage_ceph(self, stg_type, name, ceph_pool, ceph_host, ceph_user, secret):
+        xml = """
+                <pool type='%s'>
+                <name>%s</name>
+                <source>
+                    <name>%s</name>
+                    <host name='%s' port='6789'/>
+                    <auth username='%s' type='ceph'>
+                        <secret uuid='%s'/>
+                    </auth>
+                </source>
+                </pool>""" % (stg_type, name, ceph_pool, ceph_host, ceph_user, secret)
+        self.define_storage(xml, 0)
+        stg = self.get_storage(name)
         stg.create(0)
         stg.setAutostart(1)
 
@@ -55,13 +72,20 @@ class wvmStorages(wvmConnect):
 class wvmStorage(wvmConnect):
     def __init__(self, host, login, passwd, conn, pool):
         wvmConnect.__init__(self, host, login, passwd, conn)
-        self.pool = self.wvm.storagePoolLookupByName(pool)
+        self.pool = self.get_storage(pool)
 
     def get_name(self):
         return self.pool.name()
 
+    def get_status(self):
+        status = ['Not running', 'Initializing pool, not available', 'Running normally', 'Running degraded']
+        try:
+            return status[self.pool.info()[0]]
+        except ValueError:
+            return 'Unknown'
+
     def get_size(self):
-        return [self.pool.info()[1], self.pool.info()[2], self.pool.info()[3]]
+        return [self.pool.info()[1], self.pool.info()[3]]
 
     def _XMLDesc(self, flags):
         return self.pool.XMLDesc(flags)
@@ -161,14 +185,15 @@ class wvmStorage(wvmConnect):
             )
         return vol_list
 
-    def create_volume(self, name, size, format='qcow2'):
+    def create_volume(self, name, size, vol_fmt='qcow2', metadata=False):
         size = int(size) * 1073741824
         storage_type = self.get_type()
+        alloc = size
+        if vol_fmt == 'unknown':
+            vol_fmt = 'raw'
         if storage_type == 'dir':
             name += '.img'
             alloc = 0
-        else:
-            alloc = size
         xml = """
             <volume>
                 <name>%s</name>
@@ -177,16 +202,16 @@ class wvmStorage(wvmConnect):
                 <target>
                     <format type='%s'/>
                 </target>
-            </volume>""" % (name, size, alloc, format)
-        self._createXML(xml, 0)
+            </volume>""" % (name, size, alloc, vol_fmt)
+        self._createXML(xml, metadata)
 
-    def clone_volume(self, name, clone, format=None):
+    def clone_volume(self, name, clone, vol_fmt=None, metadata=False):
         storage_type = self.get_type()
         if storage_type == 'dir':
             clone += '.img'
         vol = self.get_volume(name)
-        if not format:
-            format = self.get_volume_type(name)
+        if not vol_fmt:
+            vol_fmt = self.get_volume_type(name)
         xml = """
             <volume>
                 <name>%s</name>
@@ -195,5 +220,5 @@ class wvmStorage(wvmConnect):
                 <target>
                     <format type='%s'/>
                 </target>
-            </volume>""" % (clone, format)
-        self._createXMLFrom(xml, vol, 0)
+            </volume>""" % (clone, vol_fmt)
+        self._createXMLFrom(xml, vol, metadata)

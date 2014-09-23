@@ -40,7 +40,7 @@ class wvmNetworks(wvmConnect):
     def define_network(self, xml):
         self.wvm.networkDefineXML(xml)
 
-    def create_network(self, name, forward, gateway, mask, dhcp, bridge, fixed=False):
+    def create_network(self, name, forward, gateway, mask, dhcp, bridge, openvswitch, fixed=False):
         xml = """
             <network>
                 <name>%s</name>""" % name
@@ -52,6 +52,8 @@ class wvmNetworks(wvmConnect):
         if forward == 'bridge':
             xml += """name='%s'""" % bridge
         xml += """/>"""
+        if openvswitch is True:
+            xml += """<virtualport type='openvswitch'/>"""
         if forward != 'bridge':
             xml += """
                         <ip address='%s' netmask='%s'>""" % (gateway, mask)
@@ -76,7 +78,7 @@ class wvmNetworks(wvmConnect):
 class wvmNetwork(wvmConnect):
     def __init__(self, host, login, passwd, conn, net):
         wvmConnect.__init__(self, host, login, passwd, conn)
-        self.net = self.wvm.networkLookupByName(net)
+        self.net = self.get_network(net)
 
     def get_name(self):
         return self.net.name()
@@ -149,6 +151,20 @@ class wvmNetwork(wvmConnect):
 
         return [IP(dhcpstart), IP(dhcpend)]
 
+    def get_ipv4_dhcp_range_start(self):
+        dhcp = self.get_ipv4_dhcp_range()
+        if not dhcp:
+            return None
+
+        return dhcp[0]
+
+    def get_ipv4_dhcp_range_end(self):
+        dhcp = self.get_ipv4_dhcp_range()
+        if not dhcp:
+            return None
+
+        return dhcp[1]
+
     def can_pxe(self):
         xml = self.get_xml()
         forward = self.get_ipv4_forward()[0]
@@ -164,4 +180,5 @@ class wvmNetwork(wvmConnect):
                 mac = net.xpathEval('@mac')[0].content
                 result.append({'host': host, 'mac': mac})
             return result
+
         return util.get_xml_path(self._XMLDesc(0), func=network)

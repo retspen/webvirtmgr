@@ -375,17 +375,18 @@ msgstr "关闭"
 #: templates/create.html:152 templates/create.html.py:154
 #: templates/create.html:161 templates/create.html.py:257
 #: templates/create.html:259 templates/networks.html:9
-#: templates/networks.html.py:116 templates/sidebar.html:15
-#: templates/storage.html:237 templates/storages.html:9
-#: templates/storages.html.py:106 templates/storages.html:133
-#: templates/storages.html.py:155
+#: templates/networks.html.py:116 templates/servers.html:75
+#: templates/sidebar.html:15 templates/storage.html:237
+#: templates/storages.html:9 templates/storages.html.py:106
+#: templates/storages.html:133 templates/storages.html.py:155
 msgid "Create"
 msgstr "创建"
 
 #: templates/create.html:166 templates/instance.html:52
 #: templates/instance.html.py:281 templates/network.html:42
-#: templates/snapshot.html:57 templates/storage.html:53
-#: templates/storage.html.py:99 templates/storage.html:186
+#: templates/servers.html:112 templates/snapshot.html:57
+#: templates/storage.html:53 templates/storage.html.py:99
+#: templates/storage.html:186
 msgid "Delete"
 msgstr "删除"
 
@@ -421,53 +422,54 @@ msgstr "添加收藏"
 msgid "Add"
 msgstr "添加"
 
-#: templates/hostdeatil.html:4 templates/hostdeatil.html.py:21
+#: templates/hostdetail.html:4 templates/hostdetail.html.py:21
+#: templates/servers.html:84
 msgid "Overview"
 msgstr "概览"
 
-#: templates/hostdeatil.html:23
+#: templates/hostdetail.html:23
 msgid "Basic details"
 msgstr "基本信息"
 
-#: templates/hostdeatil.html:26
+#: templates/hostdetail.html:26
 msgid "Connection"
 msgstr "连接"
 
-#: templates/hostdeatil.html:27 templates/servers.html:149
+#: templates/hostdetail.html:27 templates/servers.html:149
 #: templates/servers.html.py:182
 msgid "Hostname"
 msgstr "主机名"
 
-#: templates/hostdeatil.html:28
+#: templates/hostdetail.html:28
 msgid "Hypervisor"
 msgstr "虚拟化层"
 
-#: templates/hostdeatil.html:29 templates/infrastructure.html:25
+#: templates/hostdetail.html:29 templates/infrastructure.html:25
 #: templates/instance.html:142
 msgid "Memory"
 msgstr "内存"
 
-#: templates/hostdeatil.html:30
+#: templates/hostdetail.html:30
 msgid "Logical CPUs"
 msgstr "逻辑CPU"
 
-#: templates/hostdeatil.html:31 templates/instance.html:141
+#: templates/hostdetail.html:31 templates/instance.html:141
 msgid "Processor"
 msgstr "处理器"
 
-#: templates/hostdeatil.html:32
+#: templates/hostdetail.html:32
 msgid "Architecture"
 msgstr "架构"
 
-#: templates/hostdeatil.html:44
+#: templates/hostdetail.html:44
 msgid "Performance"
 msgstr "性能"
 
-#: templates/hostdeatil.html:47 templates/instance.html:84
+#: templates/hostdetail.html:47 templates/instance.html:84
 msgid "CPU usage"
 msgstr "CPU占用"
 
-#: templates/hostdeatil.html:49
+#: templates/hostdetail.html:49
 msgid "Memory usage"
 msgstr "内存占用"
 
@@ -509,7 +511,8 @@ msgstr "运行"
 msgid "Suspend"
 msgstr "暂停"
 
-#: templates/infrastructure.html:49 templates/instances.html:42
+#: templates/infrastructure.html:49 templates/instance.html:125
+#: templates/instances.html:42
 msgid "Shutoff"
 msgstr "关闭"
 
@@ -560,7 +563,7 @@ msgid "Statistics"
 msgstr "统计"
 
 #: templates/instance.html:71 templates/instance.html.py:73
-#: templates/instance.html:365
+#: templates/instance.html:365 templates/servers.html:109
 msgid "Edit"
 msgstr "编辑"
 
@@ -599,10 +602,6 @@ msgstr "启用"
 #: templates/storage.html:64
 msgid "Disable"
 msgstr "禁用"
-
-#: templates/instance.html:125
-msgid "Shuttoff"
-msgstr "关闭"
 
 #: templates/instance.html:137
 msgid "Technical Details"
@@ -708,7 +707,7 @@ msgid "Save"
 msgstr "保存"
 
 #: templates/instances.html:4 templates/instances.html.py:13
-#: templates/sidebar.html:12
+#: templates/servers.html:72 templates/sidebar.html:12
 msgid "Instances"
 msgstr "虚机实例"
 
@@ -894,12 +893,12 @@ msgstr "********"
 msgid "Need create ssh authorization key"
 msgstr "需要创建SSH认证密钥"
 
-#: templates/sidebar.html:18 templates/storages.html:3
-#: templates/storages.html.py:10
+#: templates/servers.html:78 templates/sidebar.html:18
+#: templates/storages.html:3 templates/storages.html.py:10
 msgid "Storages"
 msgstr "存储池"
 
-#: templates/sidebar.html:21
+#: templates/servers.html:81 templates/sidebar.html:21
 msgid "Networks"
 msgstr "网络池"
 

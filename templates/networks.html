@@ -3,7 +3,7 @@
 {% block title %}{% trans "Virtual Networks" %}{% endblock %}
 {% block content %}
     {% include 'sidebar.html' %}
-    <div class="main">
+    <div class="main col-xs-12 col-sm-9">
         <div class="btn-group-sm">
             <a href="#AddNetPool" class="btn btn-success" data-toggle="modal">{% trans "New Network" %}</a>
         </div>
@@ -18,7 +18,7 @@
         {% if form.name.errors %}
             <div class="alert alert-danger">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                {% for error in form.name.errors  %}
+                {% for error in form.name.errors %}
                     {{ error }}
                 {% endfor %}
             </div>
@@ -26,7 +26,7 @@
         {% if form.subnet.errors %}
             <div class="alert alert-danger">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                {% for error in form.subnet.errors  %}
+                {% for error in form.subnet.errors %}
                     {{ error }}
                 {% endfor %}
             </div>
@@ -34,7 +34,7 @@
         {% if form.bridge_name.errors %}
             <div class="alert alert-danger">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                {% for error in form.bridge_name.errors  %}
+                {% for error in form.bridge_name.errors %}
                     {{ error }}
                 {% endfor %}
             </div>
@@ -44,22 +44,28 @@
                 <h4>{% trans "You do not have any virtual networks" %}</h4>
             </div>
         {% else %}
-            {% for pool in networks %}
-                <div class="panel {% if pool.status %}panel-success{% else %}panel-danger{% endif %}">
-                    <div class="panel-heading">
-                        <h3 class="panel-title"><a href="{% url 'network' host_id pool.name %}">{{ pool.name }}</a></h3>
+            <div class="row" role="main">
+                {% for pool in networks %}
+                    <div class="col-xs-12 col-sm-4">
+                        <div class="panel {% if pool.status %}panel-success{% else %}panel-danger{% endif %} panel-data">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><a href="{% url 'network' host_id pool.name %}">{{ pool.name }}</a></h3>
+                            </div>
+                            <div class="panel-body">
+                                <p>{% trans "Device" %}: {{ pool.device }}</p>
+
+                                <p>{% trans "Forward" %}: {{ pool.forward|upper }}</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="panel-body">
-                        <p>{% trans "Device" %}: {{ pool.device }}</p>
-                        <p>{% trans "Forward" %}: {{ pool.forward|upper }}</p>
-                    </div>
-                </div>
-            {% endfor %}
+                {% endfor %}
+            </div>
         {% endif %}
     </div>
 
     <!-- Modal pool -->
-    <div class="modal fade" id="AddNetPool" tabindex="-1" role="dialog" aria-labelledby="AddNetPoolLabel" aria-hidden="true">
+    <div class="modal fade" id="AddNetPool" tabindex="-1" role="dialog" aria-labelledby="AddNetPoolLabel"
+         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -69,43 +75,59 @@
                 <form class="form-horizontal" method="post" action="" role="form">{% csrf_token %}
                     <div class="form-group">
                         <label class="col-sm-4 control-label">{% trans "Name" %}</label>
+
                         <div class="col-sm-6">
-                            <input type="text" class="form-control" name="name" placeholder="default" required pattern="[a-zA-Z0-9_]+">
+                            <input type="text" class="form-control" name="name" placeholder="default" required
+                                   pattern="[a-zA-Z0-9_]+">
                         </div>
                     </div>
                     <div class="form-group bridge_name_form_group_dhcp">
                         <label class="col-sm-4 control-label">{% trans "Subnet pool" %}</label>
+
                         <div class="col-sm-6">
-                            <input type="text" class="form-control" name="subnet" value="192.168.100.0/24" required pattern="[0-9\/\.]+">
+                            <input type="text" class="form-control" name="subnet" value="192.168.100.0/24" required
+                                   pattern="[0-9\/\.]+">
                         </div>
                     </div>
                     <div class="form-group bridge_name_form_group_dhcp">
                         <label class="col-sm-4 control-label">{% trans "DHCP" %}</label>
+
                         <div class="col-sm-6">
                             <input type="checkbox" name="dhcp" value="true" checked>
                         </div>
                     </div>
                     <div class="form-group bridge_name_form_group_dhcp">
                         <label class="col-sm-4 control-label">{% trans "Fixed Address" %}</label>
+
                         <div class="col-sm-6">
                             <input type="checkbox" name="fixed" value="true">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-4 control-label">{% trans "Type forwarding" %}</label>
+
                         <div class="col-sm-6">
                             <select id="forward_select" class="form-control" name="forward">
                                 <option value="nat">{% trans "NAT" %}</option>
                                 <option value="route">{% trans "ROUTE" %}</option>
                                 <option value="none">{% trans "ISOLATE" %}</option>
                                 <option value="bridge">{% trans "BRIDGE" %}</option>
-                             </select>
+                            </select>
                         </div>
                     </div>
-                    <div class="form-group" id="bridge_name_form_group">
+                    <div class="form-group bridge_name_form_group">
                         <label class="col-sm-4 control-label">{% trans "Bridge Name" %}</label>
+
                         <div class="col-sm-6">
-                            <input type="text" class="form-control" name="bridge_name" placeholder="br0" pattern="[a-z0-9\-_]+">
+                            <input type="text" class="form-control" name="bridge_name" placeholder="br0"
+                                   pattern="[a-z0-9\-_]+">
+                        </div>
+                    </div>
+                    <div class="form-group bridge_name_form_group">
+                        <label class="col-sm-4 control-label">{% trans "Open vSwitch" %}</label>
+
+                        <div class="col-sm-6">
+                            <input type="checkbox" name="openvswitch" value="true">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -113,19 +135,22 @@
                         <button type="submit" class="btn btn-primary" name="create">{% trans "Create" %}</button>
                     </div>
                 </form>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
     </div><!-- /.modal -->
+    {% include 'sidebar_close.html' %}
 {% endblock %}
 {% block script %}
     <script>
-        $(document).ready(function() {
-            $('#forward_select').change(function(eventObject) {
-                if($(this).val() == 'bridge') {
-                    $('#bridge_name_form_group').show();
+        $(document).ready(function () {
+            $('#forward_select').change(function (eventObject) {
+                if ($(this).val() == 'bridge') {
+                    $('.bridge_name_form_group').show();
                     $('.bridge_name_form_group_dhcp').hide();
                 } else {
-                    $('#bridge_name_form_group').hide();
+                    $('.bridge_name_form_group').hide();
                     $('.bridge_name_form_group_dhcp').show();
                 }
             }).change();

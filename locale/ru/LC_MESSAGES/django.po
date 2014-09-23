@@ -376,17 +376,18 @@ msgstr ""
 #: templates/create.html:152 templates/create.html.py:154
 #: templates/create.html:161 templates/create.html.py:257
 #: templates/create.html:259 templates/networks.html:9
-#: templates/networks.html.py:116 templates/sidebar.html:15
-#: templates/storage.html:237 templates/storages.html:9
-#: templates/storages.html.py:106 templates/storages.html:133
-#: templates/storages.html.py:155
+#: templates/networks.html.py:116 templates/servers.html:75
+#: templates/sidebar.html:15 templates/storage.html:237
+#: templates/storages.html:9 templates/storages.html.py:106
+#: templates/storages.html:133 templates/storages.html.py:155
 msgid "Create"
 msgstr ""
 
 #: templates/create.html:166 templates/instance.html:52
 #: templates/instance.html.py:281 templates/network.html:42
-#: templates/snapshot.html:57 templates/storage.html:53
-#: templates/storage.html.py:99 templates/storage.html:186
+#: templates/servers.html:112 templates/snapshot.html:57
+#: templates/storage.html:53 templates/storage.html.py:99
+#: templates/storage.html:186
 msgid "Delete"
 msgstr ""
 
@@ -422,53 +423,54 @@ msgstr ""
 msgid "Add"
 msgstr ""
 
-#: templates/hostdeatil.html:4 templates/hostdeatil.html.py:21
+#: templates/hostdetail.html:4 templates/hostdetail.html.py:21
+#: templates/servers.html:84
 msgid "Overview"
 msgstr ""
 
-#: templates/hostdeatil.html:23
+#: templates/hostdetail.html:23
 msgid "Basic details"
 msgstr ""
 
-#: templates/hostdeatil.html:26
+#: templates/hostdetail.html:26
 msgid "Connection"
 msgstr ""
 
-#: templates/hostdeatil.html:27 templates/servers.html:149
+#: templates/hostdetail.html:27 templates/servers.html:149
 #: templates/servers.html.py:182
 msgid "Hostname"
 msgstr ""
 
-#: templates/hostdeatil.html:28
+#: templates/hostdetail.html:28
 msgid "Hypervisor"
 msgstr ""
 
-#: templates/hostdeatil.html:29 templates/infrastructure.html:25
+#: templates/hostdetail.html:29 templates/infrastructure.html:25
 #: templates/instance.html:142
 msgid "Memory"
 msgstr ""
 
-#: templates/hostdeatil.html:30
+#: templates/hostdetail.html:30
 msgid "Logical CPUs"
 msgstr ""
 
-#: templates/hostdeatil.html:31 templates/instance.html:141
+#: templates/hostdetail.html:31 templates/instance.html:141
 msgid "Processor"
 msgstr ""
 
-#: templates/hostdeatil.html:32
+#: templates/hostdetail.html:32
 msgid "Architecture"
 msgstr ""
 
-#: templates/hostdeatil.html:44
+#: templates/hostdetail.html:44
 msgid "Performance"
 msgstr ""
 
-#: templates/hostdeatil.html:47 templates/instance.html:84
+#: templates/hostdetail.html:47 templates/instance.html:84
 msgid "CPU usage"
 msgstr ""
 
-#: templates/hostdeatil.html:49
+#: templates/hostdetail.html:49
 msgid "Memory usage"
 msgstr ""
 
@@ -508,7 +510,8 @@ msgstr ""
 msgid "Suspend"
 msgstr ""
 
-#: templates/infrastructure.html:49 templates/instances.html:42
+#: templates/infrastructure.html:49 templates/instance.html:125
+#: templates/instances.html:42
 msgid "Shutoff"
 msgstr ""
 
@@ -559,7 +562,7 @@ msgid "Statistics"
 msgstr ""
 
 #: templates/instance.html:71 templates/instance.html.py:73
-#: templates/instance.html:365
+#: templates/instance.html:365 templates/servers.html:109
 msgid "Edit"
 msgstr ""
 
@@ -596,10 +599,6 @@ msgstr ""
 #: templates/instance.html:120 templates/network.html:53
 #: templates/storage.html:64
 msgid "Disable"
-msgstr ""
-
-#: templates/instance.html:125
-msgid "Shuttoff"
 msgstr ""
 
 #: templates/instance.html:137
@@ -704,7 +703,7 @@ msgid "Save"
 msgstr ""
 
 #: templates/instances.html:4 templates/instances.html.py:13
-#: templates/sidebar.html:12
+#: templates/servers.html:72 templates/sidebar.html:12
 msgid "Instances"
 msgstr ""
 
@@ -890,12 +889,12 @@ msgstr ""
 msgid "Need create ssh authorization key"
 msgstr ""
 
-#: templates/sidebar.html:18 templates/storages.html:3
-#: templates/storages.html.py:10
+#: templates/servers.html:78 templates/sidebar.html:18
+#: templates/storages.html:3 templates/storages.html.py:10
 msgid "Storages"
 msgstr ""
 
-#: templates/sidebar.html:21
+#: templates/servers.html:81 templates/sidebar.html:21
 msgid "Networks"
 msgstr ""
 

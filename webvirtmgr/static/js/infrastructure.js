@@ -32,4 +32,8 @@ $(document).ready(function() {
             $('#filter_button').click();
         }
     });
+
+    $('#hide_vms_bystate input[type=checkbox]').change(function () {
+	    $('tbody tr[data-status=' + $(this).data('value') + ']').toggle();
+    });
 });

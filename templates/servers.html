@@ -7,10 +7,11 @@
 {% endblock %}
 {% block content %}
     <div class="row">
+        <div class="col-xs-12">
         {% if form.name.errors %}
             <div class="alert alert-danger">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                {% for error in form.name.errors  %}
+                {% for error in form.name.errors %}
                     {{ error }}
                 {% endfor %}
             </div>
@@ -18,7 +19,7 @@
         {% if form.hostname.errors %}
             <div class="alert alert-danger">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                {% for error in form.hostname.errors  %}
+                {% for error in form.hostname.errors %}
                     {{ error }}
                 {% endfor %}
             </div>
@@ -26,7 +27,7 @@
         {% if form.login.errors %}
             <div class="alert alert-danger">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                {% for error in form.login.errors  %}
+                {% for error in form.login.errors %}
                     {{ error }}
                 {% endfor %}
             </div>
@@ -34,92 +35,222 @@
         {% if form.password.errors %}
             <div class="alert alert-danger">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                {% for error in form.password.errors  %}
+                {% for error in form.password.errors %}
                     {{ error }}
                 {% endfor %}
             </div>
         {% endif %}
-        <div class="col-md-12" role="main">
             <div class="page-header">
-                <a data-toggle="modal" href="#addHost" class="btn btn-sm btn-success pull-right">{% trans "Add Host" %}</a>
-                <h1>{% trans "Servers List" %}</h1>
+                <a data-toggle="modal" href="#addHost"
+                   class="btn btn-sm btn-success pull-right">{% trans "Add Connection" %}</a>
+
+                <h1>{% trans "Connections" %}</h1>
             </div>
+            <div class="row" role="main">
             {% if hosts_info %}
-                <table class="table table-hover" id="sortTable">
-                    <thead>
-                    <tr>
-                        <th style="width:35px">#</th>
-                        <th>{% trans "Server" %}</th>
-                        <th>{% trans "Status" %}</th>
-                        <th>{% trans "Action" %}</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for host_id, info in hosts_info.items %}
-                        <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td><strong>{{ info.0 }}</strong> [<a href="ssh://{{ info.1 }}">{{ info.1 }}]</a></td>
-                            <td>
-                                {% ifequal info.2 1 %}
-                                    <span class="text-success">{% trans "connected" %}</span>
+                {% for host in hosts_info %}
+                    <div class="col-xs-12 col-sm-4">
+                        <div class="panel {% ifequal host.status 1 %}panel-success{% else %}panel-danger{% endifequal %} panel-data">
+                            <div class="panel-heading">
+                                {% ifequal host.status 1 %}
+                                    <h3 class="panel-title">
+                                        <a href="{% url 'instances' host.id %}"><strong>{{ host.name }}</strong></a>
+                                        <a data-toggle="modal" href="#editHost{{ host.id }}" class="pull-right"
+                                           title="{% trans "Edit" %}">
+                                            <span class="glyphicon glyphicon-pencil"></span>
+                                        </a>
+                                    </h3>
                                 {% else %}
-                                    <span class="text-danger">{% trans "not connected" %} ({{ info.2 }})</span>
+                                    <h3 class="panel-title"><strong>{{ host.name }}</strong>
+                                        <a data-toggle="modal" href="#editHost{{ host.id }}" class="pull-right"
+                                           title="{% trans "Edit" %}">
+                                            <span class="glyphicon glyphicon-pencil"></span>
+                                        </a>
+                                    </h3>
                                 {% endifequal %}
-                            </td>
-                            <td style="width:280px">
-                                <div class="btn-group btn-group-sm">
-                                {% ifequal info.2 1 %}
-                                    <a href="{% url 'instances' host_id %}" class="btn btn-primary">
-                                        <span class="glyphicon glyphicon-th-large"></span>
-                                    </a>
-                                    <a href="{% url 'create' host_id %}" class="btn btn-primary">
-                                        <span class="glyphicon glyphicon-plus"></span>
-                                    </a>
-                                    <a href="{% url 'storages' host_id %}" class="btn btn-primary">
-                                        <span class="glyphicon glyphicon-hdd"></span>
-                                    </a>
-                                    <a href="{% url 'networks' host_id %}" class="btn btn-primary">
-                                        <span class="glyphicon glyphicon-globe"></span>
-                                    </a>
-                                    <a href="{% url 'overview' host_id %}" class="btn btn-primary">
-                                        <span class="glyphicon glyphicon-info-sign"></span>
-                                    </a>
-                                {% else %}
-                                    <a href="#" class="btn btn-primary">
-                                        <span class="glyphicon glyphicon-th-large"></span>
-                                    </a>
-                                    <a href="#" class="btn btn-primary">
-                                        <span class="glyphicon glyphicon-plus"></span>
-                                    </a>
-                                    <a href="#" class="btn btn-primary">
-                                        <span class="glyphicon glyphicon-hdd"></span>
-                                    </a>
-                                    <a href="#" class="btn btn-primary">
-                                        <span class="glyphicon glyphicon-globe"></span>
-                                    </a>
-                                    <a href="#" class="btn btn-primary">
-                                        <span class="glyphicon glyphicon-info-sign"></span>
-                                    </a>
-                                </div>
-                                {% endifequal %}
-                            </td>
-                            <td style="width:70px">
-                                <form action="" method="post">{% csrf_token %}
-                                    <input type="hidden" name="host_id" value="{{ host_id }}">
-                                    <button type="submit" class="btn btn-sm btn-danger" name="host_del" title="Delete" onclick="return confirm('{% trans "Are you sure?"%}')">
+                            </div>
+                            <div class="panel-body">
+                                <p>
+                                <form action="" method="post" role="form">{% csrf_token %}
+                                    <input type="hidden" name="host_id" value="{{ host.id }}">
+                                    <button type="submit" class="pull-right btn btn-xs btn-danger" name="host_del"
+                                            title="{% trans "Delete" %}"
+                                            onclick="return confirm('{% trans "Are you sure?" %}')">
                                         <span class="glyphicon glyphicon-trash"></span>
                                     </button>
                                 </form>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+                                <p>
+                                <p><strong>{% trans "Type" %}:</strong> [
+                                    {% ifequal host.type 1 %}TCP{% endifequal %}
+                                    {% ifequal host.type 2 %}SSH{% endifequal %}
+                                    {% ifequal host.type 3 %}TLS{% endifequal %}
+                                    {% ifequal host.type 4 %}SOCKET{% endifequal %} ]
+                                </p>
+                                <p><strong>{% trans "Host" %}:</strong> <a
+                                        href="ssh://{{ host.hostname }}" title="{{ host.status }}">{{ host.hostname }}</a></p>
+                                <!-- Modal Edit -->
+                                <div class="modal fade" id="editHost{{ host.id }}" tabindex="-1" role="dialog"
+                                     aria-labelledby="editHostLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                        aria-hidden="true">&times;</button>
+                                                <h4 class="modal-title">{% trans "Edit Host Server" %}
+                                                    {% ifequal host.type 1 %}({% trans "TCP" %}){% endifequal %}
+                                                    {% ifequal host.type 2 %}({% trans "SSH" %}){% endifequal %}
+                                                    {% ifequal host.type 3 %}({% trans "TLS" %}){% endifequal %}
+                                                    {% ifequal host.type 4 %}({% trans "SOCKET" %}){% endifequal %}
+                                                </h4>
+                                            </div>
+                                            <div class="tab-content">
+                                                {% ifequal host.type 1 %}
+                                                    <form class="form-horizontal" method="post" role="form">{% csrf_token %}
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label">{% trans "Label" %}</label>
+                                                            <div class="col-sm-6">
+                                                                <input type="hidden" name="host_id" value="{{ host.id }}">
+                                                                <input type="text" name="name" class="form-control"
+                                                                       value="{{ host.name }}" maxlength="20" required
+                                                                       pattern="[a-z0-9\.\-_]+">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label">{% trans "FQDN / IP" %}</label>
+
+                                                            <div class="col-sm-6">
+                                                                <input type="text" name="hostname" class="form-control"
+                                                                       value="{{ host.hostname }}" required
+                                                                       pattern="[a-z0-9\.\-_]+">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label">{% trans "Username" %}</label>
+
+                                                            <div class="col-sm-6">
+                                                                <input type="text" name="login" class="form-control"
+                                                                       value="{{ host.login }}">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label">{% trans "Password" %}</label>
+
+                                                            <div class="col-sm-6">
+                                                                <input type="password" name="password" class="form-control"
+                                                                       value="{{ host.password }}">
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-default"
+                                                                    data-dismiss="modal">{% trans "Close" %}</button>
+                                                            <button type="submit" class="btn btn-primary"
+                                                                    name="host_edit">{% trans "Edit" %}</button>
+                                                        </div>
+                                                    </form>
+                                                {% endifequal %}
+                                                {% ifequal host.type 2 %}
+                                                    <form class="form-horizontal" method="post" role="form">{% csrf_token %}
+                                                        <p class="modal-body">{% trans "Need create ssh <a href='https://github.com/retspen/webvirtmgr/wiki/Setup-SSH-Authorization'>authorization key</a>. If you have another SSH port on your server, you can add IP:PORT like '192.168.1.1:2222'." %}</p>
+
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label">{% trans "Label" %}</label>
+
+                                                            <div class="col-sm-6">
+                                                                <input type="hidden" name="host_id" value="{{ host.id }}">
+                                                                <input type="text" name="name" class="form-control"
+                                                                       value="{{ host.name }}" maxlength="20" required
+                                                                       pattern="[a-z0-9\.\-_]+">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label">{% trans "FQDN / IP" %}</label>
+
+                                                            <div class="col-sm-6">
+                                                                <input type="text" name="hostname" class="form-control"
+                                                                       value="{{ host.hostname }}" required
+                                                                       pattern="[a-z0-9\:\.\-_]+">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label">{% trans "Username" %}</label>
+
+                                                            <div class="col-sm-6">
+                                                                <input type="text" name="login" class="form-control"
+                                                                       value="{{ host.login }}">
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-default"
+                                                                    data-dismiss="modal">{% trans "Close" %}</button>
+                                                            <button type="submit" class="btn btn-primary"
+                                                                    name="host_edit">{% trans "Edit" %}</button>
+                                                        </div>
+                                                    </form>
+                                                {% endifequal %}
+                                                {% ifequal host.type 3 %}
+                                                    <form class="form-horizontal" method="post" role="form">{% csrf_token %}
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label">{% trans "Label" %}</label>
+
+                                                            <div class="col-sm-6">
+                                                                <input type="hidden" name="host_id" value="{{ host.id }}">
+                                                                <input type="text" name="name" class="form-control"
+                                                                       value="{{ host.name }}" maxlength="20" required
+                                                                       pattern="[a-z0-9\.\-_]+">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label">{% trans "FQDN / IP" %}</label>
+
+                                                            <div class="col-sm-6">
+                                                                <input type="text" name="hostname" class="form-control"
+                                                                       value="{{ host.hostname }}" required
+                                                                       pattern="[a-z0-9\:\.\-_]+">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label">{% trans "Username" %}</label>
+
+                                                            <div class="col-sm-6">
+                                                                <input type="text" name="login" class="form-control"
+                                                                       placeholder="{% trans "Name" %}">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label">{% trans "Password" %}</label>
+
+                                                            <div class="col-sm-6">
+                                                                <input type="password" name="password" class="form-control"
+                                                                       value="{{ host.password }}">
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-default"
+                                                                    data-dismiss="modal">{% trans "Close" %}</button>
+                                                            <button type="submit" class="btn btn-primary"
+                                                                    name="host_tls_add">{% trans "Add" %}</button>
+                                                        </div>
+                                                    </form>
+                                                {% endifequal %}
+                                            </div>
+                                        </div>
+                                        <!-- /.modal-content -->
+                                    </div>
+                                    <!-- /.modal-dialog -->
+                                </div>
+                                <!-- /.modal -->
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
             {% else %}
-                <div class="well">
-                    <h4>{% trans "You have no connection" %}</h4>
+                <div class="col-sm-12">
+                    <div class="well">
+                        <h4>{% trans "You have no connection" %}</h4>
+                    </div>
                 </div>
             {% endif %}
+            </div>
         </div>
     </div>
     <!-- Modal -->
@@ -128,7 +259,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">{% trans "Add Host Server" %}</h4>
+                    <h4 class="modal-title">{% trans "Add Connection" %}</h4>
                 </div>
                 <div class="tabbable">
                     <ul class="nav nav-tabs">
@@ -136,78 +267,156 @@
                             <a href="#1" data-toggle="tab">{% trans "TCP Connections" %}</a>
                         </li>
                         <li><a href="#2" data-toggle="tab">{% trans "SSH Connections" %}</a></li>
+                        <li><a href="#3" data-toggle="tab">{% trans "TLS Connection" %}</a></li>
+                        <li><a href="#4" data-toggle="tab">{% trans "Local Socket" %}</a></li>
                     </ul>
                 </div>
                 <div class="tab-content">
                     <div class="tab-pane active" id="1">
                         <form class="form-horizontal" method="post" role="form">{% csrf_token %}
                             <div class="form-group">
-                                <label class="col-sm-4 control-label">{% trans "Hostname" %}</label>
+                                <label class="col-sm-4 control-label">{% trans "Label" %}</label>
+
                                 <div class="col-sm-6">
-                                    <input type="text" name="name" class="form-control" placeholder="Name" maxlength="20" required pattern="[a-z0-9\.\-_]+">
+                                    <input type="text" name="name" class="form-control" placeholder="Label Name"
+                                           maxlength="20" required pattern="[a-z0-9\.\-_]+">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-sm-4 control-label">{% trans "IP / Domain" %}</label>
+                                <label class="col-sm-4 control-label">{% trans "FQDN / IP" %}</label>
+
                                 <div class="col-sm-6">
-                                    <input type="text" name="hostname" class="form-control" placeholder="{% trans "IP or domain" %}" required pattern="[a-z0-9\.\-_]+">
+                                    <input type="text" name="hostname" class="form-control"
+                                           placeholder="{% trans "FQDN or IP Address" %}" required
+                                           pattern="[a-z0-9\.\-_]+">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">{% trans "Username" %}</label>
+
                                 <div class="col-sm-6">
-                                    <input type="text" name="login" class="form-control" placeholder="{% trans "Name" %}">
+                                    <input type="text" name="login" class="form-control"
+                                           placeholder="{% trans "Username" %}">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">{% trans "Password" %}</label>
+
                                 <div class="col-sm-6">
-                                    <input type="password" name="password" class="form-control" placeholder="{% trans "********" %}">
+                                    <input type="password" name="password" class="form-control"
+                                           placeholder="{% trans "Password" %}">
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-                                <button type="submit" class="btn btn-primary" name="host_tcp_add">{% trans "Add" %}</button>
+                                <button type="button" class="btn btn-default"
+                                        data-dismiss="modal">{% trans "Close" %}</button>
+                                <button type="submit" class="btn btn-primary"
+                                        name="host_tcp_add">{% trans "Add" %}</button>
                             </div>
                         </form>
                     </div>
                     <div class="tab-pane" id="2">
                         <form class="form-horizontal" method="post" role="form">{% csrf_token %}
-                            <p class="modal-body">{% trans "Need create ssh <a href='https://github.com/retspen/webvirtmgr/wiki/Setup-SSH-Authorization'>authorization key</a>. If you have another SSH port on your server, you can add IP:PORT like '192.168.1.1:2222'." %}</p>
+                            <p class="modal-body">{% trans "You must create ssh <a href='https://github.com/retspen/webvirtmgr/wiki/Setup-SSH-Authorization'>authorization key</a>. If you have another SSH port on your server, you can add IP:PORT like '192.168.1.1:2222'." %}</p>
+
                             <div class="form-group">
-                                <label class="col-sm-4 control-label">{% trans "Hostname" %}</label>
+                                <label class="col-sm-4 control-label">{% trans "Label" %}</label>
+
                                 <div class="col-sm-6">
-                                    <input type="text" name="name" class="form-control" placeholder="Name" maxlength="20" required pattern="[a-z0-9\.\-_]+">
+                                    <input type="text" name="name" class="form-control" placeholder="Label Name"
+                                           maxlength="20" required pattern="[a-z0-9\.\-_]+">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-sm-4 control-label">{% trans "IP / Domain" %}</label>
+                                <label class="col-sm-4 control-label">{% trans "FQDN / IP" %}</label>
+
                                 <div class="col-sm-6">
-                                    <input type="text" name="hostname" class="form-control" placeholder="{% trans "IP or domain" %}" required pattern="[a-z0-9\:\.\-_]+">
+                                    <input type="text" name="hostname" class="form-control"
+                                           placeholder="{% trans "FQDN or IP Address" %}" required
+                                           pattern="[a-z0-9\:\.\-_]+">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">{% trans "Username" %}</label>
+
                                 <div class="col-sm-6">
-                                    <input type="text" name="login" class="form-control" placeholder="{% trans "Name" %}">
+                                    <input type="text" name="login" class="form-control"
+                                           placeholder="{% trans "Username" %}">
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-                                <button type="submit" class="btn btn-primary" name="host_ssh_add">{% trans "Add" %}</button>
+                                <button type="button" class="btn btn-default"
+                                        data-dismiss="modal">{% trans "Close" %}</button>
+                                <button type="submit" class="btn btn-primary"
+                                        name="host_ssh_add">{% trans "Add" %}</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane" id="3">
+                        <form class="form-horizontal" method="post" role="form">{% csrf_token %}
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">{% trans "Label" %}</label>
+
+                                <div class="col-sm-6">
+                                    <input type="text" name="name" class="form-control" placeholder="Label Name"
+                                           maxlength="20" required pattern="[a-z0-9\.\-_]+">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">{% trans "FQDN / IP" %}</label>
+
+                                <div class="col-sm-6">
+                                    <input type="text" name="hostname" class="form-control"
+                                           placeholder="{% trans "FQDN or IP Address" %}" required
+                                           pattern="[a-z0-9\.\-_]+">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">{% trans "Username" %}</label>
+
+                                <div class="col-sm-6">
+                                    <input type="text" name="login" class="form-control"
+                                           placeholder="{% trans "Username" %}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">{% trans "Password" %}</label>
+
+                                <div class="col-sm-6">
+                                    <input type="password" name="password" class="form-control"
+                                           placeholder="{% trans "Password" %}">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default"
+                                        data-dismiss="modal">{% trans "Close" %}</button>
+                                <button type="submit" class="btn btn-primary"
+                                        name="host_tls_add">{% trans "Add" %}</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane" id="4">
+                        <form class="form-horizontal" method="post" role="form">{% csrf_token %}
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">{% trans "Label" %}</label>
+
+                                <div class="col-sm-6">
+                                    <input type="text" name="name" class="form-control" placeholder="Label Name"
+                                           maxlength="20" required pattern="[a-z0-9\.\-_]+">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default"
+                                        data-dismiss="modal">{% trans "Close" %}</button>
+                                <button type="submit" class="btn btn-primary"
+                                        name="host_socket_add">{% trans "Add" %}</button>
                             </div>
                         </form>
                     </div>
                 </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
     </div><!-- /.modal -->
-{% endblock %}
-{% block script %}
-<script src="{% static "js/jquery.tablesorter.js" %}"></script>
-<script >
-    $(function() {
-        $("#sortTable").tablesorter({ sortList: [[0,0]] });
-    });
-</script>
 {% endblock %}

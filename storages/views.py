@@ -27,6 +27,7 @@ def storages(request, host_id):
                            compute.password,
                            compute.type)
         storages = conn.get_storages_info()
+        secrets = conn.get_secrets()
 
         if request.method == 'POST':
             if 'create' in request.POST:
@@ -36,12 +37,24 @@ def storages(request, host_id):
                     if data['name'] in storages:
                         msg = _("Pool name already use")
                         errors.append(msg)
+                    if data['stg_type'] == 'rbd':
+                        if not data['secret']:
+                            msg = _("You need create secret for pool")
+                            errors.append(msg)
+                        if not data['ceph_pool'] and not data['ceph_host'] and not data['ceph_user']:
+                            msg = _("You need input all fields for creating ceph pool")
+                            errors.append(msg)
                     if not errors:
-                        conn.create_storage(data['stg_type'], data['name'], data['source'], data['target'])
+                        if data['stg_type'] == 'rbd':
+                            conn.create_storage_ceph(data['stg_type'], data['name'],
+                                                     data['ceph_pool'], data['ceph_host'],
+                                                     data['ceph_user'], data['secret'])
+                        else:
+                            conn.create_storage(data['stg_type'], data['name'], data['source'], data['target'])
                         return HttpResponseRedirect('/storage/%s/%s/' % (host_id, data['name']))
         conn.close()
     except libvirtError as err:
-        errors.append(err.message)
+        errors.append(err)
 
     return render_to_response('storages.html', locals(), context_instance=RequestContext(request))
 
@@ -62,6 +75,7 @@ def storage(request, host_id, pool):
 
     errors = []
     compute = Compute.objects.get(id=host_id)
+    meta_prealloc = False
 
     try:
         conn = wvmStorage(compute.hostname,
@@ -72,11 +86,13 @@ def storage(request, host_id, pool):
 
         storages = conn.get_storages()
         state = conn.is_active()
-        size, free, usage = conn.get_size()
+        size, free = conn.get_size()
+        used = (size - free)
         if state:
-            percent = (free * 100) / size
+            percent = (used * 100) / size
         else:
             percent = 0
+        status = conn.get_status()
         path = conn.get_target_path()
         type = conn.get_type()
         autostart = conn.get_autostart()
@@ -87,7 +103,7 @@ def storage(request, host_id, pool):
         else:
             volumes = None
     except libvirtError as err:
-        errors.append(err.message)
+        errors.append(err)
 
     if request.method == 'POST':
         if 'start' in request.POST:
@@ -124,13 +140,13 @@ def storage(request, host_id, pool):
             form = AddImage(request.POST)
             if form.is_valid():
                 data = form.cleaned_data
-                img_name = data['name'] + '.img'
-                if img_name in conn.update_volumes():
-                    msg = _("Volume name already use")
-                    errors.append(msg)
-                if not errors:
-                    conn.create_volume(data['name'], data['size'], data['format'])
+                if data['meta_prealloc'] and data['format'] == 'qcow2':
+                    meta_prealloc = True
+                try:
+                    conn.create_volume(data['name'], data['size'], data['format'], meta_prealloc)
                     return HttpResponseRedirect(request.get_full_path())
+                except libvirtError as err:
+                    errors.append(err)
         if 'del_volume' in request.POST:
             volname = request.POST.get('volname', '')
             try:
@@ -151,19 +167,22 @@ def storage(request, host_id, pool):
             if form.is_valid():
                 data = form.cleaned_data
                 img_name = data['name'] + '.img'
+                meta_prealloc = 0
                 if img_name in conn.update_volumes():
                     msg = _("Name of volume name already use")
                     errors.append(msg)
                 if not errors:
                     if data['convert']:
                         format = data['format']
+                        if data['meta_prealloc'] and data['format'] == 'qcow2':
+                            meta_prealloc = True
                     else:
                         format = None
                     try:
-                        conn.clone_volume(data['image'], data['name'], format)
+                        conn.clone_volume(data['image'], data['name'], format, meta_prealloc)
                         return HttpResponseRedirect(request.get_full_path())
-                    except libvirtError as error_msg:
-                        errors.append(error_msg.message)
+                    except libvirtError as err:
+                        errors.append(err)
     conn.close()
 
     return render_to_response('storage.html', locals(), context_instance=RequestContext(request))

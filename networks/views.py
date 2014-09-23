@@ -46,11 +46,11 @@ def networks(request, host_id):
                         errors.append(msg)
                     if not errors:
                         conn.create_network(data['name'], data['forward'], gateway, netmask,
-                                            dhcp, data['bridge_name'], data['fixed'])
+                                            dhcp, data['bridge_name'], data['openvswitch'], data['fixed'])
                         return HttpResponseRedirect('/network/%s/%s/' % (host_id, data['name']))
         conn.close()
     except libvirtError as err:
-        errors.append(err.message)
+        errors.append(err)
 
     return render_to_response('networks.html', locals(), context_instance=RequestContext(request))
 
@@ -76,11 +76,12 @@ def network(request, host_id, pool):
         device = conn.get_bridge_device()
         autostart = conn.get_autostart()
         ipv4_forward = conn.get_ipv4_forward()
-        ipv4_dhcp_range = conn.get_ipv4_dhcp_range()
+        ipv4_dhcp_range_start = conn.get_ipv4_dhcp_range_start()
+        ipv4_dhcp_range_end = conn.get_ipv4_dhcp_range_end()
         ipv4_network = conn.get_ipv4_network()
         fixed_address = conn.get_mac_ipaddr()
     except libvirtError as err:
-        errors.append(err.message)
+        errors.append(err)
 
     if request.method == 'POST':
         if 'start' in request.POST:

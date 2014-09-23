@@ -11,11 +11,11 @@ class FlavorAddForm(forms.Form):
                             error_messages={'required': _('No flavor name has been entered')},
                             max_length=20)
     vcpu = forms.IntegerField(label="VCPU",
-                              error_messages={'required': _('No VCPU has been entered')},)
+                              error_messages={'required': _('No VCPU has been entered')}, )
     disk = forms.IntegerField(label="HDD",
-                              error_messages={'required': _('No HDD image has been entered')},)
+                              error_messages={'required': _('No HDD image has been entered')}, )
     memory = forms.IntegerField(label="RAM",
-                                error_messages={'required': _('No RAM size has been entered')},)
+                                error_messages={'required': _('No RAM size has been entered')}, )
 
     def clean_name(self):
         label = self.cleaned_data['label']
@@ -43,6 +43,7 @@ class NewVMForm(forms.Form):
     template = forms.CharField(required=False)
     images = forms.CharField(required=False)
     hdd_size = forms.IntegerField(required=False)
+    meta_prealloc = forms.BooleanField(required=False)
     virtio = forms.BooleanField(required=False)
     mac = forms.CharField(required=False)
 

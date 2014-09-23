@@ -5,7 +5,7 @@ import os
 #
 # Server socket
 #
-#   bind - The socket to bind.
+# bind - The socket to bind.
 #
 #       A string of the form: 'HOST', 'HOST:PORT', 'unix:PATH'.
 #       An IP is a valid HOST.
@@ -77,6 +77,7 @@ def get_workers():
         return procs * 2 + 1
     else:
         return 3
+
 
 workers = get_workers()
 #worker_class = 'egg:gunicorn#eventlet'

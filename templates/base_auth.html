@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="{% static "img/favicon.ico" %}">
     <title>{% block title %}{% endblock %}</title>
-    <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <link href="{% static "css/webvirtmgr.css" %}" rel="stylesheet">
     <link href="{% static "css/signin.css" %}" rel="stylesheet">
 </head>
+
 <body>
-<!-- Static navbar -->
-<div class="navbar navbar-inverse navbar-static-top">
+<nav class="navbar navbar-inverse navbar-static-top" role="navigation">
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -21,7 +21,7 @@
             </button>
             <a class="navbar-brand" href="/">WebVirtMgr</a>
         </div>
-        <div class="navbar-collapse collapse">
+        <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav navbar-right">
                 {% if request.user.is_authenticated %}
                     <li class="">
@@ -33,13 +33,14 @@
                     </li>
                 {% endif %}
             </ul>
-        </div><!--/.nav-collapse -->
+        </div>
+        <!--/.nav-collapse -->
     </div>
-</div>
+</nav>
 <div class="container">
     {% block content %}{% endblock %}
 </div>
 <script src="{% static "js/jquery-1.10.2.js" %}"></script>
-<script src="{% static "js/bootstrap.min.js" %}"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 </body>
 </html>

@@ -12,6 +12,7 @@ class AddNetPool(forms.Form):
     dhcp = forms.BooleanField(required=False)
     fixed = forms.BooleanField(required=False)
     bridge_name = forms.CharField(max_length=20, required=False)
+    openvswitch = forms.BooleanField(required=False)
 
     def clean_name(self):
         name = self.cleaned_data['name']

@@ -13,6 +13,10 @@ class AddStgPool(forms.Form):
     source = forms.CharField(error_messages={'required': _('No device has been entered')},
                              max_length=100,
                              required=False)
+    ceph_user = forms.CharField(required=False)
+    ceph_host = forms.CharField(required=False)
+    ceph_pool = forms.CharField(required=False)
+    secret = forms.CharField(required=False)
 
     def clean_name(self):
         name = self.cleaned_data['name']
@@ -48,8 +52,11 @@ class AddStgPool(forms.Form):
 
 class AddImage(forms.Form):
     name = forms.CharField(max_length=20)
-    format = forms.ChoiceField(required=True, choices=(('raw', 'raw'), ('qcow', 'qcow'), ('qcow2', 'qcow2 (recommended due to snapshots and thin privisioning)')))
+    format = forms.ChoiceField(required=True, choices=(('qcow2', 'qcow2 (recommended)'),
+                                                       ('qcow', 'qcow'),
+                                                       ('raw', 'raw')))
     size = forms.IntegerField()
+    meta_prealloc = forms.BooleanField(required=False)
 
     def clean_name(self):
         name = self.cleaned_data['name']
@@ -65,7 +72,10 @@ class CloneImage(forms.Form):
     name = forms.CharField(max_length=20)
     image = forms.CharField(max_length=20)
     convert = forms.BooleanField(required=False)
-    format = forms.ChoiceField(required=False, choices=(('qcow2', 'qcow2 (recommended due to snapshots and thin privisioning)'), ('qcow', 'qcow'), ('raw', 'raw')))
+    format = forms.ChoiceField(required=False, choices=(('qcow2', 'qcow2 (recommended)'),
+                                                        ('qcow', 'qcow'),
+                                                        ('raw', 'raw')))
+    meta_prealloc = forms.BooleanField(required=False)
 
     def clean_name(self):
         name = self.cleaned_data['name']

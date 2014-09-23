@@ -70,19 +70,6 @@ def hostusage(request, host_id):
         datasets['mem'].append(int(mem_usage['usage']) / 1048576)
         del datasets['mem'][0]
 
-    # Some fix division by 0 Chart.js
-    if len(datasets['cpu']) == 10:
-        if sum(datasets['cpu']) == 0:
-            datasets['cpu'][9] += 0.1
-        if sum(datasets['cpu']) / 10 == datasets['cpu'][0]:
-            datasets['cpu'][9] += 0.1
-
-    if len(datasets['mem']) == 10:
-        if sum(datasets['mem']) == 0:
-            datasets['mem'][9] += 0.1
-        if sum(datasets['mem']) / 10 == datasets['mem'][0]:
-            datasets['mem'][9] += 0.1
-
     cpu = {
         'labels': [""] * 10,
         'datasets': [
@@ -140,6 +127,6 @@ def overview(request, host_id):
         mem_usage = conn.get_memory_usage()
         conn.close()
     except libvirtError as err:
-        errors.append(err.message)
+        errors.append(err)
 
-    return render_to_response('hostdeatil.html', locals(), context_instance=RequestContext(request))
+    return render_to_response('hostdetail.html', locals(), context_instance=RequestContext(request))

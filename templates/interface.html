@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% block title %}{% trans "Interface" %}{% endblock %}
+{% block content %}
+    {% include 'sidebar.html' %}
+    <div class="main col-xs-12 col-sm-9">
+        {% if errors %}
+            {% for error in errors %}
+                <div class="alert alert-danger">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    {{ error }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        <table class="table table-hover table-nolines" role="main">
+            <tbody>
+                <tr>
+                    <td>{% trans "Interface" %}</td>
+                    <td><strong>{{ iface }}</strong></td>
+                </tr>
+                <tr>
+                    <td>{% trans "IPv4" %} ({% ifequal ipv4 None %}None{% else %}{{ ipv4_type }}{% endifequal %})</td>
+                    <td>{{ ipv4 }}</td>
+                </tr>
+                <tr>
+                    <td>{% trans "IPv6" %} ({% ifequal ipv6 None %}None{% else %}{{ ipv6_type }}{% endifequal %})</td>
+                    <td>{{ ipv6 }}</td>
+                </tr>
+                <tr>
+                    <td>{% trans "MAC Adress" %}</td>
+                    <td>{{ mac }}</td>
+                </tr>
+                <tr>
+                    <td>{% trans "Interface type" %}</td>
+                    <td>{{ itype }}</td>
+                </tr>
+                {% ifequal itype 'bridge' %}
+                    <tr>
+                        <td>{% trans "Bridge device" %}</td>
+                        <td>{{ bridge }}</td>
+                    </tr>
+                {% endifequal %}
+                <tr>
+                    <td>{% trans "Boot mode" %}</td>
+                    <td>{{ start_mode }}</td>
+                </tr>
+                <tr>
+                    <td>{% trans "State" %}</td>
+                    <td>
+                        <form action="" method="post" role="form">{% csrf_token %}
+                            {% ifequal state 0 %}
+                                <input type="submit" class="btn btn-xs btn-default" name="start" value="{% trans "Start" %}">
+                                <input type="submit" class="btn btn-xs btn-default" name="delete" value="{% trans "Delete" %}"
+                                       onclick="return confirm('{% trans "Are you sure?" %}')">
+                            {% else %}
+                                <input type="submit" class="btn btn-xs btn-default" name="stop" value="{% trans "Stop" %}"
+                                       onclick="return confirm('{% trans "Are you sure?" %}')">
+                            {% endifequal %}
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    {% include 'sidebar_close.html' %}
+{% endblock %}
