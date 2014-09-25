@@ -50,7 +50,6 @@
 
         <h4>{% trans "Performance" %}</h4>
         <p>{% trans "CPU usage" %}</p>
-        <!-- TODO: adaptive width -->
         <canvas id="cpuChart" width="700" height="200"></canvas>
         <p>{% trans "Memory usage" %}</p>
         <canvas id="memoryChart" width="700" height="200"></canvas>
@@ -62,21 +61,28 @@
     <script>
         var cpu_ctx = $("#cpuChart").get(0).getContext("2d");
         var cpuChart = new Chart(cpu_ctx);
-        var cpu_options = { animation: false,
+        var cpu_options = {
+            animation: false,
             pointDotRadius: 2,
             scaleLabel: "<%=value%> %",
             scaleOverride: true,
             scaleSteps: 10,
             scaleStepWidth: 10,
-            scaleStartValue: 0
-        }
+            scaleStartValue: 0,
+            responsive: true
+        };
 
         var mem_ctx = $("#memoryChart").get(0).getContext("2d");
         var memChart = new Chart(mem_ctx);
-        var mem_options = {animation: false, pointDotRadius: 2, scaleLabel: "<%=value%> Mb"}
+        var mem_options = {
+            animation: false,
+            pointDotRadius: 2,
+            scaleLabel: "<%=value%> Mb",
+            responsive: true
+        };
 
         function hostusage() {
-            $.getJSON('{%  url 'hostusage' host_id %}', function (data) {
+            $.getJSON('{% url 'hostusage' host_id %}', function (data) {
                 cpuChart.Line(data['cpu'], cpu_options);
                 memChart.Line(data['memory'], mem_options);
             });

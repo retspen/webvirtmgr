@@ -1,5 +1,6 @@
 from string import letters, digits
 from random import choice
+from bisect import insort
 
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect, HttpResponse
@@ -459,7 +460,11 @@ def instance(request, host_id, vname):
         networks = conn.get_net_device()
         media_iso = sorted(conn.get_iso_media())
         vcpu_range = conn.get_max_cpus()
-        memory_range = [256, 512, 1024, 2048, 4096, 6144, 8192, 16384]
+        memory_range = [256, 512, 768, 1024, 2048, 4096, 6144, 8192, 16384]
+        if not memory in memory_range:
+            insort(memory_range, memory)
+        if not cur_memory in memory_range:
+            insort(memory_range, cur_memory)
         memory_host = conn.get_max_memory()
         vcpu_host = len(vcpu_range)
         telnet_port = conn.get_telnet_port()
@@ -546,7 +551,13 @@ def instance(request, host_id, vname):
                 vcpu = request.POST.get('vcpu', '')
                 cur_vcpu = request.POST.get('cur_vcpu', '')
                 memory = request.POST.get('memory', '')
+                memory_custom = request.POST.get('memory_custom', '')
+                if memory_custom:
+                    memory = memory_custom
                 cur_memory = request.POST.get('cur_memory', '')
+                cur_memory_custom = request.POST.get('cur_memory_custom', '')
+                if cur_memory_custom:
+                    cur_memory = cur_memory_custom
                 conn.change_settings(description, cur_memory, memory, cur_vcpu, vcpu)
                 return HttpResponseRedirect(request.get_full_path() + '#instancesettings')
             if 'change_xml' in request.POST:

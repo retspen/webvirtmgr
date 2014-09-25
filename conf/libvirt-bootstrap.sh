@@ -223,8 +223,8 @@ __gather_linux_system_info() {
                 done < /etc/${rsource}
                 ;;
             os                 )
-                nn=$(__unquote_string $(grep '^ID=' /etc/os-release | sed -e 's/^ID=\(.*\)$/\1/g'))
-                rv=$(__unquote_string $(grep '^VERSION_ID=' /etc/os-release | sed -e 's/^VERSION_ID=\(.*\)$/\1/g'))
+                nn=$(grep '^ID=' /etc/os-release | sed -e 's/^ID=\(.*\)$/\1/g')
+                rv=$(grep '^VERSION_ID=' /etc/os-release | sed -e 's/^VERSION_ID=\(.*\)$/\1/g')
                 [ "${rv}x" != "x" ] && v=$(__parse_version_string "$rv") || v=""
                 case $(echo ${nn} | tr '[:upper:]' '[:lower:]') in
                     arch        )
@@ -374,7 +374,12 @@ __check_end_of_life_versions
 #   CentOS Install Functions
 #
 install_centos() {
-    yum -y install kvm libvirt bridge-utils || return 1
+    if [ $DISTRO_MAJOR_VERSION -eq 6 ]; then
+        yum -y install kvm libvirt bridge-utils || return 1
+    fi
+    if [ $DISTRO_MAJOR_VERSION -eq 7 ]; then
+        yum -y install qemu-kvm libvirt bridge-utils || return 1
+    fi
     return 0
 }
 
@@ -410,6 +415,14 @@ daemons_running_centos() {
     if [ -f /etc/init.d/libvirt-guests ]; then
         service libvirt-guests stop > /dev/null 2>&1
         service libvirt-guests start
+    fi
+    if [ -f /usr/lib/systemd/system/libvirtd.service ]; then
+        systemctl stop libvirtd.service > /dev/null 2>&1
+        systemctl start libvirtd.service
+    fi
+    if [ -f /usr/lib/systemd/system/libvirt-guests.service ]; then
+        systemctl stop libvirt-guests.service > /dev/null 2>&1
+        systemctl start libvirt-guests.service
     fi
     return 0
 } 
@@ -456,7 +469,7 @@ daemons_running_fedora() {
         systemctl stop libvirtd.service > /dev/null 2>&1
         systemctl start libvirtd.service
     fi
-    if [ -f /etc/init.d/libvirt-guests ]; then
+    if [ -f /usr/lib/systemd/system/libvirt-guests.service ]; then
         systemctl stop libvirt-guests.service > /dev/null 2>&1
         systemctl start libvirt-guests.service
     fi

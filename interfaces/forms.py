@@ -51,7 +51,7 @@ class AddInterface(forms.Form):
         if have_symbol:
             raise forms.ValidationError(_('The ipv6 gateway must not contain any special characters'))
         elif len(ipv6_gw) > 100:
-            raise forms.ValidationError(_('The ipv4 gateway must not exceed 1000 characters'))
+            raise forms.ValidationError(_('The ipv6 gateway must not exceed 100 characters'))
         return ipv6_gw
 
     def clean_name(self):
