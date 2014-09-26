@@ -2,6 +2,9 @@
 {% load i18n %}
 {% load staticfiles %}
 {% block title %}{% trans "Instances" %}{% endblock %}
+{% block style %}
+    <link href="{% static "css/table-sort.css" %}" rel="stylesheet">
+{% endblock %}
 {% block content %}
     {% include 'sidebar.html' %}
     <div class="main col-xs-12 col-sm-9" role="main">
@@ -15,7 +18,7 @@
         {% endif %}
         {% if instances %}
             <div class="table-responsive">
-                <table class="table">
+                <table class="table" id="sortTable">
                     <thead>
                     <tr class="active">
                         <th>{% trans "Name" %}</th>
@@ -251,4 +254,10 @@
             window.open("/console/?token=" + uuid, "", "width=850,height=485");
         }
     </script>
+<script src="{% static "js/jquery.tablesorter.js" %}"></script>
+<script >
+    $(function() {
+        $("#sortTable").tablesorter({ sortList: [[1,1], [0,0]] });
+    });
+</script>
 {% endblock %}
