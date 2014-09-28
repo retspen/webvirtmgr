@@ -57,6 +57,7 @@
                         <th>{% trans "Server" %}</th>
                         <th>{% trans "Status" %}</th>
                         <th>{% trans "Action" %}</th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -479,7 +480,7 @@
 <script src="{% static "js/jquery.tablesorter.js" %}"></script>
 <script >
     $(function() {
-        $("#sortTable").tablesorter({ sortList: [[0,0]] });
+        $("#sortTable").tablesorter({ sortList: [[0,0]], headers: {3: {sorter: false}, 4: {sorter: false}} });
     });
 </script>
 {% endblock %}
