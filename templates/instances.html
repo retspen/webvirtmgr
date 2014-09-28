@@ -257,7 +257,7 @@
     <script src="{% static "js/jquery.tablesorter.js" %}"></script>
     <script >
         $(function() {
-            $("#sortTable").tablesorter({ sortList: [[1,1], [0,0]] });
+            $("#sortTable").tablesorter({ sortList: [[1,1], [0,0]], headers: {4: {sorter: false}} });
         });
     </script>
 {% endblock %}
