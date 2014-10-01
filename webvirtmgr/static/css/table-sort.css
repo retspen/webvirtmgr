@@ -5,10 +5,14 @@ table#sortTable th {
     cursor: pointer;
 }
 
-table#sortTable thead tr .headerSortUp {
+table#sortTable th.sorter-false {
+    background-image: none;
+}
+
+table#sortTable thead tr .tablesorter-headerAsc {
     background-image: url('../img/asc.gif');
 }
 
-table#sortTable thead tr .headerSortDown {
+table#sortTable thead tr .tablesorter-headerDesc {
     background-image: url('../img/desc.gif');
 }
