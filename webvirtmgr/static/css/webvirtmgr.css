@@ -21,14 +21,14 @@ label input[type="radio"], label input[type="checkbox"] {
 
 .navbar-inverse {
     text-shadow: 0 -1px 0 rgba(0, 0, 0, .15);
-    background-color: #563d7c;
-    border-color: #463265;
+    background-color: #4183c4;
+    border-color: #4183c4;
     box-shadow: 0 1px 0 rgba(255, 255, 255, .1);
 }
 
 .navbar-inverse .navbar-brand,
 .navbar-inverse .navbar-nav > li > a {
-    color: #f3ecff;
+    color: #fff;
 }
 
 .navbar-inverse .navbar-brand:hover, .navbar-inverse .navbar-brand:focus {
