@@ -29,7 +29,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {% for inst in instances %}
+                    {% for inst in instances|dictsort:"name"|dictsort:"status" %}
                         <tr id="{{ inst.name }}">
                             <td><a href="{% url 'instance' host_id inst.name %}"><i
                                     class="icon-th-large"></i> {{ inst.name }}</a></td>
