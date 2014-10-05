@@ -81,7 +81,8 @@
                         </li>
                         <li><a href="#2" data-toggle="tab">{% trans "LVM" %}</a></li>
                         <li><a href="#3" data-toggle="tab">{% trans "CEPH" %}</a></li>
-                        <li><a href="#4" data-toggle="tab">{% trans "ISO" %}</a></li>
+                        <li><a href="#4" data-toggle="tab">{% trans "NETFS" %}</a></li>
+                        <li><a href="#5" data-toggle="tab">{% trans "ISO" %}</a></li>
                     </ul>
                 </div>
                 <div class="tab-content">
@@ -224,6 +225,69 @@
                         </form>
                     </div>
                     <div class="tab-pane" id="4">
+                        <form class="form-horizontal" method="post" action="" role="form">{% csrf_token %}
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">{% trans "Type" %}</label>
+
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" name="stg_type" value="netfs" disabled>
+                                    <input type="hidden" name="stg_type" value="netfs">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">{% trans "Name" %}</label>
+
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" name="name" placeholder="netfspool"
+                                           maxlength="20" required pattern="[a-zA-Z0-9\.\-_]+">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">{% trans "Hostname" %}</label>
+
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" name="netfs_host"
+                                           placeholder="nfs.example.com" maxlength="20" required
+                                           pattern="[a-zA-Z0-9\.\-_]+">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">{% trans "Remote Path" %}</label>
+
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" name="source" placeholder="/srv/storage/"
+                                           maxlength="40" required pattern="[a-zA-Z0-9\/\-_]+">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">{% trans "Format" %}</label>
+
+	                            <div class="col-sm-6">
+	                                <select name="source_format" class="form-control" id="source_format">
+	                                    <option value="auto">{% trans "auto" %}</option>
+	                                    <option value="nfs">{% trans "nfs" %}</option>
+										<option value="glusterfs">{% trans "glusterfs" %}</option>
+										<option value="cifs">{% trans "cifs" %}</option>
+	                                </select>
+	                            </div>
+	                        </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">{% trans "Local Path" %}</label>
+
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" name="target" placeholder="/srv/storage/"
+                                           maxlength="40" required pattern="[a-zA-Z0-9\/\-_]+">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default"
+                                        data-dismiss="modal">{% trans "Close" %}</button>
+                                <button type="submit" class="btn btn-primary"
+                                        name="create">{% trans "Create" %}</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane" id="5">
                         <form class="form-horizontal" method="post" action="" role="form">{% csrf_token %}
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">{% trans "Name" %}</label>

@@ -17,6 +17,8 @@ class AddStgPool(forms.Form):
     ceph_host = forms.CharField(required=False)
     ceph_pool = forms.CharField(required=False)
     secret = forms.CharField(required=False)
+    netfs_host = forms.CharField(required=False)
+    source_format = forms.CharField(required=False)
 
     def clean_name(self):
         name = self.cleaned_data['name']
