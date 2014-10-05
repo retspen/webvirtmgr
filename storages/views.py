@@ -51,8 +51,8 @@ def storages(request, host_id):
                                                      data['ceph_user'], data['secret'])
                         elif data['stg_type'] == 'netfs':
                             conn.create_storage_netfs(data['stg_type'], data['name'],
-                                                     data['netfs_host'], data['source'],
-                                                     data['source_format'], data['target'])
+                                                      data['netfs_host'], data['source'],
+                                                      data['source_format'], data['target'])
                         else:
                             conn.create_storage(data['stg_type'], data['name'], data['source'], data['target'])
                         return HttpResponseRedirect('/storage/%s/%s/' % (host_id, data['name']))
