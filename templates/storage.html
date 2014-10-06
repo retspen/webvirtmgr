@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load staticfiles %}
 {% block title %}{% trans "Storage Pool" %}{% endblock %}
+{% block style %}
+    <link href="{% static "css/table-sort.css" %}" rel="stylesheet">
+{% endblock %}
 {% block content %}
     {% include 'sidebar.html' %}
     <div class="main col-xs-12 col-sm-9">
@@ -353,5 +357,16 @@
         {% ifnotequal type 'dir' %}
             $('#image_format').hide();
         {% endifnotequal %}
+    </script>
+    <script src="{% static "js/jquery.tablesorter.js" %}"></script>
+    <script>
+        $(function() {
+            $("#sortTable").tablesorter({
+                ignoreCase: true,
+                sortList: [[0,0]],
+                headers: {4: {sorter: false}},
+                textSorter: {1: $.tablesorter.sortText}
+            });
+        });
     </script>
 {% endblock %}
