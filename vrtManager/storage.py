@@ -68,6 +68,24 @@ class wvmStorages(wvmConnect):
         stg.create(0)
         stg.setAutostart(1)
 
+    def create_storage_netfs(self, stg_type, name, netfs_host, source, source_format, target):
+        xml = """
+                <pool type='%s'>
+                <name>%s</name>
+                <source>
+                    <host name='%s'/>
+                    <dir path='%s'/>
+                    <format type='%s'/>
+                </source>
+                <target>
+                    <path>%s</path>
+                </target>
+                </pool>""" % (stg_type, name, netfs_host, source, source_format, target)
+        self.define_storage(xml, 0)
+        stg = self.get_storage(name)
+        stg.create(0)
+        stg.setAutostart(1)
+
 
 class wvmStorage(wvmConnect):
     def __init__(self, host, login, passwd, conn, pool):
