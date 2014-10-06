@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-12-25 11:03+0200\n"
+"POT-Creation-Date: 2014-10-06 08:51+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -55,40 +55,80 @@ msgstr ""
 msgid "No Network pool has been choice"
 msgstr ""
 
-#: create/forms.py:52
+#: create/forms.py:54
 msgid "The name of the virtual machine must not contain any special characters"
 msgstr ""
 
-#: create/forms.py:54
+#: create/forms.py:56
 msgid "The name of the virtual machine must not exceed 20 characters"
 msgstr ""
 
-#: create/views.py:43
+#: create/views.py:48
 msgid "You haven't defined have any storage pools"
 msgstr ""
 
-#: create/views.py:46
+#: create/views.py:51
 msgid "You haven't defined have any network pools"
 msgstr ""
 
-#: create/views.py:73
+#: create/views.py:77 create/views.py:94
 msgid "A virtual machine with this name already exists"
 msgstr ""
 
-#: create/views.py:78
-msgid "First you need to create or select an image"
-msgstr ""
-
-#: create/views.py:89
+#: create/views.py:99
 msgid "No Virtual Machine MAC has been entered"
 msgstr ""
 
-#: instance/views.py:395
-msgid "Create snapshot for instance successful"
+#: create/views.py:114
+msgid "First you need to create or select an image"
 msgstr ""
 
-#: instance/views.py:428
+#: instance/views.py:569
 msgid "Enter the VNC password or select Generate"
+msgstr ""
+
+#: instance/views.py:605
+msgid "Successful revert snapshot: "
+msgstr ""
+
+#: interfaces/forms.py:25
+msgid "The ipv4 must not contain any special characters"
+msgstr ""
+
+#: interfaces/forms.py:27
+msgid "The ipv4 must not exceed 20 characters"
+msgstr ""
+
+#: interfaces/forms.py:34
+msgid "The ipv4 gateway must not contain any special characters"
+msgstr ""
+
+#: interfaces/forms.py:36
+msgid "The ipv4 gateway must not exceed 20 characters"
+msgstr ""
+
+#: interfaces/forms.py:43
+msgid "The ipv6 must not contain any special characters"
+msgstr ""
+
+#: interfaces/forms.py:45
+msgid "The ipv6 must not exceed 100 characters"
+msgstr ""
+
+#: interfaces/forms.py:52
+msgid "The ipv6 gateway must not contain any special characters"
+msgstr ""
+
+#: interfaces/forms.py:54
+msgid "The ipv6 gateway must not exceed 100 characters"
+msgstr ""
+
+#: interfaces/forms.py:61 interfaces/forms.py:70
+msgid "The interface must not contain any special characters"
+msgstr ""
+
+#: interfaces/forms.py:63 interfaces/forms.py:72
+msgid "The interface must not exceed 10 characters"
 msgstr ""
 
 #: networks/forms.py:7 storages/forms.py:7
@@ -99,27 +139,27 @@ msgstr ""
 msgid "No subnet has been entered"
 msgstr ""
 
-#: networks/forms.py:20 storages/forms.py:21
+#: networks/forms.py:21 storages/forms.py:27
 msgid "The pool name must not contain any special characters"
 msgstr ""
 
-#: networks/forms.py:22 storages/forms.py:23
+#: networks/forms.py:23 storages/forms.py:29
 msgid "The pool name must not exceed 20 characters"
 msgstr ""
 
-#: networks/forms.py:29
+#: networks/forms.py:30
 msgid "The pool subnet must not contain any special characters"
 msgstr ""
 
-#: networks/forms.py:31
+#: networks/forms.py:32
 msgid "The pool subnet must not exceed 20 characters"
 msgstr ""
 
-#: networks/forms.py:38
+#: networks/forms.py:39
 msgid "The pool bridge name must not contain any special characters"
 msgstr ""
 
-#: networks/forms.py:40
+#: networks/forms.py:41
 msgid "The pool bridge name must not exceed 20 characters"
 msgstr ""
 
@@ -131,89 +171,95 @@ msgstr ""
 msgid "Input subnet pool error"
 msgstr ""
 
-#: servers/forms.py:10 servers/forms.py:48
+#: servers/forms.py:10 servers/forms.py:48 servers/forms.py:84
+#: servers/forms.py:123 servers/forms.py:152
 msgid "No hostname has been entered"
 msgstr ""
 
-#: servers/forms.py:12 servers/forms.py:50
+#: servers/forms.py:12 servers/forms.py:50 servers/forms.py:86
+#: servers/forms.py:125
 msgid "No IP / Domain name has been entered"
 msgstr ""
 
-#: servers/forms.py:14 servers/forms.py:52
+#: servers/forms.py:14 servers/forms.py:52 servers/forms.py:88
+#: servers/forms.py:127
 msgid "No login has been entered"
 msgstr ""
 
-#: servers/forms.py:16
+#: servers/forms.py:16 servers/forms.py:90
 msgid "No password has been entered"
 msgstr ""
 
-#: servers/forms.py:23
+#: servers/forms.py:23 servers/forms.py:97 servers/forms.py:159
 msgid "The host name must not contain any special characters"
 msgstr ""
 
-#: servers/forms.py:25
+#: servers/forms.py:25 servers/forms.py:99 servers/forms.py:161
 msgid "The host name must not exceed 20 characters"
 msgstr ""
 
 #: servers/forms.py:30 servers/forms.py:44 servers/forms.py:66
-#: servers/forms.py:80
+#: servers/forms.py:80 servers/forms.py:104 servers/forms.py:118
+#: servers/forms.py:166
 msgid "This host is already connected"
 msgstr ""
 
-#: servers/forms.py:37 servers/forms.py:73
+#: servers/forms.py:37 servers/forms.py:73 servers/forms.py:111
+#: servers/forms.py:145
 msgid ""
 "Hostname must contain only numbers, or the domain name separated by \".\""
 msgstr ""
 
-#: servers/forms.py:39 servers/forms.py:75
+#: servers/forms.py:39 servers/forms.py:75 servers/forms.py:113
+#: servers/forms.py:147
 msgid "Wrong IP address"
 msgstr ""
 
-#: servers/forms.py:59
+#: servers/forms.py:59 servers/forms.py:135
 msgid "The name of the host must not contain any special characters"
 msgstr ""
 
-#: servers/forms.py:61
+#: servers/forms.py:61 servers/forms.py:137
 msgid "The name of the host must not exceed 20 characters"
 msgstr ""
 
-#: snapshots/views.py:62
-msgid "Successful revert snapshot: "
-msgstr ""
-
-#: storages/forms.py:10 storages/forms.py:34
+#: storages/forms.py:10 storages/forms.py:40
 msgid "No path has been entered"
 msgstr ""
 
-#: storages/forms.py:13 storages/forms.py:45
+#: storages/forms.py:13 storages/forms.py:51
 msgid "No device has been entered"
 msgstr ""
 
-#: storages/forms.py:31 storages/forms.py:42
+#: storages/forms.py:37 storages/forms.py:48
 msgid "The type must not contain any special characters"
 msgstr ""
 
-#: storages/forms.py:58 storages/forms.py:74
+#: storages/forms.py:67 storages/forms.py:86
 msgid "The image name must not contain any special characters"
 msgstr ""
 
-#: storages/forms.py:60 storages/forms.py:76
+#: storages/forms.py:69 storages/forms.py:88
 msgid "The image name must not exceed 20 characters"
 msgstr ""
 
-#: storages/views.py:37
+#: storages/views.py:38
 msgid "Pool name already use"
 msgstr ""
 
-#: storages/views.py:128
-msgid "Volume name already use"
+#: storages/views.py:42
+msgid "You need create secret for pool"
 msgstr ""
 
-#: storages/views.py:143
+#: storages/views.py:45
+msgid "You need input all fields for creating ceph pool"
+msgstr ""
+
+#: storages/views.py:164
 msgid "ISO image already exist"
 msgstr ""
 
-#: storages/views.py:154
+#: storages/views.py:176
 msgid "Name of volume name already use"
 msgstr ""
 
@@ -221,11 +267,11 @@ msgstr ""
 msgid "404"
 msgstr ""
 
-#: templates/404.html:9
+#: templates/404.html:10
 msgid "404 Not Found"
 msgstr ""
 
-#: templates/404.html:10
+#: templates/404.html:12
 msgid "The requested page was not found on this server."
 msgstr ""
 
@@ -233,30 +279,30 @@ msgstr ""
 msgid "500"
 msgstr ""
 
-#: templates/500.html:9
+#: templates/500.html:10
 msgid "500 Internal Server Error"
 msgstr ""
 
-#: templates/500.html:10
+#: templates/500.html:12
 msgid ""
 "The server encountered an internal error or misconfiguration and was unable "
 "to complete you request."
 msgstr ""
 
-#: templates/base.html:24
+#: templates/base.html:28
 msgid "Show all host and vm's"
 msgstr ""
 
-#: templates/base.html:24 templates/infrastructure.html:3
-#: templates/infrastructure.html.py:15
+#: templates/base.html:28 templates/infrastructure.html:3
+#: templates/infrastructure.html.py:8
 msgid "Infrastructure"
 msgstr ""
 
-#: templates/base.html:31 templates/base_auth.html:28
+#: templates/base.html:35 templates/base_auth.html:28
 msgid "Sign out"
 msgstr ""
 
-#: templates/base.html:35 templates/base_auth.html:32
+#: templates/base.html:39 templates/base_auth.html:32
 msgid "Sign in"
 msgstr ""
 
@@ -264,463 +310,843 @@ msgstr ""
 msgid "Loading..."
 msgstr ""
 
-#: templates/console.html:29
+#: templates/console.html:42
 msgid "Canvas not supported."
 msgstr ""
 
 #: templates/create.html:4
-msgid "Create VM"
+msgid "Create Instance"
 msgstr ""
 
-#: templates/create.html:14 templates/create.html.py:94
-msgid "Create Virtual Machine"
+#: templates/create.html:60
+msgid "Custom Instance"
 msgstr ""
 
-#: templates/create.html:65
-msgid "Custom VM"
+#: templates/create.html:61
+msgid "From Template"
 msgstr ""
 
-#: templates/create.html:66
-msgid "Add Flavor"
+#: templates/create.html:62
+msgid "From XML"
 msgstr ""
 
-#: templates/create.html:73 templates/create.html.py:98
-#: templates/create.html:100 templates/create.html.py:191
-#: templates/create.html:193 templates/create.html.py:277
-#: templates/instance.html:107 templates/instances.html:28
-#: templates/networks.html:74 templates/servers.html:163
-#: templates/servers.html.py:196 templates/snapshot.html:34
-#: templates/storage.html:83 templates/storage.html.py:123
-#: templates/storage.html:146 templates/storage.html.py:148
-#: templates/storage.html:213 templates/storage.html.py:215
-#: templates/storage.html:254 templates/storages.html:93
-#: templates/storages.html.py:120 templates/storages.html:140
+#: templates/create.html:63
+msgid "New Flavor"
+msgstr ""
+
+#: templates/create.html:72 templates/create.html.py:100
+#: templates/create.html:104 templates/create.html.py:216
+#: templates/create.html:219 templates/create.html.py:317
+#: templates/create.html:372 templates/create.html.py:375
+#: templates/instance.html:27 templates/instance.html.py:550
+#: templates/instance.html:553 templates/instance.html.py:572
+#: templates/instances.html:24 templates/interfaces.html:52
+#: templates/networks.html:77 templates/servers.html:216
+#: templates/storage.html:99 templates/storage.html.py:143
+#: templates/storage.html:169 templates/storage.html.py:173
+#: templates/storage.html:259 templates/storage.html.py:262
+#: templates/storage.html:315 templates/storages.html:100
+#: templates/storages.html.py:134 templates/storages.html:168
+#: templates/storages.html.py:238 templates/storages.html:293
 msgid "Name"
 msgstr ""
 
-#: templates/create.html:74 templates/infrastructure.html:24
+#: templates/create.html:73
 msgid "VCPU's"
 msgstr ""
 
-#: templates/create.html:75 templates/create.html.py:210
-#: templates/create.html:289 templates/instance.html:325
+#: templates/create.html:74 templates/create.html.py:240
+#: templates/create.html:333 templates/create.html.py:396
 msgid "RAM"
 msgstr ""
 
-#: templates/create.html:76 templates/create.html.py:217
-#: templates/create.html:296
+#: templates/create.html:75 templates/create.html.py:249
+#: templates/create.html:342 templates/create.html.py:405
 msgid "HDD"
 msgstr ""
 
-#: templates/create.html:77 templates/instance.html:243
-#: templates/instances.html:30 templates/servers.html:54
-#: templates/snapshot.html:36 templates/storage.html:86
-#: templates/storage.html.py:126
+#: templates/create.html:76 templates/instance.html:574
+#: templates/instances.html:28 templates/secrets.html:26
+#: templates/storage.html:102 templates/storage.html.py:146
 msgid "Action"
 msgstr ""
 
-#: templates/create.html:86 templates/create.html.py:214
-#: templates/create.html:293 templates/instance.html:146
-#: templates/instance.html.py:329
+#: templates/create.html:85 templates/create.html.py:246
+#: templates/create.html:339 templates/create.html.py:402
+#: templates/instance.html:53 templates/instance.html.py:364
+#: templates/instance.html:379 templates/instances.html:51
+#: templates/instances.html.py:166 templates/instances.html:193
+#: templates/instances.html.py:222
 msgid "MB"
 msgstr ""
 
-#: templates/create.html:87 templates/create.html.py:300
-#: templates/storage.html:233
+#: templates/create.html:86 templates/create.html.py:348
+#: templates/storage.html:284
 msgid "GB"
 msgstr ""
 
-#: templates/create.html:107
+#: templates/create.html:95
+msgid "Create Virtual Machine"
+msgstr ""
+
+#: templates/create.html:112
 msgid "Storage"
 msgstr ""
 
-#: templates/create.html:115 templates/create.html.py:229
-#: templates/instance.html:130 templates/instance.html.py:215
-#: templates/storage.html:46 templates/storage.html.py:47
+#: templates/create.html:121 templates/create.html.py:262
+#: templates/create.html:414 templates/instance.html:49
+#: templates/instance.html.py:414 templates/storage.html:39
+#: templates/storage.html.py:43 templates/storage.html:47
+#: templates/storages.html:210
 msgid "None"
 msgstr ""
 
-#: templates/create.html:121 templates/create.html.py:235
-#: templates/network.html:64
+#: templates/create.html:127 templates/create.html.py:420
+#: templates/storage.html:199 templates/storage.html.py:287
+msgid "Metadata"
+msgstr ""
+
+#: templates/create.html:132 templates/create.html.py:425
+msgid "Image"
+msgstr ""
+
+#: templates/create.html:135 templates/create.html.py:268
+#: templates/create.html:428 templates/network.html:90
 msgid "Network"
 msgstr ""
 
-#: templates/create.html:131 templates/network.html:124
+#: templates/create.html:146 templates/interfaces.html:31
+#: templates/network.html:140
 msgid "MAC"
 msgstr ""
 
-#: templates/create.html:137 templates/create.html.py:203
+#: templates/create.html:154 templates/create.html.py:232
+#: templates/create.html:388
 msgid "Host-Model"
 msgstr ""
 
-#: templates/create.html:141 templates/create.html.py:207
+#: templates/create.html:159 templates/create.html.py:237
+#: templates/create.html:393
 msgid "CPU"
 msgstr ""
 
-#: templates/create.html:144 templates/create.html.py:249
+#: templates/create.html:162 templates/create.html.py:284
+#: templates/create.html:439
 msgid "VirtIO"
 msgstr ""
 
-#: templates/create.html:150 templates/create.html.py:255
-#: templates/create.html:303 templates/instance.html:254
-#: templates/instance.html.py:280 templates/instance.html:335
-#: templates/instance.html.py:355 templates/instance.html:364
-#: templates/instance.html.py:371 templates/networks.html:115
-#: templates/servers.html:173 templates/servers.html.py:200
-#: templates/storage.html:170 templates/storage.html.py:236
-#: templates/storage.html:260 templates/storages.html:105
-#: templates/storages.html.py:132 templates/storages.html:154
+#: templates/create.html:170 templates/create.html.py:291
+#: templates/create.html:351 templates/create.html.py:446
+#: templates/create.html:477 templates/instance.html:532
+#: templates/interfaces.html:179 templates/networks.html:134
+#: templates/secrets.html:81 templates/secrets.html.py:155
+#: templates/servers.html:145 templates/servers.html.py:184
+#: templates/servers.html:229 templates/servers.html.py:312
+#: templates/servers.html:349 templates/servers.html.py:392
+#: templates/servers.html:410 templates/storage.html:208
+#: templates/storage.html.py:294 templates/storage.html:322
+#: templates/storages.html:117 templates/storages.html.py:151
+#: templates/storages.html:217 templates/storages.html.py:284
+#: templates/storages.html:311
 msgid "Close"
 msgstr ""
 
-#: templates/create.html:152 templates/create.html.py:154
-#: templates/create.html:161 templates/create.html.py:257
-#: templates/create.html:259 templates/networks.html:9
-#: templates/networks.html.py:116 templates/servers.html:75
-#: templates/sidebar.html:15 templates/storage.html:237
-#: templates/storages.html:9 templates/storages.html.py:106
-#: templates/storages.html:133 templates/storages.html.py:155
+#: templates/create.html:173 templates/create.html.py:175
+#: templates/create.html:183 templates/create.html.py:294
+#: templates/create.html:296 templates/create.html.py:449
+#: templates/create.html:451 templates/create.html.py:478
+#: templates/interfaces.html:180 templates/networks.html:135
+#: templates/secrets.html:156 templates/storage.html:295
+#: templates/storages.html:119 templates/storages.html.py:153
+#: templates/storages.html:220 templates/storages.html.py:222
+#: templates/storages.html:286 templates/storages.html.py:313
 msgid "Create"
 msgstr ""
 
-#: templates/create.html:166 templates/instance.html:52
-#: templates/instance.html.py:281 templates/network.html:42
-#: templates/servers.html:112 templates/snapshot.html:57
-#: templates/storage.html:53 templates/storage.html.py:99
-#: templates/storage.html:186
+#: templates/create.html:189 templates/instance.html:598
+#: templates/instance.html.py:730 templates/interface.html:54
+#: templates/network.html:42 templates/secrets.html:52
+#: templates/servers.html:77 templates/storage.html:59
+#: templates/storage.html.py:116 templates/storage.html:230
 msgid "Delete"
 msgstr ""
 
-#: templates/create.html:166 templates/instance.html:120
-#: templates/instance.html.py:204 templates/network.html:42
-#: templates/network.html.py:44 templates/network.html:53
-#: templates/servers.html:113 templates/snapshot.html:57
-#: templates/storage.html:53 templates/storage.html.py:55
-#: templates/storage.html:64 templates/storage.html.py:99
-#: templates/storage.html:186
+#: templates/create.html:190 templates/instance.html:598
+#: templates/interface.html:55 templates/interface.html.py:58
+#: templates/network.html:42 templates/network.html.py:45
+#: templates/network.html:59 templates/secrets.html:53
+#: templates/servers.html:78 templates/storage.html:60
+#: templates/storage.html.py:63 templates/storage.html:77
+#: templates/storage.html.py:117 templates/storage.html:231
 msgid "Are you sure?"
 msgstr ""
 
-#: templates/create.html:175
+#: templates/create.html:200
 msgid "You do not have any flavors"
 msgstr ""
 
-#: templates/create.html:187
-msgid "Create Custom Virtual Machine"
+#: templates/create.html:212
+msgid "Create Custom Instance"
 msgstr ""
 
-#: templates/create.html:197 templates/create.html.py:283
-#: templates/instance.html:315
+#: templates/create.html:224 templates/create.html.py:325
+#: templates/create.html:380
 msgid "VCPU"
 msgstr ""
 
-#: templates/create.html:273
+#: templates/create.html:313
 msgid "Add New Flavor"
 msgstr ""
 
-#: templates/create.html:304 templates/servers.html:174
-#: templates/servers.html.py:201
+#: templates/create.html:352 templates/servers.html:231
+#: templates/servers.html.py:314 templates/servers.html:351
+#: templates/servers.html.py:394 templates/servers.html:412
 msgid "Add"
 msgstr ""
 
-#: templates/hostdetail.html:4 templates/hostdetail.html.py:21
-#: templates/servers.html:84
+#: templates/create.html:368
+msgid "Create Instance From Template Image"
+msgstr ""
+
+#: templates/create.html:468
+msgid "Create Instance From XML"
+msgstr ""
+
+#: templates/hostdetail.html:4 templates/sidebar.html:35
 msgid "Overview"
 msgstr ""
 
-#: templates/hostdetail.html:23
+#: templates/hostdetail.html:17
 msgid "Basic details"
 msgstr ""
 
-#: templates/hostdetail.html:26
+#: templates/hostdetail.html:21
 msgid "Connection"
 msgstr ""
 
-#: templates/hostdetail.html:27 templates/servers.html:149
-#: templates/servers.html.py:182
+#: templates/hostdetail.html:25 templates/storages.html:246
 msgid "Hostname"
 msgstr ""
 
-#: templates/hostdetail.html:28
+#: templates/hostdetail.html:29
 msgid "Hypervisor"
 msgstr ""
 
-#: templates/hostdetail.html:29 templates/infrastructure.html:25
-#: templates/instance.html:142
+#: templates/hostdetail.html:33 templates/infrastructure.html:41
+#: templates/instance.html:30 templates/instances.html:27
 msgid "Memory"
 msgstr ""
 
-#: templates/hostdetail.html:30
+#: templates/hostdetail.html:37
 msgid "Logical CPUs"
 msgstr ""
 
-#: templates/hostdetail.html:31 templates/instance.html:141
+#: templates/hostdetail.html:41
 msgid "Processor"
 msgstr ""
 
-#: templates/hostdetail.html:32
+#: templates/hostdetail.html:45
 msgid "Architecture"
 msgstr ""
 
-#: templates/hostdetail.html:44
+#: templates/hostdetail.html:51
 msgid "Performance"
 msgstr ""
 
-#: templates/hostdetail.html:47 templates/instance.html:84
+#: templates/hostdetail.html:52 templates/instance.html:618
 msgid "CPU usage"
 msgstr ""
 
-#: templates/hostdetail.html:49
+#: templates/hostdetail.html:54
 msgid "Memory usage"
 msgstr ""
 
-#: templates/infrastructure.html:22
-msgid "Hostname / VM's"
-msgstr ""
-
-#: templates/infrastructure.html:23 templates/instance.html:110
-#: templates/instances.html:29 templates/servers.html:53
-msgid "Status"
-msgstr ""
-
-#: templates/infrastructure.html:26 templates/storage.html:48
-msgid "Usage"
-msgstr ""
-
-#: templates/infrastructure.html:34
-msgid "Active"
-msgstr ""
-
-#: templates/infrastructure.html:35
-msgid "Not Active"
-msgstr ""
-
-#: templates/infrastructure.html:36
-msgid "Connection Failed"
-msgstr ""
-
-#: templates/infrastructure.html:47 templates/instance.html:126
-#: templates/instances.html:39
+#: templates/infrastructure.html:24 templates/infrastructure.html.py:67
+#: templates/instance.html:45 templates/instances.html:37
+#: templates/instances.html.py:164
 msgid "Running"
 msgstr ""
 
-#: templates/infrastructure.html:48 templates/instance.html:59
-#: templates/instance.html.py:64 templates/instance.html:127
-#: templates/instances.html:45
+#: templates/infrastructure.html:27 templates/infrastructure.html.py:69
+#: templates/instance.html:46 templates/instance.html.py:95
+#: templates/instance.html:145 templates/instances.html:47
+#: templates/instances.html.py:59 templates/instances.html:88
+#: templates/instances.html.py:111 templates/instances.html:173
+#: templates/instances.html.py:191 templates/instances.html:200
+#: templates/instances.html.py:229
 msgid "Suspend"
 msgstr ""
 
-#: templates/infrastructure.html:49 templates/instance.html:125
-#: templates/instances.html:42
+#: templates/infrastructure.html:30 templates/infrastructure.html.py:71
+#: templates/instance.html:42 templates/instances.html:43
+#: templates/instances.html.py:220
 msgid "Shutoff"
 msgstr ""
 
-#: templates/infrastructure.html:62 templates/servers.html:124
+#: templates/infrastructure.html:38
+msgid "Hostname / VMs"
+msgstr ""
+
+#: templates/infrastructure.html:39 templates/instance.html:28
+#: templates/instances.html:25
+msgid "Status"
+msgstr ""
+
+#: templates/infrastructure.html:40 templates/instance.html:29
+#: templates/instances.html:26
+msgid "VCPUs"
+msgstr ""
+
+#: templates/infrastructure.html:42 templates/secrets.html:25
+#: templates/secrets.html.py:135 templates/storage.html:51
+msgid "Usage"
+msgstr ""
+
+#: templates/infrastructure.html:50
+msgid "Active"
+msgstr ""
+
+#: templates/infrastructure.html:52
+msgid "Not Active"
+msgstr ""
+
+#: templates/infrastructure.html:54
+msgid "Connection Failed"
+msgstr ""
+
+#: templates/infrastructure.html:85 templates/servers.html:249
 msgid "You have no connection"
 msgstr ""
 
 #: templates/instance.html:4
-msgid "VM's"
+msgid "VMs"
 msgstr ""
 
-#: templates/instance.html:13
-msgid "Virtual Machine"
-msgstr ""
-
-#: templates/instance.html:32
-msgid "Action For This Server"
-msgstr ""
-
-#: templates/instance.html:37 templates/instance.html.py:40
-msgid "Console"
-msgstr ""
-
-#: templates/instance.html:44 templates/instances.html:86
-#: templates/network.html:41 templates/network.html.py:67
-#: templates/storage.html:52
-msgid "Start"
-msgstr ""
-
-#: templates/instance.html:47 templates/instance.html.py:50
-#: templates/instance.html:246 templates/instances.html:58
-#: templates/instances.html.py:75 templates/instances.html:92
-msgid "Shutdown"
-msgstr ""
-
-#: templates/instance.html:54 templates/instances.html:69
-msgid "Resume"
-msgstr ""
-
-#: templates/instance.html:55 templates/instance.html.py:60
-#: templates/instance.html:65
-msgid "Snapshot"
-msgstr ""
-
-#: templates/instance.html:56 templates/instance.html.py:61
-#: templates/instance.html:68
-msgid "Statistics"
-msgstr ""
-
-#: templates/instance.html:71 templates/instance.html.py:73
-#: templates/instance.html:365 templates/servers.html:109
-msgid "Edit"
-msgstr ""
-
-#: templates/instance.html:80
-msgid "Usage Statistics"
-msgstr ""
-
-#: templates/instance.html:89
-msgid "Bandwidth"
-msgstr ""
-
-#: templates/instance.html:95
-msgid "Disk I/O"
-msgstr ""
-
-#: templates/instance.html:103
-msgid "Name & Status"
-msgstr ""
-
-#: templates/instance.html:108 templates/instance.html.py:309
+#: templates/instance.html:31 templates/instance.html.py:324
 msgid "Description"
 msgstr ""
 
-#: templates/instance.html:109 templates/network.html:25
-#: templates/storage.html:34
-msgid "Autostart"
+#: templates/instance.html:40 templates/instances.html:41
+msgid "Saved"
 msgstr ""
 
-#: templates/instance.html:118 templates/network.html:51
-#: templates/storage.html:62
-msgid "Enable"
+#: templates/instance.html:62
+msgid "Power"
 msgstr ""
 
-#: templates/instance.html:120 templates/network.html:53
-#: templates/storage.html:64
-msgid "Disable"
+#: templates/instance.html:66
+msgid "Access"
 msgstr ""
 
-#: templates/instance.html:137
-msgid "Technical Details"
+#: templates/instance.html:70
+msgid "Snapshots"
 msgstr ""
 
-#: templates/instance.html:151
-msgid "Network Details"
+#: templates/instance.html:74
+msgid "Statistics"
 msgstr ""
 
-#: templates/instance.html:171
-msgid "Storage Details"
-msgstr ""
-
-#: templates/instance.html:176
-msgid "Disk"
-msgstr ""
-
-#: templates/instance.html:187
-msgid "Media Details"
-msgstr ""
-
-#: templates/instance.html:192
-msgid "Connected"
-msgstr ""
-
-#: templates/instance.html:204
-msgid "Disconnect"
-msgstr ""
-
-#: templates/instance.html:207 templates/storage.html:72
-msgid "Images"
-msgstr ""
-
-#: templates/instance.html:220 templates/instance.html.py:222
-msgid "Connect"
-msgstr ""
-
-#: templates/instance.html:236
-msgid "Power On Server"
-msgstr ""
-
-#: templates/instance.html:239
-msgid ""
-"Shutdown sends ACPI shutdown signal to guest system. Force shutdown is lost "
-"immediately."
-msgstr ""
-
-#: templates/instance.html:249 templates/instances.html:61
-#: templates/instances.html.py:78 templates/instances.html:95
-msgid "Force Shutdown"
-msgstr ""
-
-#: templates/instance.html:255
-msgid "Send"
-msgstr ""
-
-#: templates/instance.html:268
-msgid "Undefined Server"
-msgstr ""
-
-#: templates/instance.html:271
-msgid "Delete HDD image?"
-msgstr ""
-
-#: templates/instance.html:276
-msgid "Warning: if you check this box, VM's data will be lost!"
-msgstr ""
-
-#: templates/instance.html:294
-msgid "Change Virtual Machine Settings"
-msgstr ""
-
-#: templates/instance.html:299
+#: templates/instance.html:78
 msgid "Settings"
 msgstr ""
 
-#: templates/instance.html:301 templates/instances.html:64
-#: templates/instances.html.py:81 templates/instances.html:98
-msgid "VNC"
+#: templates/instance.html:82 templates/instance.html.py:703
+#: templates/instance.html:705
+msgid "Migrate"
 msgstr ""
 
-#: templates/instance.html:302
-msgid "XML"
+#: templates/instance.html:86
+msgid "Destroy"
 msgstr ""
 
-#: templates/instance.html:336 templates/instance.html.py:356
-msgid "Change"
+#: templates/instance.html:93 templates/instance.html.py:109
+#: templates/instance.html:112 templates/instances.html:71
+#: templates/instances.html.py:95 templates/instances.html:119
+#: templates/instances.html.py:159 templates/instances.html:206
+#: templates/instances.html.py:235
+msgid "Shutdown"
 msgstr ""
 
-#: templates/instance.html:343
-msgid "Generate"
+#: templates/instance.html:94 templates/instance.html.py:127
+#: templates/instance.html:130 templates/instances.html:76
+#: templates/instances.html.py:99 templates/instances.html:123
+#: templates/instances.html.py:180 templates/instances.html:209
+#: templates/instances.html.py:238
+msgid "Force Shutdown"
 msgstr ""
 
-#: templates/instance.html:349 templates/instance.html.py:351
-#: templates/servers.html:167
-msgid "Password"
-msgstr ""
-
-#: templates/instance.html:372
+#: templates/instance.html:96 templates/instance.html.py:169
+#: templates/instance.html:172 templates/instance.html.py:533
+#: templates/instances.html:62 templates/instances.html.py:92
+#: templates/instances.html:115 templates/instances.html.py:176
+#: templates/instances.html:203 templates/instances.html.py:232
 msgid "Save"
 msgstr ""
 
-#: templates/instances.html:4 templates/instances.html.py:13
-#: templates/servers.html:72 templates/sidebar.html:12
+#: templates/instance.html:100
+msgid "This action sends an ACPI shutdown signal to the instance."
+msgstr ""
+
+#: templates/instance.html:105 templates/instance.html.py:123
+#: templates/instance.html:141 templates/instance.html.py:160
+#: templates/instances.html:107 templates/instances.html.py:170
+#: templates/instances.html:226 templates/interface.html:53
+#: templates/network.html:40 templates/network.html.py:105
+#: templates/storage.html:58
+msgid "Start"
+msgstr ""
+
+#: templates/instance.html:118
+msgid ""
+"This action forcibly powers off the instance and may cause data corruption."
+msgstr ""
+
+#: templates/instance.html:136
+msgid "This action suspends or restores the instance."
+msgstr ""
+
+#: templates/instance.html:149 templates/instances.html:85
+#: templates/instances.html.py:197
+msgid "Resume"
+msgstr ""
+
+#: templates/instance.html:155
+msgid "This action saves the state of the instance."
+msgstr ""
+
+#: templates/instance.html:164 templates/instances.html:67
+#: templates/instances.html.py:155
+msgid "Delete Save Image"
+msgstr ""
+
+#: templates/instance.html:181
+msgid "VNC Console"
+msgstr ""
+
+#: templates/instance.html:182
+msgid "VNC Password"
+msgstr ""
+
+#: templates/instance.html:183
+msgid "VNC Keymap"
+msgstr ""
+
+#: templates/instance.html:185
+msgid "Telnet Console"
+msgstr ""
+
+#: templates/instance.html:191
+msgid ""
+"This action opens a new window with a VNC connection to the console of the "
+"instance."
+msgstr ""
+
+#: templates/instance.html:193 templates/instance.html.py:196
+#: templates/instance.html:203 templates/instance.html.py:207
+msgid "Console"
+msgstr ""
+
+#: templates/instance.html:201
+msgid ""
+"This action open new window with console Telnet connection to your instance."
+msgstr ""
+
+#: templates/instance.html:212
+msgid "To create password for VNC, shutdown the instance."
+msgstr ""
+
+#: templates/instance.html:220
+msgid "Generate"
+msgstr ""
+
+#: templates/instance.html:226 templates/instance.html.py:266
+msgid "Clear"
+msgstr ""
+
+#: templates/instance.html:232 templates/instance.html.py:239
+#: templates/servers.html:136 templates/servers.html.py:220
+#: templates/servers.html:303 templates/servers.html.py:307
+#: templates/servers.html:383 templates/servers.html.py:387
+msgid "Password"
+msgstr ""
+
+#: templates/instance.html:244
+msgid "Show"
+msgstr ""
+
+#: templates/instance.html:249 templates/instance.html.py:252
+msgid "Set Password"
+msgstr ""
+
+#: templates/instance.html:258
+msgid "To set a keymap for vnc, shutdown the instance."
+msgstr ""
+
+#: templates/instance.html:272
+msgid "Keymap"
+msgstr ""
+
+#: templates/instance.html:276
+msgid "please choose"
+msgstr ""
+
+#: templates/instance.html:285 templates/instance.html.py:288
+msgid "Set Keymap"
+msgstr ""
+
+#: templates/instance.html:297
+msgid "VCPU's and Memory"
+msgstr ""
+
+#: templates/instance.html:298
+msgid "Media"
+msgstr ""
+
+#: templates/instance.html:299
+msgid "Disks and Networks"
+msgstr ""
+
+#: templates/instance.html:300 templates/instance.html.py:512
+#: templates/instance.html:514 templates/storage.html:210
+#: templates/storage.html.py:221 templates/storage.html:223
+msgid "Clone"
+msgstr ""
+
+#: templates/instance.html:301
+msgid "XML"
+msgstr ""
+
+#: templates/instance.html:305
+msgid "Description and Autostart"
+msgstr ""
+
+#: templates/instance.html:309 templates/network.html:51
+#: templates/storage.html:69
+msgid "Autostart"
+msgstr ""
+
+#: templates/instance.html:314 templates/network.html:56
+#: templates/storage.html:74
+msgid "Enable"
+msgstr ""
+
+#: templates/instance.html:317 templates/network.html:60
+#: templates/storage.html:77
+msgid "Disable"
+msgstr ""
+
+#: templates/instance.html:330
+msgid "Logical host CPUs:"
+msgstr ""
+
+#: templates/instance.html:334 templates/instance.html.py:364
+msgid "Current allocation"
+msgstr ""
+
+#: templates/instance.html:350 templates/instance.html.py:379
+msgid "Maximum allocation"
+msgstr ""
+
+#: templates/instance.html:360
+msgid "Total host memory:"
+msgstr ""
+
+#: templates/instance.html:374 templates/instance.html.py:389
+msgid "Custom value"
+msgstr ""
+
+#: templates/instance.html:394 templates/instance.html.py:396
+msgid "Change"
+msgstr ""
+
+#: templates/instance.html:405
+msgid "CDROM"
+msgstr ""
+
+#: templates/instance.html:421 templates/instance.html.py:424
+msgid "Connect"
+msgstr ""
+
+#: templates/instance.html:434
+msgid "Disconnect"
+msgstr ""
+
+#: templates/instance.html:443 templates/instance.html.py:484
+msgid "Network devices"
+msgstr ""
+
+#: templates/instance.html:459 templates/instance.html.py:494
+msgid "Storage devices"
+msgstr ""
+
+#: templates/instance.html:474
+msgid "Create a clone"
+msgstr ""
+
+#: templates/instance.html:478
+msgid "Clone Name"
+msgstr ""
+
+#: templates/instance.html:524 templates/instance.html.py:526
+#: templates/secrets.html:48 templates/servers.html:59
+#: templates/servers.html.py:66 templates/servers.html:147
+#: templates/servers.html.py:186
+msgid "Edit"
+msgstr ""
+
+#: templates/instance.html:541 templates/instance.html.py:559
+#: templates/instance.html:561
+msgid "Create Snapshot"
+msgstr ""
+
+#: templates/instance.html:542
+msgid "Restore from Snapshot"
+msgstr ""
+
+#: templates/instance.html:546
+msgid "To take a snapshot, shutdown the instance."
+msgstr ""
+
+#: templates/instance.html:567
+msgid "To revert to a snapshot, shutdown the instance"
+msgstr ""
+
+#: templates/instance.html:573
+msgid "Date"
+msgstr ""
+
+#: templates/instance.html:587 templates/instance.html.py:590
+msgid "Revert"
+msgstr ""
+
+#: templates/instance.html:606
+msgid "You do not have any snapshots"
+msgstr ""
+
+#: templates/instance.html:613
+msgid "Instance Statistics"
+msgstr ""
+
+#: templates/instance.html:623
+msgid "Bandwidth"
+msgstr ""
+
+#: templates/instance.html:627
+msgid "In"
+msgstr ""
+
+#: templates/instance.html:628
+msgid "Out"
+msgstr ""
+
+#: templates/instance.html:634
+msgid "Disk I/O"
+msgstr ""
+
+#: templates/instance.html:637
+msgid "Read"
+msgstr ""
+
+#: templates/instance.html:638
+msgid "Write"
+msgstr ""
+
+#: templates/instance.html:647
+msgid "Instance Migrate"
+msgstr ""
+
+#: templates/instance.html:652 templates/instance.html.py:725
+msgid "Warning:"
+msgstr ""
+
+#: templates/instance.html:652
+msgid "Both host servers must have equal settings and OS type"
+msgstr ""
+
+#: templates/instance.html:658
+msgid "Original host"
+msgstr ""
+
+#: templates/instance.html:666
+msgid "Host migration"
+msgstr ""
+
+#: templates/instance.html:681
+msgid "Live migration"
+msgstr ""
+
+#: templates/instance.html:688
+msgid "Unsafe migration"
+msgstr ""
+
+#: templates/instance.html:695
+msgid "Delete original"
+msgstr ""
+
+#: templates/instance.html:714
+msgid "Delete Instance"
+msgstr ""
+
+#: templates/instance.html:718
+msgid "Delete HDD image?"
+msgstr ""
+
+#: templates/instance.html:725
+msgid "If you check this box, Instance's data will be lost!"
+msgstr ""
+
+#: templates/instances.html:4 templates/sidebar.html:16
 msgid "Instances"
 msgstr ""
 
-#: templates/instances.html:55 templates/instances.html.py:72
-#: templates/instances.html:89
-msgid "Pause"
+#: templates/instances.html:79 templates/instances.html.py:102
+#: templates/instances.html:128 templates/instances.html.py:183
+#: templates/instances.html:212 templates/instances.html.py:241
+msgid "VNC"
 msgstr ""
 
-#: templates/instances.html:110
+#: templates/instances.html:141
 msgid "You do not have any Virtual Machines"
 msgstr ""
 
-#: templates/login.html:3 templates/login.html.py:12 templates/login.html:16
+#: templates/interface.html:4 templates/interface.html.py:19
+#: templates/interfaces.html:4
+msgid "Interface"
+msgstr ""
+
+#: templates/interface.html:23 templates/interfaces.html:112
+msgid "IPv4"
+msgstr ""
+
+#: templates/interface.html:27 templates/interfaces.html:114
+msgid "IPv6"
+msgstr ""
+
+#: templates/interface.html:31
+msgid "MAC Adress"
+msgstr ""
+
+#: templates/interface.html:35
+msgid "Interface type"
+msgstr ""
+
+#: templates/interface.html:40
+msgid "Bridge device"
+msgstr ""
+
+#: templates/interface.html:45
+msgid "Boot mode"
+msgstr ""
+
+#: templates/interface.html:49 templates/network.html:35
+#: templates/storage.html:54
+msgid "State"
+msgstr ""
+
+#: templates/interface.html:57 templates/network.html:44
+#: templates/storage.html:62
+msgid "Stop"
+msgstr ""
+
+#: templates/interfaces.html:29 templates/interfaces.html.py:82
+#: templates/secrets.html:24 templates/servers.html:83
+#: templates/storages.html:55 templates/storages.html.py:92
+#: templates/storages.html:126 templates/storages.html.py:160
+#: templates/storages.html:230
+msgid "Type"
+msgstr ""
+
+#: templates/interfaces.html:47
+msgid "Create New Interface"
+msgstr ""
+
+#: templates/interfaces.html:60
+msgid "Start mode"
+msgstr ""
+
+#: templates/interfaces.html:64
+msgid "none"
+msgstr ""
+
+#: templates/interfaces.html:65
+msgid "onboot"
+msgstr ""
+
+#: templates/interfaces.html:66
+msgid "hotplug"
+msgstr ""
+
+#: templates/interfaces.html:71 templates/network.html:31
+#: templates/networks.html:55 templates/storages.html:142
+msgid "Device"
+msgstr ""
+
+#: templates/interfaces.html:86
+msgid "bridge"
+msgstr ""
+
+#: templates/interfaces.html:87
+msgid "ethernet"
+msgstr ""
+
+#: templates/interfaces.html:92
+msgid "STP"
+msgstr ""
+
+#: templates/interfaces.html:96
+msgid "on"
+msgstr ""
+
+#: templates/interfaces.html:97
+msgid "off"
+msgstr ""
+
+#: templates/interfaces.html:102
+msgid "Delay"
+msgstr ""
+
+#: templates/interfaces.html:120
+msgid "IPv4 Mode"
+msgstr ""
+
+#: templates/interfaces.html:124 templates/interfaces.html.py:154
+#: templates/network.html:94 templates/networks.html:93
+msgid "DHCP"
+msgstr ""
+
+#: templates/interfaces.html:125 templates/interfaces.html.py:155
+msgid "Static"
+msgstr ""
+
+#: templates/interfaces.html:126 templates/interfaces.html.py:153
+msgid "No configuration"
+msgstr ""
+
+#: templates/interfaces.html:131
+msgid "IPv4 Address"
+msgstr ""
+
+#: templates/interfaces.html:139
+msgid "IPv4 Gateway"
+msgstr ""
+
+#: templates/interfaces.html:149
+msgid "IPv6 Mode"
+msgstr ""
+
+#: templates/interfaces.html:160
+msgid "IPv6 Address"
+msgstr ""
+
+#: templates/interfaces.html:168
+msgid "IPv6 Gateway"
+msgstr ""
+
+#: templates/login.html:3 templates/login.html.py:14 templates/login.html:19
 msgid "Sign In"
 msgstr "Вход"
 
-#: templates/login.html:8
+#: templates/login.html:10
 msgid "Incorrect username or password."
 msgstr ""
 
@@ -728,76 +1154,59 @@ msgstr ""
 msgid "Sign Out"
 msgstr "Выход"
 
-#: templates/logout.html:6
+#: templates/logout.html:8
 msgid "Successful log out"
 msgstr ""
 
-#: templates/network.html:3 templates/network.html.py:9
-#: templates/networks.html:10
+#: templates/network.html:3
 msgid "Network Pool"
 msgstr ""
 
-#: templates/network.html:22 templates/storage.html:29
-msgid "Pool name"
-msgstr ""
-
-#: templates/network.html:23
-msgid "Device pool"
-msgstr ""
-
-#: templates/network.html:24 templates/storage.html:33
-msgid "State"
-msgstr ""
-
-#: templates/network.html:44 templates/storage.html:55
-msgid "Stop"
-msgstr ""
-
-#: templates/network.html:59
-msgid "IPv4 configuration"
-msgstr ""
-
-#: templates/network.html:63
-msgid "IPv4 Forwarding"
-msgstr ""
-
-#: templates/network.html:65 templates/networks.html:86
-msgid "DHCP"
+#: templates/network.html:19
+msgid "Network name"
 msgstr ""
 
 #: templates/network.html:68
-msgid "End"
+msgid "IPv4 configuration"
 msgstr ""
 
-#: templates/network.html:74 templates/networks.html:101
+#: templates/network.html:73
+msgid "IPv4 Forwarding"
+msgstr ""
+
+#: templates/network.html:76 templates/networks.html:111
 msgid "NAT"
 msgstr ""
 
-#: templates/network.html:77 templates/networks.html:102
+#: templates/network.html:79 templates/networks.html:112
 msgid "ROUTE"
 msgstr ""
 
-#: templates/network.html:80 templates/networks.html:104
+#: templates/network.html:82 templates/networks.html:114
 msgid "BRIDGE"
 msgstr ""
 
-#: templates/network.html:83 templates/networks.html:103
+#: templates/network.html:85 templates/networks.html:113
 msgid "ISOLATE"
 msgstr ""
 
-#: templates/network.html:89
+#: templates/network.html:97
 msgid "ON"
 msgstr ""
 
-#: templates/network.html:91
+#: templates/network.html:99
 msgid "OFF"
 msgstr ""
 
-#: templates/network.html:102 templates/networks.html:92
+#: templates/network.html:109
+msgid "End"
+msgstr ""
+
+#: templates/network.html:117 templates/networks.html:100
 msgid "Fixed Address"
 msgstr ""
 
-#: templates/network.html:123
+#: templates/network.html:139
 msgid "Address"
 msgstr ""
 
@@ -805,229 +1214,363 @@ msgstr ""
 msgid "Virtual Networks"
 msgstr ""
 
-#: templates/networks.html:46
+#: templates/networks.html:8
+msgid "New Network"
+msgstr ""
+
+#: templates/networks.html:44
 msgid "You do not have any virtual networks"
 msgstr ""
 
-#: templates/networks.html:55 templates/storages.html:126
-msgid "Device"
-msgstr ""
-
-#: templates/networks.html:56
+#: templates/networks.html:57
 msgid "Forward"
 msgstr ""
 
-#: templates/networks.html:70
-msgid "Add New Network Pool"
+#: templates/networks.html:73
+msgid "Add New Network"
 msgstr ""
 
-#: templates/networks.html:80
+#: templates/networks.html:85
 msgid "Subnet pool"
 msgstr ""
 
-#: templates/networks.html:98
+#: templates/networks.html:107
 msgid "Type forwarding"
 msgstr ""
 
-#: templates/networks.html:109
+#: templates/networks.html:119
 msgid "Bridge Name"
+msgstr ""
+
+#: templates/networks.html:127
+msgid "Open vSwitch"
+msgstr ""
+
+#: templates/secrets.html:4 templates/sidebar.html:32
+#: templates/storages.html:201
+msgid "Secrets"
+msgstr ""
+
+#: templates/secrets.html:23
+msgid "UUID"
+msgstr ""
+
+#: templates/secrets.html:34 templates/secrets.html.py:140
+msgid "volume"
+msgstr ""
+
+#: templates/secrets.html:37 templates/secrets.html.py:141
+msgid "iscsi"
+msgstr ""
+
+#: templates/secrets.html:40 templates/secrets.html.py:139
+msgid "ceph"
+msgstr ""
+
+#: templates/secrets.html:65
+msgid "Set secret value"
+msgstr ""
+
+#: templates/secrets.html:70
+msgid "Value"
+msgstr ""
+
+#: templates/secrets.html:83
+msgid "Set"
+msgstr ""
+
+#: templates/secrets.html:99
+msgid "You do not have any Secrets"
+msgstr ""
+
+#: templates/secrets.html:110
+msgid "Create New Secret"
+msgstr ""
+
+#: templates/secrets.html:115
+msgid "Ephemeral"
+msgstr ""
+
+#: templates/secrets.html:119 templates/secrets.html.py:129
+msgid "no"
+msgstr ""
+
+#: templates/secrets.html:120 templates/secrets.html.py:130
+msgid "yes"
+msgstr ""
+
+#: templates/secrets.html:125
+msgid "Private"
+msgstr ""
+
+#: templates/secrets.html:146
+msgid "Data"
 msgstr ""
 
 #: templates/servers.html:4
 msgid "Dashboard"
 msgstr ""
 
-#: templates/servers.html:44
-msgid "Add Host"
+#: templates/servers.html:45 templates/servers.html.py:262
+msgid "Add Connection"
 msgstr ""
 
-#: templates/servers.html:45
-msgid "Servers List"
+#: templates/servers.html:47
+msgid "Connections"
 msgstr ""
 
-#: templates/servers.html:52
-msgid "Server"
+#: templates/servers.html:89
+msgid "Host"
 msgstr ""
 
-#: templates/servers.html:64
-msgid "connected"
+#: templates/servers.html:99
+msgid "Edit Host Server"
 msgstr ""
 
-#: templates/servers.html:66
-msgid "not connected"
+#: templates/servers.html:100
+msgid "TCP"
 msgstr ""
 
-#: templates/servers.html:135
-msgid "Add Host Server"
+#: templates/servers.html:101
+msgid "SSH"
 msgstr ""
 
-#: templates/servers.html:140
-msgid "TCP Connections"
+#: templates/servers.html:102
+msgid "TLS"
 msgstr ""
 
-#: templates/servers.html:142
-msgid "SSH Connections"
+#: templates/servers.html:103
+msgid "SOCKET"
 msgstr ""
 
-#: templates/servers.html:155 templates/servers.html.py:188
-msgid "IP / Domain"
+#: templates/servers.html:110 templates/servers.html.py:156
+#: templates/servers.html:193 templates/servers.html.py:278
+#: templates/servers.html:323 templates/servers.html.py:358
+#: templates/servers.html:401
+msgid "Label"
 msgstr ""
 
-#: templates/servers.html:157 templates/servers.html.py:190
-msgid "IP or domain"
+#: templates/servers.html:119 templates/servers.html.py:166
+#: templates/servers.html:203 templates/servers.html.py:286
+#: templates/servers.html:331 templates/servers.html.py:366
+msgid "FQDN / IP"
 msgstr ""
 
-#: templates/servers.html:161 templates/servers.html.py:194
+#: templates/servers.html:128 templates/servers.html.py:175
+#: templates/servers.html:212 templates/servers.html.py:295
+#: templates/servers.html:299 templates/servers.html.py:340
+#: templates/servers.html:344 templates/servers.html.py:375
+#: templates/servers.html:379
 msgid "Username"
 msgstr ""
 
-#: templates/servers.html:169
-msgid "********"
+#: templates/servers.html:153
+msgid ""
+"Need create ssh <a href='https://github.com/retspen/webvirtmgr/wiki/Setup-"
+"SSH-Authorization'>authorization key</a>. If you have another SSH port on "
+"your server, you can add IP:PORT like '192.168.1.1:2222'."
 msgstr ""
 
-#: templates/servers.html:180
-msgid "Need create ssh authorization key"
+#: templates/servers.html:267
+msgid "TCP Connections"
 msgstr ""
 
-#: templates/servers.html:78 templates/sidebar.html:18
-#: templates/storages.html:3 templates/storages.html.py:10
+#: templates/servers.html:269
+msgid "SSH Connections"
+msgstr ""
+
+#: templates/servers.html:270
+msgid "TLS Connection"
+msgstr ""
+
+#: templates/servers.html:271
+msgid "Local Socket"
+msgstr ""
+
+#: templates/servers.html:290 templates/servers.html.py:335
+#: templates/servers.html:370
+msgid "FQDN or IP Address"
+msgstr ""
+
+#: templates/servers.html:320
+msgid ""
+"You must create ssh <a href='https://github.com/retspen/webvirtmgr/wiki/"
+"Setup-SSH-Authorization'>authorization key</a>. If you have another SSH port "
+"on your server, you can add IP:PORT like '192.168.1.1:2222'."
+msgstr ""
+
+#: templates/sidebar.html:6
+msgid "New Instance"
+msgstr ""
+
+#: templates/sidebar.html:20 templates/storages.html:3
 msgid "Storages"
 msgstr ""
 
-#: templates/servers.html:81 templates/sidebar.html:21
+#: templates/sidebar.html:24
 msgid "Networks"
 msgstr ""
 
-#: templates/sidebar.html:25 templates/sidebar.html.py:29
-#: templates/snapshot.html:3 templates/snapshot.html.py:9
-msgid "Snapshots"
+#: templates/sidebar.html:28
+msgid "Interfaces"
 msgstr ""
 
-#: templates/snapshot.html:27
-msgid "You do not have any snapshots for"
-msgstr ""
-
-#: templates/snapshot.html:35
-msgid "Date"
-msgstr ""
-
-#: templates/snapshot.html:48 templates/snapshot.html.py:50
-msgid "Revert"
-msgstr ""
-
-#: templates/snapshots.html:3 templates/snapshots.html.py:9
-msgid "Instances Snapshots"
-msgstr ""
-
-#: templates/snapshots.html:28
-msgid "You do not have any snapshots"
-msgstr ""
-
-#: templates/storage.html:3 templates/storage.html.py:9
+#: templates/storage.html:3
 msgid "Storage Pool"
 msgstr ""
 
-#: templates/storage.html:30
+#: templates/storage.html:26
+msgid "Pool name"
+msgstr ""
+
+#: templates/storage.html:38
 msgid "Pool type"
 msgstr ""
 
-#: templates/storage.html:31
+#: templates/storage.html:42
 msgid "Pool path"
 msgstr ""
 
-#: templates/storage.html:32 templates/storage.html.py:84
-#: templates/storage.html:124 templates/storage.html.py:229
-#: templates/storages.html:56
+#: templates/storage.html:46
+msgid "Pool status"
+msgstr ""
+
+#: templates/storage.html:50 templates/storage.html.py:100
+#: templates/storage.html:144 templates/storage.html.py:278
+#: templates/storages.html:57
 msgid "Size"
 msgstr ""
 
-#: templates/storage.html:75
+#: templates/storage.html:86
+msgid "Images"
+msgstr ""
+
+#: templates/storage.html:89
 msgid "Upload ISO"
 msgstr ""
 
-#: templates/storage.html:85 templates/storage.html.py:125
-#: templates/storage.html:160 templates/storage.html.py:219
+#: templates/storage.html:101 templates/storage.html.py:145
+#: templates/storage.html:188 templates/storage.html.py:267
+#: templates/storages.html:263
 msgid "Format"
 msgstr ""
 
-#: templates/storage.html:108
+#: templates/storage.html:127
 msgid "You do not have any ISO images or storage pool not active"
 msgstr ""
 
-#: templates/storage.html:112 templates/storages.html:57
+#: templates/storage.html:131 templates/storages.html:59
 msgid "Volumes"
 msgstr ""
 
-#: templates/storage.html:115
+#: templates/storage.html:134
 msgid "Add Image"
 msgstr ""
 
-#: templates/storage.html:142
+#: templates/storage.html:164
 msgid "Clone image"
 msgstr ""
 
-#: templates/storage.html:154
+#: templates/storage.html:180
 msgid "Convert"
 msgstr ""
 
-#: templates/storage.html:163 templates/storage.html.py:224
+#: templates/storage.html:192 templates/storage.html.py:273
 msgid "raw"
 msgstr ""
 
-#: templates/storage.html:164 templates/storage.html.py:223
+#: templates/storage.html:193 templates/storage.html.py:272
 msgid "qcow"
 msgstr ""
 
-#: templates/storage.html:165 templates/storage.html.py:222
+#: templates/storage.html:194 templates/storage.html.py:271
 msgid "qcow2"
 msgstr ""
 
-#: templates/storage.html:171 templates/storage.html.py:178
-#: templates/storage.html:180
-msgid "Clone"
-msgstr ""
-
-#: templates/storage.html:195
+#: templates/storage.html:241
 msgid "You do not have any volumes or storage pools active"
 msgstr ""
 
-#: templates/storage.html:209
+#: templates/storage.html:255
 msgid "Add New Image"
 msgstr ""
 
-#: templates/storage.html:250
+#: templates/storage.html:311
 msgid "Upload ISO Image"
 msgstr ""
 
-#: templates/storage.html:261
+#: templates/storage.html:323
 msgid "Upload"
 msgstr ""
 
-#: templates/storages.html:46
-msgid "You do not have any storages"
+#: templates/storages.html:8
+msgid "New Storage Pool"
 msgstr ""
 
-#: templates/storages.html:55 templates/storages.html.py:86
-#: templates/storages.html:113
-msgid "Type"
+#: templates/storages.html:44
+msgid "You do not have any storage pools"
 msgstr ""
 
-#: templates/storages.html:71
+#: templates/storages.html:75
 msgid "Create Storage Pool"
 msgstr ""
 
-#: templates/storages.html:76
+#: templates/storages.html:80
 msgid "DIR"
 msgstr ""
 
-#: templates/storages.html:78
+#: templates/storages.html:82
 msgid "LVM"
 msgstr ""
 
-#: templates/storages.html:79
+#: templates/storages.html:83
+msgid "CEPH"
+msgstr ""
+
+#: templates/storages.html:84
+msgid "NETFS"
+msgstr ""
+
+#: templates/storages.html:85
 msgid "ISO"
 msgstr ""
 
-#: templates/storages.html:99 templates/storages.html.py:148
+#: templates/storages.html:108 templates/storages.html.py:302
 msgid "Path"
+msgstr ""
+
+#: templates/storages.html:176
+msgid "Ceph User"
+msgstr ""
+
+#: templates/storages.html:184
+msgid "Ceph Pool"
+msgstr ""
+
+#: templates/storages.html:192
+msgid "Ceph Host"
+msgstr ""
+
+#: templates/storages.html:255
+msgid "Remote Path"
+msgstr ""
+
+#: templates/storages.html:267
+msgid "auto"
+msgstr ""
+
+#: templates/storages.html:268
+msgid "nfs"
+msgstr ""
+
+#: templates/storages.html:269
+msgid "glusterfs"
+msgstr ""
+
+#: templates/storages.html:270
+msgid "cifs"
+msgstr ""
+
+#: templates/storages.html:275
+msgid "Local Path"
 msgstr ""
