@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-03 16:32+0300\n"
+"POT-Creation-Date: 2014-10-06 08:51+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -139,11 +139,11 @@ msgstr ""
 msgid "No subnet has been entered"
 msgstr ""
 
-#: networks/forms.py:21 storages/forms.py:25
+#: networks/forms.py:21 storages/forms.py:27
 msgid "The pool name must not contain any special characters"
 msgstr ""
 
-#: networks/forms.py:23 storages/forms.py:27
+#: networks/forms.py:23 storages/forms.py:29
 msgid "The pool name must not exceed 20 characters"
 msgstr ""
 
@@ -223,23 +223,23 @@ msgstr ""
 msgid "The name of the host must not exceed 20 characters"
 msgstr ""
 
-#: storages/forms.py:10 storages/forms.py:38
+#: storages/forms.py:10 storages/forms.py:40
 msgid "No path has been entered"
 msgstr ""
 
-#: storages/forms.py:13 storages/forms.py:49
+#: storages/forms.py:13 storages/forms.py:51
 msgid "No device has been entered"
 msgstr ""
 
-#: storages/forms.py:35 storages/forms.py:46
+#: storages/forms.py:37 storages/forms.py:48
 msgid "The type must not contain any special characters"
 msgstr ""
 
-#: storages/forms.py:65 storages/forms.py:84
+#: storages/forms.py:67 storages/forms.py:86
 msgid "The image name must not contain any special characters"
 msgstr ""
 
-#: storages/forms.py:67 storages/forms.py:86
+#: storages/forms.py:69 storages/forms.py:88
 msgid "The image name must not exceed 20 characters"
 msgstr ""
 
@@ -255,11 +255,11 @@ msgstr ""
 msgid "You need input all fields for creating ceph pool"
 msgstr ""
 
-#: storages/views.py:160
+#: storages/views.py:164
 msgid "ISO image already exist"
 msgstr ""
 
-#: storages/views.py:172
+#: storages/views.py:176
 msgid "Name of volume name already use"
 msgstr ""
 
@@ -345,9 +345,9 @@ msgstr ""
 #: templates/storage.html:99 templates/storage.html.py:143
 #: templates/storage.html:169 templates/storage.html.py:173
 #: templates/storage.html:259 templates/storage.html.py:262
-#: templates/storage.html:315 templates/storages.html:99
-#: templates/storages.html.py:133 templates/storages.html:167
-#: templates/storages.html.py:229
+#: templates/storage.html:315 templates/storages.html:100
+#: templates/storages.html.py:134 templates/storages.html:168
+#: templates/storages.html.py:238 templates/storages.html:293
 msgid "Name"
 msgstr ""
 
@@ -397,7 +397,7 @@ msgstr ""
 #: templates/create.html:414 templates/instance.html:49
 #: templates/instance.html.py:414 templates/storage.html:39
 #: templates/storage.html.py:43 templates/storage.html:47
-#: templates/storages.html:209
+#: templates/storages.html:210
 msgid "None"
 msgstr ""
 
@@ -445,8 +445,9 @@ msgstr ""
 #: templates/servers.html:349 templates/servers.html.py:392
 #: templates/servers.html:410 templates/storage.html:208
 #: templates/storage.html.py:294 templates/storage.html:322
-#: templates/storages.html:116 templates/storages.html.py:150
-#: templates/storages.html:216 templates/storages.html.py:247
+#: templates/storages.html:117 templates/storages.html.py:151
+#: templates/storages.html:217 templates/storages.html.py:284
+#: templates/storages.html:311
 msgid "Close"
 msgstr ""
 
@@ -456,9 +457,9 @@ msgstr ""
 #: templates/create.html:451 templates/create.html.py:478
 #: templates/interfaces.html:180 templates/networks.html:135
 #: templates/secrets.html:156 templates/storage.html:295
-#: templates/storages.html:118 templates/storages.html.py:152
-#: templates/storages.html:219 templates/storages.html.py:221
-#: templates/storages.html:249
+#: templates/storages.html:119 templates/storages.html.py:153
+#: templates/storages.html:220 templates/storages.html.py:222
+#: templates/storages.html:286 templates/storages.html.py:313
 msgid "Create"
 msgstr ""
 
@@ -523,7 +524,7 @@ msgstr ""
 msgid "Connection"
 msgstr ""
 
-#: templates/hostdetail.html:25
+#: templates/hostdetail.html:25 templates/storages.html:246
 msgid "Hostname"
 msgstr ""
 
@@ -991,7 +992,7 @@ msgid "Delete HDD image?"
 msgstr ""
 
 #: templates/instance.html:725
-msgid "if you check this box, Instance's data will be lost!"
+msgid "If you check this box, Instance's data will be lost!"
 msgstr ""
 
 #: templates/instances.html:4 templates/sidebar.html:16
@@ -1049,8 +1050,9 @@ msgstr ""
 
 #: templates/interfaces.html:29 templates/interfaces.html.py:82
 #: templates/secrets.html:24 templates/servers.html:83
-#: templates/storages.html:55 templates/storages.html.py:91
-#: templates/storages.html:125 templates/storages.html.py:159
+#: templates/storages.html:55 templates/storages.html.py:92
+#: templates/storages.html:126 templates/storages.html.py:160
+#: templates/storages.html:230
 msgid "Type"
 msgstr ""
 
@@ -1074,8 +1076,8 @@ msgstr ""
 msgid "hotplug"
 msgstr ""
 
-#: templates/interfaces.html:71 templates/networks.html:55
-#: templates/storages.html:141
+#: templates/interfaces.html:71 templates/network.html:31
+#: templates/networks.html:55 templates/storages.html:142
 msgid "Device"
 msgstr ""
 
@@ -1160,12 +1162,8 @@ msgstr ""
 msgid "Network Pool"
 msgstr ""
 
-#: templates/network.html:19 templates/storage.html:26
-msgid "Pool name"
-msgstr ""
-
-#: templates/network.html:31
-msgid "Device pool"
+#: templates/network.html:19
+msgid "Network name"
 msgstr ""
 
 #: templates/network.html:68
@@ -1229,7 +1227,7 @@ msgid "Forward"
 msgstr ""
 
 #: templates/networks.html:73
-msgid "Add New Network Pool"
+msgid "Add New Network"
 msgstr ""
 
 #: templates/networks.html:85
@@ -1249,7 +1247,7 @@ msgid "Open vSwitch"
 msgstr ""
 
 #: templates/secrets.html:4 templates/sidebar.html:32
-#: templates/storages.html:200
+#: templates/storages.html:201
 msgid "Secrets"
 msgstr ""
 
@@ -1421,6 +1419,10 @@ msgstr ""
 msgid "Storage Pool"
 msgstr ""
 
+#: templates/storage.html:26
+msgid "Pool name"
+msgstr ""
+
 #: templates/storage.html:38
 msgid "Pool type"
 msgstr ""
@@ -1449,6 +1451,7 @@ msgstr ""
 
 #: templates/storage.html:101 templates/storage.html.py:145
 #: templates/storage.html:188 templates/storage.html.py:267
+#: templates/storages.html:263
 msgid "Format"
 msgstr ""
 
@@ -1501,11 +1504,11 @@ msgid "Upload"
 msgstr ""
 
 #: templates/storages.html:8
-msgid "New Storage"
+msgid "New Storage Pool"
 msgstr ""
 
 #: templates/storages.html:44
-msgid "You do not have any storages"
+msgid "You do not have any storage pools"
 msgstr ""
 
 #: templates/storages.html:75
@@ -1525,21 +1528,49 @@ msgid "CEPH"
 msgstr ""
 
 #: templates/storages.html:84
+msgid "NETFS"
+msgstr ""
+
+#: templates/storages.html:85
 msgid "ISO"
 msgstr ""
 
-#: templates/storages.html:107 templates/storages.html.py:238
+#: templates/storages.html:108 templates/storages.html.py:302
 msgid "Path"
 msgstr ""
 
-#: templates/storages.html:175
+#: templates/storages.html:176
 msgid "Ceph User"
 msgstr ""
 
-#: templates/storages.html:183
+#: templates/storages.html:184
 msgid "Ceph Pool"
 msgstr ""
 
-#: templates/storages.html:191
+#: templates/storages.html:192
 msgid "Ceph Host"
+msgstr ""
+
+#: templates/storages.html:255
+msgid "Remote Path"
+msgstr ""
+
+#: templates/storages.html:267
+msgid "auto"
+msgstr ""
+
+#: templates/storages.html:268
+msgid "nfs"
+msgstr ""
+
+#: templates/storages.html:269
+msgid "glusterfs"
+msgstr ""
+
+#: templates/storages.html:270
+msgid "cifs"
+msgstr ""
+
+#: templates/storages.html:275
+msgid "Local Path"
 msgstr ""
