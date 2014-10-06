@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="{% static "img/favicon.ico" %}">
     <title>{% block title %}{% endblock %}</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}">
     <link href="{% static "css/webvirtmgr.css" %}" rel="stylesheet">
     {% block style %}{% endblock %}
 </head>
@@ -47,7 +47,7 @@
     {% block content %}{% endblock %}
 </div>
 <script src="{% static "js/jquery-1.10.2.js" %}"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script src="{% static "js/bootstrap.min.js" %}"></script>
 {% block script %}{% endblock %}
 </body>
 </html>
