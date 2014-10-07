@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: webvirtmgr\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-10-06 08:51+0300\n"
-"PO-Revision-Date: 2014-10-06 14:41+0100\n"
+"PO-Revision-Date: 2014-10-07 14:48+0100\n"
 "Last-Translator: Jens Hyllegaard <jens.hyllegaard@gmail.com>\n"
 "Language-Team: Danish <LL@li.org>\n"
 "Language: da_DK\n"
@@ -535,7 +535,7 @@ msgstr "Hypervisor"
 #: templates/hostdetail.html:33 templates/infrastructure.html:41
 #: templates/instance.html:30 templates/instances.html:27
 msgid "Memory"
-msgstr "Hukommenlse"
+msgstr "Hukommelse"
 
 #: templates/hostdetail.html:37
 msgid "Logical CPUs"
@@ -581,7 +581,7 @@ msgstr "Suspendér"
 #: templates/instance.html:42 templates/instances.html:43
 #: templates/instances.html.py:220
 msgid "Shutoff"
-msgstr "Luk ned"
+msgstr "Slukket"
 
 #: templates/infrastructure.html:38
 msgid "Hostname / VMs"
@@ -657,7 +657,7 @@ msgstr "Migrer"
 
 #: templates/instance.html:86
 msgid "Destroy"
-msgstr "Ødelæg"
+msgstr "Slet"
 
 #: templates/instance.html:93 templates/instance.html.py:109
 #: templates/instance.html:112 templates/instances.html:71
@@ -1321,7 +1321,7 @@ msgstr "Tilføj forbindelse"
 
 #: templates/servers.html:47
 msgid "Connections"
-msgstr "Forbindelsen"
+msgstr "Forbindelser"
 
 #: templates/servers.html:89
 msgid "Host"
