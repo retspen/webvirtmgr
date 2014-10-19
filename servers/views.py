@@ -39,6 +39,7 @@ def servers_list(request):
             all_hosts.append({'id': host.id,
                               'name': host.name,
                               'hostname': host.hostname,
+                              'hypervisor': host.hypervisor,
                               'status': connection_manager.host_is_up(host.type, host.hostname),
                               'type': host.type,
                               'login': host.login,
@@ -70,6 +71,7 @@ def servers_list(request):
                 data = form.cleaned_data
                 new_tcp_host = Compute(name=data['name'],
                                        hostname=data['hostname'],
+                                       hypervisor=data['hypervisor'],
                                        type=CONN_TCP,
                                        login=data['login'],
                                        password=data['password'])
@@ -81,6 +83,7 @@ def servers_list(request):
                 data = form.cleaned_data
                 new_ssh_host = Compute(name=data['name'],
                                        hostname=data['hostname'],
+                                       hypervisor=data['hypervisor'],
                                        type=CONN_SSH,
                                        login=data['login'])
                 new_ssh_host.save()
@@ -91,6 +94,7 @@ def servers_list(request):
                 data = form.cleaned_data
                 new_tls_host = Compute(name=data['name'],
                                        hostname=data['hostname'],
+                                       hypervisor=data['hypervisor'],
                                        type=CONN_TLS,
                                        login=data['login'],
                                        password=data['password'])
@@ -103,6 +107,7 @@ def servers_list(request):
                 data = form.cleaned_data
                 compute_edit = Compute.objects.get(id=data['host_id'])
                 compute_edit.name = data['name']
+                compute_edit.hypervisor=data['hypervisor'],
                 compute_edit.hostname = data['hostname']
                 compute_edit.login = data['login']
                 compute_edit.password = data['password']
@@ -115,6 +120,7 @@ def servers_list(request):
                 data = form.cleaned_data
                 new_socket_host = Compute(name=data['name'],
                                           hostname='localhost',
+                                          hypervisor=data['hypervisor'],
                                           type=CONN_SOCKET,
                                           login='',
                                           password='')
