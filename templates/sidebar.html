@@ -3,7 +3,7 @@
 <div class="row">
     <div class="col-xs-12">
         <div class="pagehead">
-            {% if user.is_staff %}
+            {% if user.is_staff and compute.hypervisor == 1 %}
             <a href="{% url 'create' host_id %}" class="btn btn-sm btn-success pull-right">{% trans "New Instance" %}</a>
             {% endif %}
             <h1><a href="{% url 'overview' host_id %}">{{ compute.name|upper }}</a></h1>

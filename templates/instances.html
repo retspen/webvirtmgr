@@ -59,9 +59,11 @@
                                         <button class="btn btn-sm btn-default disabled" title="{% trans "Suspend" %}">
                                             <span class="glyphicon glyphicon-pause"></span>
                                         </button>
+                                        {% ifequal compute.hypervisor 1 %}
                                         <button class="btn btn-sm btn-default disabled" title="{% trans "Save" %}">
                                             <span class="glyphicon glyphicon-download-alt"></span>
                                         </button>
+                                        {% endifequal %}
                                         {% ifequal inst.has_managed_save_image 1 %}
                                             <button class="btn btn-sm btn-default" type="submit" name="deletesaveimage"
                                                     title="{% trans "Delete Save Image" %}">
@@ -88,10 +90,12 @@
                                         <button class="btn btn-sm btn-default disabled" title="{% trans "Suspend" %}">
                                             <span class="glyphicon glyphicon-pause"></span>
                                         </button>
+                                        {% ifequal compute.hypervisor 1 %}
                                         <button class="btn btn-sm btn-default" type="submit" name="managedsave"
                                                 title="{% trans "Save" %}">
                                             <span class="glyphicon glyphicon-download-alt"></span>
                                         </button>
+                                        {% endifequal %}
                                         <button class="btn btn-sm btn-default disabled" title="{% trans "Shutdown" %}">
                                             <span class="glyphicon glyphicon-off"></span>
                                         </button>
@@ -111,10 +115,12 @@
                                                 title="{% trans "Suspend" %}">
                                             <span class="glyphicon glyphicon-pause"></span>
                                         </button>
+                                        {% ifequal compute.hypervisor 1 %}
                                         <button class="btn btn-sm btn-default" type="submit" name="managedsave"
                                                 title="{% trans "Save" %}">
                                             <span class="glyphicon glyphicon-download-alt"></span>
                                         </button>
+                                        {% endifequal %}
                                         <button class="btn btn-sm btn-default" type="submit" name="shutdown"
                                                 title="{% trans "Shutdown" %}">
                                             <span class="glyphicon glyphicon-off"></span>

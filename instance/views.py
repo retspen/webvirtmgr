@@ -324,14 +324,23 @@ def insts_status(request, host_id):
         errors.append(err)
 
     for instance in get_instances:
-        instances.append({'name': instance,
-                          'status': conn.get_instance_status(instance),
-                          'memory': conn.get_instance_memory(instance),
-                          'vcpu': conn.get_instance_vcpu(instance),
-                          'uuid': conn.get_uuid(instance),
-                          'host': host_id,
-                          'dump': conn.get_instance_managed_save_image(instance)
-                          })
+        if compute.hypervisor == 1:
+            instances.append({'name': instance,
+                              'status': conn.get_instance_status(instance),
+                              'memory': conn.get_instance_memory(instance),
+                              'vcpu': conn.get_instance_vcpu(instance),
+                              'uuid': conn.get_uuid(instance),
+                              'host': host_id,
+                              'dump': conn.get_instance_managed_save_image(instance)
+                              })
+        else:
+            instances.append({'name': instance,
+                              'status': conn.get_instance_status(instance),
+                              'memory': conn.get_instance_memory(instance),
+                              'vcpu': conn.get_instance_vcpu(instance),
+                              'uuid': conn.get_uuid(instance),
+                              'host': host_id
+                              })
 
     data = json.dumps(instances)
     response = HttpResponse()
@@ -376,12 +385,19 @@ def instances(request, host_id):
 
         acl = Instance.objects.get(compute_id=host_id, name=instance).acl
         if request.user in acl.all() or request.user.is_staff:
-            instances.append({'name': instance,
-                              'status': conn.get_instance_status(instance),
-                              'uuid': uuid,
-                              'memory': conn.get_instance_memory(instance),
-                              'vcpu': conn.get_instance_vcpu(instance),
-                              'has_managed_save_image': conn.get_instance_managed_save_image(instance)})
+            if compute.hypervisor == 1:
+                instances.append({'name': instance,
+                                  'status': conn.get_instance_status(instance),
+                                  'uuid': uuid,
+                                  'memory': conn.get_instance_memory(instance),
+                                  'vcpu': conn.get_instance_vcpu(instance),
+                                  'has_managed_save_image': conn.get_instance_managed_save_image(instance)})
+            else:
+                instances.append({'name': instance,
+                                  'status': conn.get_instance_status(instance),
+                                  'uuid': uuid,
+                                  'memory': conn.get_instance_memory(instance),
+                                  'vcpu': conn.get_instance_vcpu(instance)})
 
     if conn:
         try:
@@ -459,10 +475,7 @@ def instance(request, host_id, vname):
         memory = conn.get_memory()
         cur_memory = conn.get_cur_memory()
         description = conn.get_description()
-        disks = conn.get_disk_device()
-        media = conn.get_media_device()
         networks = conn.get_net_device()
-        media_iso = sorted(conn.get_iso_media())
         vcpu_range = conn.get_max_cpus()
         memory_range = [256, 512, 768, 1024, 2048, 4096, 6144, 8192, 16384]
         if not memory in memory_range:
@@ -472,13 +485,18 @@ def instance(request, host_id, vname):
         memory_host = conn.get_max_memory()
         vcpu_host = len(vcpu_range)
         telnet_port = conn.get_telnet_port()
-        vnc_port = conn.get_vnc_port()
-        vnc_keymap = conn.get_vnc_keymap()
-        snapshots = sorted(conn.get_snapshot(), reverse=True)
         inst_xml = conn._XMLDesc(VIR_DOMAIN_XML_SECURE)
-        has_managed_save_image = conn.get_managed_save_image()
-        clone_disks = show_clone_disk(disks)
-        vnc_passwd = conn.get_vnc_passwd()
+        if compute.hypervisor == 1:
+            snapshots = sorted(conn.get_snapshot(), reverse=True)
+            has_managed_save_image = conn.get_managed_save_image()
+            vnc_passwd = conn.get_vnc_passwd()
+            vnc_port = conn.get_vnc_port()
+            vnc_keymap = conn.get_vnc_keymap()
+            media_iso = sorted(conn.get_iso_media())
+            media = conn.get_media_device()
+            disks = conn.get_disk_device()
+            clone_disks = show_clone_disk(disks)
+        hypervisor = compute.hypervisor
     except libvirtError as err:
         errors.append(err)
 

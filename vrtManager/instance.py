@@ -31,8 +31,7 @@ class wvmInstances(wvmConnect):
 
     def get_instance_managed_save_image(self, name):
         inst = self.get_instance(name)
-        # return inst.hasManagedSaveImage(0)
-        return None
+        return inst.hasManagedSaveImage(0)
 
     def get_uuid(self, name):
         inst = self.get_instance(name)

@@ -37,7 +37,8 @@ def create(request, host_id):
         conn = wvmCreate(compute.hostname,
                          compute.login,
                          compute.password,
-                         compute.type)
+                         compute.type,
+                         compute.hypervisor)
 
         storages = sorted(conn.get_storages())
         networks = sorted(conn.get_networks())
