@@ -30,7 +30,8 @@ def networks(request, host_id):
         conn = wvmNetworks(compute.hostname,
                            compute.login,
                            compute.password,
-                           compute.type)
+                           compute.type,
+                           compute.hypervisor)
         networks = conn.get_networks_info()
 
         if request.method == 'POST':

@@ -147,7 +147,8 @@ def infrastructure(request):
         status = connection_manager.host_is_up(host.type, host.hostname)
         if status:
             try:
-                conn = wvmHostDetails(host, host.login, host.password, host.type)
+                conn = wvmHostDetails(host, host.login, host.password,
+                                      host.type, host.hypervisor)
                 host_info = conn.get_node_info()
                 host_mem = conn.get_memory_usage()
                 hosts_vms[host.id, host.name, status, host_info[3], host_info[2],

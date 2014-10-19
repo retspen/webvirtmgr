@@ -46,7 +46,8 @@ def instusage(request, host_id, vname):
                            compute.login,
                            compute.password,
                            compute.type,
-                           vname)
+                           vname,
+                           compute.hypervisor)
         status = conn.get_status()
         if status == 3 or status == 5:
             networks = conn.get_net_device()
@@ -316,7 +317,8 @@ def insts_status(request, host_id):
         conn = wvmInstances(compute.hostname,
                             compute.login,
                             compute.password,
-                            compute.type)
+                            compute.type,
+                            compute.hypervisor)
         get_instances = conn.get_instances()
     except libvirtError as err:
         errors.append(err)
@@ -446,7 +448,8 @@ def instance(request, host_id, vname):
                            compute.login,
                            compute.password,
                            compute.type,
-                           vname)
+                           vname,
+                           compute.hypervisor)
 
         status = conn.get_status()
         autostart = conn.get_autostart()
@@ -599,7 +602,8 @@ def instance(request, host_id, vname):
                 conn_migrate = wvmInstances(new_compute.hostname,
                                             new_compute.login,
                                             new_compute.password,
-                                            new_compute.type)
+                                            new_compute.type,
+                                            new_compute.hypervisor)
                 conn_migrate.moveto(conn, vname, live, unsafe, xml_del)
                 conn_migrate.define_move(vname)
                 conn_migrate.close()
