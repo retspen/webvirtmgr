@@ -52,7 +52,7 @@ class wvmConnection(object):
     # to-do: may also need some locking to ensure to not connect simultaniously in 2 threads
     """
 
-    def __init__(self, host, login, passwd, conn):
+    def __init__(self, host, login, passwd, conn, hypervisor):
         """
         Sets all class attributes and tries to open the connection
         """
@@ -67,6 +67,14 @@ class wvmConnection(object):
         self.login = login
         self.passwd = passwd
         self.type = conn
+
+        if hypervisor == 1:
+            self.hypervisor = 'qemu'
+        elif hypervisor == 2:
+            self.hypervisor = 'lxc'
+        else:
+            raise ValueError('"{hypervisor}" is not a valid hypervisor'
+                             'type'.format(hypervisor=self.hypervisor))
 
         # connect
         self.connect()
@@ -149,7 +157,7 @@ class wvmConnection(object):
     def __connect_tcp(self):
         flags = [libvirt.VIR_CRED_AUTHNAME, libvirt.VIR_CRED_PASSPHRASE]
         auth = [flags, self.__libvirt_auth_credentials_callback, None]
-        uri = 'lxc+tcp://%s/' % self.host
+        uri = '%s+tcp://%s/' % (self.hypervisor, self.host)
 
         try:
             self.connection = libvirt.openAuth(uri, auth, 0)
@@ -160,7 +168,7 @@ class wvmConnection(object):
             self.connection = None
 
     def __connect_ssh(self):
-        uri = 'lxc+ssh://%s@%s/' % (self.login, self.host)
+        uri = '%s+ssh://%s@%s/' % (self.hypervisor, self.login, self.host)
 
         try:
             self.connection = libvirt.open(uri)
@@ -173,7 +181,7 @@ class wvmConnection(object):
     def __connect_tls(self):
         flags = [libvirt.VIR_CRED_AUTHNAME, libvirt.VIR_CRED_PASSPHRASE]
         auth = [flags, self.__libvirt_auth_credentials_callback, None]
-        uri = 'lxc+tls://%s@%s/' % (self.login, self.host)
+        uri = '%s+tls://%s@%s/' % (self.hypervisor, self.login, self.host)
 
         try:
             self.connection = libvirt.openAuth(uri, auth, 0)
@@ -184,7 +192,7 @@ class wvmConnection(object):
             self.connection = None
 
     def __connect_socket(self):
-        uri = 'lxc:///'
+        uri = '%s:///' % self.hypervisor
 
         try:
             self.connection = libvirt.open(uri)
@@ -254,7 +262,7 @@ class wvmConnectionManager(object):
         self._event_loop = wvmEventLoop()
         self._event_loop.start()
 
-    def _search_connection(self, host, login, passwd, conn):
+    def _search_connection(self, host, login, passwd, conn, hypervisor):
         """
         search the connection dict for a connection with the given credentials
         if it does not exist return None
@@ -272,7 +280,7 @@ class wvmConnectionManager(object):
 
         return None
 
-    def get_connection(self, host, login, passwd, conn):
+    def get_connection(self, host, login, passwd, conn, hypervisor):
         """
         returns a connection object (as returned by the libvirt.open* methods) for the given host and credentials
         raises libvirtError if (re)connecting fails
@@ -282,17 +290,20 @@ class wvmConnectionManager(object):
         login = unicode(login)
         passwd = unicode(passwd) if passwd is not None else None
 
-        connection = self._search_connection(host, login, passwd, conn)
+        connection = self._search_connection(host, login, passwd, conn,
+                                             hypervisor)
 
         if (connection is None):
             self._connections_lock.acquireWrite()
             try:
                 # we have to search for the connection again after aquireing the write lock
                 # as the thread previously holding the write lock may have already added our connection
-                connection = self._search_connection(host, login, passwd, conn)
+                connection = self._search_connection(host, login, passwd, conn,
+                                                     hypervisor)
                 if (connection is None):
                     # create a new connection if a matching connection does not already exist
-                    connection = wvmConnection(host, login, passwd, conn)
+                    connection = wvmConnection(host, login, passwd, conn,
+                                               hypervisor)
 
                     # add new connection to connection dict
                     if host in self._connections:
@@ -345,14 +356,16 @@ connection_manager = wvmConnectionManager(
 
 
 class wvmConnect(object):
-    def __init__(self, host, login, passwd, conn):
+    def __init__(self, host, login, passwd, conn, hypervisor):
         self.login = login
         self.host = host
         self.passwd = passwd
         self.conn = conn
+        self.hypervisor = hypervisor
 
         # get connection from connection manager
-        self.wvm = connection_manager.get_connection(host, login, passwd, conn)
+        self.wvm = connection_manager.get_connection(host, login, passwd, conn,
+                                                    hypervisor)
 
     def get_cap_xml(self):
         """Return xml capabilities"""

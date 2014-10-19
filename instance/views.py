@@ -357,7 +357,8 @@ def instances(request, host_id):
         conn = wvmInstances(compute.hostname,
                             compute.login,
                             compute.password,
-                            compute.type)
+                            compute.type,
+                            compute.hypervisor)
         get_instances = conn.get_instances()
     except libvirtError as err:
         errors.append(err)
