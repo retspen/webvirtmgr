@@ -158,6 +158,10 @@
                                                                 <input type="text" name="hostname" class="form-control"
                                                                        value="{{ host.hostname }}" required
                                                                        pattern="[a-z0-9\.\-_]+">
+                                                                <select name="hypervisor" class="form-control">
+                                                                    <option value="1" selected>KVM</option>
+                                                                    <option value="2">LXC</option>
+                                                                </select>
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
@@ -195,6 +199,10 @@
                                                                 <input type="text" name="name" class="form-control"
                                                                        value="{{ host.name }}" maxlength="20" required
                                                                        pattern="[a-z0-9\.\-_]+">
+                                                                <select name="hypervisor" class="form-control">
+                                                                    <option value="1" selected>KVM</option>
+                                                                    <option value="2">LXC</option>
+                                                                </select>
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
@@ -232,6 +240,10 @@
                                                                 <input type="text" name="name" class="form-control"
                                                                        value="{{ host.name }}" maxlength="20" required
                                                                        pattern="[a-z0-9\.\-_]+">
+                                                                <select name="hypervisor" class="form-control">
+                                                                    <option value="1" selected>KVM</option>
+                                                                    <option value="2">LXC</option>
+                                                                </select>
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
@@ -276,6 +288,10 @@
                                                                 <input type="text" name="name" class="form-control"
                                                                        value="{{ host.name }}" maxlength="20" required
                                                                        pattern="[a-z0-9\.\-_]+">
+                                                                <select name="hypervisor" class="form-control">
+                                                                    <option value="1" selected>KVM</option>
+                                                                    <option value="2">LXC</option>
+                                                                </select>
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">
