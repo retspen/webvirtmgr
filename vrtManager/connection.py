@@ -281,7 +281,10 @@ class wvmConnectionManager(object):
                 connections = self._connections[host]
 
                 for connection in connections:
-                    if (connection.login == login and connection.passwd == passwd and connection.type == conn):
+                    if (connection.login == login and
+                        connection.passwd == passwd and
+                        connection.type == conn and
+                        connection.hypervisor == hypervisor):
                         return connection
         finally:
             self._connections_lock.release()
