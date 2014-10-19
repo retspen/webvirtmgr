@@ -34,7 +34,8 @@ class wvmInstances(wvmConnect):
 
     def get_instance_managed_save_image(self, name):
         inst = self.get_instance(name)
-        return inst.hasManagedSaveImage(0)
+        # return inst.hasManagedSaveImage(0)
+        return None
 
     def get_uuid(self, name):
         inst = self.get_instance(name)
@@ -86,8 +87,8 @@ class wvmInstances(wvmConnect):
 
 
 class wvmInstance(wvmConnect):
-    def __init__(self, host, login, passwd, conn, vname):
-        wvmConnect.__init__(self, host, login, passwd, conn)
+    def __init__(self, host, login, passwd, conn, vname, hypervisor):
+        wvmConnect.__init__(self, host, login, passwd, conn, hypervisor)
         self.instance = self.get_instance(vname)
 
     def start(self):

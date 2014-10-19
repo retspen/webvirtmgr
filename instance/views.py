@@ -7,6 +7,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 import json
+from django.core.exceptions import PermissionDenied
 
 from instance.models import Instance
 from servers.models import Compute
@@ -38,7 +39,6 @@ def instusage(request, host_id, vname):
     net_error = False
     networks = None
     disks = None
-
     compute = Compute.objects.get(id=host_id)
 
     try:
@@ -46,7 +46,8 @@ def instusage(request, host_id, vname):
                            compute.login,
                            compute.password,
                            compute.type,
-                           vname)
+                           vname,
+                           compute.hypervisor)
         status = conn.get_status()
         if status == 3 or status == 5:
             networks = conn.get_net_device()
@@ -164,8 +165,8 @@ def instusage(request, host_id, vname):
                     ]
                 }
 
-            json_blk.append({'dev': blk['dev'], 'data': disk})
-            cookie_blk[blk['dev']] = [datasets_rd, datasets_wr]
+                json_blk.append({'dev': blk['dev'], 'data': disk})
+                cookie_blk[blk['dev']] = [datasets_rd, datasets_wr]
 
         for net in net_usage:
             if cookies['net'] == '{}' or not cookies['net'] or not net_usage:
@@ -316,7 +317,8 @@ def insts_status(request, host_id):
         conn = wvmInstances(compute.hostname,
                             compute.login,
                             compute.password,
-                            compute.type)
+                            compute.type,
+                            compute.hypervisor)
         get_instances = conn.get_instances()
     except libvirtError as err:
         errors.append(err)
@@ -350,13 +352,15 @@ def instances(request, host_id):
     time_refresh = 8000
     get_instances = []
     conn = None
+
     compute = Compute.objects.get(id=host_id)
 
     try:
         conn = wvmInstances(compute.hostname,
                             compute.login,
                             compute.password,
-                            compute.type)
+                            compute.type,
+                            compute.hypervisor)
         get_instances = conn.get_instances()
     except libvirtError as err:
         errors.append(err)
@@ -369,12 +373,15 @@ def instances(request, host_id):
             uuid = conn.get_uuid(instance)
             inst = Instance(compute_id=host_id, name=instance, uuid=uuid)
             inst.save()
-        instances.append({'name': instance,
-                          'status': conn.get_instance_status(instance),
-                          'uuid': uuid,
-                          'memory': conn.get_instance_memory(instance),
-                          'vcpu': conn.get_instance_vcpu(instance),
-                          'has_managed_save_image': conn.get_instance_managed_save_image(instance)})
+
+        acl = Instance.objects.get(compute_id=host_id, name=instance).acl
+        if request.user in acl.all() or request.user.is_staff:
+            instances.append({'name': instance,
+                              'status': conn.get_instance_status(instance),
+                              'uuid': uuid,
+                              'memory': conn.get_instance_memory(instance),
+                              'vcpu': conn.get_instance_vcpu(instance),
+                              'has_managed_save_image': conn.get_instance_managed_save_image(instance)})
 
     if conn:
         try:
@@ -441,7 +448,8 @@ def instance(request, host_id, vname):
                            compute.login,
                            compute.password,
                            compute.type,
-                           vname)
+                           vname,
+                           compute.hypervisor)
 
         status = conn.get_status()
         autostart = conn.get_autostart()
@@ -482,6 +490,10 @@ def instance(request, host_id, vname):
     except Instance.DoesNotExist:
         instance = Instance(compute_id=host_id, name=vname, uuid=uuid)
         instance.save()
+
+    acl = Instance.objects.get(compute_id=host_id, name=vname).acl
+    if request.user not in acl.all() and not request.user.is_staff:
+        raise PermissionDenied
 
     try:
         if request.method == 'POST':
@@ -590,7 +602,8 @@ def instance(request, host_id, vname):
                 conn_migrate = wvmInstances(new_compute.hostname,
                                             new_compute.login,
                                             new_compute.password,
-                                            new_compute.type)
+                                            new_compute.type,
+                                            new_compute.hypervisor)
                 conn_migrate.moveto(conn, vname, live, unsafe, xml_del)
                 conn_migrate.define_move(vname)
                 conn_migrate.close()

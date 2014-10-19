@@ -41,56 +41,92 @@
             </div>
         {% endif %}
             <div class="page-header">
+                {% if user.is_staff %}
                 <a data-toggle="modal" href="#addHost"
                    class="btn btn-sm btn-success pull-right">{% trans "Add Connection" %}</a>
+                {% endif %}
 
                 <h1>{% trans "Connections" %}</h1>
             </div>
             <div class="row" role="main">
             {% if hosts_info %}
-                {% for host in hosts_info %}
-                    <div class="col-xs-12 col-sm-4">
-                        <div class="panel {% ifequal host.status 1 %}panel-success{% else %}panel-danger{% endifequal %} panel-data">
-                            <div class="panel-heading">
+                <table class="table table-hover" id="sortTable">
+                    <thead>
+                    <tr>
+                        <th style="width:35px">#</th>
+                        <th>{% trans "Server" %}</th>
+                        <th>{% trans "Status" %}</th>
+                        <th>{% trans "Action" %}</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for host in hosts_info %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td><strong><a href="{% url 'instances' host.id %}">{{ host.name }}</a></strong> <em>[{{ host.hostname }}]</em></td>
+                            <td>
                                 {% ifequal host.status 1 %}
-                                    <h3 class="panel-title">
-                                        <a href="{% url 'instances' host.id %}"><strong>{{ host.name }}</strong></a>
-                                        <a data-toggle="modal" href="#editHost{{ host.id }}" class="pull-right"
-                                           title="{% trans "Edit" %}">
-                                            <span class="glyphicon glyphicon-pencil"></span>
-                                        </a>
-                                    </h3>
+                                    <span class="text-success">{% trans "connected" %}</span>
                                 {% else %}
-                                    <h3 class="panel-title"><strong>{{ host.name }}</strong>
-                                        <a data-toggle="modal" href="#editHost{{ host.id }}" class="pull-right"
-                                           title="{% trans "Edit" %}">
-                                            <span class="glyphicon glyphicon-pencil"></span>
-                                        </a>
-                                    </h3>
+                                    <span class="text-danger">{% trans "not connected" %} ({{ host.status }})</span>
                                 {% endifequal %}
-                            </div>
-                            <div class="panel-body">
-                                <p>
-                                <form action="" method="post" role="form">{% csrf_token %}
+                            </td>
+                            <td style="width:280px">
+                                <div class="btn-group btn-group-sm">
+                                {% ifequal host.status 1 %}
+                                    <a href="{% url 'instances' host.id %}" class="btn btn-primary" title="{% trans "Instances" %}">
+                                        <span class="glyphicon glyphicon-th-large"></span>
+                                    </a>
+                                    {% if user.is_staff %}
+                                    <a href="{% url 'create' host.id %}" class="btn btn-primary" title="{% trans "Create" %}">
+                                        <span class="glyphicon glyphicon-plus"></span>
+                                    </a>
+                                    <a href="{% url 'storages' host.id %}" class="btn btn-primary" title="{% trans "Storages" %}">
+                                        <span class="glyphicon glyphicon-hdd"></span>
+                                    </a>
+                                    <a href="{% url 'networks' host.id %}" class="btn btn-primary" title="{% trans "Networks" %}">
+                                        <span class="glyphicon glyphicon-globe"></span>
+                                    </a>
+                                    {% endif %}
+                                    <a href="{% url 'overview' host.id %}" class="btn btn-primary" title="{% trans "Overview" %}">
+                                        <span class="glyphicon glyphicon-info-sign"></span>
+                                    </a>
+                                {% else %}
+                                    <a href="#" class="btn btn-primary">
+                                        <span class="glyphicon glyphicon-th-large"></span>
+                                    </a>
+                                    {% if user.is_staff %}
+                                    <a href="#" class="btn btn-primary">
+                                        <span class="glyphicon glyphicon-plus"></span>
+                                    </a>
+                                    <a href="#" class="btn btn-primary">
+                                        <span class="glyphicon glyphicon-hdd"></span>
+                                    </a>
+                                    <a href="#" class="btn btn-primary">
+                                        <span class="glyphicon glyphicon-globe"></span>
+                                    </a>
+                                    {% endif %}
+                                    <a href="#" class="btn btn-primary">
+                                        <span class="glyphicon glyphicon-info-sign"></span>
+                                    </a>
+                                {% endifequal %}
+                                </div>
+                            </td>
+                            {% if user.is_staff %}
+                            <td style="width:100px">
+                                <form action="" method="post">{% csrf_token %}
                                     <input type="hidden" name="host_id" value="{{ host.id }}">
-                                    <button type="submit" class="pull-right btn btn-xs btn-danger" name="host_del"
-                                            title="{% trans "Delete" %}"
-                                            onclick="return confirm('{% trans "Are you sure?" %}')">
+                                     <a data-toggle="modal" href="#editHost{{ host.id }}" class="btn btn-sm btn-primary" title="{% trans "Edit" %}">
+                                        <span class="glyphicon glyphicon-pencil"></span>
+                                    </a>
+                                    <button type="submit" class="btn btn-sm btn-danger" name="host_del" title="{% trans "Delete" %}" onclick="return confirm('{% trans "Are you sure?"%}')">
                                         <span class="glyphicon glyphicon-trash"></span>
                                     </button>
                                 </form>
-                                <p>
-                                <p><strong>{% trans "Type" %}:</strong> [
-                                    {% ifequal host.type 1 %}TCP{% endifequal %}
-                                    {% ifequal host.type 2 %}SSH{% endifequal %}
-                                    {% ifequal host.type 3 %}TLS{% endifequal %}
-                                    {% ifequal host.type 4 %}SOCKET{% endifequal %} ]
-                                </p>
-                                <p><strong>{% trans "Host" %}:</strong> <a
-                                        href="ssh://{{ host.hostname }}" title="{{ host.status }}">{{ host.hostname }}</a></p>
                                 <!-- Modal Edit -->
                                 <div class="modal fade" id="editHost{{ host.id }}" tabindex="-1" role="dialog"
-                                     aria-labelledby="editHostLabel" aria-hidden="true">
+                                 aria-labelledby="editHostLabel" aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header">
@@ -113,6 +149,16 @@
                                                                 <input type="text" name="name" class="form-control"
                                                                        value="{{ host.name }}" maxlength="20" required
                                                                        pattern="[a-z0-9\.\-_]+">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label">{% trans "Hypervisor type" %}</label>
+
+                                                            <div class="col-sm-6">
+                                                                <select name="hypervisor" class="form-control">
+                                                                    <option value="1" selected>KVM</option>
+                                                                    <option value="2">LXC</option>
+                                                                </select>
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
@@ -139,7 +185,6 @@
                                                                 <input type="password" name="password" class="form-control"
                                                                        value="{{ host.password }}">
                                                             </div>
-                                                        </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-default"
                                                                     data-dismiss="modal">{% trans "Close" %}</button>
@@ -160,6 +205,16 @@
                                                                 <input type="text" name="name" class="form-control"
                                                                        value="{{ host.name }}" maxlength="20" required
                                                                        pattern="[a-z0-9\.\-_]+">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label">{% trans "Hypervisor type" %}</label>
+
+                                                            <div class="col-sm-6">
+                                                                <select name="hypervisor" class="form-control">
+                                                                    <option value="1" selected>KVM</option>
+                                                                    <option value="2">LXC</option>
+                                                                </select>
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
@@ -200,6 +255,16 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
+                                                            <label class="col-sm-4 control-label">{% trans "Hypervisor type" %}</label>
+
+                                                            <div class="col-sm-6">
+                                                                <select name="hypervisor" class="form-control">
+                                                                    <option value="1" selected>KVM</option>
+                                                                    <option value="2">LXC</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
                                                             <label class="col-sm-4 control-label">{% trans "FQDN / IP" %}</label>
 
                                                             <div class="col-sm-6">
@@ -232,6 +297,35 @@
                                                         </div>
                                                     </form>
                                                 {% endifequal %}
+                                                {% ifequal host.type 4 %}
+                                                    <form class="form-horizontal" method="post" role="form">{% csrf_token %}
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label">{% trans "Label" %}</label>
+                                                            <div class="col-sm-6">
+                                                                <input type="hidden" name="host_id" value="{{ host.id }}">
+                                                                <input type="text" name="name" class="form-control"
+                                                                       value="{{ host.name }}" maxlength="20" required
+                                                                       pattern="[a-z0-9\.\-_]+">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label">{% trans "Hypervisor type" %}</label>
+
+                                                            <div class="col-sm-6">
+                                                                <select name="hypervisor" class="form-control">
+                                                                    <option value="1" selected>KVM</option>
+                                                                    <option value="2">LXC</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-default"
+                                                                    data-dismiss="modal">{% trans "Close" %}</button>
+                                                            <button type="submit" class="btn btn-primary"
+                                                                    name="host_edit">{% trans "Edit" %}</button>
+                                                        </div>
+                                                    </form>
+                                                {% endifequal %}
                                             </div>
                                         </div>
                                         <!-- /.modal-content -->
@@ -239,10 +333,12 @@
                                     <!-- /.modal-dialog -->
                                 </div>
                                 <!-- /.modal -->
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
+                            </td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
             {% else %}
                 <div class="col-sm-12">
                     <div class="well">
@@ -259,7 +355,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">{% trans "Add Connection" %}</h4>
+                    <h4 class="modal-title">{% trans "Add Host Server" %}</h4>
                 </div>
                 <div class="tabbable">
                     <ul class="nav nav-tabs">
@@ -280,6 +376,16 @@
                                 <div class="col-sm-6">
                                     <input type="text" name="name" class="form-control" placeholder="Label Name"
                                            maxlength="20" required pattern="[a-z0-9\.\-_]+">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">{% trans "Hypervisor type" %}</label>
+
+                                <div class="col-sm-6">
+                                    <select name="hypervisor" class="form-control">
+                                        <option value="1" selected>KVM</option>
+                                        <option value="2">LXC</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -328,6 +434,16 @@
                                 </div>
                             </div>
                             <div class="form-group">
+                                <label class="col-sm-4 control-label">{% trans "Hypervisor type" %}</label>
+
+                                <div class="col-sm-6">
+                                    <select name="hypervisor" class="form-control">
+                                        <option value="1" selected>KVM</option>
+                                        <option value="2">LXC</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <label class="col-sm-4 control-label">{% trans "FQDN / IP" %}</label>
 
                                 <div class="col-sm-6">
@@ -360,6 +476,16 @@
                                 <div class="col-sm-6">
                                     <input type="text" name="name" class="form-control" placeholder="Label Name"
                                            maxlength="20" required pattern="[a-z0-9\.\-_]+">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">{% trans "Hypervisor type" %}</label>
+
+                                <div class="col-sm-6">
+                                    <select name="hypervisor" class="form-control">
+                                        <option value="1" selected>KVM</option>
+                                        <option value="2">LXC</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -405,6 +531,16 @@
                                            maxlength="20" required pattern="[a-z0-9\.\-_]+">
                                 </div>
                             </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">{% trans "Hypervisor type" %}</label>
+
+                                <div class="col-sm-6">
+                                    <select name="hypervisor" class="form-control">
+                                        <option value="1" selected>KVM</option>
+                                        <option value="2">LXC</option>
+                                    </select>
+                                </div>
+                            </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default"
                                         data-dismiss="modal">{% trans "Close" %}</button>
@@ -419,4 +555,12 @@
         </div>
         <!-- /.modal-dialog -->
     </div><!-- /.modal -->
+{% endblock %}
+{% block script %}
+<script src="{% static "js/jquery.tablesorter.js" %}"></script>
+<script >
+    $(function() {
+        $("#sortTable").tablesorter({ sortList: [[0,0]], headers: {3: {sorter: false}, 4: {sorter: false}} });
+    });
+</script>
 {% endblock %}

@@ -2,6 +2,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
+from django.core.exceptions import PermissionDenied
 
 from servers.models import Compute
 from storages.forms import AddStgPool, AddImage, CloneImage
@@ -18,6 +19,9 @@ def storages(request, host_id):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
+    if not request.user.is_staff:
+        raise PermissionDenied
+
     errors = []
     compute = Compute.objects.get(id=host_id)
 
@@ -25,7 +29,8 @@ def storages(request, host_id):
         conn = wvmStorages(compute.hostname,
                            compute.login,
                            compute.password,
-                           compute.type)
+                           compute.type,
+                           compute.hypervisor)
         storages = conn.get_storages_info()
         secrets = conn.get_secrets()
 
@@ -69,6 +74,9 @@ def storage(request, host_id, pool):
     """
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
+
+    if not request.user.is_staff:
+        raise PermissionDenied
 
     def handle_uploaded_file(path, f_name):
         target = path + '/' + str(f_name)
