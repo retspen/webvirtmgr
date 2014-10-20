@@ -245,7 +245,7 @@ class wvmConnection(object):
 
         return u'{hypervisor}+{type}://{user}@{host}{path}'.format(
             hypervisor=self.hypervisor, type=type_str,
-            user=self.login, host=self.hosti, path=self.path
+            user=self.login, host=self.host, path=self.path
             )
 
     def __repr__(self):
