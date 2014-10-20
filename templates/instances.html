@@ -59,7 +59,7 @@
                                         <button class="btn btn-sm btn-default disabled" title="{% trans "Suspend" %}">
                                             <span class="glyphicon glyphicon-pause"></span>
                                         </button>
-                                        {% ifequal compute.hypervisor 1 %}
+                                        {% ifequal compute.hypervisor qemu %}
                                         <button class="btn btn-sm btn-default disabled" title="{% trans "Save" %}">
                                             <span class="glyphicon glyphicon-download-alt"></span>
                                         </button>
@@ -90,7 +90,7 @@
                                         <button class="btn btn-sm btn-default disabled" title="{% trans "Suspend" %}">
                                             <span class="glyphicon glyphicon-pause"></span>
                                         </button>
-                                        {% ifequal compute.hypervisor 1 %}
+                                        {% ifequal compute.hypervisor qemu %}
                                         <button class="btn btn-sm btn-default" type="submit" name="managedsave"
                                                 title="{% trans "Save" %}">
                                             <span class="glyphicon glyphicon-download-alt"></span>
@@ -115,7 +115,7 @@
                                                 title="{% trans "Suspend" %}">
                                             <span class="glyphicon glyphicon-pause"></span>
                                         </button>
-                                        {% ifequal compute.hypervisor 1 %}
+                                        {% ifequal compute.hypervisor qemu %}
                                         <button class="btn btn-sm btn-default" type="submit" name="managedsave"
                                                 title="{% trans "Save" %}">
                                             <span class="glyphicon glyphicon-download-alt"></span>
