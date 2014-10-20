@@ -68,12 +68,12 @@ class wvmConnection(object):
         self.passwd = passwd
         self.type = conn
 
-
-        if hypervisor == 1:
-            self.hypervisor = 'qemu'
+        self.hypervisor = hypervisor
+        if self.hypervisor == 1:
+            self.hypervisor_name = 'qemu'
             self.path = '/system'
-        elif hypervisor == 2:
-            self.hypervisor = 'lxc'
+        elif self.hypervisor == 2:
+            self.hypervisor_name = 'lxc'
             self.path = '/'
         else:
             raise ValueError('"{hypervisor}" is not a valid hypervisor'
@@ -160,7 +160,7 @@ class wvmConnection(object):
     def __connect_tcp(self):
         flags = [libvirt.VIR_CRED_AUTHNAME, libvirt.VIR_CRED_PASSPHRASE]
         auth = [flags, self.__libvirt_auth_credentials_callback, None]
-        uri = '%s+tcp://%s%s' % (self.hypervisor, self.host, self.path)
+        uri = '%s+tcp://%s%s' % (self.hypervisor_name, self.host, self.path)
 
         try:
             self.connection = libvirt.openAuth(uri, auth, 0)
@@ -171,7 +171,7 @@ class wvmConnection(object):
             self.connection = None
 
     def __connect_ssh(self):
-        uri = '%s+ssh://%s@%s%s' % (self.hypervisor, self.login, self.host,
+        uri = '%s+ssh://%s@%s%s' % (self.hypervisor_name, self.login, self.host,
                                     self.path)
 
         try:
@@ -185,7 +185,7 @@ class wvmConnection(object):
     def __connect_tls(self):
         flags = [libvirt.VIR_CRED_AUTHNAME, libvirt.VIR_CRED_PASSPHRASE]
         auth = [flags, self.__libvirt_auth_credentials_callback, None]
-        uri = '%s+tls://%s@%s%s' % (self.hypervisor, self.login, self.host,
+        uri = '%s+tls://%s@%s%s' % (self.hypervisor_name, self.login, self.host,
                                     self.path)
 
         try:
@@ -197,7 +197,7 @@ class wvmConnection(object):
             self.connection = None
 
     def __connect_socket(self):
-        uri = '%s://%s' % (self.hypervisor, self.path)
+        uri = '%s://%s' % (self.hypervisor_name, self.path)
 
         try:
             self.connection = libvirt.open(uri)
@@ -244,7 +244,7 @@ class wvmConnection(object):
             type_str = u'invalid_type'
 
         return u'{hypervisor}+{type}://{user}@{host}{path}'.format(
-            hypervisor=self.hypervisor, type=type_str,
+            hypervisor=self.hypervisor_name, type=type_str,
             user=self.login, host=self.host, path=self.path
             )
 
