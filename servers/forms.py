@@ -10,6 +10,7 @@ class ComputeAddTcpForm(forms.Form):
     name = forms.CharField(error_messages={'required': _('No hostname has been entered')},
                            max_length=20)
     hypervisor = forms.CharField(error_messages={'required': _('No hypervisor selected')},
+                                 max_length=5)
     hostname = forms.CharField(error_messages={'required': _('No IP / Domain name has been entered')},
                                max_length=100)
     login = forms.CharField(error_messages={'required': _('No login has been entered')},
@@ -49,6 +50,7 @@ class ComputeAddSshForm(forms.Form):
     name = forms.CharField(error_messages={'required': _('No hostname has been entered')},
                            max_length=20)
     hypervisor = forms.CharField(error_messages={'required': _('No hypervisor selected')},
+                                 max_length=5)
     hostname = forms.CharField(error_messages={'required': _('No IP / Domain name has been entered')},
                                max_length=100)
     login = forms.CharField(error_messages={'required': _('No login has been entered')},
@@ -86,6 +88,7 @@ class ComputeAddTlsForm(forms.Form):
     name = forms.CharField(error_messages={'required': _('No hostname has been entered')},
                            max_length=20)
     hypervisor = forms.CharField(error_messages={'required': _('No hypervisor selected')},
+                                 max_length=5)
     hostname = forms.CharField(error_messages={'required': _('No IP / Domain name has been entered')},
                                max_length=100)
     login = forms.CharField(error_messages={'required': _('No login has been entered')},
@@ -126,6 +129,7 @@ class ComputeEditHostForm(forms.Form):
     name = forms.CharField(error_messages={'required': _('No hostname has been entered')},
                            max_length=20)
     hypervisor = forms.CharField(error_messages={'required': _('No hypervisor selected')},
+                                 max_length=5)
     hostname = forms.CharField(error_messages={'required': _('No IP / Domain name has been entered')},
                                max_length=100)
     login = forms.CharField(error_messages={'required': _('No login has been entered')},
@@ -156,6 +160,7 @@ class ComputeAddSocketForm(forms.Form):
     name = forms.CharField(error_messages={'required': _('No hostname has been entered')},
                            max_length=20)
     hypervisor = forms.CharField(error_messages={'required': _('No hypervisor selected')},
+                                 max_length=5)
 
     def clean_name(self):
         name = self.cleaned_data['name']
