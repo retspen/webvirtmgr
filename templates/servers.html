@@ -79,9 +79,11 @@
                                         <span class="glyphicon glyphicon-th-large"></span>
                                     </a>
                                     {% if user.is_staff %}
+                                    {% ifequal host.hypervisor 'qemu' %}
                                     <a href="{% url 'create' host.id %}" class="btn btn-primary" title="{% trans "Create" %}">
                                         <span class="glyphicon glyphicon-plus"></span>
                                     </a>
+                                    {% endifequal %}
                                     <a href="{% url 'storages' host.id %}" class="btn btn-primary" title="{% trans "Storages" %}">
                                         <span class="glyphicon glyphicon-hdd"></span>
                                     </a>
@@ -97,9 +99,11 @@
                                         <span class="glyphicon glyphicon-th-large"></span>
                                     </a>
                                     {% if user.is_staff %}
+                                    {% ifequal host.hypervisor 'qemu' %}
                                     <a href="#" class="btn btn-primary">
                                         <span class="glyphicon glyphicon-plus"></span>
                                     </a>
+                                    {% endifequal %}
                                     <a href="#" class="btn btn-primary">
                                         <span class="glyphicon glyphicon-hdd"></span>
                                     </a>
