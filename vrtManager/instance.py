@@ -3,7 +3,10 @@
 #
 import time
 import os.path
-from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE, VIR_MIGRATE_LIVE, VIR_MIGRATE_UNSAFE
+try:
+    from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE, VIR_MIGRATE_LIVE, VIR_MIGRATE_UNSAFE
+except:
+    from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE, VIR_MIGRATE_LIVE
 from vrtManager import util
 from xml.etree import ElementTree
 from datetime import datetime
