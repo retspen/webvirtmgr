@@ -43,7 +43,6 @@ def hostusage(request, host_id):
     except KeyError:
         cookies['cpu'] = None
         cookies['mem'] = None
-        cookies['timer'] = curent_time
 
     if not cookies['cpu'] and not cookies['mem']:
         datasets['cpu'] = [0]
@@ -54,20 +53,16 @@ def hostusage(request, host_id):
         datasets['mem'] = eval(cookies['mem'])
         datasets['timer'] = eval(cookies['timer'])
 
-    if len(datasets['timer']) <= points:
-        datasets['timer'].append(curent_time)
-    if len(datasets['timer']) >= points + 1:
-        del datasets['timer'][0]
+    datasets['timer'].append(curent_time)
+    datasets['cpu'].append(int(cpu_usage['usage']))
+    datasets['mem'].append(int(mem_usage['usage']) / 1048576)
 
-    if len(datasets['cpu']) <= points:
-        datasets['cpu'].append(int(cpu_usage['usage']))
-    if len(datasets['cpu']) >= points + 1:
-        del datasets['cpu'][0]
-
-    if len(datasets['mem']) <= points:
-        datasets['mem'].append(int(mem_usage['usage']) / 1048576)
-    if len(datasets['mem']) >= points + 1:
-        del datasets['mem'][0]
+    if len(datasets['timer']) > points:
+        datasets['timer'].pop(0)
+    if len(datasets['cpu']) > points:
+        datasets['cpu'].pop(0)
+    if len(datasets['mem']) > points:
+        datasets['mem'].pop(0)
 
     cpu = {
         'labels': datasets['timer'],
