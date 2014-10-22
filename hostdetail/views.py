@@ -63,22 +63,22 @@ def hostusage(request, host_id):
 
     if len(datasets['cpu_time']) <= points:
         datasets['cpu_time'].append(curent_time)
-    if len(datasets['cpu_time']) >= points:
+    if len(datasets['cpu_time']) >= points+1:
         del datasets['cpu_time'][0]
 
     if len(datasets['cpu']) <= points:
         datasets['cpu'].append(int(cpu_usage['usage']))
-    if len(datasets['cpu']) >= points:
+    if len(datasets['cpu']) >= points+1:
         del datasets['cpu'][0]
 
     if len(datasets['mem']) <= points:
         datasets['mem'].append(int(mem_usage['usage']) / 1048576)
-    if len(datasets['mem']) >= points:
+    if len(datasets['mem']) >= points+1:
         del datasets['mem'][0]
 
     if len(datasets['mem_time']) <= points:
         datasets['mem_time'].append(curent_time)
-    if len(datasets['mem_time']) >= points:
+    if len(datasets['mem_time']) >= points+1:
         del datasets['mem_time'][0]
 
     cpu = {
