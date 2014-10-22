@@ -38,33 +38,26 @@ def hostusage(request, host_id):
 
     try:
         cookies['cpu'] = request._cookies['cpu']
-        cookies['cpu_time'] = request._cookies['cpu_time']
         cookies['mem'] = request._cookies['mem']
-        cookies['mem_time'] = request._cookies['mem_time']
+        cookies['timer'] = request._cookies['timer']
     except KeyError:
         cookies['cpu'] = None
-        cookies['cpu_time'] = None
         cookies['mem'] = None
-        cookies['mem_time'] = None
+        cookies['timer'] = curent_time
 
     if not cookies['cpu'] and not cookies['mem']:
         datasets['cpu'] = [0]
         datasets['mem'] = [0]
+        datasets['timer'] = [curent_time]
     else:
         datasets['cpu'] = eval(cookies['cpu'])
         datasets['mem'] = eval(cookies['mem'])
+        datasets['timer'] = eval(cookies['timer'])
 
-    if not cookies['cpu_time'] and not cookies['mem_time']:
-        datasets['cpu_time'] = [curent_time]
-        datasets['mem_time'] = [curent_time]
-    else:
-        datasets['cpu_time'] = eval(cookies['cpu_time'])
-        datasets['mem_time'] = eval(cookies['mem_time'])
-
-    if len(datasets['cpu_time']) <= points:
-        datasets['cpu_time'].append(curent_time)
-    if len(datasets['cpu_time']) >= points + 1:
-        del datasets['cpu_time'][0]
+    if len(datasets['timer']) <= points:
+        datasets['timer'].append(curent_time)
+    if len(datasets['timer']) >= points + 1:
+        del datasets['timer'][0]
 
     if len(datasets['cpu']) <= points:
         datasets['cpu'].append(int(cpu_usage['usage']))
@@ -76,13 +69,8 @@ def hostusage(request, host_id):
     if len(datasets['mem']) >= points + 1:
         del datasets['mem'][0]
 
-    if len(datasets['mem_time']) <= points:
-        datasets['mem_time'].append(curent_time)
-    if len(datasets['mem_time']) >= points + 1:
-        del datasets['mem_time'][0]
-
     cpu = {
-        'labels': datasets['cpu_time'],
+        'labels': datasets['timer'],
         'datasets': [
             {
                 "fillColor": "rgba(241,72,70,0.5)",
@@ -95,7 +83,7 @@ def hostusage(request, host_id):
     }
 
     memory = {
-        'labels': datasets['mem_time'],
+        'labels': datasets['timer'],
         'datasets': [
             {
                 "fillColor": "rgba(249,134,33,0.5)",
@@ -111,9 +99,8 @@ def hostusage(request, host_id):
     response = HttpResponse()
     response['Content-Type'] = "text/javascript"
     response.cookies['cpu'] = datasets['cpu']
-    response.cookies['cpu_time'] = datasets['cpu_time']
+    response.cookies['timer'] = datasets['timer']
     response.cookies['mem'] = datasets['mem']
-    response.cookies['mem_time'] = datasets['mem_time']
     response.write(data)
     return response
 
