@@ -40,11 +40,8 @@ def instusage(request, host_id, vname):
     net_error = False
     networks = None
     disks = None
-<<<<<<< HEAD
-=======
     points = 5
     curent_time = time.strftime("%H:%M:%S")
->>>>>>> 8bcda60a7a37c8ac701970d4af7f022cb08faac3
     compute = Compute.objects.get(id=host_id)
 
     try:
