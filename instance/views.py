@@ -53,9 +53,10 @@ def instusage(request, host_id, vname):
         if status == 3 or status == 5:
             networks = conn.get_net_device()
             disks = conn.get_disk_device()
-        cpu_usage = conn.cpu_usage()
-        blk_usage = conn.disk_usage()
-        net_usage = conn.net_usage()
+        else:
+            cpu_usage = conn.cpu_usage()
+            blk_usage = conn.disk_usage()
+            net_usage = conn.net_usage()
         conn.close()
     except libvirtError:
         status = None
