@@ -78,6 +78,7 @@ def network(request, host_id, pool):
                           compute.login,
                           compute.password,
                           compute.type,
+                          compute.hypervisor,
                           pool)
         networks = conn.get_networks()
         state = conn.is_active()

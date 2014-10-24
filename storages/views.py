@@ -94,6 +94,7 @@ def storage(request, host_id, pool):
                           compute.login,
                           compute.password,
                           compute.type,
+                          compute.hypervisor,
                           pool)
 
         storages = conn.get_storages()

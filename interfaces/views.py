@@ -75,6 +75,7 @@ def interface(request, host_id, iface):
                             compute.login,
                             compute.password,
                             compute.type,
+                            compute.hypervisor,
                             iface)
         start_mode = conn.get_start_mode()
         state = conn.is_active()
