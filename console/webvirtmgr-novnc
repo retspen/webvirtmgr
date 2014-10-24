@@ -69,6 +69,9 @@ class CompatibilityMixIn(object):
 
         host, port = get_connection_infos(token)
 
+        if host.find(':'):
+            host = host.split(':')[0]
+
         # Connect to the target
         self.msg("connecting to: %s:%s" % (host, port))
         tsock = socket_factory(host, port, connect=True)

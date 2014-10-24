@@ -10,9 +10,7 @@ class AddStgPool(forms.Form):
     target = forms.CharField(error_messages={'required': _('No path has been entered')},
                              max_length=100,
                              required=False)
-    source = forms.CharField(error_messages={'required': _('No device has been entered')},
-                             max_length=100,
-                             required=False)
+    source = forms.CharField(max_length=100, required=False)
     ceph_user = forms.CharField(required=False)
     ceph_host = forms.CharField(required=False)
     ceph_pool = forms.CharField(required=False)
@@ -22,8 +20,8 @@ class AddStgPool(forms.Form):
 
     def clean_name(self):
         name = self.cleaned_data['name']
-        have_symbol = re.match('[^a-zA-Z0-9._-]+', name)
-        if have_symbol:
+        have_symbol = re.match('^[a-zA-Z0-9._-]+$', name)
+        if not have_symbol:
             raise forms.ValidationError(_('The pool name must not contain any special characters'))
         elif len(name) > 20:
             raise forms.ValidationError(_('The pool name must not exceed 20 characters'))
@@ -32,9 +30,9 @@ class AddStgPool(forms.Form):
     def clean_target(self):
         storage_type = self.cleaned_data['stg_type']
         target = self.cleaned_data['target']
-        have_symbol = re.match('[^a-zA-Z0-9/]+', target)
-        if have_symbol:
-            raise forms.ValidationError(_('The type must not contain any special characters'))
+        have_symbol = re.match('^[a-zA-Z0-9/]+$', target)
+        if not have_symbol:
+            raise forms.ValidationError(_('The target must not contain any special characters'))
         if storage_type == 'dir':
             if not target:
                 raise forms.ValidationError(_('No path has been entered'))
@@ -43,12 +41,12 @@ class AddStgPool(forms.Form):
     def clean_source(self):
         storage_type = self.cleaned_data['stg_type']
         source = self.cleaned_data['source']
-        have_symbol = re.match('[^a-zA-Z0-9/]+', source)
-        if have_symbol:
-            raise forms.ValidationError(_('The type must not contain any special characters'))
-        if storage_type == 'logical':
+        have_symbol = re.match('^[a-zA-Z0-9\/]+$', source)
+        if storage_type == 'logical' or storage_type == 'netfs':
             if not source:
                 raise forms.ValidationError(_('No device has been entered'))
+            if not have_symbol:
+                raise forms.ValidationError(_('The source must not contain any special characters'))
         return source
 
 
@@ -62,8 +60,8 @@ class AddImage(forms.Form):
 
     def clean_name(self):
         name = self.cleaned_data['name']
-        have_symbol = re.match('[^a-zA-Z0-9._-]+', name)
-        if have_symbol:
+        have_symbol = re.match('^[a-zA-Z0-9._-]+$', name)
+        if not have_symbol:
             raise forms.ValidationError(_('The image name must not contain any special characters'))
         elif len(name) > 20:
             raise forms.ValidationError(_('The image name must not exceed 20 characters'))
@@ -81,8 +79,8 @@ class CloneImage(forms.Form):
 
     def clean_name(self):
         name = self.cleaned_data['name']
-        have_symbol = re.match('[^a-zA-Z0-9._-]+', name)
-        if have_symbol:
+        have_symbol = re.match('^[a-zA-Z0-9._-]+$', name)
+        if not have_symbol:
             raise forms.ValidationError(_('The image name must not contain any special characters'))
         elif len(name) > 20:
             raise forms.ValidationError(_('The image name must not exceed 20 characters'))
