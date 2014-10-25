@@ -107,7 +107,7 @@ def servers_list(request):
                 data = form.cleaned_data
                 compute_edit = Compute.objects.get(id=data['host_id'])
                 compute_edit.name = data['name']
-                compute_edit.hypervisor=data['hypervisor'],
+                compute_edit.hypervisor = data['hypervisor']
                 compute_edit.hostname = data['hostname']
                 compute_edit.login = data['login']
                 compute_edit.password = data['password']
