@@ -6,7 +6,7 @@
             {% if user.is_staff and compute.hypervisor == 'qemu' %}
             <a href="{% url 'create' host_id %}" class="btn btn-sm btn-success pull-right">{% trans "New Instance" %}</a>
             {% endif %}
-            <h1><a href="{% url 'overview' host_id %}">{{ compute.name|upper }}</a></h1>
+            <h1><a href="{% url 'overview' host_id %}">{{ compute.name|upper }}</a> | {{compute.hypervisor|upper}}</h1>
         </div>
     </div>
 </div>
