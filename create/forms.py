@@ -19,8 +19,8 @@ class FlavorAddForm(forms.Form):
 
     def clean_name(self):
         label = self.cleaned_data['label']
-        have_symbol = re.match('[^a-zA-Z0-9._-]+', label)
-        if have_symbol:
+        have_symbol = re.match('^[a-zA-Z0-9._-]+$', label)
+        if not have_symbol:
             raise forms.ValidationError(_('The flavor name must not contain any special characters'))
         elif len(label) > 20:
             raise forms.ValidationError(_('The flavor name must not exceed 20 characters'))
@@ -49,8 +49,8 @@ class NewVMForm(forms.Form):
 
     def clean_name(self):
         name = self.cleaned_data['name']
-        have_symbol = re.match('[^a-zA-Z0-9._-]+', name)
-        if have_symbol:
+        have_symbol = re.match('^[a-zA-Z0-9._-]+$', name)
+        if not have_symbol:
             raise forms.ValidationError(_('The name of the virtual machine must not contain any special characters'))
         elif len(name) > 20:
             raise forms.ValidationError(_('The name of the virtual machine must not exceed 20 characters'))

@@ -16,8 +16,8 @@ class AddNetPool(forms.Form):
 
     def clean_name(self):
         name = self.cleaned_data['name']
-        have_symbol = re.match('[^a-zA-Z0-9._-]+', name)
-        if have_symbol:
+        have_symbol = re.match('^[a-zA-Z0-9._-]+$', name)
+        if not have_symbol:
             raise forms.ValidationError(_('The pool name must not contain any special characters'))
         elif len(name) > 20:
             raise forms.ValidationError(_('The pool name must not exceed 20 characters'))
@@ -25,8 +25,8 @@ class AddNetPool(forms.Form):
 
     def clean_subnet(self):
         subnet = self.cleaned_data['subnet']
-        have_symbol = re.match('[^0-9./]+', subnet)
-        if have_symbol:
+        have_symbol = re.match('^[0-9./]+$', subnet)
+        if not have_symbol:
             raise forms.ValidationError(_('The pool subnet must not contain any special characters'))
         elif len(subnet) > 20:
             raise forms.ValidationError(_('The pool subnet must not exceed 20 characters'))
@@ -34,8 +34,8 @@ class AddNetPool(forms.Form):
 
     def clean_bridge_name(self):
         bridge_name = self.cleaned_data['bridge_name']
-        have_symbol = re.match('[^a-zA-Z0-9._-]+', bridge_name)
-        if have_symbol:
+        have_symbol = re.match('^[a-zA-Z0-9._-]+$', bridge_name)
+        if not have_symbol:
             raise forms.ValidationError(_('The pool bridge name must not contain any special characters'))
         elif len(bridge_name) > 20:
             raise forms.ValidationError(_('The pool bridge name must not exceed 20 characters'))

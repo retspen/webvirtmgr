@@ -4,6 +4,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
 import json
+import time
 
 from servers.models import Compute
 from vrtManager.hostdetails import wvmHostDetails
@@ -17,9 +18,11 @@ def hostusage(request, host_id):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
 
+    points = 5
     datasets = {}
     cookies = {}
     compute = Compute.objects.get(id=host_id)
+    curent_time = time.strftime("%H:%M:%S")
 
     try:
         conn = wvmHostDetails(compute.hostname,
@@ -31,10 +34,12 @@ def hostusage(request, host_id):
         conn.close()
     except libvirtError:
         cpu_usage = 0
+        mem_usage = 0
 
     try:
         cookies['cpu'] = request._cookies['cpu']
         cookies['mem'] = request._cookies['mem']
+        cookies['timer'] = request._cookies['timer']
     except KeyError:
         cookies['cpu'] = None
         cookies['mem'] = None
@@ -42,36 +47,25 @@ def hostusage(request, host_id):
     if not cookies['cpu'] and not cookies['mem']:
         datasets['cpu'] = [0]
         datasets['mem'] = [0]
+        datasets['timer'] = [curent_time]
     else:
         datasets['cpu'] = eval(cookies['cpu'])
         datasets['mem'] = eval(cookies['mem'])
+        datasets['timer'] = eval(cookies['timer'])
 
-    if len(datasets['cpu']) > 10:
-        while datasets['cpu']:
-            del datasets['cpu'][0]
-            if len(datasets['cpu']) == 10:
-                break
+    datasets['timer'].append(curent_time)
+    datasets['cpu'].append(int(cpu_usage['usage']))
+    datasets['mem'].append(int(mem_usage['usage']) / 1048576)
 
-    if len(datasets['mem']) > 10:
-        while datasets['mem']:
-            del datasets['mem'][0]
-            if len(datasets['mem']) == 10:
-                break
-
-    if len(datasets['cpu']) <= 9:
-        datasets['cpu'].append(int(cpu_usage['usage']))
-    if len(datasets['cpu']) == 10:
-        datasets['cpu'].append(int(cpu_usage['usage']))
-        del datasets['cpu'][0]
-
-    if len(datasets['mem']) <= 9:
-        datasets['mem'].append(int(mem_usage['usage']) / 1048576)
-    if len(datasets['mem']) == 10:
-        datasets['mem'].append(int(mem_usage['usage']) / 1048576)
-        del datasets['mem'][0]
+    if len(datasets['timer']) > points:
+        datasets['timer'].pop(0)
+    if len(datasets['cpu']) > points:
+        datasets['cpu'].pop(0)
+    if len(datasets['mem']) > points:
+        datasets['mem'].pop(0)
 
     cpu = {
-        'labels': [""] * 10,
+        'labels': datasets['timer'],
         'datasets': [
             {
                 "fillColor": "rgba(241,72,70,0.5)",
@@ -84,7 +78,7 @@ def hostusage(request, host_id):
     }
 
     memory = {
-        'labels': [""] * 10,
+        'labels': datasets['timer'],
         'datasets': [
             {
                 "fillColor": "rgba(249,134,33,0.5)",
@@ -100,6 +94,7 @@ def hostusage(request, host_id):
     response = HttpResponse()
     response['Content-Type'] = "text/javascript"
     response.cookies['cpu'] = datasets['cpu']
+    response.cookies['timer'] = datasets['timer']
     response.cookies['mem'] = datasets['mem']
     response.write(data)
     return response
