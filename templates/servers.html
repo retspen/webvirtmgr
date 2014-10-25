@@ -55,6 +55,7 @@
                     <tr>
                         <th style="width:35px">#</th>
                         <th>{% trans "Server" %}</th>
+                        <th>{% trans "Hypervisor" %}</th>
                         <th>{% trans "Status" %}</th>
                         <th>{% trans "Action" %}</th>
                         <th></th>
@@ -65,6 +66,7 @@
                         <tr>
                             <td>{{ forloop.counter }}</td>
                             <td><strong><a href="{% url 'instances' host.id %}">{{ host.name }}</a></strong> <em>[{{ host.hostname }}]</em></td>
+                            <td>{{ host.hypervisor }}</td>
                             <td>
                                 {% ifequal host.status 1 %}
                                     <span class="text-success">{% trans "connected" %}</span>
