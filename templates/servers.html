@@ -85,12 +85,15 @@
                                     <a href="{% url 'create' host.id %}" class="btn btn-primary" title="{% trans "Create" %}">
                                         <span class="glyphicon glyphicon-plus"></span>
                                     </a>
-                                    {% endifequal %}
                                     <a href="{% url 'storages' host.id %}" class="btn btn-primary" title="{% trans "Storages" %}">
                                         <span class="glyphicon glyphicon-hdd"></span>
                                     </a>
+                                    {% endifequal %}
                                     <a href="{% url 'networks' host.id %}" class="btn btn-primary" title="{% trans "Networks" %}">
                                         <span class="glyphicon glyphicon-globe"></span>
+                                    </a>
+                                    <a href="{% url 'interfaces' host.id %}" class="btn btn-primary" title="{% trans "Interfaces" %}">
+                                        <span class="glyphicon glyphicon-link"></span>
                                     </a>
                                     {% endif %}
                                     <a href="{% url 'overview' host.id %}" class="btn btn-primary" title="{% trans "Overview" %}">
