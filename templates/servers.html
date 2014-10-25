@@ -48,7 +48,6 @@
 
                 <h1>{% trans "Connections" %}</h1>
             </div>
-            <div class="row" role="main">
             {% if hosts_info %}
                 <table class="table table-hover" id="sortTable">
                     <thead>
@@ -300,10 +299,8 @@
                     </tbody>
                 </table>
             {% else %}
-                <div class="col-sm-12">
-                    <div class="well">
-                        <h4>{% trans "You have no connection" %}</h4>
-                    </div>
+                <div class="well">
+                    <h4>{% trans "You have no connection" %}</h4>
                 </div>
             {% endif %}
             </div>
