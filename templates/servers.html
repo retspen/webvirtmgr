@@ -162,8 +162,8 @@
 
                                                             <div class="col-sm-6">
                                                                 <select name="hypervisor" class="form-control">
-                                                                    <option value="qemu" selected>QEMU</option>
-                                                                    <option value="lxc">LXC</option>
+                                                                    <option value="qemu" {% ifequal host.hypervisor 'qemu' %}selected{% endifequal %}>QEMU</option>
+                                                                    <option value="lxc" {% ifequal host.hypervisor 'lxc' %}selected{% endifequal %}>LXC</option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -218,8 +218,8 @@
 
                                                             <div class="col-sm-6">
                                                                 <select name="hypervisor" class="form-control">
-                                                                    <option value="qemu" selected>QEMU</option>
-                                                                    <option value="lxc">LXC</option>
+                                                                    <option value="qemu" {% ifequal host.hypervisor 'qemu' %}selected{% endifequal %}>QEMU</option>
+                                                                    <option value="lxc" {% ifequal host.hypervisor 'lxc' %}selected{% endifequal %}>LXC</option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -265,8 +265,8 @@
 
                                                             <div class="col-sm-6">
                                                                 <select name="hypervisor" class="form-control">
-                                                                    <option value="qemu" selected>QEMU</option>
-                                                                    <option value="lxc">LXC</option>
+                                                                    <option value="qemu" {% ifequal host.hypervisor 'qemu' %}selected{% endifequal %}>QEMU</option>
+                                                                    <option value="lxc" {% ifequal host.hypervisor 'lxc' %}selected{% endifequal %}>LXC</option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -319,8 +319,8 @@
 
                                                             <div class="col-sm-6">
                                                                 <select name="hypervisor" class="form-control">
-                                                                    <option value="qemu" selected>QEMU</option>
-                                                                    <option value="lxc">LXC</option>
+                                                                    <option value="qemu" {% ifequal host.hypervisor 'qemu' %}selected{% endifequal %}>QEMU</option>
+                                                                    <option value="lxc" {% ifequal host.hypervisor 'lxc' %}selected{% endifequal %}>LXC</option>
                                                                 </select>
                                                             </div>
                                                         </div>
