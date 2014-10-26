@@ -114,7 +114,10 @@ class wvmInstance(wvmConnect):
         self.instance.resume()
 
     def delete(self):
-        self.instance.undefineFlags(VIR_DOMAIN_UNDEFINE_SNAPSHOTS_METADATA)
+        try:
+            self.instance.undefineFlags(VIR_DOMAIN_UNDEFINE_SNAPSHOTS_METADATA)
+        except:
+            self.instance.undefineFlags()
 
     def _XMLDesc(self, flag):
         return self.instance.XMLDesc(flag)
