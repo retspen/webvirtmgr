@@ -117,7 +117,7 @@ class wvmInstance(wvmConnect):
         try:
             self.instance.undefineFlags(VIR_DOMAIN_UNDEFINE_SNAPSHOTS_METADATA)
         except:
-            self.instance.undefineFlags()
+            self.instance.undefine()
 
     def _XMLDesc(self, flag):
         return self.instance.XMLDesc(flag)
