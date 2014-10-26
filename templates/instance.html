@@ -727,9 +727,14 @@
         </ul>
         <div class="tab-content">
             <div class="tab-pane tab-inst active" id="destroy">
+                {% ifequal compute.hypervisor 'qemu' %}
                 <p>{% trans "Delete HDD image?" %}</p>
+                {% else %}
+                <p><strong><span class="label label-danger">{% trans "Warning:" %}</span> {% trans "The container rootfs must be deleted manually." %}</strong>
+                {% endifequal %}
 
                 <form class="form-group" method="post" role="form">{% csrf_token %}
+                    {% ifequal compute.hypervisor 'qemu' %}
                     <div class="checkbox" style="margin-left: 8px;">
                         <label>
                             <input type="checkbox" name="delete_disk" value="true">
@@ -738,6 +743,7 @@
                             </strong>
                         </label>
                     </div>
+                    {% endifequal %}
                     <button type="submit" class="btn btn-lg btn-primary pull-right"
                             name="delete">{% trans "Delete" %}</button>
                 </form>
