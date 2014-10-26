@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load staticfiles %}
 {% block title %}{% trans "Storage Pool" %}{% endblock %}
+{% block style %}
+    <link href="{% static "css/table-sort.css" %}" rel="stylesheet">
+{% endblock %}
 {% block content %}
     {% include 'sidebar.html' %}
     <div class="main col-xs-12 col-sm-9">
@@ -92,13 +96,13 @@
 
                 {% if volumes %}
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered">
+                        <table class="table table-striped table-bordered" id="sortTable">
                             <thead>
                                 <tr>
-                                    <th style="width:20px;">#</th>
+                                    <th style="width:35px;">#</th>
                                     <th>{% trans "Name" %}</th>
                                     <th style="width:90px;">{% trans "Size" %}</th>
-                                    <th style="width:30px;">{% trans "Format" %}</th>
+                                    <th style="width:75px;">{% trans "Format" %}</th>
                                     <th colspan="2">{% trans "Action" %}</th>
                                 </tr>
                             </thead>
@@ -136,13 +140,13 @@
 
                 {% if volumes %}
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered">
+                        <table class="table table-striped table-bordered" id="sortTable">
                             <thead>
                             <tr>
-                                <th style="width:20px;">#</th>
+                                <th style="width:35px;">#</th>
                                 <th>{% trans "Name" %}</th>
                                 <th style="width:80px;">{% trans "Size" %}</th>
-                                <th style="width:30px;">{% trans "Format" %}</th>
+                                <th style="width:75px;">{% trans "Format" %}</th>
                                 <th colspan="2">{% trans "Action" %}</th>
                             </tr>
                             </thead>
@@ -353,5 +357,16 @@
         {% ifnotequal type 'dir' %}
             $('#image_format').hide();
         {% endifnotequal %}
+    </script>
+    <script src="{% static "js/jquery.tablesorter.js" %}"></script>
+    <script>
+        $(function() {
+            $("#sortTable").tablesorter({
+                ignoreCase: true,
+                sortList: [[0,0]],
+                headers: {4: {sorter: false}},
+                textSorter: {1: $.tablesorter.sortText}
+            });
+        });
     </script>
 {% endblock %}
