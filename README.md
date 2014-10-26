@@ -26,3 +26,4 @@ The fork is kept up-to-date with [retspen's](https://github.com/retspen) master.
 WebVirtMgr is licensed under the [Apache Licence, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
 
 The original __README.rst__ can be seen on the orginal repo: https://github.com/retspen/webvirtmgr/blob/master/README.rst
+If you enjoyed **WebVirtMgr** please make a donation to the [original project](https://github.com/retspen/webvirtmgr/).
