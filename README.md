@@ -8,7 +8,7 @@ This personal fork is based on the great [**WebVirtMgr**](https://github.com/ret
 
 * The old connections list page (with a table instead of boxes) has been backported
 * A very basic ACL support (users can access only a predefined set of VMs)
-* A basic LXC support through _libvirtd_ (coming soon)
+* A basic LXC support through _libvirtd_ (todo: LXC creation, remote console)
 
 The fork is kept up-to-date with [retspen's](https://github.com/retspen) master.
 
