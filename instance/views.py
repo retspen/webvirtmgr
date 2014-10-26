@@ -290,7 +290,7 @@ def insts_status(request, host_id):
         errors.append(err)
 
     for instance in get_instances:
-        if compute.hypervisor == 1:
+        if compute.hypervisor == 'qemu':
             instances.append({'name': instance,
                               'status': conn.get_instance_status(instance),
                               'memory': conn.get_instance_memory(instance),
@@ -351,7 +351,7 @@ def instances(request, host_id):
 
         acl = Instance.objects.get(compute_id=host_id, name=instance).acl
         if request.user in acl.all() or request.user.is_staff:
-            if compute.hypervisor == 1:
+            if compute.hypervisor == 'qemu':
                 instances.append({'name': instance,
                                   'status': conn.get_instance_status(instance),
                                   'uuid': uuid,
@@ -452,7 +452,7 @@ def instance(request, host_id, vname):
         vcpu_host = len(vcpu_range)
         telnet_port = conn.get_telnet_port()
         inst_xml = conn._XMLDesc(VIR_DOMAIN_XML_SECURE)
-        if compute.hypervisor == 1:
+        if compute.hypervisor == 'qemu':
             snapshots = sorted(conn.get_snapshot(), reverse=True)
             has_managed_save_image = conn.get_managed_save_image()
             vnc_passwd = conn.get_vnc_passwd()

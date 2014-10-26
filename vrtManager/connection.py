@@ -75,7 +75,7 @@ class wvmConnection(object):
             self.path = '/'
         else:
             raise ValueError('"{hypervisor}" is not a valid hypervisor'
-                             'type'.format(hypervisor=self.hypervisor))
+                             ' type'.format(hypervisor=self.hypervisor))
 
         # connect
         self.connect()
