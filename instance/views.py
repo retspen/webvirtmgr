@@ -538,6 +538,8 @@ def instance(request, host_id, vname):
                 description = request.POST.get('description', '')
                 vcpu = request.POST.get('vcpu', '')
                 cur_vcpu = request.POST.get('cur_vcpu', '')
+                if int(cur_vcpu) > int(vcpu):
+                    vcpu = cur_vcpu
                 memory = request.POST.get('memory', '')
                 memory_custom = request.POST.get('memory_custom', '')
                 if memory_custom:
@@ -546,6 +548,8 @@ def instance(request, host_id, vname):
                 cur_memory_custom = request.POST.get('cur_memory_custom', '')
                 if cur_memory_custom:
                     cur_memory = cur_memory_custom
+                if int(cur_memory) > int(memory):
+                    memory = cur_memory
                 conn.change_settings(description, cur_memory, memory, cur_vcpu, vcpu)
                 return HttpResponseRedirect(request.get_full_path() + '#instancesettings')
             if 'change_xml' in request.POST:
