@@ -132,7 +132,7 @@
                     {% endifequal %}
                     {% ifequal status 1 %}
                         <button data-id="shutoff" type="submit" name="power" value="destroy"
-                                class="btn btn-lg btn-primary pull-right">{% trans "Force Shutdown" %}</button>
+                                class="btn btn-lg btn-danger pull-right">{% trans "Force Shutdown" %}</button>
                     {% endifequal %}
                     {% ifequal status 3 %}
                         <button class="btn btn-lg btn-primary pull-right disabled">{% trans "Force Shutdown" %}</button>
@@ -744,7 +744,7 @@
                         </label>
                     </div>
                     {% endifequal %}
-                    <button type="submit" class="btn btn-lg btn-primary pull-right"
+                    <button type="submit" class="btn btn-lg btn-danger pull-right"
                             name="delete">{% trans "Delete" %}</button>
                 </form>
                 <div class="clearfix"></div>
