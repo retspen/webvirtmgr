@@ -52,7 +52,8 @@ def get_connection_infos(token):
                            instance.compute.login,
                            instance.compute.password,
                            instance.compute.type,
-                           instance.name)
+                           instance.name,
+                           instance.compute.hypervisor)
         port = conn.get_vnc_port()
         host = instance.compute.hostname
     except:

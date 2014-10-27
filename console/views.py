@@ -29,7 +29,8 @@ def console(request):
                            instance.compute.login,
                            instance.compute.password,
                            instance.compute.type,
-                           instance.name)
+                           instance.name,
+                           instance.compute.hypervisor)
         vnc_websocket_port = conn.get_vnc_websocket_port()
         vnc_passwd = conn.get_vnc_passwd()
     except:
