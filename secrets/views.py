@@ -29,7 +29,8 @@ def secrets(request, host_id):
         conn = wvmSecrets(compute.hostname,
                           compute.login,
                           compute.password,
-                          compute.type)
+                          compute.type,
+                          compute.hypervisor)
         secrets = conn.get_secrets()
         for uuid in secrets:
             secrt = conn.get_secret(uuid)

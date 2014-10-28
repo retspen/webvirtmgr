@@ -54,6 +54,7 @@
                     <tr>
                         <th style="width:35px">#</th>
                         <th>{% trans "Server" %}</th>
+                        <th>{% trans "Hypervisor" %}</th>
                         <th>{% trans "Status" %}</th>
                         <th>{% trans "Action" %}</th>
                         <th></th>
@@ -64,6 +65,7 @@
                         <tr>
                             <td>{{ forloop.counter }}</td>
                             <td><strong><a href="{% url 'instances' host.id %}">{{ host.name }}</a></strong> <em>[{{ host.hostname }}]</em></td>
+                            <td>{{ host.hypervisor }}</td>
                             <td>
                                 {% ifequal host.status 1 %}
                                     <span class="text-success">{% trans "connected" %}</span>
@@ -78,14 +80,19 @@
                                         <span class="glyphicon glyphicon-th-large"></span>
                                     </a>
                                     {% if user.is_staff %}
+                                    {% ifequal host.hypervisor 'qemu' %}
                                     <a href="{% url 'create' host.id %}" class="btn btn-primary" title="{% trans "Create" %}">
                                         <span class="glyphicon glyphicon-plus"></span>
                                     </a>
                                     <a href="{% url 'storages' host.id %}" class="btn btn-primary" title="{% trans "Storages" %}">
                                         <span class="glyphicon glyphicon-hdd"></span>
                                     </a>
+                                    {% endifequal %}
                                     <a href="{% url 'networks' host.id %}" class="btn btn-primary" title="{% trans "Networks" %}">
                                         <span class="glyphicon glyphicon-globe"></span>
+                                    </a>
+                                    <a href="{% url 'interfaces' host.id %}" class="btn btn-primary" title="{% trans "Interfaces" %}">
+                                        <span class="glyphicon glyphicon-link"></span>
                                     </a>
                                     {% endif %}
                                     <a href="{% url 'overview' host.id %}" class="btn btn-primary" title="{% trans "Overview" %}">
@@ -96,9 +103,11 @@
                                         <span class="glyphicon glyphicon-th-large"></span>
                                     </a>
                                     {% if user.is_staff %}
+                                    {% ifequal host.hypervisor 'qemu' %}
                                     <a href="#" class="btn btn-primary">
                                         <span class="glyphicon glyphicon-plus"></span>
                                     </a>
+                                    {% endifequal %}
                                     <a href="#" class="btn btn-primary">
                                         <span class="glyphicon glyphicon-hdd"></span>
                                     </a>
@@ -151,6 +160,16 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
+                                                            <label class="col-sm-4 control-label">{% trans "Hypervisor type" %}</label>
+
+                                                            <div class="col-sm-6">
+                                                                <select name="hypervisor" class="form-control">
+                                                                    <option value="qemu" {% ifequal host.hypervisor 'qemu' %}selected{% endifequal %}>QEMU</option>
+                                                                    <option value="lxc" {% ifequal host.hypervisor 'lxc' %}selected{% endifequal %}>LXC</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
                                                             <label class="col-sm-4 control-label">{% trans "FQDN / IP" %}</label>
 
                                                             <div class="col-sm-6">
@@ -174,6 +193,7 @@
                                                                 <input type="password" name="password" class="form-control"
                                                                        value="{{ host.password }}">
                                                             </div>
+                                                        </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-default"
                                                                     data-dismiss="modal">{% trans "Close" %}</button>
@@ -194,6 +214,16 @@
                                                                 <input type="text" name="name" class="form-control"
                                                                        value="{{ host.name }}" maxlength="20" required
                                                                        pattern="[a-z0-9\.\-_]+">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label">{% trans "Hypervisor type" %}</label>
+
+                                                            <div class="col-sm-6">
+                                                                <select name="hypervisor" class="form-control">
+                                                                    <option value="qemu" {% ifequal host.hypervisor 'qemu' %}selected{% endifequal %}>QEMU</option>
+                                                                    <option value="lxc" {% ifequal host.hypervisor 'lxc' %}selected{% endifequal %}>LXC</option>
+                                                                </select>
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
@@ -231,6 +261,16 @@
                                                                 <input type="text" name="name" class="form-control"
                                                                        value="{{ host.name }}" maxlength="20" required
                                                                        pattern="[a-z0-9\.\-_]+">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label">{% trans "Hypervisor type" %}</label>
+
+                                                            <div class="col-sm-6">
+                                                                <select name="hypervisor" class="form-control">
+                                                                    <option value="qemu" {% ifequal host.hypervisor 'qemu' %}selected{% endifequal %}>QEMU</option>
+                                                                    <option value="lxc" {% ifequal host.hypervisor 'lxc' %}selected{% endifequal %}>LXC</option>
+                                                                </select>
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
@@ -275,6 +315,16 @@
                                                                 <input type="text" name="name" class="form-control"
                                                                        value="{{ host.name }}" maxlength="20" required
                                                                        pattern="[a-z0-9\.\-_]+">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label">{% trans "Hypervisor type" %}</label>
+
+                                                            <div class="col-sm-6">
+                                                                <select name="hypervisor" class="form-control">
+                                                                    <option value="qemu" {% ifequal host.hypervisor 'qemu' %}selected{% endifequal %}>QEMU</option>
+                                                                    <option value="lxc" {% ifequal host.hypervisor 'lxc' %}selected{% endifequal %}>LXC</option>
+                                                                </select>
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">
@@ -336,6 +386,16 @@
                                 </div>
                             </div>
                             <div class="form-group">
+                                <label class="col-sm-4 control-label">{% trans "Hypervisor type" %}</label>
+
+                                <div class="col-sm-6">
+                                    <select name="hypervisor" class="form-control">
+                                        <option value="qemu" selected>QEMU</option>
+                                        <option value="lxc">LXC</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <label class="col-sm-4 control-label">{% trans "FQDN / IP" %}</label>
 
                                 <div class="col-sm-6">
@@ -381,6 +441,16 @@
                                 </div>
                             </div>
                             <div class="form-group">
+                                <label class="col-sm-4 control-label">{% trans "Hypervisor type" %}</label>
+
+                                <div class="col-sm-6">
+                                    <select name="hypervisor" class="form-control">
+                                        <option value="qemu" selected>QEMU</option>
+                                        <option value="lxc">LXC</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <label class="col-sm-4 control-label">{% trans "FQDN / IP" %}</label>
 
                                 <div class="col-sm-6">
@@ -413,6 +483,16 @@
                                 <div class="col-sm-6">
                                     <input type="text" name="name" class="form-control" placeholder="Label Name"
                                            maxlength="20" required pattern="[a-z0-9\.\-_]+">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">{% trans "Hypervisor type" %}</label>
+
+                                <div class="col-sm-6">
+                                    <select name="hypervisor" class="form-control">
+                                        <option value="qemu" selected>QEMU</option>
+                                        <option value="lxc">LXC</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -458,6 +538,16 @@
                                            maxlength="20" required pattern="[a-z0-9\.\-_]+">
                                 </div>
                             </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">{% trans "Hypervisor type" %}</label>
+
+                                <div class="col-sm-6">
+                                    <select name="hypervisor" class="form-control">
+                                        <option value="qemu" selected>QEMU</option>
+                                        <option value="lxc">LXC</option>
+                                    </select>
+                                </div>
+                            </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default"
                                         data-dismiss="modal">{% trans "Close" %}</button>
@@ -477,7 +567,7 @@
 <script src="{% static "js/jquery.tablesorter.js" %}"></script>
 <script >
     $(function() {
-        $("#sortTable").tablesorter({ sortList: [[0,0]], headers: {3: {sorter: false}, 4: {sorter: false}} });
+        $("#sortTable").tablesorter({ sortList: [[0,0]], headers: {4: {sorter: false}, 5: {sorter: false}} });
     });
 </script>
 {% endblock %}

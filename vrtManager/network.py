@@ -76,8 +76,8 @@ class wvmNetworks(wvmConnect):
 
 
 class wvmNetwork(wvmConnect):
-    def __init__(self, host, login, passwd, conn, net):
-        wvmConnect.__init__(self, host, login, passwd, conn)
+    def __init__(self, host, login, passwd, conn, hypervisor, net):
+        wvmConnect.__init__(self, host, login, passwd, conn, hypervisor)
         self.net = self.get_network(net)
 
     def get_name(self):

@@ -57,11 +57,15 @@ label input[type="radio"], label input[type="checkbox"] {
 }
 
 .pagehead h1 {
+    color: #777;
     margin-top: 0;
     margin-bottom: 0;
     font-size: 20px;
-    font-weight: bold;
     line-height: 28px;
+}
+
+.pagehead h1 a{
+    font-weight: bold;
 }
 
 .sidebar ul .list {

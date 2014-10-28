@@ -50,8 +50,8 @@ class wvmInterfaces(wvmConnect):
 
 
 class wvmInterface(wvmConnect):
-    def __init__(self, host, login, passwd, conn, iface):
-        wvmConnect.__init__(self, host, login, passwd, conn)
+    def __init__(self, host, login, passwd, conn, hypervisor, iface):
+        wvmConnect.__init__(self, host, login, passwd, conn, hypervisor)
         self.iface = self.get_iface(iface)
 
     def _XMLDesc(self, flags=0):

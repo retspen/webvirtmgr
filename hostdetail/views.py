@@ -28,7 +28,8 @@ def hostusage(request, host_id):
         conn = wvmHostDetails(compute.hostname,
                               compute.login,
                               compute.password,
-                              compute.type)
+                              compute.type,
+                              compute.hypervisor)
         cpu_usage = conn.get_cpu_usage()
         mem_usage = conn.get_memory_usage()
         conn.close()
@@ -116,7 +117,8 @@ def overview(request, host_id):
         conn = wvmHostDetails(compute.hostname,
                               compute.login,
                               compute.password,
-                              compute.type)
+                              compute.type,
+                              compute.hypervisor)
         hostname, host_arch, host_memory, logical_cpu, model_cpu, uri_conn = conn.get_node_info()
         hypervisor = conn.hypervisor_type()
         mem_usage = conn.get_memory_usage()

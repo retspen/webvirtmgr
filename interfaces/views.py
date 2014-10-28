@@ -30,7 +30,8 @@ def interfaces(request, host_id):
         conn = wvmInterfaces(compute.hostname,
                              compute.login,
                              compute.password,
-                             compute.type)
+                             compute.type,
+                             compute.hypervisor)
         ifaces = conn.get_ifaces()
         try:
             netdevs = conn.get_net_device()
@@ -74,6 +75,7 @@ def interface(request, host_id, iface):
                             compute.login,
                             compute.password,
                             compute.type,
+                            compute.hypervisor,
                             iface)
         start_mode = conn.get_start_mode()
         state = conn.is_active()

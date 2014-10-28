@@ -88,8 +88,8 @@ class wvmStorages(wvmConnect):
 
 
 class wvmStorage(wvmConnect):
-    def __init__(self, host, login, passwd, conn, pool):
-        wvmConnect.__init__(self, host, login, passwd, conn)
+    def __init__(self, host, login, passwd, conn, hypervisor, pool):
+        wvmConnect.__init__(self, host, login, passwd, conn, hypervisor)
         self.pool = self.get_storage(pool)
 
     def get_name(self):

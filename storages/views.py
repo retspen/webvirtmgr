@@ -29,7 +29,8 @@ def storages(request, host_id):
         conn = wvmStorages(compute.hostname,
                            compute.login,
                            compute.password,
-                           compute.type)
+                           compute.type,
+                           compute.hypervisor)
         storages = conn.get_storages_info()
         secrets = conn.get_secrets()
 
@@ -93,6 +94,7 @@ def storage(request, host_id, pool):
                           compute.login,
                           compute.password,
                           compute.type,
+                          compute.hypervisor,
                           pool)
 
         storages = conn.get_storages()
