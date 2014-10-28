@@ -2,7 +2,7 @@
 
 ### Introduction
 
-This personal fork is based on the great [**WebVirtMgr**](https://github.com/retspen/webvirtmgr/) made by [Anatoliy Guskov \(retspen\)](https://github.com/retspen/webvirtmgr). WebVirtMgr is a libvirt-based Web interface for managing virtual machines. It allows you to create and configure new domains, and adjust a domain's resource allocation. A VNC viewer presents a full graphical console to the guest domain. KVM is currently the only hypervisor supported.
+This personal fork is based on the great [**WebVirtMgr**](https://github.com/retspen/webvirtmgr/) made by [Anatoliy Guskov \(retspen\)](https://github.com/retspen/webvirtmgr). WebVirtMgr is a libvirt-based Web interface for managing virtual machines. It allows you to create and configure new domains, and adjust a domain's resource allocation. A VNC viewer presents a full graphical console to the guest domain. KVM and LXC \(with some limitations\) are currently the only hypervisors supported.
 
 ### What are the differences with the original one?
 
