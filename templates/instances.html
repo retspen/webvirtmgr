@@ -78,9 +78,11 @@
                                                 title="{% trans "Force Shutdown" %}">
                                             <span class="glyphicon glyphicon-stop"></span>
                                         </button>
+                                        {% ifequal compute.hypervisor 'qemu' %}
                                         <button class="btn btn-sm btn-default disabled" title="{% trans "VNC" %}">
                                             <span class="glyphicon glyphicon-align-justify"></span>
                                         </button>
+                                        {% endifequal %}
                                     {% endifequal %}
                                     {% ifequal inst.status 3 %}
                                         <button class="btn btn-sm btn-default" type="submit" name="resume"
@@ -103,9 +105,11 @@
                                                 title="{% trans "Force Shutdown" %}">
                                             <span class="glyphicon glyphicon-stop"></span>
                                         </button>
+                                        {% ifequal compute.hypervisor 'qemu' %}
                                         <button class="btn btn-sm btn-default disabled" title="{% trans "VNC" %}">
                                             <span class="glyphicon glyphicon-align-justify"></span>
                                         </button>
+                                        {% endifequal %}
                                     {% endifequal %}
                                     {% ifequal inst.status 1 %}
                                         <button class="btn btn-sm btn-default disabled" title="{% trans "Start" %}">
@@ -130,10 +134,12 @@
                                                 onclick="return confirm('Are you sure?')">
                                             <span class="glyphicon glyphicon-stop"></span>
                                         </button>
+                                        {% ifequal compute.hypervisor 'qemu' %}
                                         <a href="#" class="btn btn-sm btn-default"
                                            onclick='open_vnc("{{ host_id }}-{{ inst.uuid }}")' title="{% trans "VNC" %}">
                                             <span class="glyphicon glyphicon-align-justify"></span>
                                         </a>
+                                        {% endifequal %}
                                     {% endifequal %}
                                 </form>
                             </td>
