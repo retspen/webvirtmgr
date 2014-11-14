@@ -887,6 +887,7 @@
             scaleLabel: "<%=value%> Mbps",
             responsive: true
         };
+
         function instusage() {
             $.getJSON('{% url 'instusage' host_id vname %}', function (data) {
                 cpuChart.Line(data['cpu'], cpu_options);
