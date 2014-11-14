@@ -8,11 +8,15 @@ pre {
 }
 
 input[type="radio"], input[type="checkbox"] {
-    margin-top: 7px;
+    margin-top: 9px;
 }
 
 label input[type="radio"], label input[type="checkbox"] {
     margin: 0;
+}
+
+.radio label input[type="radio"], .checkbox label input[type="checkbox"] {
+    margin-top: 4px;
 }
 
 .container {
