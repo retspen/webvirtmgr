@@ -501,6 +501,10 @@
                     <div class="col-sm-3">
                         <input type="text" class="form-control" name="net-{{ forloop.counter0 }}" value="{{ network.mac }}"/>
                     </div>
+                    <div class="col-sm-1">
+                        <button type="button" class="btn btn-primary btn-sm pull-left" name="random-mac-{{ forloop.counter0 }}"
+                                onclick="random_mac({{ forloop.counter0 }})">{% trans "Random MAC address" %}</button>
+                    </div>
                 </div>
             {% endfor %}
             <p style="font-weight:bold;">{% trans "Storage devices" %}</p>
@@ -767,6 +771,16 @@
                 $('#vnc_show_pass').attr('type', 'password');
             }
         }
+        function random_mac(net) {
+            var hexDigits = "0123456789abcdef";
+            var macAddress="52:54:00:";
+            for (var i=0; i<3; i++) {
+                macAddress+=hexDigits.charAt(Math.round(Math.random()*16));
+                macAddress+=hexDigits.charAt(Math.round(Math.random()*16));
+                if (i != 2) macAddress+=":";
+            }
+            $('input[name="net-'+net+'"]').val(macAddress);
+        };
     </script>
     <script src="{% static "js/Chart.min.js" %}"></script>
     <script>
