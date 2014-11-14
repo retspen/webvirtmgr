@@ -489,6 +489,9 @@
                     <div class="col-sm-3">
                         <input type="text" class="form-control" name="net-{{ forloop.counter0 }}" value="{{ network.mac }}"/>
                     </div>
+                    <div class="col-sm-1">
+                        <input type="button" value="Random MAC" onclick="randomMAC()">
+                    </div>
                 </div>
             {% endfor %}
             <p style="font-weight:bold;">{% trans "Storage devices" %}</p>
