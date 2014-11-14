@@ -490,7 +490,8 @@
                         <input type="text" class="form-control" name="net-{{ forloop.counter0 }}" value="{{ network.mac }}"/>
                     </div>
                     <div class="col-sm-1">
-                        <input type="button" value="Random MAC" onclick="randomMAC()">
+                        <button type="button" class="btn btn-primary btn-sm pull-left" name="random-mac-{{ forloop.counter0 }}"
+                                onclick="random_mac({{ forloop.counter0 }})">{% trans "Generate a new MAC address" %}</button>
                     </div>
                 </div>
             {% endfor %}
@@ -752,6 +753,16 @@
                 $('#vnc_show_pass').attr('type', 'password');
             }
         }
+        function random_mac(net) {
+            var hexDigits = "0123456789ABCDEF";
+            var macAddress="52:54:00:";
+            for (var i=0; i<3; i++) {
+                macAddress+=hexDigits.charAt(Math.round(Math.random()*16));
+                macAddress+=hexDigits.charAt(Math.round(Math.random()*16));
+                if (i != 2) macAddress+=":";
+            }
+            $('input[name="net-'+net+'"]').val(macAddress);
+        };
     </script>
     <script src="{% static "js/Chart.min.js" %}"></script>
     <script>
@@ -876,7 +887,6 @@
             scaleLabel: "<%=value%> Mbps",
             responsive: true
         };
-
         function instusage() {
             $.getJSON('{% url 'instusage' host_id vname %}', function (data) {
                 cpuChart.Line(data['cpu'], cpu_options);
