@@ -118,7 +118,7 @@ class wvmInstance(wvmConnect):
         return self.instance.XMLDesc(flag)
 
     def _defineXML(self, xml):
-        self.wvm.defineXML(xml)
+        return self.wvm.defineXML(xml)
 
     def get_status(self):
         return self.instance.info()[0]
@@ -401,6 +401,8 @@ class wvmInstance(wvmConnect):
         except SyntaxError:
             # Little fix for old version ElementTree
             graphics_vnc = root.find("devices/graphics")
+        if graphics_vnc is None:
+            return False
         if passwd:
             graphics_vnc.set('passwd', passwd)
         else:
@@ -409,7 +411,7 @@ class wvmInstance(wvmConnect):
             except:
                 pass
         newxml = ElementTree.tostring(root)
-        self._defineXML(newxml)
+        return self._defineXML(newxml)
 
     def set_vnc_keymap(self, keymap):
         xml = self._XMLDesc(VIR_DOMAIN_XML_SECURE)

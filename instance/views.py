@@ -536,8 +536,11 @@ def instance(request, host_id, vname):
                         msg = _("Enter the VNC password or select Generate")
                         errors.append(msg)
                 if not errors:
-                    conn.set_vnc_passwd(passwd)
-                    return HttpResponseRedirect(request.get_full_path() + '#vnc_pass')
+                    if not conn.set_vnc_passwd(passwd):
+                        msg = _("Error setting VNC password. You should check that your instance have an graphic device.")
+                        errors.append(msg)
+                    else:
+                        return HttpResponseRedirect(request.get_full_path() + '#vnc_pass')
 
             if 'set_vnc_keymap' in request.POST:
                 keymap = request.POST.get('vnc_keymap', '')
