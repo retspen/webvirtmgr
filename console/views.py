@@ -8,6 +8,7 @@ from instance.models import Instance
 from vrtManager.instance import wvmInstance
 
 from webvirtmgr.settings import WS_PORT
+from webvirtmgr.settings import WS_PUBLIC_HOST
 
 
 def console(request):
@@ -37,7 +38,7 @@ def console(request):
         vnc_passwd = None
 
     ws_port = vnc_websocket_port if vnc_websocket_port else WS_PORT
-    ws_host = request.get_host()
+    ws_host = WS_PUBLIC_HOST if WS_PUBLIC_HOST else request.get_host()
 
     if ':' in ws_host:
         ws_host = re.sub(':[0-9]+', '', ws_host)

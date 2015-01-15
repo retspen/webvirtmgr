@@ -146,6 +146,7 @@ LOCAL_PATH = None
 TIME_JS_REFRESH = 2000
 WS_PORT = 6080
 WS_HOST = '0.0.0.0'
+WS_PUBLIC_HOST = None
 
 # keepalive interval and count for libvirt connections
 # 
