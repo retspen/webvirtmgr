@@ -90,14 +90,18 @@
     <div class="tab-content">
     <div class="tab-pane active" id="power" style="margin-top: 20px">
         <ul class="nav nav-tabs nav-btn-act">
-            <li class="active"><a href="#shutdown" data-toggle="tab">{% trans "Shutdown" %}</a></li>
+            <li class="active"><a href="#shutdown" data-toggle="tab">{% ifequal status 5 %}{% trans "Start" %}{% else %}{% trans "Shutdown" %}{% endifequal %}</a></li>
             <li><a href="#forceshutdown" data-toggle="tab">{% trans "Force Shutdown" %}</a></li>
             <li><a href="#suspend" data-toggle="tab">{% trans "Suspend" %}</a></li>
             <li><a href="#managedsave" data-toggle="tab">{% trans "Save" %}</a></li>
         </ul>
         <div class="tab-content">
             <div class="tab-pane tab-inst active" id="shutdown">
+                {% ifequal status 5 %}
+                <p>{% trans "Click on Start button to start this instance." %}</p>
+                {% else %}
                 <p>{% trans "This action sends an ACPI shutdown signal to the instance." %}</p>
+                {% endifequal %}
 
                 <form action="" method="post" role="form">{% csrf_token %}
                     {% ifequal status 5 %}
