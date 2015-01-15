@@ -384,6 +384,8 @@ def instance(request, host_id, vname):
     def show_clone_disk(disks):
         clone_disk = []
         for disk in disks:
+            if disk['image'] is None:
+                continue
             if disk['image'].count(".") and len(disk['image'].rsplit(".", 1)[1]) <= 7:
                 name, suffix = disk['image'].rsplit(".", 1)
                 image = name + "-clone" + "." + suffix
