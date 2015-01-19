@@ -91,9 +91,13 @@
     <div class="tab-pane active" id="power" style="margin-top: 20px">
         <ul class="nav nav-tabs nav-btn-act">
             <li class="active"><a href="#shutdown" data-toggle="tab">{% ifequal status 5 %}{% trans "Start" %}{% else %}{% trans "Shutdown" %}{% endifequal %}</a></li>
+            {% ifnotequal status 5 %}
             <li><a href="#forceshutdown" data-toggle="tab">{% trans "Force Shutdown" %}</a></li>
             <li><a href="#suspend" data-toggle="tab">{% trans "Suspend" %}</a></li>
+            {% endifnotequal %}
+            {% if status != 5 or has_managed_save_image == 1 %}
             <li><a href="#managedsave" data-toggle="tab">{% trans "Save" %}</a></li>
+            {% endif %}
         </ul>
         <div class="tab-content">
             <div class="tab-pane tab-inst active" id="shutdown">
@@ -118,14 +122,11 @@
                 </form>
                 <div class="clearfix"></div>
             </div>
+            {% ifnotequal status 5 %}
             <div class="tab-pane tab-inst" id="forceshutdown">
                 <p>{% trans "This action forcibly powers off the instance and may cause data corruption." %}</p>
 
                 <form action="" method="post" role="form">{% csrf_token %}
-                    {% ifequal status 5 %}
-                        <button type="submit" name="start"
-                                class="btn btn-lg btn-primary pull-right">{% trans "Start" %}</button>
-                    {% endifequal %}
                     {% ifequal status 1 %}
                         <button data-id="shutoff" type="submit" name="power" value="destroy"
                                 class="btn btn-lg btn-primary pull-right">{% trans "Force Shutdown" %}</button>
@@ -140,10 +141,6 @@
                 <p>{% trans "This action suspends or restores the instance." %}</p>
 
                 <form action="" method="post" role="form">{% csrf_token %}
-                    {% ifequal status 5 %}
-                        <button type="submit" name="start"
-                                class="btn btn-lg btn-primary pull-right">{% trans "Start" %}</button>
-                    {% endifequal %}
                     {% ifequal status 1 %}
                         <button data-id="shutoff" type="submit" name="suspend"
                                 class="btn btn-lg btn-primary pull-right">{% trans "Suspend" %}</button>
@@ -155,6 +152,8 @@
                 </form>
                 <div class="clearfix"></div>
             </div>
+            {% endifnotequal %}
+            {% if status != 5 or has_managed_save_image == 1 %}
             <div class="tab-pane tab-inst" id="managedsave">
                 <p>{% trans "This action saves the state of the instance." %}</p>
 
@@ -178,6 +177,7 @@
                 </form>
                 <div class="clearfix"></div>
             </div>
+            {% endif %}
         </div>
     </div>
     <div class="tab-pane" id="access" style="margin-top: 20px">
