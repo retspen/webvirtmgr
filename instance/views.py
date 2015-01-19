@@ -15,7 +15,7 @@ from servers.models import Compute
 from vrtManager.instance import wvmInstances, wvmInstance
 
 from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE
-from webvirtmgr.settings import TIME_JS_REFRESH, QEMU_KEYMAPS
+from webvirtmgr.settings import TIME_JS_REFRESH, QEMU_KEYMAPS, QEMU_CONSOLE_TYPES
 
 
 def instusage(request, host_id, vname):
@@ -402,6 +402,7 @@ def instance(request, host_id, vname):
     computes = Compute.objects.all()
     computes_count = len(computes)
     keymaps = QEMU_KEYMAPS
+    console_types = QEMU_CONSOLE_TYPES
 
     try:
         conn = wvmInstance(compute.hostname,
@@ -431,13 +432,14 @@ def instance(request, host_id, vname):
         memory_host = conn.get_max_memory()
         vcpu_host = len(vcpu_range)
         telnet_port = conn.get_telnet_port()
-        vnc_port = conn.get_vnc_port()
-        vnc_keymap = conn.get_vnc_keymap()
+        console_type = conn.get_console_type()
+        console_port = conn.get_console_port()
+        console_keymap = conn.get_console_keymap()
         snapshots = sorted(conn.get_snapshot(), reverse=True)
         inst_xml = conn._XMLDesc(VIR_DOMAIN_XML_SECURE)
         has_managed_save_image = conn.get_managed_save_image()
         clone_disks = show_clone_disk(disks)
-        vnc_passwd = conn.get_vnc_passwd()
+        console_passwd = conn.get_console_passwd()
     except libvirtError as err:
         errors.append(err)
 
@@ -524,32 +526,37 @@ def instance(request, host_id, vname):
                 if xml:
                     conn._defineXML(xml)
                     return HttpResponseRedirect(request.get_full_path() + '#instancexml')
-            if 'set_vnc_passwd' in request.POST:
+            if 'set_console_passwd' in request.POST:
                 if request.POST.get('auto_pass', ''):
                     passwd = ''.join([choice(letters + digits) for i in xrange(12)])
                 else:
-                    passwd = request.POST.get('vnc_passwd', '')
+                    passwd = request.POST.get('console_passwd', '')
                     clear = request.POST.get('clear_pass', False)
                     if clear:
                         passwd = ''
                     if not passwd and not clear:
-                        msg = _("Enter the VNC password or select Generate")
+                        msg = _("Enter the console password or select Generate")
                         errors.append(msg)
                 if not errors:
-                    if not conn.set_vnc_passwd(passwd):
-                        msg = _("Error setting VNC password. You should check that your instance have an graphic device.")
+                    if not conn.set_console_passwd(passwd):
+                        msg = _("Error setting console password. You should check that your instance have an graphic device.")
                         errors.append(msg)
                     else:
-                        return HttpResponseRedirect(request.get_full_path() + '#vnc_pass')
+                        return HttpResponseRedirect(request.get_full_path() + '#console_pass')
 
-            if 'set_vnc_keymap' in request.POST:
-                keymap = request.POST.get('vnc_keymap', '')
+            if 'set_console_keymap' in request.POST:
+                keymap = request.POST.get('console_keymap', '')
                 clear = request.POST.get('clear_keymap', False)
                 if clear:
-                    conn.set_vnc_keymap('')
+                    conn.set_console_keymap('')
                 else:
-                    conn.set_vnc_keymap(keymap)
-                return HttpResponseRedirect(request.get_full_path() + '#vnc_keymap')
+                    conn.set_console_keymap(keymap)
+                return HttpResponseRedirect(request.get_full_path() + '#console_keymap')
+
+            if 'set_console_type' in request.POST:
+                console_type = request.POST.get('console_type', '')
+                conn.set_console_type(console_type)
+                return HttpResponseRedirect(request.get_full_path() + '#console_type')
 
             if 'migrate' in request.POST:
                 compute_id = request.POST.get('compute_id', '')

@@ -192,6 +192,12 @@ QEMU_KEYMAPS = ['ar', 'da', 'de', 'de-ch', 'en-gb', 'en-us', 'es', 'et', 'fi',
                 'ja', 'lt', 'lv', 'mk', 'nl', 'nl-be', 'no', 'pl', 'pt',
                 'pt-br', 'ru', 'sl', 'sv', 'th', 'tr']
 
+# list of console types
+QEMU_CONSOLE_TYPES = ['vnc','spice']
+
+# default console type
+QEMU_CONSOLE_DEFAULT_TYPE = 'vnc'
+
 # Installed Apps shouldn't be overridden
 INSTALLED_APPS = (
     'django.contrib.auth',

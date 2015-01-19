@@ -13,7 +13,7 @@ from webvirtmgr.settings import WS_PUBLIC_HOST
 
 def console(request):
     """
-    VNC instance block
+    Console instance block
     """
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
@@ -31,18 +31,26 @@ def console(request):
                            instance.compute.password,
                            instance.compute.type,
                            instance.name)
-        vnc_websocket_port = conn.get_vnc_websocket_port()
-        vnc_passwd = conn.get_vnc_passwd()
+        console_type = conn.get_console_type()
+        console_websocket_port = conn.get_console_websocket_port()
+        console_passwd = conn.get_console_passwd()
     except:
-        vnc_websocket_port = None
-        vnc_passwd = None
+        console_type = None
+        console_websocket_port = None
+        console_passwd = None
 
-    ws_port = vnc_websocket_port if vnc_websocket_port else WS_PORT
+    ws_port = console_websocket_port if console_websocket_port else WS_PORT
     ws_host = WS_PUBLIC_HOST if WS_PUBLIC_HOST else request.get_host()
 
     if ':' in ws_host:
         ws_host = re.sub(':[0-9]+', '', ws_host)
 
-    response = render_to_response('console.html', locals(), context_instance=RequestContext(request))
+    if console_type=='vnc':
+        response = render_to_response('console-vnc.html', locals(), context_instance=RequestContext(request))
+    elif console_type=='spice':
+        response = render_to_response('console-spice.html', locals(), context_instance=RequestContext(request))
+    else:
+        response = "Console type %s no support" % console_type
+
     response.set_cookie('token', token)
     return response

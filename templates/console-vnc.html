@@ -161,7 +161,7 @@
         // By default, use the host and port of server that served this file
         host = '{{ ws_host }}';
         port = '{{ ws_port }}';
-        password = '{{ vnc_passwd }}';
+        password = '{{ console_passwd }}';
 
         if ((!host) || (!port)) {
             updateState('failed',
