@@ -7,6 +7,7 @@ from vrtManager.connection import wvmConnect
 
 from webvirtmgr.settings import QEMU_CONSOLE_DEFAULT_TYPE
 
+
 def get_rbd_storage_data(stg):
     xml = stg.XMLDesc(0)
     ceph_user = util.get_xml_path(xml, "/pool/source/auth/@username")

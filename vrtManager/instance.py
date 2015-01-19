@@ -383,12 +383,12 @@ class wvmInstance(wvmConnect):
 
     def get_console_type(self):
         console_type = util.get_xml_path(self._XMLDesc(0),
-                                     "/domain/devices/graphics/@type")
+                                         "/domain/devices/graphics/@type")
         return console_type
 
     def set_console_type(self, console_type):
         current_type = self.get_console_type()
-        if current_type==console_type:
+        if current_type == console_type:
             return True
         if console_type == '' or console_type not in QEMU_CONSOLE_TYPES:
             return False
@@ -405,15 +405,15 @@ class wvmInstance(wvmConnect):
 
     def get_console_port(self, console_type=None):
         if console_type is None:
-            console_type=self.get_console_type()
+            console_type = self.get_console_type()
         port = util.get_xml_path(self._XMLDesc(0),
-                                     "/domain/devices/graphics[@type='%s']/@port" % console_type)
+                                 "/domain/devices/graphics[@type='%s']/@port" % console_type)
         return port
 
     def get_console_websocket_port(self):
         console_type = self.get_console_type()
         websocket_port = util.get_xml_path(self._XMLDesc(0),
-                                               "/domain/devices/graphics[@type='%s']/@websocket" % console_type)
+                                           "/domain/devices/graphics[@type='%s']/@websocket" % console_type)
         return websocket_port
 
     def get_console_passwd(self):

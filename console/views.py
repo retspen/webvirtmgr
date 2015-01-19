@@ -45,9 +45,9 @@ def console(request):
     if ':' in ws_host:
         ws_host = re.sub(':[0-9]+', '', ws_host)
 
-    if console_type=='vnc':
+    if console_type == 'vnc':
         response = render_to_response('console-vnc.html', locals(), context_instance=RequestContext(request))
-    elif console_type=='spice':
+    elif console_type == 'spice':
         response = render_to_response('console-spice.html', locals(), context_instance=RequestContext(request))
     else:
         response = "Console type %s no support" % console_type
