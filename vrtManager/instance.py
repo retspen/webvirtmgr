@@ -381,6 +381,16 @@ class wvmInstance(wvmConnect):
                                 telnet_port = service_port
         return telnet_port
 
+    def get_console_listen_addr(self):
+        listen_addr = util.get_xml_path(self._XMLDesc(0),
+                                        "/domain/devices/graphics/@listen")
+        return listen_addr
+
+    def get_console_socket(self):
+        socket = util.get_xml_path(self._XMLDesc(0),
+                                   "/domain/devices/graphics/@socket")
+        return socket
+
     def get_console_type(self):
         console_type = util.get_xml_path(self._XMLDesc(0),
                                          "/domain/devices/graphics/@type")
