@@ -19,9 +19,8 @@ import socket
 import django
 from webvirtmgr.settings import WS_PORT
 from webvirtmgr.settings import WS_HOST
-from webvirtmgr.settings import FORCE_CONNECT_
 
-from vrtManager.connection import CONN_SSH
+from vrtManager.connection import CONN_SSH, CONN_SOCKET
 
 import re
 
@@ -89,7 +88,12 @@ class CompatibilityMixIn(object):
 
         connhost, connport, connuser, conntype, console_host, console_port, console_socket = get_connection_infos(token)
 
-        if console_socket or re.match('^127\.',console_host):
+        if console_socket and conntype==CONN_SOCKET:
+            # Local socket on local host
+            self.msg('Try to open local socket %s' % console_socket)
+            tsock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+            tsock.connect(console_socket)
+        elif console_socket or re.match('^127\.',console_host):
             # Need tunnel to physical host
             if conntype!=CONN_SSH:
                 self.msg("Need a tunnel to access console but can't mount one because it's not a SSH host")
