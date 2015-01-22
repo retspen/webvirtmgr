@@ -65,22 +65,14 @@ def instusage(request, host_id, vname):
         net_usage = None
 
     if status and status == 1:
-        try:
-            cookies['cpu'] = request._cookies['cpu']
-            cookies['hdd'] = request._cookies['hdd']
-            cookies['net'] = request._cookies['net']
-            cookies['timer'] = request._cookies['timer']
-        except KeyError:
-            cookies['cpu'] = None
-            cookies['hdd'] = None
-            cookies['net'] = None
+        cookies = request._get_cookies()
 
-        if cookies['cpu'] == '{}' or not cookies['cpu'] or not cpu_usage:
+        if cookies.get('cpu') == '{}' or not cookies.get('cpu') or not cpu_usage:
             datasets['cpu'] = [0]
             datasets['timer'] = [curent_time]
         else:
-            datasets['cpu'] = eval(cookies['cpu'])
-            datasets['timer'] = eval(cookies['timer'])
+            datasets['cpu'] = eval(cookies.get('cpu'))
+            datasets['timer'] = eval(cookies.get('timer'))
 
         datasets['timer'].append(curent_time)
         datasets['cpu'].append(int(cpu_usage['cpu']))
@@ -104,11 +96,11 @@ def instusage(request, host_id, vname):
         }
 
         for blk in blk_usage:
-            if cookies['hdd'] == '{}' or not cookies['hdd'] or not blk_usage:
+            if cookies.get('hdd') == '{}' or not cookies.get('hdd') or not blk_usage:
                 datasets_wr.append(0)
                 datasets_rd.append(0)
             else:
-                datasets['hdd'] = eval(cookies['hdd'])
+                datasets['hdd'] = eval(cookies.get('hdd'))
                 try:
                     datasets_rd = datasets['hdd'][blk['dev']][0]
                     datasets_wr = datasets['hdd'][blk['dev']][1]
@@ -148,11 +140,11 @@ def instusage(request, host_id, vname):
             cookie_blk[blk['dev']] = [datasets_rd, datasets_wr]
 
         for net in net_usage:
-            if cookies['net'] == '{}' or not cookies['net'] or not net_usage:
+            if cookies.get('net') == '{}' or not cookies.get('net') or not net_usage:
                 datasets_rx.append(0)
                 datasets_tx.append(0)
             else:
-                datasets['net'] = eval(cookies['net'])
+                datasets['net'] = eval(cookies.get('net'))
                 try:
                     datasets_rx = datasets['net'][net['dev']][0]
                     datasets_tx = datasets['net'][net['dev']][1]
