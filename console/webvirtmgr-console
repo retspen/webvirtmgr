@@ -20,6 +20,10 @@ import django
 from webvirtmgr.settings import WS_PORT
 from webvirtmgr.settings import WS_HOST
 
+from webvirtmgr.settings import WS_CERT
+if WS_CERT:
+	CERT = WS_CERT
+
 from vrtManager.connection import CONN_SSH, CONN_SOCKET
 
 import re
