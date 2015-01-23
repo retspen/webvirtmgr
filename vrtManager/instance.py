@@ -12,6 +12,8 @@ from xml.etree import ElementTree
 from datetime import datetime
 from vrtManager.connection import wvmConnect
 
+from webvirtmgr.settings import QEMU_CONSOLE_TYPES
+
 
 class wvmInstances(wvmConnect):
     def get_instance_status(self, name):
@@ -118,7 +120,7 @@ class wvmInstance(wvmConnect):
         return self.instance.XMLDesc(flag)
 
     def _defineXML(self, xml):
-        self.wvm.defineXML(xml)
+        return self.wvm.defineXML(xml)
 
     def get_status(self):
         return self.instance.info()[0]
@@ -379,57 +381,96 @@ class wvmInstance(wvmConnect):
                                 telnet_port = service_port
         return telnet_port
 
-    def get_vnc_port(self):
-        vnc_port = util.get_xml_path(self._XMLDesc(0),
-                                     "/domain/devices/graphics[@type='vnc']/@port")
-        return vnc_port
+    def get_console_listen_addr(self):
+        listen_addr = util.get_xml_path(self._XMLDesc(0),
+                                        "/domain/devices/graphics/@listen")
+        return listen_addr
 
-    def get_vnc_websocket_port(self):
-        vnc_websocket_port = util.get_xml_path(self._XMLDesc(0),
-                                               "/domain/devices/graphics[@type='vnc']/@websocket")
-        return vnc_websocket_port
+    def get_console_socket(self):
+        socket = util.get_xml_path(self._XMLDesc(0),
+                                   "/domain/devices/graphics/@socket")
+        return socket
 
-    def get_vnc_passwd(self):
+    def get_console_type(self):
+        console_type = util.get_xml_path(self._XMLDesc(0),
+                                         "/domain/devices/graphics/@type")
+        return console_type
+
+    def set_console_type(self, console_type):
+        current_type = self.get_console_type()
+        if current_type == console_type:
+            return True
+        if console_type == '' or console_type not in QEMU_CONSOLE_TYPES:
+            return False
+        xml = self._XMLDesc(VIR_DOMAIN_XML_SECURE)
+        root = ElementTree.fromstring(xml)
+        try:
+            graphic = root.find("devices/graphics[@type='%s']" % current_type)
+        except SyntaxError:
+            # Little fix for old version ElementTree
+            graphic = root.find("devices/graphics")
+        graphic.set('type', console_type)
+        newxml = ElementTree.tostring(root)
+        self._defineXML(newxml)
+
+    def get_console_port(self, console_type=None):
+        if console_type is None:
+            console_type = self.get_console_type()
+        port = util.get_xml_path(self._XMLDesc(0),
+                                 "/domain/devices/graphics[@type='%s']/@port" % console_type)
+        return port
+
+    def get_console_websocket_port(self):
+        console_type = self.get_console_type()
+        websocket_port = util.get_xml_path(self._XMLDesc(0),
+                                           "/domain/devices/graphics[@type='%s']/@websocket" % console_type)
+        return websocket_port
+
+    def get_console_passwd(self):
         return util.get_xml_path(self._XMLDesc(VIR_DOMAIN_XML_SECURE),
                                  "/domain/devices/graphics/@passwd")
 
-    def set_vnc_passwd(self, passwd):
+    def set_console_passwd(self, passwd):
         xml = self._XMLDesc(VIR_DOMAIN_XML_SECURE)
         root = ElementTree.fromstring(xml)
+        console_type = self.get_console_type()
         try:
-            graphics_vnc = root.find("devices/graphics[@type='vnc']")
+            graphic = root.find("devices/graphics[@type='%s']" % console_type)
         except SyntaxError:
             # Little fix for old version ElementTree
-            graphics_vnc = root.find("devices/graphics")
+            graphic = root.find("devices/graphics")
+        if graphic is None:
+            return False
         if passwd:
-            graphics_vnc.set('passwd', passwd)
+            graphic.set('passwd', passwd)
         else:
             try:
-                graphics_vnc.attrib.pop('passwd')
+                graphic.attrib.pop('passwd')
             except:
                 pass
         newxml = ElementTree.tostring(root)
-        self._defineXML(newxml)
+        return self._defineXML(newxml)
 
-    def set_vnc_keymap(self, keymap):
+    def set_console_keymap(self, keymap):
         xml = self._XMLDesc(VIR_DOMAIN_XML_SECURE)
         root = ElementTree.fromstring(xml)
+        console_type = self.get_console_type()
         try:
-            graphics_vnc = root.find("devices/graphics[@type='vnc']")
+            graphic = root.find("devices/graphics[@type='%s']" % console_type)
         except SyntaxError:
             # Little fix for old version ElementTree
-            graphics_vnc = root.find("devices/graphics")
+            graphic = root.find("devices/graphics")
         if keymap:
-            graphics_vnc.set('keymap', keymap)
+            graphic.set('keymap', keymap)
         else:
             try:
-                graphics_vnc.attrib.pop('keymap')
+                graphic.attrib.pop('keymap')
             except:
                 pass
         newxml = ElementTree.tostring(root)
         self._defineXML(newxml)
 
-    def get_vnc_keymap(self):
+    def get_console_keymap(self):
         return util.get_xml_path(self._XMLDesc(VIR_DOMAIN_XML_SECURE),
                                  "/domain/devices/graphics/@keymap") or ''
 

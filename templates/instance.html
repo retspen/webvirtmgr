@@ -90,14 +90,22 @@
     <div class="tab-content">
     <div class="tab-pane active" id="power" style="margin-top: 20px">
         <ul class="nav nav-tabs nav-btn-act">
-            <li class="active"><a href="#shutdown" data-toggle="tab">{% trans "Shutdown" %}</a></li>
+            <li class="active"><a href="#shutdown" data-toggle="tab">{% ifequal status 5 %}{% trans "Start" %}{% else %}{% trans "Shutdown" %}{% endifequal %}</a></li>
+            {% ifnotequal status 5 %}
             <li><a href="#forceshutdown" data-toggle="tab">{% trans "Force Shutdown" %}</a></li>
             <li><a href="#suspend" data-toggle="tab">{% trans "Suspend" %}</a></li>
+            {% endifnotequal %}
+            {% if status != 5 or has_managed_save_image == 1 %}
             <li><a href="#managedsave" data-toggle="tab">{% trans "Save" %}</a></li>
+            {% endif %}
         </ul>
         <div class="tab-content">
             <div class="tab-pane tab-inst active" id="shutdown">
+                {% ifequal status 5 %}
+                <p>{% trans "Click on Start button to start this instance." %}</p>
+                {% else %}
                 <p>{% trans "This action sends an ACPI shutdown signal to the instance." %}</p>
+                {% endifequal %}
 
                 <form action="" method="post" role="form">{% csrf_token %}
                     {% ifequal status 5 %}
@@ -114,14 +122,11 @@
                 </form>
                 <div class="clearfix"></div>
             </div>
+            {% ifnotequal status 5 %}
             <div class="tab-pane tab-inst" id="forceshutdown">
                 <p>{% trans "This action forcibly powers off the instance and may cause data corruption." %}</p>
 
                 <form action="" method="post" role="form">{% csrf_token %}
-                    {% ifequal status 5 %}
-                        <button type="submit" name="start"
-                                class="btn btn-lg btn-primary pull-right">{% trans "Start" %}</button>
-                    {% endifequal %}
                     {% ifequal status 1 %}
                         <button data-id="shutoff" type="submit" name="power" value="destroy"
                                 class="btn btn-lg btn-primary pull-right">{% trans "Force Shutdown" %}</button>
@@ -136,10 +141,6 @@
                 <p>{% trans "This action suspends or restores the instance." %}</p>
 
                 <form action="" method="post" role="form">{% csrf_token %}
-                    {% ifequal status 5 %}
-                        <button type="submit" name="start"
-                                class="btn btn-lg btn-primary pull-right">{% trans "Start" %}</button>
-                    {% endifequal %}
                     {% ifequal status 1 %}
                         <button data-id="shutoff" type="submit" name="suspend"
                                 class="btn btn-lg btn-primary pull-right">{% trans "Suspend" %}</button>
@@ -151,6 +152,8 @@
                 </form>
                 <div class="clearfix"></div>
             </div>
+            {% endifnotequal %}
+            {% if status != 5 or has_managed_save_image == 1 %}
             <div class="tab-pane tab-inst" id="managedsave">
                 <p>{% trans "This action saves the state of the instance." %}</p>
 
@@ -174,26 +177,28 @@
                 </form>
                 <div class="clearfix"></div>
             </div>
+            {% endif %}
         </div>
     </div>
     <div class="tab-pane" id="access" style="margin-top: 20px">
         <ul class="nav nav-tabs nav-btn-act">
-            <li class="active"><a href="#vnc_console" data-toggle="tab">{% trans "VNC Console" %}</a></li>
-            <li><a href="#vnc_pass" data-toggle="tab">{% trans "VNC Password" %}</a></li>
-            <li><a href="#vnc_keymap" data-toggle="tab">{% trans "VNC Keymap" %}</a></li>
+            <li class="active"><a href="#console" data-toggle="tab">{% trans "Console" %}</a></li>
+            <li><a href="#console_type" data-toggle="tab">{% trans "Console Type" %}</a></li>
+            <li><a href="#console_pass" data-toggle="tab">{% trans "Console Password" %}</a></li>
+            <li><a href="#console_keymap" data-toggle="tab">{% trans "Console Keymap" %}</a></li>
             {% if telnet_port %}
                 <li><a href="#telnet_console" data-toggle="tab">{% trans "Telnet Console" %}</a></li>
             {% endif %}
 
         </ul>
         <div class="tab-content">
-            <div class="tab-pane tab-inst active" id="vnc_console">
-                <p>{% trans "This action opens a new window with a VNC connection to the console of the instance." %}</p>
+            <div class="tab-pane tab-inst active" id="console">
+                <p>{% trans "This action opens a new window with a connection to the console of the instance." %}</p>
                 {% ifequal status 5 %}
                     <button class="btn btn-primary btn-lg pull-right disabled">{% trans "Console" %}</button>
                 {% else %}
-                    <a href="#" class="btn btn-primary btn-lg pull-right" title="VNC Port: {{ vnc_port }}"
-                       onclick="open_vnc()">{% trans "Console" %}</a>
+                    <a href="#" class="btn btn-primary btn-lg pull-right" title="Console port: {{ console_port }}"
+                       onclick="open_console()">{% trans "Console" %}</a>
                 {% endifequal %}
                 <div class="clearfix"></div>
             </div>
@@ -208,8 +213,34 @@
                 {% endifequal %}
                 <div class="clearfix"></div>
             </div>
-            <div class="tab-pane tab-inst" id="vnc_pass">
-                <p>{% trans "To create password for VNC, shutdown the instance." %}</p>
+            <div class="tab-pane tab-inst" id="console_type">
+                <p>{% trans "To set console's type, shutdown the instance." %}</p>
+
+                <form class="form-horizontal" method="post" role="form">{% csrf_token %}
+                    <div class="form-group" id="console_type_selection">
+                        <label for="console_select_type" class="col-sm-2 control-label">{% trans "Type" %}</label>
+
+                        <div class="col-sm-6">
+                            <select id="console_select_type" class="form-control" name="console_type">
+                                <option value="" style="font-weight: bold">{% trans "please choose" %}</option>
+                                {% for ctype in console_types %}
+                                    <option value="{{ ctype }}">{{ ctype }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    {% ifequal status 5 %}
+                        <button type="submit" class="btn btn-primary btn-lg pull-right"
+                                name="set_console_type">{% trans "Set console type" %}</button>
+                    {% else %}
+                        <button class="btn btn-primary btn-lg pull-right disabled"
+                                name="set_console_type">{% trans "Set console type" %}</button>
+                    {% endifequal %}
+                </form>
+                <div class="clearfix"></div>
+            </div>
+            <div class="tab-pane tab-inst" id="console_pass">
+                <p>{% trans "To create console password, shutdown the instance." %}</p>
 
                 <form class="form-horizontal" method="post" role="form">{% csrf_token %}
                     <div class="form-group">
@@ -217,45 +248,45 @@
                             <div class="checkbox">
                                 <label>
                                     <input type="checkbox" name="auto_pass" value="true"
-                                           id="vnc_passwd_gen">{% trans "Generate" %}
+                                           id="console_passwd_gen">{% trans "Generate" %}
                                 </label>
                             </div>
                             <div class="checkbox">
                                 <label>
                                     <input type="checkbox" name="clear_pass" value="true"
-                                           id="vnc_passwd_clear">{% trans "Clear" %}
+                                           id="console_passwd_clear">{% trans "Clear" %}
                                 </label>
                             </div>
                         </div>
                     </div>
-                    <div class="form-group" id="vnc_passwd_manual">
+                    <div class="form-group" id="console_passwd_manual">
                         <label for="inputPassword1" class="col-sm-2 control-label">{% trans "Password" %}</label>
 
                         <div class="col-sm-6">
-                            <input id="vnc_show_pass" type="password" class="form-control" name="vnc_passwd"
-                                   {% if vnc_passwd %}
-                                        value="{{ vnc_passwd }}"
+                            <input id="console_show_pass" type="password" class="form-control" name="console_passwd"
+                                   {% if console_passwd %}
+                                        value="{{ console_passwd }}"
                                    {% else %}
                                         placeholder="{% trans "Password" %}"
                                    {% endif %} maxlength="14">
                         </div>
-                        {% if vnc_passwd %}
-                            <a href="#" name="vnc_show" class="btn btn-primary btn-md"
-                                onclick="show_vnc()">{% trans "Show" %}</a>
+                        {% if console_passwd %}
+                            <a href="#" name="console_show" class="btn btn-primary btn-md"
+                                onclick="show_console()">{% trans "Show" %}</a>
                         {% endif %}
                     </div>
                     {% ifequal status 5 %}
                         <button type="submit" class="btn btn-primary btn-lg pull-right"
-                                name="set_vnc_passwd">{% trans "Set Password" %}</button>
+                                name="set_console_passwd">{% trans "Set Password" %}</button>
                     {% else %}
                         <button class="btn btn-primary btn-lg pull-right disabled"
-                                name="set_vnc_passwd">{% trans "Set Password" %}</button>
+                                name="set_console_passwd">{% trans "Set Password" %}</button>
                     {% endifequal %}
                 </form>
                 <div class="clearfix"></div>
             </div>
-            <div class="tab-pane tab-inst" id="vnc_keymap">
-                <p>{% trans "To set a keymap for vnc, shutdown the instance." %}</p>
+            <div class="tab-pane tab-inst" id="console_keymap">
+                <p>{% trans "To set console's keymap, shutdown the instance." %}</p>
 
                 <form class="form-horizontal" method="post" role="form">{% csrf_token %}
                     <div class="form-group">
@@ -263,16 +294,16 @@
                             <div class="checkbox">
                                 <label>
                                     <input type="checkbox" name="clear_keymap" value="true"
-                                           id="vnc_keymap_clear">{% trans "Clear" %}
+                                           id="console_keymap_clear">{% trans "Clear" %}
                                 </label>
                             </div>
                         </div>
                     </div>
-                    <div class="form-group" id="vnc_keymap_selection">
-                        <label for="vnc_select_keymap" class="col-sm-2 control-label">{% trans "Keymap" %}</label>
+                    <div class="form-group" id="console_keymap_selection">
+                        <label for="console_select_keymap" class="col-sm-2 control-label">{% trans "Keymap" %}</label>
 
                         <div class="col-sm-6">
-                            <select id="vnc_select_keymap" class="form-control" name="vnc_keymap">
+                            <select id="console_select_keymap" class="form-control" name="console_keymap">
                                 <option value="" style="font-weight: bold">{% trans "please choose" %}</option>
                                 {% for keymap in keymaps %}
                                     <option value="{{ keymap }}">{{ keymap }}</option>
@@ -282,10 +313,10 @@
                     </div>
                     {% ifequal status 5 %}
                         <button type="submit" class="btn btn-primary btn-lg pull-right"
-                                name="set_vnc_keymap">{% trans "Set Keymap" %}</button>
+                                name="set_console_keymap">{% trans "Set Keymap" %}</button>
                     {% else %}
                         <button class="btn btn-primary btn-lg pull-right disabled"
-                                name="set_vnc_keymap">{% trans "Set Keymap" %}</button>
+                                name="set_console_keymap">{% trans "Set Keymap" %}</button>
                     {% endifequal %}
                 </form>
                 <div class="clearfix"></div>
@@ -743,14 +774,14 @@
 {% endblock %}
 {% block script %}
     <script>
-        function open_vnc() {
+        function open_console() {
             window.open('{% url 'console' %}?token={{ host_id }}-{{ uuid }}', '', 'width=850,height=485')
         }
-        function show_vnc() {
-            if ($('#vnc_show_pass').attr('type') == 'password') {
-                $('#vnc_show_pass').attr('type', 'text');
+        function show_console() {
+            if ($('#console_show_pass').attr('type') == 'password') {
+                $('#console_show_pass').attr('type', 'text');
             } else {
-                $('#vnc_show_pass').attr('type', 'password');
+                $('#console_show_pass').attr('type', 'password');
             }
         }
         function random_mac(net) {
@@ -775,7 +806,7 @@
                 }
             });
         }
-        if (~$.inArray(hash, ['#vnc_pass', '#vnc_keymap'])) {
+        if (~$.inArray(hash, ['#console_pass', '#console_keymap', '#console_type'])) {
             var btnsect = $('#btnsection>li>a');
             $(btnsect).each(function () {
                 if ($(this).attr('href') === '#access') {
@@ -819,34 +850,41 @@
         }
     </script>
     <script>
-        $(document).on('change', '#vnc_passwd_gen', function () {
+        $(document).on('change', '#console_passwd_gen', function () {
             if ($(this).prop('checked')) {
-                $('#vnc_passwd_manual').hide();
-                $('#vnc_passwd_clear').prop('checked', false);
+                $('#console_passwd_manual').hide();
+                $('#console_passwd_clear').prop('checked', false);
             } else {
-                $('#vnc_passwd_manual').show();
+                $('#console_passwd_manual').show();
             }
         });
-        $(document).on('change', '#vnc_passwd_clear', function () {
+        $(document).on('change', '#console_passwd_clear', function () {
             if ($(this).prop('checked')) {
-                $('#vnc_passwd_manual').hide();
-                $('#vnc_passwd_gen').prop('checked', false);
+                $('#console_passwd_manual').hide();
+                $('#console_passwd_gen').prop('checked', false);
             } else {
-                $('#vnc_passwd_manual').show();
+                $('#console_passwd_manual').show();
             }
         });
-        $(document).on('change', '#vnc_keymap_clear', function () {
+        $(document).on('change', '#console_keymap_clear', function () {
             if ($(this).prop('checked')) {
-                $('#vnc_keymap_selection').hide();
+                $('#console_keymap_selection').hide();
             } else {
-                $('#vnc_keymap_selection').show();
+                $('#console_keymap_selection').show();
             }
         });
         $(document).ready(function () {
-            // set current vnc keymap or fall back to default
-            var keymap = "{{ vnc_keymap }}"
+            // set current console keymap or fall back to default
+            var keymap = "{{ console_keymap }}"
             if (keymap != '') {
-                $("#vnc_select_keymap option[value='" + keymap + "']").prop('selected', true);
+                $("#console_select_keymap option[value='" + keymap + "']").prop('selected', true);
+            }
+        });
+        $(document).ready(function () {
+            // set current console type or fall back to default
+            var console_type = "{{ console_type }}"
+            if (console_type != '') {
+                $("#console_select_type option[value='" + console_type + "']").prop('selected', true);
             }
         });
     </script>

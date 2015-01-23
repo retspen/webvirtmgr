@@ -146,6 +146,7 @@ LOCAL_PATH = None
 TIME_JS_REFRESH = 2000
 WS_PORT = 6080
 WS_HOST = '0.0.0.0'
+WS_PUBLIC_HOST = None
 
 # keepalive interval and count for libvirt connections
 # 
@@ -190,6 +191,12 @@ QEMU_KEYMAPS = ['ar', 'da', 'de', 'de-ch', 'en-gb', 'en-us', 'es', 'et', 'fi',
                 'fo', 'fr', 'fr-be', 'fr-ca', 'fr-ch', 'hr', 'hu', 'is', 'it',
                 'ja', 'lt', 'lv', 'mk', 'nl', 'nl-be', 'no', 'pl', 'pt',
                 'pt-br', 'ru', 'sl', 'sv', 'th', 'tr']
+
+# list of console types
+QEMU_CONSOLE_TYPES = ['vnc','spice']
+
+# default console type
+QEMU_CONSOLE_DEFAULT_TYPE = 'vnc'
 
 # Installed Apps shouldn't be overridden
 INSTALLED_APPS = (
