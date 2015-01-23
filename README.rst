@@ -1,11 +1,18 @@
 =========================
-WebVirtMgr panel - v4.8.8
+WebVirtMgr panel - v4.8.9
 =========================
+
+-------
+Warning
+-------
+
+In latest version app `console/webvirtmgr-novnc` move to `console/webvirtmgr-console` you need check your supervisor settings.
 
 ----------
 Whats new?
 ----------
 
+- Added support SPICE, SSH Tunnel, fixed some bugs (Thanks: `brenard <https://github.com/brenard>`)
 - Responsive design (Thanks: `Michel Käser <https://github.com/MaddinXx>`_)
 - Added VNC WebSocket support (Thanks: `Tolbkni Kao <https://github.com/tolbkni>`_)
 - Added novnc proxy supporting new websockify versions (Thanks: `casell <https://github.com/casell>`_)

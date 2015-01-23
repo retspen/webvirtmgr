@@ -35,7 +35,7 @@ import os
 from setuptools import setup, find_packages
 
 
-__version__ = "4.8.8"
+__version__ = "4.8.9"
 
 
 def read(fname):
