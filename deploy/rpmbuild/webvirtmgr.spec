@@ -1,5 +1,5 @@
 %global name webvirtmgr
-%global version 4.8.8
+%global version 4.8.9
 %global release 1
 
 Name:           %{name}

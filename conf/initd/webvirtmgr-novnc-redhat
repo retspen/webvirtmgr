@@ -37,6 +37,7 @@ start() {
     [ -x $exec ] || exit 5
 
     echo -n $"Starting $prog: "
+    export PYTHONPATH=$PYTHONPATH:/usr/lib/python2.6/site-packages/Django-1.5.6-py2.6.egg
     daemon --user $username --pidfile $pidfile "$exec &>/dev/null & echo \$! > $pidfile"
     retval=$?
     echo
