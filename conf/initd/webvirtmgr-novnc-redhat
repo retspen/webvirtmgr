@@ -16,12 +16,17 @@
 
 . /etc/rc.d/init.d/functions
 
-prog="webvirtmgr-novnc"
+prog="webvirtmgr-console"
 exec="/var/www/webvirtmgr/console/$prog"
 lockfile="/var/lock/subsys/$prog"
 pidfile="/var/run/webvirtmgr/$prog.pid"
 logfile="/var/log/$prog.log"
 username="nginx"
+
+# load webvirtmgr-console preferences
+if [ -f /etc/sysconfig/webvirtmgr-console ]; then
+    . /etc/sysconfig/webvirtmgr-console
+fi
 
 if [ ! -d /var/run/webvirtmgr ]; then
         mkdir /var/run/webvirtmgr

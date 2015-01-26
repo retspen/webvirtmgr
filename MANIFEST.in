@@ -1,7 +1,7 @@
 include *.rst
 
 include images/README.md
-include console/webvirtmgr-novnc
+include console/webvirtmgr-console
 
 recursive-include console *.pem
 recursive-include create *.json
