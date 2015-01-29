@@ -146,23 +146,25 @@ LOCAL_PATH = None
 TIME_JS_REFRESH = 2000
 WS_PORT = 6080
 WS_HOST = '0.0.0.0'
+WS_PUBLIC_HOST = None
+WS_CERT = None
 
 # keepalive interval and count for libvirt connections
-# 
+#
 # from: http://libvirt.org/html/libvirt-libvirt.html#virConnectSetKeepAlive
-# 
+#
 # Start sending keepalive messages after @interval seconds of inactivity and
 # consider the connection to be broken when no response is received after
 # @count keepalive messages sent in a row. In other words, sending count + 1
 # keepalive message results in closing the connection. When @interval is <= 0,
 # no keepalive messages will be sent. When @count is 0, the connection will be
-# automatically closed after @interval seconds of inactivity without sending 
+# automatically closed after @interval seconds of inactivity without sending
 # any keepalive messages.
-# 
+#
 # Keep in mind that by default (at least on ubuntu variants) the libvirt.d is
 # configured to send keepalive messages by default (interval: 5, count: 5).
 # If the libvirt.d keeps on sending keepalive messages form the server-side
-# we will never close the connection no matter what these parameters are set 
+# we will never close the connection no matter what these parameters are set
 # to, as long as the libvirt.d is up and running at the server side.
 LIBVIRT_KEEPALIVE_INTERVAL = 5
 LIBVIRT_KEEPALIVE_COUNT    = 5
@@ -190,6 +192,12 @@ QEMU_KEYMAPS = ['ar', 'da', 'de', 'de-ch', 'en-gb', 'en-us', 'es', 'et', 'fi',
                 'fo', 'fr', 'fr-be', 'fr-ca', 'fr-ch', 'hr', 'hu', 'is', 'it',
                 'ja', 'lt', 'lv', 'mk', 'nl', 'nl-be', 'no', 'pl', 'pt',
                 'pt-br', 'ru', 'sl', 'sv', 'th', 'tr']
+
+# list of console types
+QEMU_CONSOLE_TYPES = ['vnc', 'spice']
+
+# default console type
+QEMU_CONSOLE_DEFAULT_TYPE = 'vnc'
 
 # Installed Apps shouldn't be overridden
 INSTALLED_APPS = (

@@ -79,7 +79,7 @@
                                             <span class="glyphicon glyphicon-stop"></span>
                                         </button>
                                         {% ifequal compute.hypervisor 'qemu' %}
-                                        <button class="btn btn-sm btn-default disabled" title="{% trans "VNC" %}">
+                                        <button class="btn btn-sm btn-default disabled" title="{% trans "Console" %}">
                                             <span class="glyphicon glyphicon-align-justify"></span>
                                         </button>
                                         {% endifequal %}
@@ -106,7 +106,7 @@
                                             <span class="glyphicon glyphicon-stop"></span>
                                         </button>
                                         {% ifequal compute.hypervisor 'qemu' %}
-                                        <button class="btn btn-sm btn-default disabled" title="{% trans "VNC" %}">
+                                        <button class="btn btn-sm btn-default disabled" title="{% trans "Console" %}">
                                             <span class="glyphicon glyphicon-align-justify"></span>
                                         </button>
                                         {% endifequal %}
@@ -136,7 +136,7 @@
                                         </button>
                                         {% ifequal compute.hypervisor 'qemu' %}
                                         <a href="#" class="btn btn-sm btn-default"
-                                           onclick='open_vnc("{{ host_id }}-{{ inst.uuid }}")' title="{% trans "VNC" %}">
+                                           onclick='open_console("{{ host_id }}-{{ inst.uuid }}")' title="{% trans "Console" %}">
                                             <span class="glyphicon glyphicon-align-justify"></span>
                                         </a>
                                         {% endifequal %}
@@ -192,7 +192,7 @@
                                 + "<button class='btn btn-sm btn-default' type='submit' name='destroy' title='{% trans "Force Shutdown" %}' onclick='return confirm('Are you sure?')'>"
                                 + "<span class='glyphicon glyphicon-stop'></span>"
                                 + "</button> "
-                                + "<a href='#' class='btn btn-sm btn-default' onclick='open_vnc(\"" + data[i]['host'] + "-" + data[i]['uuid'] + "\")' title='{% trans "VNC" %}'>"
+                                + "<a href='#' class='btn btn-sm btn-default' onclick='open_console(\"" + data[i]['host'] + "-" + data[i]['uuid'] + "\")' title='{% trans "Console" %}'>"
                                 + "<span class='glyphicon glyphicon-align-justify'></span>"
                                 + "</a> "
                                 + "</form>"
@@ -221,7 +221,7 @@
                                 + "<button class='btn btn-sm btn-default disabled' title='{% trans "Force Shutdown" %}'>"
                                 + "<span class='glyphicon glyphicon-stop'></span>"
                                 + "</button> "
-                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "VNC" %}'>"
+                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Console" %}'>"
                                 + "<span class='glyphicon glyphicon-align-justify'></span>"
                                 + "</button> "
                                 + "</form>"
@@ -250,7 +250,7 @@
                                 + "<button class='btn btn-sm btn-default disabled' title='{% trans "Force Shutdown" %}'>"
                                 + "<span class='glyphicon glyphicon-stop'></span>"
                                 + "</button> "
-                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "VNC" %}'>"
+                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Console" %}'>"
                                 + "<span class='glyphicon glyphicon-align-justify'></span>"
                                 + "</button> "
                                 + "</form>"
@@ -262,7 +262,7 @@
         $(function () {
             window.setInterval('status()', {{ time_refresh }});
         });
-        function open_vnc(uuid) {
+        function open_console(uuid) {
             window.open("/console/?token=" + uuid, "", "width=850,height=485");
         }
     </script>

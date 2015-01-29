@@ -5,6 +5,8 @@ import string
 from vrtManager import util
 from vrtManager.connection import wvmConnect
 
+from webvirtmgr.settings import QEMU_CONSOLE_DEFAULT_TYPE
+
 
 def get_rbd_storage_data(stg):
     xml = stg.XMLDesc(0)
@@ -202,7 +204,7 @@ class wvmCreate(wvmConnect):
 
         xml += """  <input type='mouse' bus='ps2'/>
                     <input type='tablet' bus='usb'/>
-                    <graphics type='vnc' port='-1' autoport='yes' listen='0.0.0.0'>
+                    <graphics type='%s' port='-1' autoport='yes' listen='0.0.0.0'>
                       <listen type='address' address='0.0.0.0'/>
                     </graphics>
                     <console type='pty'/>
@@ -211,5 +213,5 @@ class wvmCreate(wvmConnect):
                     </video>
                     <memballoon model='virtio'/>
                   </devices>
-                </domain>"""
+                </domain>""" % QEMU_CONSOLE_DEFAULT_TYPE
         self._defineXML(xml)

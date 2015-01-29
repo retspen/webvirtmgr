@@ -16,7 +16,7 @@ from servers.models import Compute
 from vrtManager.instance import wvmInstances, wvmInstance
 
 from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE
-from webvirtmgr.settings import TIME_JS_REFRESH, QEMU_KEYMAPS
+from webvirtmgr.settings import TIME_JS_REFRESH, QEMU_KEYMAPS, QEMU_CONSOLE_TYPES
 
 
 def instusage(request, host_id, vname):
@@ -67,22 +67,14 @@ def instusage(request, host_id, vname):
         net_usage = None
 
     if status and status == 1:
-        try:
-            cookies['cpu'] = request._cookies['cpu']
-            cookies['hdd'] = request._cookies['hdd']
-            cookies['net'] = request._cookies['net']
-            cookies['timer'] = request._cookies['timer']
-        except KeyError:
-            cookies['cpu'] = None
-            cookies['hdd'] = None
-            cookies['net'] = None
+        cookies = request._get_cookies()
 
-        if cookies['cpu'] == '{}' or not cookies['cpu'] or not cpu_usage:
+        if cookies.get('cpu') == '{}' or not cookies.get('cpu') or not cpu_usage:
             datasets['cpu'] = [0]
             datasets['timer'] = [curent_time]
         else:
-            datasets['cpu'] = eval(cookies['cpu'])
-            datasets['timer'] = eval(cookies['timer'])
+            datasets['cpu'] = eval(cookies.get('cpu'))
+            datasets['timer'] = eval(cookies.get('timer'))
 
         datasets['timer'].append(curent_time)
         datasets['cpu'].append(int(cpu_usage['cpu']))
@@ -106,11 +98,11 @@ def instusage(request, host_id, vname):
         }
 
         for blk in blk_usage:
-            if cookies['hdd'] == '{}' or not cookies['hdd'] or not blk_usage:
+            if cookies.get('hdd') == '{}' or not cookies.get('hdd') or not blk_usage:
                 datasets_wr.append(0)
                 datasets_rd.append(0)
             else:
-                datasets['hdd'] = eval(cookies['hdd'])
+                datasets['hdd'] = eval(cookies.get('hdd'))
                 try:
                     datasets_rd = datasets['hdd'][blk['dev']][0]
                     datasets_wr = datasets['hdd'][blk['dev']][1]
@@ -150,11 +142,11 @@ def instusage(request, host_id, vname):
                 cookie_blk[blk['dev']] = [datasets_rd, datasets_wr]
 
         for net in net_usage:
-            if cookies['net'] == '{}' or not cookies['net'] or not net_usage:
+            if cookies.get('net') == '{}' or not cookies.get('net') or not net_usage:
                 datasets_rx.append(0)
                 datasets_tx.append(0)
             else:
-                datasets['net'] = eval(cookies['net'])
+                datasets['net'] = eval(cookies.get('net'))
                 try:
                     datasets_rx = datasets['net'][net['dev']][0]
                     datasets_tx = datasets['net'][net['dev']][1]
@@ -408,6 +400,8 @@ def instance(request, host_id, vname):
     def show_clone_disk(disks):
         clone_disk = []
         for disk in disks:
+            if disk['image'] is None:
+                continue
             if disk['image'].count(".") and len(disk['image'].rsplit(".", 1)[1]) <= 7:
                 name, suffix = disk['image'].rsplit(".", 1)
                 image = name + "-clone" + "." + suffix
@@ -424,6 +418,7 @@ def instance(request, host_id, vname):
     computes = Compute.objects.all()
     computes_count = len(computes)
     keymaps = QEMU_KEYMAPS
+    console_types = QEMU_CONSOLE_TYPES
 
     try:
         conn = wvmInstance(compute.hostname,
@@ -444,9 +439,9 @@ def instance(request, host_id, vname):
         networks = conn.get_net_device()
         vcpu_range = conn.get_max_cpus()
         memory_range = [256, 512, 768, 1024, 2048, 4096, 6144, 8192, 16384]
-        if not memory in memory_range:
+        if memory not in memory_range:
             insort(memory_range, memory)
-        if not cur_memory in memory_range:
+        if cur_memory not in memory_range:
             insort(memory_range, cur_memory)
         memory_host = conn.get_max_memory()
         vcpu_host = len(vcpu_range)
@@ -455,9 +450,10 @@ def instance(request, host_id, vname):
         if compute.hypervisor == 'qemu':
             snapshots = sorted(conn.get_snapshot(), reverse=True)
             has_managed_save_image = conn.get_managed_save_image()
-            vnc_passwd = conn.get_vnc_passwd()
-            vnc_port = conn.get_vnc_port()
-            vnc_keymap = conn.get_vnc_keymap()
+            console_type = conn.get_console_type()
+            console_port = conn.get_console_port()
+            console_keymap = conn.get_console_keymap()
+            console_passwd = conn.get_console_passwd()
             media_iso = sorted(conn.get_iso_media())
             media = conn.get_media_device()
             disks = conn.get_disk_device()
@@ -557,29 +553,37 @@ def instance(request, host_id, vname):
                 if xml:
                     conn._defineXML(xml)
                     return HttpResponseRedirect(request.get_full_path() + '#instancexml')
-            if 'set_vnc_passwd' in request.POST:
+            if 'set_console_passwd' in request.POST:
                 if request.POST.get('auto_pass', ''):
                     passwd = ''.join([choice(letters + digits) for i in xrange(12)])
                 else:
-                    passwd = request.POST.get('vnc_passwd', '')
+                    passwd = request.POST.get('console_passwd', '')
                     clear = request.POST.get('clear_pass', False)
                     if clear:
                         passwd = ''
                     if not passwd and not clear:
-                        msg = _("Enter the VNC password or select Generate")
+                        msg = _("Enter the console password or select Generate")
                         errors.append(msg)
                 if not errors:
-                    conn.set_vnc_passwd(passwd)
-                    return HttpResponseRedirect(request.get_full_path() + '#vnc_pass')
+                    if not conn.set_console_passwd(passwd):
+                        msg = _("Error setting console password. You should check that your instance have an graphic device.")
+                        errors.append(msg)
+                    else:
+                        return HttpResponseRedirect(request.get_full_path() + '#console_pass')
 
-            if 'set_vnc_keymap' in request.POST:
-                keymap = request.POST.get('vnc_keymap', '')
+            if 'set_console_keymap' in request.POST:
+                keymap = request.POST.get('console_keymap', '')
                 clear = request.POST.get('clear_keymap', False)
                 if clear:
-                    conn.set_vnc_keymap('')
+                    conn.set_console_keymap('')
                 else:
-                    conn.set_vnc_keymap(keymap)
-                return HttpResponseRedirect(request.get_full_path() + '#vnc_keymap')
+                    conn.set_console_keymap(keymap)
+                return HttpResponseRedirect(request.get_full_path() + '#console_keymap')
+
+            if 'set_console_type' in request.POST:
+                console_type = request.POST.get('console_type', '')
+                conn.set_console_type(console_type)
+                return HttpResponseRedirect(request.get_full_path() + '#console_type')
 
             if 'migrate' in request.POST:
                 compute_id = request.POST.get('compute_id', '')
