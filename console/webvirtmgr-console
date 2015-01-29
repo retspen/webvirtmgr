@@ -16,13 +16,12 @@ if ROOT_PATH not in sys.path:
 
 import Cookie
 import socket
-import django
 from webvirtmgr.settings import WS_PORT
 from webvirtmgr.settings import WS_HOST
 
 from webvirtmgr.settings import WS_CERT
 if WS_CERT:
-	CERT = WS_CERT
+    CERT = WS_CERT
 
 from vrtManager.connection import CONN_SSH, CONN_SOCKET
 
@@ -43,7 +42,8 @@ except ImportError:
     try:
         from novnc.wsproxy import WebSocketProxy
     except ImportError:
-        print('Unable to import a websockify implementation, please install one')
+        print('Unable to import a websockify implementation,' +
+              'please install one')
         sys.exit(1)
     else:
         USE_HANDLER = False
@@ -67,10 +67,10 @@ def get_connection_infos(token):
             connhost = host.split(':')[0]
             connport = host.split(':')[1]
         else:
-            connhost =  instance.compute.hostname
+            connhost = instance.compute.hostname
             connport = 22
         connuser = instance.compute.login
-	conntype = instance.compute.type
+        conntype = instance.compute.type
         console_host = conn.get_console_listen_addr()
         console_port = conn.get_console_port()
         console_socket = conn.get_console_socket()
@@ -78,11 +78,13 @@ def get_connection_infos(token):
         connhost = None
         connport = None
         connuser = None
-	conntype = None
-	console_host = None
-	console_port = None
-	console_socket = None
-    return connhost, connport, connuser, conntype, console_host, console_port, console_socket
+        conntype = None
+        console_host = None
+        console_port = None
+        console_socket = None
+    return (connhost, connport, connuser, conntype, console_host,
+            console_port, console_socket)
+
 
 class CompatibilityMixIn(object):
     def _new_client(self, daemon, socket_factory):
@@ -90,21 +92,25 @@ class CompatibilityMixIn(object):
         cookie.load(self.headers.getheader('cookie'))
         token = cookie['token'].value
 
-        connhost, connport, connuser, conntype, console_host, console_port, console_socket = get_connection_infos(token)
+        (connhost, connport, connuser, conntype, console_host, console_port,
+         console_socket) = get_connection_infos(token)
 
-        if console_socket and conntype==CONN_SOCKET:
+        if console_socket and conntype == CONN_SOCKET:
             # Local socket on local host
             self.msg('Try to open local socket %s' % console_socket)
             tsock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
             tsock.connect(console_socket)
-        elif console_socket or re.match('^127\.',console_host):
+        elif console_socket or re.match('^127\.', console_host):
             # Need tunnel to physical host
-            if conntype!=CONN_SSH:
-                self.msg("Need a tunnel to access console but can't mount one because it's not a SSH host")
+            if conntype != CONN_SSH:
+                self.msg("Need a tunnel to access console but can't mount" +
+                         " one because it's not a SSH host")
                 raise
             try:
-                self.msg("Try to open tunnel on %s@%s:%s on console %s:%s (or socket %s)" %
-                         (connuser,connhost,connport,console_host,console_port,console_socket))
+                self.msg("Try to open tunnel on %s@%s:%s on console %s:%s" +
+                         " (or socket %s)" %
+                         (connuser, connhost, connport, console_host,
+                          console_port, console_socket))
                 tunnel = Tunnel()
                 fd = tunnel.open(connhost, connuser, connport,
                                  console_host, console_port, console_socket)
@@ -128,7 +134,9 @@ class CompatibilityMixIn(object):
             self.do_proxy(tsock)
         except:
             if tunnel:
-                self.vmsg("%s:%s (via %s@%s:%s) : Target closed" % (console_host,console_port,connuser,connhost,connport))
+                self.vmsg(
+                    "%s:%s (via %s@%s:%s) : Target closed" %
+                    (console_host, console_port, connuser, connhost, connport))
                 if tsock:
                     tsock.shutdown(socket.SHUT_RDWR)
                     tsock.close()

@@ -417,9 +417,9 @@ def instance(request, host_id, vname):
         media_iso = sorted(conn.get_iso_media())
         vcpu_range = conn.get_max_cpus()
         memory_range = [256, 512, 768, 1024, 2048, 4096, 6144, 8192, 16384]
-        if not memory in memory_range:
+        if memory not in memory_range:
             insort(memory_range, memory)
-        if not cur_memory in memory_range:
+        if cur_memory not in memory_range:
             insort(memory_range, cur_memory)
         memory_host = conn.get_max_memory()
         vcpu_host = len(vcpu_range)
