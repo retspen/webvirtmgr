@@ -42,7 +42,7 @@ except ImportError:
     try:
         from novnc.wsproxy import WebSocketProxy
     except ImportError:
-        print('Unable to import a websockify implementation,' +
+        print('Unable to import a websockify implementation, ' +
               'please install one')
         sys.exit(1)
     else:
@@ -103,12 +103,12 @@ class CompatibilityMixIn(object):
         elif console_socket or re.match('^127\.', console_host):
             # Need tunnel to physical host
             if conntype != CONN_SSH:
-                self.msg("Need a tunnel to access console but can't mount" +
-                         " one because it's not a SSH host")
+                self.msg("Need a tunnel to access console but can't mount " +
+                         "one because it's not a SSH host")
                 raise
             try:
-                self.msg("Try to open tunnel on %s@%s:%s on console %s:%s" +
-                         " (or socket %s)" %
+                self.msg("Try to open tunnel on %s@%s:%s on console %s:%s " +
+                         "(or socket %s)" %
                          (connuser, connhost, connport, console_host,
                           console_port, console_socket))
                 tunnel = Tunnel()
