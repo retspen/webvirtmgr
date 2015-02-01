@@ -282,23 +282,17 @@ def insts_status(request, host_id):
         errors.append(err)
 
     for instance in get_instances:
+        instance_info = ({'name': instance,
+                          'status': conn.get_instance_status(instance),
+                          'memory': conn.get_instance_memory(instance),
+                          'vcpu': conn.get_instance_vcpu(instance),
+                          'uuid': conn.get_uuid(instance),
+                          'host': host_id,
+                          'hypervisor': compute.hypervisor
+                          })
         if compute.hypervisor == 'qemu':
-            instances.append({'name': instance,
-                              'status': conn.get_instance_status(instance),
-                              'memory': conn.get_instance_memory(instance),
-                              'vcpu': conn.get_instance_vcpu(instance),
-                              'uuid': conn.get_uuid(instance),
-                              'host': host_id,
-                              'dump': conn.get_instance_managed_save_image(instance)
-                              })
-        else:
-            instances.append({'name': instance,
-                              'status': conn.get_instance_status(instance),
-                              'memory': conn.get_instance_memory(instance),
-                              'vcpu': conn.get_instance_vcpu(instance),
-                              'uuid': conn.get_uuid(instance),
-                              'host': host_id
-                              })
+            instance_info['dump'] = conn.get_instance_managed_save_image(instance)
+        instances.append(instance_info)
 
     data = json.dumps(instances)
     response = HttpResponse()
