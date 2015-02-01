@@ -163,7 +163,7 @@
                 for (var i = 0; i < data.length; i++) {
                     var elem = '#' + data[i]['name']
                     if (data[i]['hypervisor'] === 'qemu') {
-                        var save = "<button class='btn btn-sm btn-default' type='submit' name='managedsave' title='{% trans "Save" %}'>
+                        var save = "<button class='btn btn-sm btn-default' type='submit' name='managedsave' title='{% trans "Save" %}'>"
                                  + "<span class='glyphicon glyphicon-download-alt'></span>"
                                  + "</button> "
                         var console = "<a href='#' class='btn btn-sm btn-default' onclick='open_console(\"" + data[i]['host'] + "-" + data[i]['uuid'] + "\")' title='{% trans "Console" %}'>"
