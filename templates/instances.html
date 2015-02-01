@@ -166,9 +166,9 @@
                         var save = "<button class='btn btn-sm btn-default' type='submit' name='managedsave' title='{% trans "Save" %}'>"
                                  + "<span class='glyphicon glyphicon-download-alt'></span>"
                                  + "</button> "
-                        var console = "<a href='#' class='btn btn-sm btn-default' onclick='open_console(\"" + data[i]['host'] + "-" + data[i]['uuid'] + "\")' title='{% trans "Console" %}'>"
+                        var console = "<button class='btn btn-sm btn-default disabled' title='{% trans "Console" %}'>"
                                     + "<span class='glyphicon glyphicon-align-justify'></span>"
-                                    + "</a> "
+                                    + "</button>"
                     }
                     if (data[i]['status'] === 1) {
                         if (data[i]['dump'] === 1) {
@@ -179,6 +179,11 @@
                             var btn = "<button class='btn btn-sm btn-default' type='submit' name='shutdown' title='{% trans "Shutdown" %}'>"
                                     + "<span class='glyphicon glyphicon-off'></span>"
                                     + "</button> ";
+                        }
+                        if (data[i]['hypervisor'] === 'qemu') {
+                            var console = "<a href='#' class='btn btn-sm btn-default' onclick='open_console(\"" + data[i]['host'] + "-" + data[i]['uuid'] + "\")' title='{% trans "Console" %}'>"
+                                        + "<span class='glyphicon glyphicon-align-justify'></span>"
+                                        + "</a> "
                         }
                         $(elem).html("<td><a href='/instance/{{ host_id }}/" + data[i]['name'] + "'><i class='icon-th-large'></i> " + data[i]['name'] + "</a></td>"
                                 + "<td><span class='label label-success'>{% trans "Running" %}</span></td>"
