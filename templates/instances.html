@@ -162,6 +162,14 @@
             $.getJSON('{% url 'insts_status' host_id %}', function (data) {
                 for (var i = 0; i < data.length; i++) {
                     var elem = '#' + data[i]['name']
+                    if (data[i]['hypervisro] === 'qemu') {
+                        var save = "<button class='btn btn-sm btn-default' type='submit' name='managedsave' title='{% trans "Save" %}'>
+                                 + "<span class='glyphicon glyphicon-download-alt'></span>"
+                                 + "</button> "
+                        var console = "<a href='#' class='btn btn-sm btn-default' onclick='open_console(\"" + data[i]['host'] + "-" + data[i]['uuid'] + "\")' title='{% trans "Console" %}'>"
+                                    + "<span class='glyphicon glyphicon-align-justify'></span>"
+                                    + "</a> "
+                    }
                     if (data[i]['status'] === 1) {
                         if (data[i]['dump'] === 1) {
                             var btn = "<button class='btn btn-sm btn-default' type='submit' name='deletesaveimage' title='{% trans "Delete Save Image" %}'>"
@@ -185,16 +193,12 @@
                                 + "<button class='btn btn-sm btn-default' type='submit' name='suspend' title='{% trans "Suspend" %}'>"
                                 + "<span class='glyphicon glyphicon-pause'></span>"
                                 + "</button> "
-                                + "<button class='btn btn-sm btn-default' type='submit' name='managedsave' title='{% trans "Save" %}'>"
-                                + "<span class='glyphicon glyphicon-download-alt'></span>"
-                                + "</button> "
+                                + save
                                 + btn
                                 + "<button class='btn btn-sm btn-default' type='submit' name='destroy' title='{% trans "Force Shutdown" %}' onclick='return confirm('Are you sure?')'>"
                                 + "<span class='glyphicon glyphicon-stop'></span>"
                                 + "</button> "
-                                + "<a href='#' class='btn btn-sm btn-default' onclick='open_console(\"" + data[i]['host'] + "-" + data[i]['uuid'] + "\")' title='{% trans "Console" %}'>"
-                                + "<span class='glyphicon glyphicon-align-justify'></span>"
-                                + "</a> "
+                                + console
                                 + "</form>"
                                 + "</td>");
                     }
@@ -212,18 +216,14 @@
                                 + "<button class='btn btn-sm btn-default disabled' title='{% trans "Suspend" %}'>"
                                 + "<span class='glyphicon glyphicon-pause'></span>"
                                 + "</button> "
-                                + "<button class='btn btn-sm btn-default' type='submit' name='managedsave' title='{% trans "Save" %}'>"
-                                + "<span class='glyphicon glyphicon-download-alt'></span>"
-                                + "</button> "
+                                + save
                                 + "<button class='btn btn-sm btn-default disabled' title='{% trans "Shutdown" %}'>"
                                 + "<span class='glyphicon glyphicon-off''></span>"
                                 + "</button> "
                                 + "<button class='btn btn-sm btn-default disabled' title='{% trans "Force Shutdown" %}'>"
                                 + "<span class='glyphicon glyphicon-stop'></span>"
                                 + "</button> "
-                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Console" %}'>"
-                                + "<span class='glyphicon glyphicon-align-justify'></span>"
-                                + "</button> "
+                                + console
                                 + "</form>"
                                 + "</td>");
                     }
@@ -241,18 +241,14 @@
                                 + "<button class='btn btn-sm btn-default disabled' title='{% trans "Suspend" %}'>"
                                 + "<span class='glyphicon glyphicon-pause'></span>"
                                 + "</button> "
-                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Save" %}'>"
-                                + "<span class='glyphicon glyphicon-download-alt'></span>"
-                                + "</button> "
+                                + save
                                 + "<button class='btn btn-sm btn-default disabled' title='{% trans "Shutdown" %}'>"
                                 + "<span class='glyphicon glyphicon-off'></span>"
                                 + "</button> "
                                 + "<button class='btn btn-sm btn-default disabled' title='{% trans "Force Shutdown" %}'>"
                                 + "<span class='glyphicon glyphicon-stop'></span>"
                                 + "</button> "
-                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Console" %}'>"
-                                + "<span class='glyphicon glyphicon-align-justify'></span>"
-                                + "</button> "
+                                + console
                                 + "</form>"
                                 + "</td>");
                     }
