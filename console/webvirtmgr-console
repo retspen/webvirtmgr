@@ -109,6 +109,7 @@ class CompatibilityMixIn(object):
             try:
                 # generate a string with all placeholders to avoid TypeErrors
                 # in sprintf
+                # https://github.com/retspen/webvirtmgr/pull/497
                 error_msg = "Try to open tunnel on %s@%s:%s on console %s:%s "
                 error_msg += "(or socket %s)"
                 self.msg(error_msg % (connuser, connhost, connport, console_host,
