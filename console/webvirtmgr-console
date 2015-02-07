@@ -107,10 +107,12 @@ class CompatibilityMixIn(object):
                          "one because it's not a SSH host")
                 raise
             try:
-                self.msg("Try to open tunnel on %s@%s:%s on console %s:%s " +
-                         "(or socket %s)" %
-                         (connuser, connhost, connport, console_host,
-                          console_port, console_socket))
+                # generate a string with all placeholders to avoid TypeErrors
+                # in sprintf
+                error_msg = "Try to open tunnel on %s@%s:%s on console %s:%s "
+                error_msg += "(or socket %s)"
+                self.msg(error_msg % (connuser, connhost, connport, console_host,
+                         console_port, console_socket))
                 tunnel = Tunnel()
                 fd = tunnel.open(connhost, connuser, connport,
                                  console_host, console_port, console_socket)
