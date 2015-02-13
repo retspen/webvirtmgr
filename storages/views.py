@@ -2,6 +2,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
+from django.core.urlresolvers import reverse
 
 from servers.models import Compute
 from storages.forms import AddStgPool, AddImage, CloneImage
@@ -16,7 +17,7 @@ def storages(request, host_id):
     Storage pool block
     """
     if not request.user.is_authenticated():
-        return HttpResponseRedirect('/login')
+        return HttpResponseRedirect(reverse('login'))
 
     errors = []
     compute = Compute.objects.get(id=host_id)
@@ -55,7 +56,7 @@ def storages(request, host_id):
                                                       data['source_format'], data['target'])
                         else:
                             conn.create_storage(data['stg_type'], data['name'], data['source'], data['target'])
-                        return HttpResponseRedirect('/storage/%s/%s/' % (host_id, data['name']))
+                        return HttpResponseRedirect(reverse('storage', args=[host_id, data['name']]))
         conn.close()
     except libvirtError as err:
         errors.append(err)
@@ -68,7 +69,7 @@ def storage(request, host_id, pool):
     Storage pool block
     """
     if not request.user.is_authenticated():
-        return HttpResponseRedirect('/login')
+        return HttpResponseRedirect(reverse('login'))
 
     def handle_uploaded_file(path, f_name):
         target = path + '/' + str(f_name)
@@ -125,7 +126,7 @@ def storage(request, host_id, pool):
         if 'delete' in request.POST:
             try:
                 conn.delete()
-                return HttpResponseRedirect('/storages/%s/' % host_id)
+                return HttpResponseRedirect(reverse('storages', args=[host_id]))
             except libvirtError as error_msg:
                 errors.append(error_msg.message)
         if 'set_autostart' in request.POST:

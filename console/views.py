@@ -3,6 +3,7 @@ import re
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
+from django.core.urlresolvers import reverse
 
 from instance.models import Instance
 from vrtManager.instance import wvmInstance
@@ -16,7 +17,7 @@ def console(request):
     Console instance block
     """
     if not request.user.is_authenticated():
-        return HttpResponseRedirect('/login')
+        return HttpResponseRedirect(reverse('login'))
 
     if request.method == 'GET':
         token = request.GET.get('token', '')
