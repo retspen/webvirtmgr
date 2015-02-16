@@ -6,6 +6,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
+from django.core.urlresolvers import reverse
 import json
 import time
 
@@ -23,7 +24,7 @@ def instusage(request, host_id, vname):
     Return instance usage
     """
     if not request.user.is_authenticated():
-        return HttpResponseRedirect('/login')
+        return HttpResponseRedirect(reverse('login'))
 
     cookies = {}
     datasets = {}
@@ -263,7 +264,7 @@ def insts_status(request, host_id):
     Instances block
     """
     if not request.user.is_authenticated():
-        return HttpResponseRedirect('/login')
+        return HttpResponseRedirect(reverse('login'))
 
     errors = []
     instances = []
@@ -300,7 +301,7 @@ def instances(request, host_id):
     Instances block
     """
     if not request.user.is_authenticated():
-        return HttpResponseRedirect('/login')
+        return HttpResponseRedirect(reverse('login'))
 
     errors = []
     instances = []
@@ -371,7 +372,7 @@ def instance(request, host_id, vname):
     Instance block
     """
     if not request.user.is_authenticated():
-        return HttpResponseRedirect('/login')
+        return HttpResponseRedirect(reverse('login'))
 
     def show_clone_disk(disks):
         clone_disk = []
@@ -478,7 +479,7 @@ def instance(request, host_id, vname):
                         conn.delete_disk()
                 finally:
                     conn.delete()
-                return HttpResponseRedirect('/instances/%s/' % host_id)
+                return HttpResponseRedirect(reverse('instances', args=[host_id]))
             if 'snapshot' in request.POST:
                 name = request.POST.get('name', '')
                 conn.create_snapshot(name)
@@ -563,7 +564,7 @@ def instance(request, host_id, vname):
                 conn_migrate.moveto(conn, vname, live, unsafe, xml_del)
                 conn_migrate.define_move(vname)
                 conn_migrate.close()
-                return HttpResponseRedirect('/instance/%s/%s' % (compute_id, vname))
+                return HttpResponseRedirect(reverse('instance', args=[compute_id, vname]))
             if 'delete_snapshot' in request.POST:
                 snap_name = request.POST.get('name', '')
                 conn.snapshot_delete(snap_name)
@@ -583,7 +584,7 @@ def instance(request, host_id, vname):
                         clone_data[post] = request.POST.get(post, '')
 
                 conn.clone_instance(clone_data)
-                return HttpResponseRedirect('/instance/%s/%s' % (host_id, clone_data['name']))
+                return HttpResponseRedirect(reverse('instance', args=[host_id, clone_data['name']]))
 
         conn.close()
 

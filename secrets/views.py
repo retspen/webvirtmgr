@@ -1,6 +1,7 @@
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
+from django.core.urlresolvers import reverse
 
 from servers.models import Compute
 from secrets.forms import AddSecret
@@ -15,7 +16,7 @@ def secrets(request, host_id):
     Networks block
     """
     if not request.user.is_authenticated():
-        return HttpResponseRedirect('/login')
+        return HttpResponseRedirect(reverse('login'))
 
     errors = []
     secrets_all = []

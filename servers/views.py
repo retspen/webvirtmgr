@@ -1,6 +1,7 @@
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
+from django.core.urlresolvers import reverse
 
 from servers.models import Compute
 from instance.models import Instance
@@ -17,9 +18,9 @@ def index(request):
 
     """
     if not request.user.is_authenticated():
-        return HttpResponseRedirect('/login')
+        return HttpResponseRedirect(reverse('login'))
     else:
-        return HttpResponseRedirect('/servers')
+        return HttpResponseRedirect(reverse('servers_list'))
 
 
 def servers_list(request):
@@ -27,7 +28,7 @@ def servers_list(request):
     Servers page.
     """
     if not request.user.is_authenticated():
-        return HttpResponseRedirect('/login')
+        return HttpResponseRedirect(reverse('login'))
 
     def get_hosts_status(hosts):
         """
@@ -124,7 +125,7 @@ def infrastructure(request):
     Infrastructure page.
     """
     if not request.user.is_authenticated():
-        return HttpResponseRedirect('/login')
+        return HttpResponseRedirect(reverse('login'))
 
     compute = Compute.objects.filter()
     hosts_vms = {}
