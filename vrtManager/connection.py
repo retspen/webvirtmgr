@@ -157,7 +157,7 @@ class wvmConnection(object):
     def __connect_tcp(self):
         flags = [libvirt.VIR_CRED_AUTHNAME, libvirt.VIR_CRED_PASSPHRASE]
         auth = [flags, self.__libvirt_auth_credentials_callback, None]
-        uri = 'qemu+tcp://%s/system' % self.host
+        uri = 'qemu+tcp://%s@%s/system' % self.host
 
         try:
             self.connection = libvirt.openAuth(uri, auth, 0)
