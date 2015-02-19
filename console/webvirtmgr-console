@@ -2,6 +2,7 @@
 
 import os
 import sys
+import logging
 
 DIR_PATH = os.path.dirname(os.path.abspath(__file__))
 ROOT_PATH = os.path.abspath(os.path.join(DIR_PATH, '..', ''))
@@ -16,18 +17,62 @@ if ROOT_PATH not in sys.path:
 
 import Cookie
 import socket
-from webvirtmgr.settings import WS_PORT
-from webvirtmgr.settings import WS_HOST
-
-from webvirtmgr.settings import WS_CERT
-if WS_CERT:
-    CERT = WS_CERT
+from webvirtmgr.settings import WS_PORT, WS_HOST, WS_CERT
 
 from vrtManager.connection import CONN_SSH, CONN_SOCKET
 
 import re
 
 from tunnel import Tunnel
+
+from optparse import OptionParser
+parser = OptionParser()
+
+parser.add_option("-v",
+                  "--verbose",
+                  dest="verbose",
+                  action="store_true",
+                  help="Verbose mode",
+                  default=False)
+
+parser.add_option("-d",
+                  "--debug",
+                  dest="debug",
+                  action="store_true",
+                  help="Debug mode",
+                  default=False)
+
+parser.add_option("-H",
+                  "--host",
+                  dest="host",
+                  action="store",
+                  help="Listen host",
+                  default=WS_HOST)
+
+parser.add_option("-p",
+                  "--port",
+                  dest="port",
+                  action="store",
+                  help="Listen port",
+                  default=WS_PORT or 6080)
+
+parser.add_option("-c",
+                  "--cert",
+                  dest="cert",
+                  action="store",
+                  help="Certificate file path",
+                  default=WS_CERT or CERT)
+
+(options, args) = parser.parse_args()
+
+FORMAT="%(asctime)s - %(name)s - %(levelname)s : %(message)s"
+if options.debug:
+    logging.basicConfig(level=logging.DEBUG,format=FORMAT)
+    options.verbose=True
+elif options.verbose:
+    logging.basicConfig(level=logging.INFO,format=FORMAT)
+else:
+    logging.basicConfig(level=logging.WARNING,format=FORMAT)
 
 try:
     from websockify import WebSocketProxy
@@ -184,11 +229,11 @@ if __name__ == '__main__':
     if USE_HANDLER:
         # Create the WebSocketProxy with NovaProxyRequestHandler handler
         server = WebSocketProxy(RequestHandlerClass=NovaProxyRequestHandler,
-                                listen_host=WS_HOST,
-                                listen_port=WS_PORT,
+                                listen_host=options.host,
+                                listen_port=options.port,
                                 source_is_ipv6=False,
-                                verbose=False,
-                                cert=CERT,
+                                verbose=options.verbose,
+                                cert=options.cert,
                                 key=None,
                                 ssl_only=False,
                                 daemon=False,
@@ -201,11 +246,11 @@ if __name__ == '__main__':
                                 wrap_cmd=None)
     else:
         # Create the NovaWebSockets proxy
-        server = NovaWebSocketProxy(listen_host=WS_HOST,
-                                    listen_port=WS_PORT,
+        server = NovaWebSocketProxy(listen_host=options.host,
+                                    listen_port=options.port,
                                     source_is_ipv6=False,
-                                    verbose=False,
-                                    cert=CERT,
+                                    verbose=options.verbose,
+                                    cert=options.cert,
                                     key=None,
                                     ssl_only=False,
                                     daemon=False,
