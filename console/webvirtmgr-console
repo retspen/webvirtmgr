@@ -135,6 +135,9 @@ class CompatibilityMixIn(object):
     def _new_client(self, daemon, socket_factory):
         cookie = Cookie.SimpleCookie()
         cookie.load(self.headers.getheader('cookie'))
+        if 'token' not in cookie:
+            self.msg('No token cookie found !')
+            return False
         token = cookie['token'].value
 
         (connhost, connport, connuser, conntype, console_host, console_port,
