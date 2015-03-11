@@ -30,7 +30,7 @@ class AddStgPool(forms.Form):
     def clean_target(self):
         storage_type = self.cleaned_data['stg_type']
         target = self.cleaned_data['target']
-        have_symbol = re.match('^[a-zA-Z0-9/]+$', target)
+        have_symbol = re.match('^[a-zA-Z0-]+$', target)
         if storage_type == 'dir' or storage_type == 'netfs':
             if not have_symbol:
                 raise forms.ValidationError(_('The target must not contain any special characters'))
