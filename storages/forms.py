@@ -42,7 +42,7 @@ class AddStgPool(forms.Form):
     def clean_source(self):
         storage_type = self.cleaned_data['stg_type']
         source = self.cleaned_data['source']
-        have_symbol = re.match('^[a-zA-Z0-9\/]+$', source)
+        have_symbol = re.match('^[a-zA-Z0-9\/_]+$', source)
         if storage_type == 'logical' or storage_type == 'netfs':
             if not source:
                 raise forms.ValidationError(_('No device has been entered'))
