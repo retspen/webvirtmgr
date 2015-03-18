@@ -76,13 +76,15 @@
         #spice-menu li {
             width: auto;
             float: left;
-            margin: 0px;
+            margin: 2px;
             padding: 0px;
             border: 0px none;
             position: relative;
-            height: 26px;
+            height: 18px;
             cursor: pointer;
             padding: 0.2em;
+            background: #eee;
+            border-radius: 3px;
         }
         
         #spice-menu .spice-submenu {
@@ -97,7 +99,6 @@
         }
         
         #spice-menu .spice-submenu li {
-            background: #eee;
             float: none;
             margin: 0;
             padding: 0;
@@ -109,11 +110,13 @@
             white-space: nowrap;
             min-width: 100px;
             padding: 0.2em;
+            border-radius: 0;
         }
         
         #spice-menu li:hover > .spice-submenu {
           opacity: 1;
           display: block;
+          margin: 2px 0 0 -2px;
         }
         
         #spice-menu li:hover > .spice-submenu li {
