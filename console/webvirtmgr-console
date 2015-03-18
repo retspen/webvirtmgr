@@ -119,14 +119,9 @@ def get_connection_infos(token):
         console_host = conn.get_console_listen_addr()
         console_port = conn.get_console_port()
         console_socket = conn.get_console_socket()
-    except:
-        connhost = None
-        connport = None
-        connuser = None
-        conntype = None
-        console_host = None
-        console_port = None
-        console_socket = None
+    except Exception,e:
+        logging.error('Fail to retrieve console connexion infos for token %s : %s' % (token,e))
+        raise
     return (connhost, connport, connuser, conntype, console_host,
             console_port, console_socket)
 
@@ -142,6 +137,16 @@ class CompatibilityMixIn(object):
 
         (connhost, connport, connuser, conntype, console_host, console_port,
          console_socket) = get_connection_infos(token)
+
+        cnx_debug_msg = "Connexion infos :\n"
+        cnx_debug_msg += "- connhost : '%s'\n" % connhost 
+        cnx_debug_msg += "- connport : '%s'\n" % connport 
+        cnx_debug_msg += "- connuser : '%s'\n" % connuser 
+        cnx_debug_msg += "- conntype : '%s'\n" % conntype 
+        cnx_debug_msg += "- console_host : '%s'\n" % console_host 
+        cnx_debug_msg += "- console_port : '%s'\n" % console_port 
+        cnx_debug_msg += "- console_socket : '%s'\n" % console_socket 
+        logging.debug(cnx_debug_msg)
 
         if console_socket and conntype == CONN_SOCKET:
             # Local socket on local host
