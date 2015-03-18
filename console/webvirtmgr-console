@@ -109,8 +109,8 @@ def get_connection_infos(token):
                            instance.compute.type,
                            instance.name)
         if instance.compute.hostname.count(':'):
-            connhost = host.split(':')[0]
-            connport = host.split(':')[1]
+            connhost = instance.compute.hostname.split(':')[0]
+            connport = instance.compute.hostname.split(':')[1]
         else:
             connhost = instance.compute.hostname
             connport = 22
