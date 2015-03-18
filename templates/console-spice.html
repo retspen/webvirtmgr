@@ -141,6 +141,7 @@
               <li onclick='sendCtrlAltFN(11);'>Ctrl+Alt+F12</li>
             </ul>
         </li>
+        <li onclick='fullscreen()'>Fullscreen</li>
       </ul>
       <div id="status"></div>
     </div>
@@ -298,6 +299,19 @@
             
                     if(Ctrl_state == false) update_modifier(false, KEY_LCtrl, sc);
                     if(Alt_state == false) update_modifier(false, KEY_Alt, sc);
+                }
+            }
+
+            function fullscreen() {
+                var screen=document.getElementById('spice-screen');
+                if(screen.requestFullscreen) {
+                    screen.requestFullscreen();
+                } else if(screen.mozRequestFullScreen) {
+                    screen.mozRequestFullScreen();
+                } else if(screen.webkitRequestFullscreen) {
+                    screen.webkitRequestFullscreen();
+                } else if(screen.msRequestFullscreen) {
+                    screen.msRequestFullscreen();
                 }
             }
 

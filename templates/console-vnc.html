@@ -17,7 +17,7 @@
                 <td>
                     <div id="noVNC_status">{% trans "Loading..." %}</div>
                 </td>
-                <td width="18%" style="text-align:right;">
+                <td width="32%" style="text-align:right;">
                     <div id="noVNC_buttons">
                         <!-- dirty fix for keyboard on iOS devices -->
                         <input type="button" id="showKeyboard" value="Keyboard" title="Show Keyboard"/>
@@ -33,6 +33,7 @@
                         </textarea>
 
                         <input type=button value="Ctrl+Alt+Del" id="sendCtrlAltDelButton">
+                        <input type=button value="Fullscreen" id="askFullscreen">
                     </div>
                 </td>
             </tr>
@@ -101,10 +102,11 @@
     }
 
     function updateState(rfb, state, oldstate, msg) {
-        var s, sb, cad, level;
+        var s, sb, cad, af, level;
         s = $D('noVNC_status');
         sb = $D('noVNC_status_bar');
         cad = $D('sendCtrlAltDelButton');
+        af = $D('askFullscreen');
         switch (state) {
             case 'failed':
                 level = "error";
@@ -128,9 +130,11 @@
 
         if (state === "normal") {
             cad.disabled = false;
+            af.disabled = false;
         }
         else {
             cad.disabled = true;
+            af.disabled = true;
         }
 
         if (typeof(msg) !== 'undefined') {
@@ -139,11 +143,26 @@
         }
     }
 
+    function fullscreen() {
+        var screen=document.getElementById('noVNC_canvas');
+        if(screen.requestFullscreen) {
+            screen.requestFullscreen();
+        } else if(screen.mozRequestFullScreen) {
+            screen.mozRequestFullScreen();
+        } else if(screen.webkitRequestFullscreen) {
+            screen.webkitRequestFullscreen();
+        } else if(screen.msRequestFullscreen) {
+            screen.msRequestFullscreen();
+        }
+    }
+
     window.onscriptsload = function () {
         var host, port, password, path, token;
 
         $D('sendCtrlAltDelButton').style.display = "inline";
         $D('sendCtrlAltDelButton').onclick = sendCtrlAltDel;
+        $D('askFullscreen').style.display = "inline";
+        $D('askFullscreen').onclick = fullscreen;
 
         // dirty fix for keyboard on iOS devices
         if (isTouchDevice) {
