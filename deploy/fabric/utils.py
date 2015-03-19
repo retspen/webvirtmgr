@@ -107,16 +107,16 @@ def configure_novnc(distro):
             sudo("service novnc stop")
             sudo("rm /etc/init.d/novnc")
         sudo("update-rc.d -f novnc remove")
-        sudo("cp /var/www/webvirtmgr/conf/initd/webvirtmgr-novnc-ubuntu\
-             /etc/init.d/webvirtmgr-novnc")
-        sudo("service webvirtmgr-novnc start")
-        sudo("update-rc.d webvirtmgr-novnc defaults")
+        sudo("cp /var/www/webvirtmgr/conf/initd/webvirtmgr-console-ubuntu\
+             /etc/init.d/webvirtmgr-console")
+        sudo("service webvirtmgr-console start")
+        sudo("update-rc.d webvirtmgr-console defaults")
         sudo("chown -R www-data:www-data /var/www/webvirtmgr")
     elif distro in ["CentOS", "RHEL", "Fedora"]:
-        sudo("cp /var/www/webvirtmgr/conf/initd/webvirtmgr-novnc-redhat\
-             /etc/init.d/webvirtmgr-novnc")
-        sudo("service webvirtmgr-novnc start")
-        sudo("chkconfig webvirtmgr-novnc on")
+        sudo("cp /var/www/webvirtmgr/conf/initd/webvirtmgr-console-redhat\
+             /etc/init.d/webvirtmgr-console")
+        sudo("service webvirtmgr-console start")
+        sudo("chkconfig webvirtmgr-console on")
         sudo("chown -R nginx:nginx /var/www/webvirtmgr")
 
 

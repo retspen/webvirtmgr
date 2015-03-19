@@ -3,7 +3,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 description="WebVirtMgr NoVNC proxy"
-NAME=webvirtmgr-novnc
+NAME=webvirtmgr-console
 PIDFILE=/var/run/$NAME.pid
 
 checkconfig() {
