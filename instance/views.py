@@ -4,9 +4,11 @@ from bisect import insort
 
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect, HttpResponse
+from django.http import Http404
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
+from django.views.generic import TemplateView
 import json
 import time
 
@@ -296,47 +298,62 @@ def insts_status(request, host_id):
     return response
 
 
-def instances(request, host_id):
-    """
-    Instances block
-    """
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect(reverse('login'))
-
-    errors = []
-    instances = []
+class InstanceList(TemplateView):
+    template_name = 'instances.html'
     time_refresh = 8000
-    get_instances = []
+    compute = None
     conn = None
-    compute = Compute.objects.get(id=host_id)
+    errors = []
 
-    try:
-        conn = wvmInstances(compute.hostname,
-                            compute.login,
-                            compute.password,
-                            compute.type)
-        get_instances = conn.get_instances()
-    except libvirtError as err:
-        errors.append(err)
-
-    for instance in get_instances:
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated():
+            return HttpResponseRedirect(reverse('login'))
+        host_id = kwargs.get('host_id')
+        if not host_id:
+            raise Http404
+        compute = Compute.objects.get(id=host_id)
         try:
-            inst = Instance.objects.get(compute_id=host_id, name=instance)
-            uuid = inst.uuid
-        except Instance.DoesNotExist:
-            uuid = conn.get_uuid(instance)
-            inst = Instance(compute_id=host_id, name=instance, uuid=uuid)
-            inst.save()
-        instances.append({'name': instance,
-                          'status': conn.get_instance_status(instance),
-                          'uuid': uuid,
-                          'memory': conn.get_instance_memory(instance),
-                          'vcpu': conn.get_instance_vcpu(instance),
-                          'has_managed_save_image': conn.get_instance_managed_save_image(instance)})
+            self.conn = wvmInstances(
+                compute.hostname,
+                compute.login,
+                compute.password,
+                compute.type)
+        except libvirtError as err:
+            self.errors.append(err)
+        self.compute = compute
+        return super(InstanceList, self).dispatch(request, *args, **kwargs)
 
-    if conn:
+    def get_instances_list(self):
+        r = []
         try:
-            if request.method == 'POST':
+            r = self.conn.get_instances()
+        except libvirtError as err:
+            self.errors.append(err)
+        return r
+
+    def get_instances(self):
+        conn = self.conn
+        instance_list = []
+        for instance in self.get_instances_list():
+            try:
+                inst = Instance.objects.get(compute=self.compute, name=instance)
+                uuid = inst.uuid
+            except Instance.DoesNotExist:
+                uuid = conn.get_uuid(instance)
+                inst = Instance(compute=self.compute, name=instance, uuid=uuid)
+                inst.save()
+            instance_list.append({'name': instance,
+                              'status': conn.get_instance_status(instance),
+                              'uuid': uuid,
+                              'memory': conn.get_instance_memory(instance),
+                              'vcpu': conn.get_instance_vcpu(instance),
+                              'has_managed_save_image': conn.get_instance_managed_save_image(instance)})
+        return instance_list
+
+    def post(self, request, *args, **kwargs):
+        conn = self.conn
+        if conn:
+            try:
                 name = request.POST.get('name', '')
                 if 'start' in request.POST:
                     conn.start(name)
@@ -360,11 +377,22 @@ def instances(request, host_id):
                     conn.resume(name)
                     return HttpResponseRedirect(request.get_full_path())
 
-            conn.close()
-        except libvirtError as err:
-            errors.append(err)
+                conn.close()
+            except libvirtError as err:
+                self.errors.append(err)
+        return super(InstanceList, self).get(request, *args, **kwargs)
 
-    return render_to_response('instances.html', locals(), context_instance=RequestContext(request))
+    def get_context_data(self, **kwargs):
+        context = super(InstanceList, self).get_context_data(**kwargs)
+        c = {
+            'errors': self.errors,
+            'compute': self.compute,
+            'instances': self.get_instances(),
+            'time_refresh': self.time_refresh,
+            'request': self.request,
+        }
+        context.update(c)
+        return context
 
 
 def instance(request, host_id, vname):
