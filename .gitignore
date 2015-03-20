@@ -10,3 +10,4 @@ webvirtmgr/local/.secret_key_store
 webvirtmgr/local/local_settings.py
 dist
 webvirtmgr.egg-info
+/static

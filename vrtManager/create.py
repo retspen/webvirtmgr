@@ -2,6 +2,8 @@
 # Copyright (C) 2013 Webvirtmgr.
 #
 import string
+from lxml import etree
+from lxml.builder import E
 from vrtManager import util
 from vrtManager.connection import wvmConnect
 
@@ -96,25 +98,34 @@ class wvmCreate(wvmConnect):
         vol = self.get_volume_by_path(vol_path)
         return vol.storagePoolLookupByVolume()
 
-    def clone_from_template(self, clone, template, metadata=False):
+    def clone_from_template(self, clone, template, **kwargs):
         vol = self.get_volume_by_path(template)
         stg = vol.storagePoolLookupByVolume()
         storage_type = util.get_xml_path(stg.XMLDesc(0), "/pool/@type")
         format = util.get_xml_path(vol.XMLDesc(0), "/volume/target/format/@type")
+        metadata = kwargs.get('metadata', False)
+        capacity = 0
+        meta_base = kwargs.get('meta_base', False)
+        vol_info = util.probe_img_info(vol.path())
         if storage_type == 'dir':
             clone += '.img'
         else:
             metadata = False
-        xml = """
-            <volume>
-                <name>%s</name>
-                <capacity>0</capacity>
-                <allocation>0</allocation>
-                <target>
-                    <format type='%s'/>
-                </target>
-            </volume>""" % (clone, format)
-        stg.createXMLFrom(xml, vol, metadata)
+            meta_base = False
+        if format != 'qcow2':
+            meta_base = False
+        v_tree = E.volume(E.name(clone))
+        v_tree.append(E.allocation('0'))
+        target = E.target(E.format(type=format))
+        if meta_base:
+            v_tree.append(E.backingStore(
+                E.path(vol.path()),
+                E.format(type=format)))
+            capacity = vol_info.get('virtual-size', 0)
+        v_tree.append(E.capacity(str(capacity), unit='G'))
+        v_tree.append(target)
+        xml = etree.tostring(v_tree)
+        stg.createXML(xml, metadata)
         clone_vol = stg.storageVolLookupByName(clone)
         return clone_vol.path()
 
