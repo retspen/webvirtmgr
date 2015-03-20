@@ -130,6 +130,7 @@ def pretty_bytes(val):
     else:
         return "%2.2f MB" % (val / (1024.0 * 1024.0))
 
+
 def probe_img_info(path):
     cmd = ["qemu-img", "info", "--output=json", path]
     info = dict()
