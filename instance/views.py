@@ -342,12 +342,14 @@ class InstanceList(TemplateView):
                 uuid = conn.get_uuid(instance)
                 inst = Instance(compute=self.compute, name=instance, uuid=uuid)
                 inst.save()
-            instance_list.append({'name': instance,
-                              'status': conn.get_instance_status(instance),
-                              'uuid': uuid,
-                              'memory': conn.get_instance_memory(instance),
-                              'vcpu': conn.get_instance_vcpu(instance),
-                              'has_managed_save_image': conn.get_instance_managed_save_image(instance)})
+            instance_list.append({
+                'name': instance,
+                'status': conn.get_instance_status(instance),
+                'uuid': uuid,
+                'memory': conn.get_instance_memory(instance),
+                'vcpu': conn.get_instance_vcpu(instance),
+                'has_managed_save_image': conn.get_instance_managed_save_image(instance)
+            })
         return instance_list
 
     def post(self, request, *args, **kwargs):
