@@ -105,8 +105,8 @@ class wvmCreate(wvmConnect):
         format = util.get_xml_path(vol.XMLDesc(0), "/volume/target/format/@type")
         metadata = kwargs.get('metadata', False)
         capacity = 0
+        capacity_unit = util.get_xml_path(vol.XMLDesc(0), "/volume/capacity/@unit")
         meta_base = kwargs.get('meta_base', False)
-        vol_info = util.probe_img_info(vol.path())
         if storage_type == 'dir':
             clone += '.img'
         else:
@@ -121,8 +121,8 @@ class wvmCreate(wvmConnect):
             v_tree.append(E.backingStore(
                 E.path(vol.path()),
                 E.format(type=format)))
-            capacity = vol_info.get('virtual-size', 0)
-        v_tree.append(E.capacity(str(capacity), unit='G'))
+            capacity = util.get_xml_path(vol.XMLDesc(0), "/volume/capacity")
+        v_tree.append(E.capacity(str(capacity), unit=capacity_unit))
         v_tree.append(target)
         xml = etree.tostring(v_tree)
         stg.createXML(xml, metadata)

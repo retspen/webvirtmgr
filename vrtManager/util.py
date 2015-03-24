@@ -5,8 +5,6 @@ import re
 import random
 import libxml2
 import libvirt
-import subprocess
-import json
 
 
 def is_kvm_available(xml):
@@ -129,17 +127,3 @@ def pretty_bytes(val):
         return "%2.2f GB" % (val / (1024.0 * 1024.0 * 1024.0))
     else:
         return "%2.2f MB" % (val / (1024.0 * 1024.0))
-
-
-def probe_img_info(path):
-    cmd = ["qemu-img", "info", "--output=json", path]
-    info = dict()
-    try:
-        p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-        out, err = p.communicate()
-    except:
-        return info
-    info = json.loads(out)
-    info['virtual-size'] = info['virtual-size'] >> 30
-    info['actual-size'] = info['actual-size'] >> 30
-    return info
