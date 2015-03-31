@@ -14,6 +14,7 @@ from vrtManager.create import wvmCreate
 from vrtManager import util
 from create.forms import FlavorAddForm, NewVMForm
 
+from collections import OrderedDict
 
 def create(request, host_id):
     """
@@ -84,7 +85,7 @@ def create(request, host_id):
                     except libvirtError as err:
                         errors.append(err.message)
             if 'create' in request.POST:
-                volumes = {}
+                volumes = OrderedDict()
                 form = NewVMForm(request.POST)
                 if form.is_valid():
                     data = form.cleaned_data
