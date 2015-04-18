@@ -65,7 +65,7 @@ class AddInterface(forms.Form):
 
     def clean_netdev(self):
         netdev = self.cleaned_data['netdev']
-        have_symbol = re.match('^[a-z0-9.]+$', netdev)
+        have_symbol = re.match('^[a-z0-9.:]+$', netdev)
         if not have_symbol:
             raise forms.ValidationError(_('The interface must not contain any special characters'))
         elif len(netdev) > 10:
