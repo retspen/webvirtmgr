@@ -11,4 +11,4 @@ script:
   - pyflakes console hostdetail instance networks servers storages vrtManager
 #  - pylint console hostdetail instance networks servers storages vrtManager
   - python manage.py syncdb --noinput
-  - python manage.py test --settings=webvirtmgr.settings_jenkins
+  - python manage.py test --settings=webvirtmgr.settings-dev
