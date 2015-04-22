@@ -318,7 +318,13 @@
                 }
             }
 
-            var uri = 'ws://{{ ws_host }}:{{ ws_port }}';
+            var uri;
+            if (window.location.protocol === "https:") {
+                uri = 'wss://{{ ws_host }}:{{ ws_port }}';
+            } else {
+                uri = 'ws://{{ ws_host }}:{{ ws_port }}';
+            }
+
             var password = '{{ console_passwd }}';
             log_info('Connecting ...');
             connect(uri,password);
