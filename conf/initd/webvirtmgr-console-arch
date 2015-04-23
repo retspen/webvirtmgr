@@ -2,11 +2,11 @@
 Description=WebVirtMgr NoVNC proxy
 
 [Service]
-EnvironmentFile=/etc/conf.d/webvirtmgr-novnc
+EnvironmentFile=/etc/conf.d/webvirtmgr-console
 Environment=PYTHONPATH=/usr/share/novnc/utils/
 User=http
 Group=http
-ExecStart=/var/www/webvirtmgr/console/webvirtmgr-novnc
+ExecStart=/var/www/webvirtmgr/console/webvirtmgr-console
 Type=simple
 
 [Install]

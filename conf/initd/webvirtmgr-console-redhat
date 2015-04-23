@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# webvirtmgr-novnc  WebVirtMgr Console noVNC Proxy
+# webvirtmgr-console  WebVirtMgr Console noVNC Proxy
 #
 # chkconfig:   - 98 02
 # description: WebVirtMgr Console noVCN Proxy Server

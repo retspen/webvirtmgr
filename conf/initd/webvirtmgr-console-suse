@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# webvirtmgr-novnc  WebVirtMgr Console noVNC Proxy
+# webvirtmgr-console  WebVirtMgr Console noVNC Proxy
 #
 # chkconfig:   - 98 02
 # description: WebVirtMgr Console noVCN Proxy Server
@@ -28,7 +28,7 @@
 
 
 
-prog="webvirtmgr-novnc"
+prog="webvirtmgr-console"
 exec="/srv/www/htdocs/webvirtmgr/console/$prog"
 lockfile="/var/lock/subsys/$prog"
 pidfile="/var/run/webvirtmgr/$prog.pid"

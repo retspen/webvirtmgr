@@ -397,6 +397,11 @@ class wvmInstance(wvmConnect):
     def get_console_listen_addr(self):
         listen_addr = util.get_xml_path(self._XMLDesc(0),
                                         "/domain/devices/graphics/@listen")
+        if listen_addr is None:
+            listen_addr = util.get_xml_path(self._XMLDesc(0),
+                                            "/domain/devices/graphics/listen/@address")
+            if listen_addr is None:
+                return "127.0.0.1"
         return listen_addr
 
     def get_console_socket(self):
