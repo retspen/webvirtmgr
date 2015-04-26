@@ -62,10 +62,92 @@
             margin-right: auto;
             display: block;
         }
+
+        #spice-menu {
+            list-style-type: none;
+            margin: 0px;
+            padding: 0px;
+            border: 0px none;
+            position: absolute;
+            top: 0px;
+            z-index: 100;
+        }
+        
+        #spice-menu li {
+            width: auto;
+            float: left;
+            margin: 2px;
+            padding: 0px;
+            border: 0px none;
+            position: relative;
+            height: 18px;
+            cursor: pointer;
+            padding: 0.2em;
+            background: #eee;
+            border-radius: 3px;
+        }
+        
+        #spice-menu .spice-submenu {
+            display: none;
+            opacity: 0;
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            border: 0;
+            overflow: hidden;
+            position: absolute;
+        }
+        
+        #spice-menu .spice-submenu li {
+            float: none;
+            margin: 0;
+            padding: 0;
+            border: 0;
+            border-top: 1px solid white;
+            border-right: 1px solid white;
+            font: normal 14px sans-serif;
+            z-index: 100;
+            white-space: nowrap;
+            min-width: 100px;
+            padding: 0.2em;
+            border-radius: 0;
+        }
+        
+        #spice-menu li:hover > .spice-submenu {
+          opacity: 1;
+          display: block;
+          margin: 2px 0 0 -2px;
+        }
+        
+        #spice-menu li:hover > .spice-submenu li {
+          height: auto;
+        }
     </style>
 </head>
 <body>
-    <div id="status"></div>
+    <div id="header">
+      <ul id='spice-menu'>
+        <li>Send key(s)
+            <ul class='spice-submenu'>
+              <li onclick='sendCtrlAltDel();'>Ctrl+Alt+Del</li>
+              <li onclick='sendCtrlAltFN(0);'>Ctrl+Alt+F1</li>
+              <li onclick='sendCtrlAltFN(1);'>Ctrl+Alt+F2</li>
+              <li onclick='sendCtrlAltFN(2);'>Ctrl+Alt+F3</li>
+              <li onclick='sendCtrlAltFN(3);'>Ctrl+Alt+F4</li>
+              <li onclick='sendCtrlAltFN(4);'>Ctrl+Alt+F5</li>
+              <li onclick='sendCtrlAltFN(5);'>Ctrl+Alt+F6</li>
+              <li onclick='sendCtrlAltFN(6);'>Ctrl+Alt+F7</li>
+              <li onclick='sendCtrlAltFN(7);'>Ctrl+Alt+F8</li>
+              <li onclick='sendCtrlAltFN(8);'>Ctrl+Alt+F9</li>
+              <li onclick='sendCtrlAltFN(9);'>Ctrl+Alt+F10</li>
+              <li onclick='sendCtrlAltFN(10);'>Ctrl+Alt+F11</li>
+              <li onclick='sendCtrlAltFN(11);'>Ctrl+Alt+F12</li>
+            </ul>
+        </li>
+        <li onclick='fullscreen()'>Fullscreen</li>
+      </ul>
+      <div id="status"></div>
+    </div>
         <div id="spice-area">
             <div id="spice-screen" class="spice-screen"></div>
         </div>
@@ -199,7 +281,50 @@
                 log_info('Connected');
             }
 
-            var uri = 'ws://{{ ws_host }}:{{ ws_port }}';
+            function sendCtrlAltFN(f) {
+                if (sc && sc.inputs && sc.inputs.state === "ready"){
+                    var keys_code=[KEY_F1,KEY_F2,KEY_F3,KEY_F4,KEY_F5,KEY_F6,KEY_F7,KEY_F8,KEY_F9,KEY_F10,KEY_F11,KEY_F12];
+            
+                    if (keys_code[f]==undefined) {
+                        return;
+                    }
+                    var key = new SpiceMsgcKeyDown();
+                    var msg = new SpiceMiniData();
+            
+                    update_modifier(true, KEY_LCtrl, sc);
+                    update_modifier(true, KEY_Alt, sc);
+            
+                    key.code = keys_code[f];
+                    msg.build_msg(SPICE_MSGC_INPUTS_KEY_DOWN, key);
+                    sc.inputs.send_msg(msg);
+                    msg.build_msg(SPICE_MSGC_INPUTS_KEY_UP, key);
+                    sc.inputs.send_msg(msg);
+            
+                    if(Ctrl_state == false) update_modifier(false, KEY_LCtrl, sc);
+                    if(Alt_state == false) update_modifier(false, KEY_Alt, sc);
+                }
+            }
+
+            function fullscreen() {
+                var screen=document.getElementById('spice-screen');
+                if(screen.requestFullscreen) {
+                    screen.requestFullscreen();
+                } else if(screen.mozRequestFullScreen) {
+                    screen.mozRequestFullScreen();
+                } else if(screen.webkitRequestFullscreen) {
+                    screen.webkitRequestFullscreen();
+                } else if(screen.msRequestFullscreen) {
+                    screen.msRequestFullscreen();
+                }
+            }
+
+            var uri;
+            if (window.location.protocol === "https:") {
+                uri = 'wss://{{ ws_host }}:{{ ws_port }}';
+            } else {
+                uri = 'ws://{{ ws_host }}:{{ ws_port }}';
+            }
+
             var password = '{{ console_passwd }}';
             log_info('Connecting ...');
             connect(uri,password);

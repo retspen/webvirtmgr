@@ -4,7 +4,6 @@ venv
 .DS_Store
 ._*
 .idea
-Vagrantfile
 .vagrant
 webvirtmgr/local/.secret_key_store
 webvirtmgr/local/local_settings.py

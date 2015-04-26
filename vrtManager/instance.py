@@ -4,9 +4,8 @@
 import time
 import os.path
 try:
-    from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE, \
-        VIR_MIGRATE_LIVE, VIR_MIGRATE_UNSAFE, \
-        VIR_DOMAIN_UNDEFINE_SNAPSHOTS_METADATA
+    from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE, VIR_MIGRATE_LIVE, \
+        VIR_MIGRATE_UNSAFE, VIR_DOMAIN_UNDEFINE_SNAPSHOTS_METADATA
 except:
     from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE, VIR_MIGRATE_LIVE
 from vrtManager import util
@@ -343,13 +342,17 @@ class wvmInstance(wvmConnect):
                         dev_file = dev_bus
                     devices.append([dev_file, dev_bus])
         for dev in devices:
-            rd_use_ago = self.instance.blockStats(dev[0])[1]
-            wr_use_ago = self.instance.blockStats(dev[0])[3]
-            time.sleep(1)
-            rd_use_now = self.instance.blockStats(dev[0])[1]
-            wr_use_now = self.instance.blockStats(dev[0])[3]
-            rd_diff_usage = rd_use_now - rd_use_ago
-            wr_diff_usage = wr_use_now - wr_use_ago
+            if self.get_status() == 1:
+                rd_use_ago = self.instance.blockStats(dev[0])[1]
+                wr_use_ago = self.instance.blockStats(dev[0])[3]
+                time.sleep(1)
+                rd_use_now = self.instance.blockStats(dev[0])[1]
+                wr_use_now = self.instance.blockStats(dev[0])[3]
+                rd_diff_usage = rd_use_now - rd_use_ago
+                wr_diff_usage = wr_use_now - wr_use_ago
+            else:
+                rd_diff_usage = 0
+                wr_diff_usage = 0
             dev_usage.append({'dev': dev[1], 'rd': rd_diff_usage, 'wr': wr_diff_usage})
         return dev_usage
 
@@ -357,17 +360,22 @@ class wvmInstance(wvmConnect):
         devices = []
         dev_usage = []
         tree = ElementTree.fromstring(self._XMLDesc(0))
-        for target in tree.findall("devices/interface/target"):
-            devices.append(target.get("dev"))
-        for i, dev in enumerate(devices):
-            rx_use_ago = self.instance.interfaceStats(dev)[0]
-            tx_use_ago = self.instance.interfaceStats(dev)[4]
-            time.sleep(1)
-            rx_use_now = self.instance.interfaceStats(dev)[0]
-            tx_use_now = self.instance.interfaceStats(dev)[4]
-            rx_diff_usage = (rx_use_now - rx_use_ago) * 8
-            tx_diff_usage = (tx_use_now - tx_use_ago) * 8
-            dev_usage.append({'dev': i, 'rx': rx_diff_usage, 'tx': tx_diff_usage})
+        if self.get_status() == 1:
+            tree = ElementTree.fromstring(self._XMLDesc(0))
+            for target in tree.findall("devices/interface/target"):
+                devices.append(target.get("dev"))
+            for i, dev in enumerate(devices):
+                rx_use_ago = self.instance.interfaceStats(dev)[0]
+                tx_use_ago = self.instance.interfaceStats(dev)[4]
+                time.sleep(1)
+                rx_use_now = self.instance.interfaceStats(dev)[0]
+                tx_use_now = self.instance.interfaceStats(dev)[4]
+                rx_diff_usage = (rx_use_now - rx_use_ago) * 8
+                tx_diff_usage = (tx_use_now - tx_use_ago) * 8
+                dev_usage.append({'dev': i, 'rx': rx_diff_usage, 'tx': tx_diff_usage})
+        else:
+            for i, dev in enumerate(self.get_net_device()):
+                dev_usage.append({'dev': i, 'rx': 0, 'tx': 0})
         return dev_usage
 
     def get_telnet_port(self):
@@ -389,6 +397,11 @@ class wvmInstance(wvmConnect):
     def get_console_listen_addr(self):
         listen_addr = util.get_xml_path(self._XMLDesc(0),
                                         "/domain/devices/graphics/@listen")
+        if listen_addr is None:
+            listen_addr = util.get_xml_path(self._XMLDesc(0),
+                                            "/domain/devices/graphics/listen/@address")
+            if listen_addr is None:
+                return "127.0.0.1"
         return listen_addr
 
     def get_console_socket(self):

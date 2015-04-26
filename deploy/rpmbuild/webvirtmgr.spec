@@ -41,7 +41,7 @@ mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/init
 cp conf/init/webvirtmgr-redhat.conf $RPM_BUILD_ROOT%{_sysconfdir}/init/webvirtmgr.conf
 
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/init.d
-cp conf/initd/webvirtmgr-novnc-redhat $RPM_BUILD_ROOT%{_sysconfdir}/init.d/webvirtmgr-console
+cp conf/initd/webvirtmgr-console-redhat $RPM_BUILD_ROOT%{_sysconfdir}/init.d/webvirtmgr-console
 
 cp manage.py $RPM_BUILD_ROOT%{python_sitelib}/%{name}/
 rm -rf $RPM_BUILD_ROOT%{_bindir}/manage.py

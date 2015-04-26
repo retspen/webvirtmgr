@@ -791,184 +791,190 @@
     {% include 'sidebar_close.html' %}
 {% endblock %}
 {% block script %}
-    <script>
-        function open_console() {
-            window.open('{% url 'console' %}?token={{ host_id }}-{{ uuid }}', '', 'width=850,height=485')
+<script>
+    function open_console() {
+        window.open('{% url 'console' %}?token={{ host_id }}-{{ uuid }}', '', 'width=850,height=485')
+    }
+    function show_console() {
+        if ($('#console_show_pass').attr('type') == 'password') {
+            $('#console_show_pass').attr('type', 'text');
+        } else {
+            $('#console_show_pass').attr('type', 'password');
         }
-        function show_console() {
-            if ($('#console_show_pass').attr('type') == 'password') {
-                $('#console_show_pass').attr('type', 'text');
-            } else {
-                $('#console_show_pass').attr('type', 'password');
-            }
+    }
+    function random_mac(net) {
+        var hexDigits = "0123456789abcdef";
+        var macAddress="52:54:00:";
+        for (var i=0; i<3; i++) {
+            macAddress+=hexDigits.charAt(Math.round(Math.random()*16));
+            macAddress+=hexDigits.charAt(Math.round(Math.random()*16));
+            if (i != 2) macAddress+=":";
         }
-        function random_mac(net) {
-            var hexDigits = "0123456789abcdef";
-            var macAddress="52:54:00:";
-            for (var i=0; i<3; i++) {
-                macAddress+=hexDigits.charAt(Math.round(Math.random()*16));
-                macAddress+=hexDigits.charAt(Math.round(Math.random()*16));
-                if (i != 2) macAddress+=":";
-            }
-            $('input[name="net-'+net+'"]').val(macAddress);
-        };
-    </script>
-    <script src="{% static "js/Chart.min.js" %}"></script>
-    <script>
-        var hash = location.hash;
-        if (~$.inArray(hash, ['#shutdown', '#forceshutdown', '#managedsave', '#suspend'])) {
-            var btn = $('#power>ul>li>a');
-            $(btn).each(function () {
-                if ($(this).attr('href') === hash) {
-                    $(this).trigger('click');
-                }
-            });
-        }
-        if (~$.inArray(hash, ['#console_pass', '#console_keymap', '#console_type'])) {
-            var btnsect = $('#btnsection>li>a');
-            $(btnsect).each(function () {
-                if ($(this).attr('href') === '#access') {
-                    $(this).trigger('click');
-                }
-            });
-            var btn = $('#access>ul>li>a');
-            $(btn).each(function () {
-                if ($(this).attr('href') === hash) {
-                    $(this).trigger('click');
-                }
-            });
-        }
-        if (~$.inArray(hash, ['#createsnapshot', '#istaceshapshosts'])) {
-            var btnsect = $('#btnsection>li>a');
-            $(btnsect).each(function () {
-                if ($(this).attr('href') === '#snapshots') {
-                    $(this).trigger('click');
-                }
-            });
-            var btn = $('#snapshots>ul>li>a');
-            $(btn).each(function () {
-                if ($(this).attr('href') === hash) {
-                    $(this).trigger('click');
-                }
-            });
-        }
-        if (~$.inArray(hash, ['#instancesettings', '#instancemedia', '#instancexml'])) {
-            var btnsect = $('#btnsection>li>a');
-            $(btnsect).each(function () {
-                if ($(this).attr('href') === '#settings') {
-                    $(this).trigger('click');
-                }
-            });
-            var btn = $('#settings>ul>li>a');
-            $(btn).each(function () {
-                if ($(this).attr('href') === hash) {
-                    $(this).trigger('click');
-                }
-            });
-        }
-    </script>
-    <script>
-        $(document).on('change', '#console_passwd_gen', function () {
-            if ($(this).prop('checked')) {
-                $('#console_passwd_manual').hide();
-                $('#console_passwd_clear').prop('checked', false);
-            } else {
-                $('#console_passwd_manual').show();
+        $('input[name="net-'+net+'"]').val(macAddress);
+    };
+</script>
+<script src="{% static "js/Chart.min.js" %}"></script>
+<script>
+    var hash = location.hash;
+    if (~$.inArray(hash, ['#shutdown', '#forceshutdown', '#managedsave', '#suspend'])) {
+        var btn = $('#power>ul>li>a');
+        $(btn).each(function () {
+            if ($(this).attr('href') === hash) {
+                $(this).trigger('click');
             }
         });
-        $(document).on('change', '#console_passwd_clear', function () {
-            if ($(this).prop('checked')) {
-                $('#console_passwd_manual').hide();
-                $('#console_passwd_gen').prop('checked', false);
-            } else {
-                $('#console_passwd_manual').show();
+    }
+    if (~$.inArray(hash, ['#console_pass', '#console_keymap', '#console_type'])) {
+        var btnsect = $('#btnsection>li>a');
+        $(btnsect).each(function () {
+            if ($(this).attr('href') === '#access') {
+                $(this).trigger('click');
             }
         });
-        $(document).on('change', '#console_keymap_clear', function () {
-            if ($(this).prop('checked')) {
-                $('#console_keymap_selection').hide();
-            } else {
-                $('#console_keymap_selection').show();
+        var btn = $('#access>ul>li>a');
+        $(btn).each(function () {
+            if ($(this).attr('href') === hash) {
+                $(this).trigger('click');
             }
         });
-        $(document).ready(function () {
-            // set current console keymap or fall back to default
-            var keymap = "{{ console_keymap }}"
-            if (keymap != '') {
-                $("#console_select_keymap option[value='" + keymap + "']").prop('selected', true);
+    }
+    if (~$.inArray(hash, ['#createsnapshot', '#istaceshapshosts'])) {
+        var btnsect = $('#btnsection>li>a');
+        $(btnsect).each(function () {
+            if ($(this).attr('href') === '#snapshots') {
+                $(this).trigger('click');
             }
         });
-        $(document).ready(function () {
-            // set current console type or fall back to default
-            var console_type = "{{ console_type }}"
-            if (console_type != '') {
-                $("#console_select_type option[value='" + console_type + "']").prop('selected', true);
+        var btn = $('#snapshots>ul>li>a');
+        $(btn).each(function () {
+            if ($(this).attr('href') === hash) {
+                $(this).trigger('click');
             }
         });
-    </script>
-    <script>
-        var status = {{ status }};
-        var cpu_ctx = $("#cpuChart").get(0).getContext("2d");
-        var cpuChart = new Chart(cpu_ctx);
-        var cpu_options = { animation: false,
-            pointDotRadius: 2,
-            scaleLabel: "<%=value%> %",
-            scaleOverride: true,
-            scaleSteps: 5,
-            scaleStepWidth: 20,
-            scaleStartValue: 0,
-            responsive: true
-        };
+    }
+    if (~$.inArray(hash, ['#instancesettings', '#instancemedia', '#instancexml'])) {
+        var btnsect = $('#btnsection>li>a');
+        $(btnsect).each(function () {
+            if ($(this).attr('href') === '#settings') {
+                $(this).trigger('click');
+            }
+        });
+        var btn = $('#settings>ul>li>a');
+        $(btn).each(function () {
+            if ($(this).attr('href') === hash) {
+                $(this).trigger('click');
+            }
+        });
+    }
+</script>
+<script>
+    $(document).on('change', '#console_passwd_gen', function () {
+        if ($(this).prop('checked')) {
+            $('#console_passwd_manual').hide();
+            $('#console_passwd_clear').prop('checked', false);
+        } else {
+            $('#console_passwd_manual').show();
+        }
+    });
+    $(document).on('change', '#console_passwd_clear', function () {
+        if ($(this).prop('checked')) {
+            $('#console_passwd_manual').hide();
+            $('#console_passwd_gen').prop('checked', false);
+        } else {
+            $('#console_passwd_manual').show();
+        }
+    });
+    $(document).on('change', '#console_keymap_clear', function () {
+        if ($(this).prop('checked')) {
+            $('#console_keymap_selection').hide();
+        } else {
+            $('#console_keymap_selection').show();
+        }
+    });
+    $(document).ready(function () {
+        // set current console keymap or fall back to default
+        var keymap = "{{ console_keymap }}"
+        if (keymap != '') {
+            $("#console_select_keymap option[value='" + keymap + "']").prop('selected', true);
+        }
+    });
+    $(document).ready(function () {
+        // set current console type or fall back to default
+        var console_type = "{{ console_type }}"
+        if (console_type != '') {
+            $("#console_select_type option[value='" + console_type + "']").prop('selected', true);
+        }
+    });
+</script>
+<script>
+    var cpu_ctx = $("#cpuChart").get(0).getContext("2d");
+    var cpuChart = new Chart(cpu_ctx);
+    var cpu_options = { animation: false,
+        pointDotRadius: 2,
+        scaleLabel: "<%=value%> %",
+        scaleOverride: true,
+        scaleSteps: 5,
+        scaleStepWidth: 20,
+        scaleStartValue: 0,
+        responsive: true
+    };
 
-        var diskChart = {};
-        {% for disk in disks %}
-            var disk_ctx_{{ disk.dev }} = $("#blk{{ disk.dev }}Chart").get(0).getContext("2d");
-            diskChart['{{ disk.dev }}'] = new Chart(disk_ctx_{{ disk.dev }});
-        {% endfor %}
-        var disk_options = {
-            animation: false,
-            pointDotRadius: 2,
-            scaleLabel: "<%=value%> Mb/s",
-            responsive: true
-        };
+    var diskChart = {};
+    {% for disk in disks %}
+        var disk_ctx_{{ disk.dev }} = $("#blk{{ disk.dev }}Chart").get(0).getContext("2d");
+        diskChart['{{ disk.dev }}'] = new Chart(disk_ctx_{{ disk.dev }});
+    {% endfor %}
+    var disk_options = {
+        animation: false,
+        pointDotRadius: 2,
+        scaleLabel: "<%=value%> Mb/s",
+        responsive: true
+    };
 
-        var netChart = {};
-        {% for net in networks %}
-            var net_ctx_{{ forloop.counter0 }} = $("#netEth{{ forloop.counter0 }}Chart").get(0).getContext("2d");
-            netChart['{{ forloop.counter0 }}'] = new Chart(net_ctx_{{ forloop.counter0 }});
-        {% endfor %}
-        var net_options = {
-            animation: false,
-            pointDotRadius: 2,
-            scaleLabel: "<%=value%> Mbps",
-            responsive: true
-        };
+    var netChart = {};
+    {% for net in networks %}
+        var net_ctx_{{ forloop.counter0 }} = $("#netEth{{ forloop.counter0 }}Chart").get(0).getContext("2d");
+        netChart['{{ forloop.counter0 }}'] = new Chart(net_ctx_{{ forloop.counter0 }});
+    {% endfor %}
+    var net_options = {
+        animation: false,
+        pointDotRadius: 2,
+        scaleLabel: "<%=value%> Mbps",
+        responsive: true
+    };
 
-        function instusage() {
-            $.getJSON('{% url 'instusage' host_id vname %}', function (data) {
-                cpuChart.Line(data['cpu'], cpu_options);
-                for (var i = 0; i < data['hdd'].length; i++) {
-                    diskChart[data['hdd'][i].dev].Line(data['hdd'][i].data, disk_options);
-                }
-                for (var i = 0; i < data['net'].length; i++) {
-                    netChart[[i]].Line(data['net'][i].data, net_options);
-                }
-                if (data['status'] != status) {
-                    window.location.reload()
-                }
-            });
-        }
-        $(function () {
-            window.setInterval('instusage()', {{ time_refresh }});
+    function instusage() {
+        $.getJSON('{% url 'instusage' host_id vname %}', function (data) {
+            cpuChart.Line(data['cpu'], cpu_options);
+            for (var i = 0; i < data['hdd'].length; i++) {
+                diskChart[data['hdd'][i].dev].Line(data['hdd'][i].data, disk_options);
+            }
+            for (var i = 0; i < data['net'].length; i++) {
+                netChart[[i]].Line(data['net'][i].data, net_options);
+            }
         });
-    </script>
-    <script>
-        $(function () {
-            $('.js-custom__checkbox').change(function () {
-                var container  = $(this).closest('.js-custom__container');
-                var toggles     = container.find('.js-custom__toggle');
-                toggles.toggle();
-            });
+    }
+    $(function () {
+        window.setInterval('instusage()', {{ time_refresh }});
+    });
+</script>
+<script>
+    $(function () {
+        $('.js-custom__checkbox').change(function () {
+            var container  = $(this).closest('.js-custom__container');
+            var toggles     = container.find('.js-custom__toggle');
+            toggles.toggle();
         });
-    </script>
+    });
+</script>
+<script>
+     window.setInterval(function get_status() {
+         var status = {{ status }};
+         $.getJSON('{% url 'inst_status' host_id vname %}', function (data) {
+             if (data['status'] != status) {
+                 window.location.reload()
+             }
+         })
+     }, 2000);
+</script>
 {% endblock %}

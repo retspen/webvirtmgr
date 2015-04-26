@@ -3,6 +3,7 @@ from libvirt import libvirtError
 from django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
+from django.core.urlresolvers import reverse
 import json
 import time
 
@@ -16,7 +17,7 @@ def hostusage(request, host_id):
     Return Memory and CPU Usage
     """
     if not request.user.is_authenticated():
-        return HttpResponseRedirect('/login')
+        return HttpResponseRedirect(reverse('login'))
 
     points = 5
     datasets = {}
@@ -106,7 +107,7 @@ def overview(request, host_id):
     Overview page.
     """
     if not request.user.is_authenticated():
-        return HttpResponseRedirect('/login')
+        return HttpResponseRedirect(reverse('login'))
 
     errors = []
     time_refresh = TIME_JS_REFRESH

@@ -2,6 +2,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
+from django.core.urlresolvers import reverse
 from django.core.exceptions import PermissionDenied
 
 from servers.models import Compute
@@ -18,7 +19,7 @@ def networks(request, host_id):
     Networks block
     """
     if not request.user.is_authenticated():
-        return HttpResponseRedirect('/login')
+        return HttpResponseRedirect(reverse('login'))
 
     if not request.user.is_staff:
         raise PermissionDenied
@@ -52,7 +53,7 @@ def networks(request, host_id):
                     if not errors:
                         conn.create_network(data['name'], data['forward'], gateway, netmask,
                                             dhcp, data['bridge_name'], data['openvswitch'], data['fixed'])
-                        return HttpResponseRedirect('/network/%s/%s/' % (host_id, data['name']))
+                        return HttpResponseRedirect(reverse('network', args=[host_id, data['name']]))
         conn.close()
     except libvirtError as err:
         errors.append(err)
@@ -65,7 +66,7 @@ def network(request, host_id, pool):
     Networks block
     """
     if not request.user.is_authenticated():
-        return HttpResponseRedirect('/login')
+        return HttpResponseRedirect(reverse('login'))
 
     if not request.user.is_staff:
         raise PermissionDenied
@@ -108,7 +109,7 @@ def network(request, host_id, pool):
         if 'delete' in request.POST:
             try:
                 conn.delete()
-                return HttpResponseRedirect('/networks/%s/' % host_id)
+                return HttpResponseRedirect(reverse('networks', args=[host_id]))
             except libvirtError as error_msg:
                 errors.append(error_msg.message)
         if 'set_autostart' in request.POST:

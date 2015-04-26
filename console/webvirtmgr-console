@@ -2,6 +2,7 @@
 
 import os
 import sys
+import logging
 
 DIR_PATH = os.path.dirname(os.path.abspath(__file__))
 ROOT_PATH = os.path.abspath(os.path.join(DIR_PATH, '..', ''))
@@ -16,18 +17,62 @@ if ROOT_PATH not in sys.path:
 
 import Cookie
 import socket
-from webvirtmgr.settings import WS_PORT
-from webvirtmgr.settings import WS_HOST
-
-from webvirtmgr.settings import WS_CERT
-if WS_CERT:
-    CERT = WS_CERT
+from webvirtmgr.settings import WS_PORT, WS_HOST, WS_CERT
 
 from vrtManager.connection import CONN_SSH, CONN_SOCKET
 
 import re
 
 from tunnel import Tunnel
+
+from optparse import OptionParser
+parser = OptionParser()
+
+parser.add_option("-v",
+                  "--verbose",
+                  dest="verbose",
+                  action="store_true",
+                  help="Verbose mode",
+                  default=False)
+
+parser.add_option("-d",
+                  "--debug",
+                  dest="debug",
+                  action="store_true",
+                  help="Debug mode",
+                  default=False)
+
+parser.add_option("-H",
+                  "--host",
+                  dest="host",
+                  action="store",
+                  help="Listen host",
+                  default=WS_HOST)
+
+parser.add_option("-p",
+                  "--port",
+                  dest="port",
+                  action="store",
+                  help="Listen port",
+                  default=WS_PORT or 6080)
+
+parser.add_option("-c",
+                  "--cert",
+                  dest="cert",
+                  action="store",
+                  help="Certificate file path",
+                  default=WS_CERT or CERT)
+
+(options, args) = parser.parse_args()
+
+FORMAT="%(asctime)s - %(name)s - %(levelname)s : %(message)s"
+if options.debug:
+    logging.basicConfig(level=logging.DEBUG,format=FORMAT)
+    options.verbose=True
+elif options.verbose:
+    logging.basicConfig(level=logging.INFO,format=FORMAT)
+else:
+    logging.basicConfig(level=logging.WARNING,format=FORMAT)
 
 try:
     from websockify import WebSocketProxy
@@ -66,8 +111,8 @@ def get_connection_infos(token):
                            instance.compute.hypervisor)
         host = instance.compute.hostname
         if instance.compute.hostname.count(':'):
-            connhost = host.split(':')[0]
-            connport = host.split(':')[1]
+            connhost = instance.compute.hostname.split(':')[0]
+            connport = instance.compute.hostname.split(':')[1]
         else:
             connhost = instance.compute.hostname
             connport = 22
@@ -76,14 +121,9 @@ def get_connection_infos(token):
         console_host = conn.get_console_listen_addr()
         console_port = conn.get_console_port()
         console_socket = conn.get_console_socket()
-    except:
-        connhost = None
-        connport = None
-        connuser = None
-        conntype = None
-        console_host = None
-        console_port = None
-        console_socket = None
+    except Exception,e:
+        logging.error('Fail to retrieve console connexion infos for token %s : %s' % (token,e))
+        raise
     return (connhost, connport, connuser, conntype, console_host,
             console_port, console_socket)
 
@@ -92,10 +132,23 @@ class CompatibilityMixIn(object):
     def _new_client(self, daemon, socket_factory):
         cookie = Cookie.SimpleCookie()
         cookie.load(self.headers.getheader('cookie'))
+        if 'token' not in cookie:
+            self.msg('No token cookie found !')
+            return False
         token = cookie['token'].value
 
         (connhost, connport, connuser, conntype, console_host, console_port,
          console_socket) = get_connection_infos(token)
+
+        cnx_debug_msg = "Connexion infos :\n"
+        cnx_debug_msg += "- connhost : '%s'\n" % connhost 
+        cnx_debug_msg += "- connport : '%s'\n" % connport 
+        cnx_debug_msg += "- connuser : '%s'\n" % connuser 
+        cnx_debug_msg += "- conntype : '%s'\n" % conntype 
+        cnx_debug_msg += "- console_host : '%s'\n" % console_host 
+        cnx_debug_msg += "- console_port : '%s'\n" % console_port 
+        cnx_debug_msg += "- console_socket : '%s'\n" % console_socket 
+        logging.debug(cnx_debug_msg)
 
         if console_socket and conntype == CONN_SOCKET:
             # Local socket on local host
@@ -186,11 +239,11 @@ if __name__ == '__main__':
     if USE_HANDLER:
         # Create the WebSocketProxy with NovaProxyRequestHandler handler
         server = WebSocketProxy(RequestHandlerClass=NovaProxyRequestHandler,
-                                listen_host=WS_HOST,
-                                listen_port=WS_PORT,
+                                listen_host=options.host,
+                                listen_port=options.port,
                                 source_is_ipv6=False,
-                                verbose=False,
-                                cert=CERT,
+                                verbose=options.verbose,
+                                cert=options.cert,
                                 key=None,
                                 ssl_only=False,
                                 daemon=False,
@@ -203,11 +256,11 @@ if __name__ == '__main__':
                                 wrap_cmd=None)
     else:
         # Create the NovaWebSockets proxy
-        server = NovaWebSocketProxy(listen_host=WS_HOST,
-                                    listen_port=WS_PORT,
+        server = NovaWebSocketProxy(listen_host=options.host,
+                                    listen_port=options.port,
                                     source_is_ipv6=False,
-                                    verbose=False,
-                                    cert=CERT,
+                                    verbose=options.verbose,
+                                    cert=options.cert,
                                     key=None,
                                     ssl_only=False,
                                     daemon=False,

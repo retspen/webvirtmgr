@@ -6,6 +6,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
+from django.core.urlresolvers import reverse
 import json
 import time
 from django.core.exceptions import PermissionDenied
@@ -24,7 +25,7 @@ def instusage(request, host_id, vname):
     Return instance usage
     """
     if not request.user.is_authenticated():
-        return HttpResponseRedirect('/login')
+        return HttpResponseRedirect(reverse('login'))
 
     cookies = {}
     datasets = {}
@@ -38,11 +39,12 @@ def instusage(request, host_id, vname):
     json_net = []
     cookie_net = {}
     net_error = False
-    networks = None
-    disks = None
     points = 5
     curent_time = time.strftime("%H:%M:%S")
     compute = Compute.objects.get(id=host_id)
+    cookies = request._get_cookies()
+    response = HttpResponse()
+    response['Content-Type'] = "text/javascript"
 
     try:
         conn = wvmInstance(compute.hostname,
@@ -51,23 +53,10 @@ def instusage(request, host_id, vname):
                            compute.type,
                            vname,
                            compute.hypervisor)
-        status = conn.get_status()
-        if status == 3 or status == 5:
-            networks = conn.get_net_device()
-            disks = conn.get_disk_device()
-        else:
-            cpu_usage = conn.cpu_usage()
-            blk_usage = conn.disk_usage()
-            net_usage = conn.net_usage()
+        cpu_usage = conn.cpu_usage()
+        blk_usage = conn.disk_usage()
+        net_usage = conn.net_usage()
         conn.close()
-    except libvirtError:
-        status = None
-        blk_usage = None
-        cpu_usage = None
-        net_usage = None
-
-    if status and status == 1:
-        cookies = request._get_cookies()
 
         if cookies.get('cpu') == '{}' or not cookies.get('cpu') or not cpu_usage:
             datasets['cpu'] = [0]
@@ -115,7 +104,7 @@ def instusage(request, host_id, vname):
 
                 if len(datasets_rd) > points:
                     datasets_rd.pop(0)
-                if len(datasets_wr) >= points + 1:
+                if len(datasets_wr) > points:
                     datasets_wr.pop(0)
 
                 disk = {
@@ -184,78 +173,42 @@ def instusage(request, host_id, vname):
 
             json_net.append({'dev': net['dev'], 'data': network})
             cookie_net[net['dev']] = [datasets_rx, datasets_tx]
-    else:
-        datasets = [0] * points
-        cpu = {
-            'labels': [""] * points,
-            'datasets': [
-                {
-                    "fillColor": "rgba(241,72,70,0.5)",
-                    "strokeColor": "rgba(241,72,70,1)",
-                    "pointColor": "rgba(241,72,70,1)",
-                    "pointStrokeColor": "#fff",
-                    "data": datasets
-                }
-            ]
-        }
 
-        for i, net in enumerate(networks):
-            datasets_rx = [0] * points
-            datasets_tx = [0] * points
-            network = {
-                'labels': [""] * points,
-                'datasets': [
-                    {
-                        "fillColor": "rgba(83,191,189,0.5)",
-                        "strokeColor": "rgba(83,191,189,1)",
-                        "pointColor": "rgba(83,191,189,1)",
-                        "pointStrokeColor": "#fff",
-                        "data": datasets_rx
-                    },
-                    {
-                        "fillColor": "rgba(151,187,205,0.5)",
-                        "strokeColor": "rgba(151,187,205,1)",
-                        "pointColor": "rgba(151,187,205,1)",
-                        "pointStrokeColor": "#fff",
-                        "data": datasets_tx
-                    },
-                ]
-            }
-            json_net.append({'dev': i, 'data': network})
-
-        for blk in disks:
-            datasets_wr = [0] * points
-            datasets_rd = [0] * points
-            disk = {
-                'labels': [""] * points,
-                'datasets': [
-                    {
-                        "fillColor": "rgba(83,191,189,0.5)",
-                        "strokeColor": "rgba(83,191,189,1)",
-                        "pointColor": "rgba(83,191,189,1)",
-                        "pointStrokeColor": "#fff",
-                        "data": datasets_rd
-                    },
-                    {
-                        "fillColor": "rgba(249,134,33,0.5)",
-                        "strokeColor": "rgba(249,134,33,1)",
-                        "pointColor": "rgba(249,134,33,1)",
-                        "pointStrokeColor": "#fff",
-                        "data": datasets_wr
-                    },
-                ]
-            }
-            json_blk.append({'dev': blk['dev'], 'data': disk})
-
-    data = json.dumps({'status': status, 'cpu': cpu, 'hdd': json_blk, 'net': json_net})
-
-    response = HttpResponse()
-    response['Content-Type'] = "text/javascript"
-    if status == 1:
+        data = json.dumps({'cpu': cpu, 'hdd': json_blk, 'net': json_net})
         response.cookies['cpu'] = datasets['cpu']
         response.cookies['timer'] = datasets['timer']
         response.cookies['hdd'] = cookie_blk
         response.cookies['net'] = cookie_net
+        response.write(data)
+    except libvirtError:
+        data = json.dumps({'error': 'Error 500'})
+        response.write(data)
+    return response
+
+
+def inst_status(request, host_id, vname):
+    """
+    Instance block
+    """
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect(reverse('login'))
+
+    compute = Compute.objects.get(id=host_id)
+
+    try:
+        conn = wvmInstance(compute.hostname,
+                           compute.login,
+                           compute.password,
+                           compute.type,
+                           vname)
+        status = conn.get_status()
+        conn.close()
+    except libvirtError:
+        status = None
+
+    data = json.dumps({'status': status})
+    response = HttpResponse()
+    response['Content-Type'] = "text/javascript"
     response.write(data)
     return response
 
@@ -265,7 +218,7 @@ def insts_status(request, host_id):
     Instances block
     """
     if not request.user.is_authenticated():
-        return HttpResponseRedirect('/login')
+        return HttpResponseRedirect(reverse('login'))
 
     errors = []
     instances = []
@@ -306,7 +259,7 @@ def instances(request, host_id):
     Instances block
     """
     if not request.user.is_authenticated():
-        return HttpResponseRedirect('/login')
+        return HttpResponseRedirect(reverse('login'))
 
     errors = []
     instances = []
@@ -389,7 +342,7 @@ def instance(request, host_id, vname):
     Instance block
     """
     if not request.user.is_authenticated():
-        return HttpResponseRedirect('/login')
+        return HttpResponseRedirect(reverse('login'))
 
     def show_clone_disk(disks):
         clone_disk = []
@@ -456,14 +409,14 @@ def instance(request, host_id, vname):
     except libvirtError as err:
         errors.append(err)
 
-    try:
-        instance = Instance.objects.get(compute_id=host_id, name=vname)
-        if instance.uuid != uuid:
-            instance.uuid = uuid
+        try:
+            instance = Instance.objects.get(compute_id=host_id, name=vname)
+            if instance.uuid != uuid:
+                instance.uuid = uuid
+                instance.save()
+        except Instance.DoesNotExist:
+            instance = Instance(compute_id=host_id, name=vname, uuid=uuid)
             instance.save()
-    except Instance.DoesNotExist:
-        instance = Instance(compute_id=host_id, name=vname, uuid=uuid)
-        instance.save()
 
     acl = Instance.objects.get(compute_id=host_id, name=vname).acl
     if request.user not in acl.all() and not request.user.is_staff:
@@ -503,7 +456,7 @@ def instance(request, host_id, vname):
                         conn.delete_disk()
                 finally:
                     conn.delete()
-                return HttpResponseRedirect('/instances/%s/' % host_id)
+                return HttpResponseRedirect(reverse('instances', args=[host_id]))
             if 'snapshot' in request.POST:
                 name = request.POST.get('name', '')
                 conn.create_snapshot(name)
@@ -593,7 +546,7 @@ def instance(request, host_id, vname):
                 conn_migrate.moveto(conn, vname, live, unsafe, xml_del)
                 conn_migrate.define_move(vname)
                 conn_migrate.close()
-                return HttpResponseRedirect('/instance/%s/%s' % (compute_id, vname))
+                return HttpResponseRedirect(reverse('instance', args=[compute_id, vname]))
             if 'delete_snapshot' in request.POST:
                 snap_name = request.POST.get('name', '')
                 conn.snapshot_delete(snap_name)
@@ -613,7 +566,7 @@ def instance(request, host_id, vname):
                         clone_data[post] = request.POST.get(post, '')
 
                 conn.clone_instance(clone_data)
-                return HttpResponseRedirect('/instance/%s/%s' % (host_id, clone_data['name']))
+                return HttpResponseRedirect(reverse('instance', args=[host_id, clone_data['name']]))
 
         conn.close()
 

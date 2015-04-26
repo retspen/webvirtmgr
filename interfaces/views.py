@@ -1,6 +1,7 @@
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
+from django.core.urlresolvers import reverse
 from django.core.exceptions import PermissionDenied
 
 from servers.models import Compute
@@ -17,7 +18,7 @@ def interfaces(request, host_id):
 
     """
     if not request.user.is_authenticated():
-        return HttpResponseRedirect('/')
+        return HttpResponseRedirect(reverse('index'))
 
     if not request.user.is_staff:
         raise PermissionDenied
@@ -64,7 +65,7 @@ def interface(request, host_id, iface):
 
     """
     if not request.user.is_authenticated():
-        return HttpResponseRedirect('/')
+        return HttpResponseRedirect(reverse('index'))
 
     errors = []
     ifaces_all = []
@@ -96,7 +97,7 @@ def interface(request, host_id, iface):
                 return HttpResponseRedirect(request.get_full_path())
             if 'delete' in request.POST:
                 conn.delete_iface()
-                return HttpResponseRedirect('/interfaces/%s' % host_id)
+                return HttpResponseRedirect(reverse('interfaces', args=[host_id]))
         conn.close()
     except libvirtError as err:
         errors.append(err)
