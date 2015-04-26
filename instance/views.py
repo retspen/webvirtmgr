@@ -200,7 +200,8 @@ def inst_status(request, host_id, vname):
                            compute.login,
                            compute.password,
                            compute.type,
-                           vname)
+                           vname,
+                           compute.hypervisor)
         status = conn.get_status()
         conn.close()
     except libvirtError:
