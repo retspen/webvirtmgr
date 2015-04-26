@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
+from django.core.exceptions import PermissionDenied
 
 from servers.models import Compute
 from networks.forms import AddNetPool
@@ -20,6 +21,9 @@ def networks(request, host_id):
     if not request.user.is_authenticated():
         return HttpResponseRedirect(reverse('login'))
 
+    if not request.user.is_staff:
+        raise PermissionDenied
+
     errors = []
     compute = Compute.objects.get(id=host_id)
 
@@ -27,7 +31,8 @@ def networks(request, host_id):
         conn = wvmNetworks(compute.hostname,
                            compute.login,
                            compute.password,
-                           compute.type)
+                           compute.type,
+                           compute.hypervisor)
         networks = conn.get_networks_info()
 
         if request.method == 'POST':
@@ -63,6 +68,9 @@ def network(request, host_id, pool):
     if not request.user.is_authenticated():
         return HttpResponseRedirect(reverse('login'))
 
+    if not request.user.is_staff:
+        raise PermissionDenied
+
     errors = []
     compute = Compute.objects.get(id=host_id)
 
@@ -71,6 +79,7 @@ def network(request, host_id, pool):
                           compute.login,
                           compute.password,
                           compute.type,
+                          compute.hypervisor,
                           pool)
         networks = conn.get_networks()
         state = conn.is_active()

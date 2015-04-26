@@ -107,7 +107,9 @@ def get_connection_infos(token):
                            instance.compute.login,
                            instance.compute.password,
                            instance.compute.type,
-                           instance.name)
+                           instance.name,
+                           instance.compute.hypervisor)
+        host = instance.compute.hostname
         if instance.compute.hostname.count(':'):
             connhost = instance.compute.hostname.split(':')[0]
             connport = instance.compute.hostname.split(':')[1]

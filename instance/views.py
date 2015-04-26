@@ -9,6 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 import json
 import time
+from django.core.exceptions import PermissionDenied
 
 from instance.models import Instance
 from servers.models import Compute
@@ -50,7 +51,8 @@ def instusage(request, host_id, vname):
                            compute.login,
                            compute.password,
                            compute.type,
-                           vname)
+                           vname,
+                           compute.hypervisor)
         cpu_usage = conn.cpu_usage()
         blk_usage = conn.disk_usage()
         net_usage = conn.net_usage()
@@ -125,8 +127,8 @@ def instusage(request, host_id, vname):
                     ]
                 }
 
-            json_blk.append({'dev': blk['dev'], 'data': disk})
-            cookie_blk[blk['dev']] = [datasets_rd, datasets_wr]
+                json_blk.append({'dev': blk['dev'], 'data': disk})
+                cookie_blk[blk['dev']] = [datasets_rd, datasets_wr]
 
         for net in net_usage:
             if cookies.get('net') == '{}' or not cookies.get('net') or not net_usage:
@@ -198,7 +200,8 @@ def inst_status(request, host_id, vname):
                            compute.login,
                            compute.password,
                            compute.type,
-                           vname)
+                           vname,
+                           compute.hypervisor)
         status = conn.get_status()
         conn.close()
     except libvirtError:
@@ -226,20 +229,24 @@ def insts_status(request, host_id):
         conn = wvmInstances(compute.hostname,
                             compute.login,
                             compute.password,
-                            compute.type)
+                            compute.type,
+                            compute.hypervisor)
         get_instances = conn.get_instances()
     except libvirtError as err:
         errors.append(err)
 
     for instance in get_instances:
-        instances.append({'name': instance,
+        instance_info = ({'name': instance,
                           'status': conn.get_instance_status(instance),
                           'memory': conn.get_instance_memory(instance),
                           'vcpu': conn.get_instance_vcpu(instance),
                           'uuid': conn.get_uuid(instance),
                           'host': host_id,
-                          'dump': conn.get_instance_managed_save_image(instance)
+                          'hypervisor': compute.hypervisor
                           })
+        if compute.hypervisor == 'qemu':
+            instance_info['dump'] = conn.get_instance_managed_save_image(instance)
+        instances.append(instance_info)
 
     data = json.dumps(instances)
     response = HttpResponse()
@@ -260,13 +267,15 @@ def instances(request, host_id):
     time_refresh = 8000
     get_instances = []
     conn = None
+
     compute = Compute.objects.get(id=host_id)
 
     try:
         conn = wvmInstances(compute.hostname,
                             compute.login,
                             compute.password,
-                            compute.type)
+                            compute.type,
+                            compute.hypervisor)
         get_instances = conn.get_instances()
     except libvirtError as err:
         errors.append(err)
@@ -279,12 +288,22 @@ def instances(request, host_id):
             uuid = conn.get_uuid(instance)
             inst = Instance(compute_id=host_id, name=instance, uuid=uuid)
             inst.save()
-        instances.append({'name': instance,
-                          'status': conn.get_instance_status(instance),
-                          'uuid': uuid,
-                          'memory': conn.get_instance_memory(instance),
-                          'vcpu': conn.get_instance_vcpu(instance),
-                          'has_managed_save_image': conn.get_instance_managed_save_image(instance)})
+
+        acl = Instance.objects.get(compute_id=host_id, name=instance).acl
+        if request.user in acl.all() or request.user.is_staff:
+            if compute.hypervisor == 'qemu':
+                instances.append({'name': instance,
+                                  'status': conn.get_instance_status(instance),
+                                  'uuid': uuid,
+                                  'memory': conn.get_instance_memory(instance),
+                                  'vcpu': conn.get_instance_vcpu(instance),
+                                  'has_managed_save_image': conn.get_instance_managed_save_image(instance)})
+            else:
+                instances.append({'name': instance,
+                                  'status': conn.get_instance_status(instance),
+                                  'uuid': uuid,
+                                  'memory': conn.get_instance_memory(instance),
+                                  'vcpu': conn.get_instance_vcpu(instance)})
 
     if conn:
         try:
@@ -354,7 +373,8 @@ def instance(request, host_id, vname):
                            compute.login,
                            compute.password,
                            compute.type,
-                           vname)
+                           vname,
+                           compute.hypervisor)
 
         status = conn.get_status()
         autostart = conn.get_autostart()
@@ -364,10 +384,7 @@ def instance(request, host_id, vname):
         memory = conn.get_memory()
         cur_memory = conn.get_cur_memory()
         description = conn.get_description()
-        disks = conn.get_disk_device()
-        media = conn.get_media_device()
         networks = conn.get_net_device()
-        media_iso = sorted(conn.get_iso_media())
         vcpu_range = conn.get_max_cpus()
         memory_range = [256, 512, 768, 1024, 2048, 4096, 6144, 8192, 16384]
         if memory not in memory_range:
@@ -377,14 +394,21 @@ def instance(request, host_id, vname):
         memory_host = conn.get_max_memory()
         vcpu_host = len(vcpu_range)
         telnet_port = conn.get_telnet_port()
-        console_type = conn.get_console_type()
-        console_port = conn.get_console_port()
-        console_keymap = conn.get_console_keymap()
-        snapshots = sorted(conn.get_snapshot(), reverse=True)
         inst_xml = conn._XMLDesc(VIR_DOMAIN_XML_SECURE)
-        has_managed_save_image = conn.get_managed_save_image()
-        clone_disks = show_clone_disk(disks)
-        console_passwd = conn.get_console_passwd()
+        if compute.hypervisor == 'qemu':
+            snapshots = sorted(conn.get_snapshot(), reverse=True)
+            has_managed_save_image = conn.get_managed_save_image()
+            console_type = conn.get_console_type()
+            console_port = conn.get_console_port()
+            console_keymap = conn.get_console_keymap()
+            console_passwd = conn.get_console_passwd()
+            media_iso = sorted(conn.get_iso_media())
+            media = conn.get_media_device()
+            disks = conn.get_disk_device()
+            clone_disks = show_clone_disk(disks)
+        hypervisor = compute.hypervisor
+    except libvirtError as err:
+        errors.append(err)
 
         try:
             instance = Instance.objects.get(compute_id=host_id, name=vname)
@@ -395,6 +419,11 @@ def instance(request, host_id, vname):
             instance = Instance(compute_id=host_id, name=vname, uuid=uuid)
             instance.save()
 
+    acl = Instance.objects.get(compute_id=host_id, name=vname).acl
+    if request.user not in acl.all() and not request.user.is_staff:
+        raise PermissionDenied
+
+    try:
         if request.method == 'POST':
             if 'start' in request.POST:
                 conn.start()
@@ -453,6 +482,8 @@ def instance(request, host_id, vname):
                 description = request.POST.get('description', '')
                 vcpu = request.POST.get('vcpu', '')
                 cur_vcpu = request.POST.get('cur_vcpu', '')
+                if int(cur_vcpu) > int(vcpu):
+                    vcpu = cur_vcpu
                 memory = request.POST.get('memory', '')
                 memory_custom = request.POST.get('memory_custom', '')
                 if memory_custom:
@@ -461,6 +492,8 @@ def instance(request, host_id, vname):
                 cur_memory_custom = request.POST.get('cur_memory_custom', '')
                 if cur_memory_custom:
                     cur_memory = cur_memory_custom
+                if int(cur_memory) > int(memory):
+                    memory = cur_memory
                 conn.change_settings(description, cur_memory, memory, cur_vcpu, vcpu)
                 return HttpResponseRedirect(request.get_full_path() + '#instancesettings')
             if 'change_xml' in request.POST:
@@ -509,7 +542,8 @@ def instance(request, host_id, vname):
                 conn_migrate = wvmInstances(new_compute.hostname,
                                             new_compute.login,
                                             new_compute.password,
-                                            new_compute.type)
+                                            new_compute.type,
+                                            new_compute.hypervisor)
                 conn_migrate.moveto(conn, vname, live, unsafe, xml_del)
                 conn_migrate.define_move(vname)
                 conn_migrate.close()

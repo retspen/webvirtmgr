@@ -2,6 +2,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
+from django.core.exceptions import PermissionDenied
 
 from servers.models import Compute
 from interfaces.forms import AddInterface
@@ -19,6 +20,9 @@ def interfaces(request, host_id):
     if not request.user.is_authenticated():
         return HttpResponseRedirect(reverse('index'))
 
+    if not request.user.is_staff:
+        raise PermissionDenied
+
     errors = []
     ifaces_all = []
     compute = Compute.objects.get(id=host_id)
@@ -27,7 +31,8 @@ def interfaces(request, host_id):
         conn = wvmInterfaces(compute.hostname,
                              compute.login,
                              compute.password,
-                             compute.type)
+                             compute.type,
+                             compute.hypervisor)
         ifaces = conn.get_ifaces()
         try:
             netdevs = conn.get_net_device()
@@ -71,6 +76,7 @@ def interface(request, host_id, iface):
                             compute.login,
                             compute.password,
                             compute.type,
+                            compute.hypervisor,
                             iface)
         start_mode = conn.get_start_mode()
         state = conn.is_active()

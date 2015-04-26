@@ -89,8 +89,8 @@ class wvmInstances(wvmConnect):
 
 
 class wvmInstance(wvmConnect):
-    def __init__(self, host, login, passwd, conn, vname):
-        wvmConnect.__init__(self, host, login, passwd, conn)
+    def __init__(self, host, login, passwd, conn, vname, hypervisor):
+        wvmConnect.__init__(self, host, login, passwd, conn, hypervisor)
         self.instance = self.get_instance(vname)
 
     def start(self):

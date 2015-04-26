@@ -2,9 +2,11 @@
 {% load tags_active %}
 <div class="row">
     <div class="col-xs-12">
-        <div class="page-header">
+        <div class="pagehead">
+            {% if user.is_staff and compute.hypervisor == 'qemu' %}
             <a href="{% url 'create' host_id %}" class="btn btn-sm btn-success pull-right">{% trans "New Instance" %}</a>
-            <h1><a href="{% url 'overview' host_id %}">{{ compute.name }}</a></h1>
+            {% endif %}
+            <h1><a href="{% url 'overview' host_id %}">{{ compute.name|upper }}</a> | {{compute.hypervisor|upper}}</h1>
         </div>
     </div>
 </div>
@@ -15,10 +17,13 @@
                 <a href="{% url 'instances' host_id %}"
                    class="list {% active request "^/instance" %}">{% trans "Instances" %}</a>
             </li>
+            {% if user.is_staff %}
+            {% ifequal compute.hypervisor 'qemu' %}
             <li>
                 <a href="{% url 'storages' host_id %}"
                    class="list {% active request "^/storage" %}">{% trans "Storages" %}</a>
             </li>
+            {% endifequal %}
             <li>
                 <a href="{% url 'networks' host_id %}"
                    class="list {% active request "^/network" %}">{% trans "Networks" %}</a>
@@ -27,10 +32,13 @@
                 <a href="{% url 'interfaces' host_id %}"
                    class="list {% active request "^/interface" %}">{% trans "Interfaces" %}</a>
             </li>
+            {% ifequal compute.hypervisor 'qemu' %}
             <li>
                 <a href="{% url 'secrets' host_id %}"
                    class="list {% active request "^/secrets" %}">{% trans "Secrets" %}</a>
             </li>
+            {% endifequal %}
+            {% endif %}
             <li>
                 <a href="{% url 'overview' host_id %}" class="list {% active request "^/host" %}">{% trans "Overview" %}</a>
             </li>

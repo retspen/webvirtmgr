@@ -31,7 +31,8 @@ def console(request):
                            instance.compute.login,
                            instance.compute.password,
                            instance.compute.type,
-                           instance.name)
+                           instance.name,
+                           instance.compute.hypervisor)
         console_type = conn.get_console_type()
         console_websocket_port = conn.get_console_websocket_port()
         console_passwd = conn.get_console_passwd()

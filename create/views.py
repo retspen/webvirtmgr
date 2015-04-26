@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
+from django.core.exceptions import PermissionDenied
 
 from servers.models import Compute
 from create.models import Flavor
@@ -22,6 +23,9 @@ def create(request, host_id):
     if not request.user.is_authenticated():
         return HttpResponseRedirect(reverse('login'))
 
+    if not request.user.is_staff:
+        raise PermissionDenied
+
     conn = None
     errors = []
     storages = []
@@ -34,7 +38,8 @@ def create(request, host_id):
         conn = wvmCreate(compute.hostname,
                          compute.login,
                          compute.password,
-                         compute.type)
+                         compute.type,
+                         compute.hypervisor)
 
         storages = sorted(conn.get_storages())
         networks = sorted(conn.get_networks())

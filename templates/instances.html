@@ -59,9 +59,11 @@
                                         <button class="btn btn-sm btn-default disabled" title="{% trans "Suspend" %}">
                                             <span class="glyphicon glyphicon-pause"></span>
                                         </button>
+                                        {% ifequal compute.hypervisor 'qemu' %}
                                         <button class="btn btn-sm btn-default disabled" title="{% trans "Save" %}">
                                             <span class="glyphicon glyphicon-download-alt"></span>
                                         </button>
+                                        {% endifequal %}
                                         {% ifequal inst.has_managed_save_image 1 %}
                                             <button class="btn btn-sm btn-default" type="submit" name="deletesaveimage"
                                                     title="{% trans "Delete Save Image" %}">
@@ -76,9 +78,11 @@
                                                 title="{% trans "Force Shutdown" %}">
                                             <span class="glyphicon glyphicon-stop"></span>
                                         </button>
+                                        {% ifequal compute.hypervisor 'qemu' %}
                                         <button class="btn btn-sm btn-default disabled" title="{% trans "Console" %}">
                                             <span class="glyphicon glyphicon-align-justify"></span>
                                         </button>
+                                        {% endifequal %}
                                     {% endifequal %}
                                     {% ifequal inst.status 3 %}
                                         <button class="btn btn-sm btn-default" type="submit" name="resume"
@@ -88,10 +92,12 @@
                                         <button class="btn btn-sm btn-default disabled" title="{% trans "Suspend" %}">
                                             <span class="glyphicon glyphicon-pause"></span>
                                         </button>
+                                        {% ifequal compute.hypervisor 'qemu' %}
                                         <button class="btn btn-sm btn-default" type="submit" name="managedsave"
                                                 title="{% trans "Save" %}">
                                             <span class="glyphicon glyphicon-download-alt"></span>
                                         </button>
+                                        {% endifequal %}
                                         <button class="btn btn-sm btn-default disabled" title="{% trans "Shutdown" %}">
                                             <span class="glyphicon glyphicon-off"></span>
                                         </button>
@@ -99,9 +105,11 @@
                                                 title="{% trans "Force Shutdown" %}">
                                             <span class="glyphicon glyphicon-stop"></span>
                                         </button>
+                                        {% ifequal compute.hypervisor 'qemu' %}
                                         <button class="btn btn-sm btn-default disabled" title="{% trans "Console" %}">
                                             <span class="glyphicon glyphicon-align-justify"></span>
                                         </button>
+                                        {% endifequal %}
                                     {% endifequal %}
                                     {% ifequal inst.status 1 %}
                                         <button class="btn btn-sm btn-default disabled" title="{% trans "Start" %}">
@@ -111,10 +119,12 @@
                                                 title="{% trans "Suspend" %}">
                                             <span class="glyphicon glyphicon-pause"></span>
                                         </button>
+                                        {% ifequal compute.hypervisor 'qemu' %}
                                         <button class="btn btn-sm btn-default" type="submit" name="managedsave"
                                                 title="{% trans "Save" %}">
                                             <span class="glyphicon glyphicon-download-alt"></span>
                                         </button>
+                                        {% endifequal %}
                                         <button class="btn btn-sm btn-default" type="submit" name="shutdown"
                                                 title="{% trans "Shutdown" %}">
                                             <span class="glyphicon glyphicon-off"></span>
@@ -124,10 +134,12 @@
                                                 onclick="return confirm('Are you sure?')">
                                             <span class="glyphicon glyphicon-stop"></span>
                                         </button>
+                                        {% ifequal compute.hypervisor 'qemu' %}
                                         <a href="#" class="btn btn-sm btn-default"
                                            onclick='open_console("{{ host_id }}-{{ inst.uuid }}")' title="{% trans "Console" %}">
                                             <span class="glyphicon glyphicon-align-justify"></span>
                                         </a>
+                                        {% endifequal %}
                                     {% endifequal %}
                                 </form>
                             </td>
@@ -150,6 +162,18 @@
             $.getJSON('{% url 'insts_status' host_id %}', function (data) {
                 for (var i = 0; i < data.length; i++) {
                     var elem = '#' + data[i]['name']
+                    if (data[i]['hypervisor'] === 'qemu') {
+                        var save = "<button class='btn btn-sm btn-default' type='submit' name='managedsave' title='{% trans "Save" %}'>"
+                                 + "<span class='glyphicon glyphicon-download-alt'></span>"
+                                 + "</button> "
+                        var console = "<button class='btn btn-sm btn-default disabled' title='{% trans "Console" %}'>"
+                                    + "<span class='glyphicon glyphicon-align-justify'></span>"
+                                    + "</button>"
+                    }
+                    else {
+                        var save = ''
+                        var console = ''
+                    }
                     if (data[i]['status'] === 1) {
                         if (data[i]['dump'] === 1) {
                             var btn = "<button class='btn btn-sm btn-default' type='submit' name='deletesaveimage' title='{% trans "Delete Save Image" %}'>"
@@ -159,6 +183,11 @@
                             var btn = "<button class='btn btn-sm btn-default' type='submit' name='shutdown' title='{% trans "Shutdown" %}'>"
                                     + "<span class='glyphicon glyphicon-off'></span>"
                                     + "</button> ";
+                        }
+                        if (data[i]['hypervisor'] === 'qemu') {
+                            var console = "<a href='#' class='btn btn-sm btn-default' onclick='open_console(\"" + data[i]['host'] + "-" + data[i]['uuid'] + "\")' title='{% trans "Console" %}'>"
+                                        + "<span class='glyphicon glyphicon-align-justify'></span>"
+                                        + "</a> "
                         }
                         $(elem).html("<td><a href='/instance/{{ host_id }}/" + data[i]['name'] + "'><i class='icon-th-large'></i> " + data[i]['name'] + "</a></td>"
                                 + "<td><span class='label label-success'>{% trans "Running" %}</span></td>"
@@ -173,16 +202,12 @@
                                 + "<button class='btn btn-sm btn-default' type='submit' name='suspend' title='{% trans "Suspend" %}'>"
                                 + "<span class='glyphicon glyphicon-pause'></span>"
                                 + "</button> "
-                                + "<button class='btn btn-sm btn-default' type='submit' name='managedsave' title='{% trans "Save" %}'>"
-                                + "<span class='glyphicon glyphicon-download-alt'></span>"
-                                + "</button> "
+                                + save
                                 + btn
                                 + "<button class='btn btn-sm btn-default' type='submit' name='destroy' title='{% trans "Force Shutdown" %}' onclick='return confirm('Are you sure?')'>"
                                 + "<span class='glyphicon glyphicon-stop'></span>"
                                 + "</button> "
-                                + "<a href='#' class='btn btn-sm btn-default' onclick='open_console(\"" + data[i]['host'] + "-" + data[i]['uuid'] + "\")' title='{% trans "Console" %}'>"
-                                + "<span class='glyphicon glyphicon-align-justify'></span>"
-                                + "</a> "
+                                + console
                                 + "</form>"
                                 + "</td>");
                     }
@@ -200,18 +225,14 @@
                                 + "<button class='btn btn-sm btn-default disabled' title='{% trans "Suspend" %}'>"
                                 + "<span class='glyphicon glyphicon-pause'></span>"
                                 + "</button> "
-                                + "<button class='btn btn-sm btn-default' type='submit' name='managedsave' title='{% trans "Save" %}'>"
-                                + "<span class='glyphicon glyphicon-download-alt'></span>"
-                                + "</button> "
+                                + save
                                 + "<button class='btn btn-sm btn-default disabled' title='{% trans "Shutdown" %}'>"
                                 + "<span class='glyphicon glyphicon-off''></span>"
                                 + "</button> "
                                 + "<button class='btn btn-sm btn-default disabled' title='{% trans "Force Shutdown" %}'>"
                                 + "<span class='glyphicon glyphicon-stop'></span>"
                                 + "</button> "
-                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Console" %}'>"
-                                + "<span class='glyphicon glyphicon-align-justify'></span>"
-                                + "</button> "
+                                + console
                                 + "</form>"
                                 + "</td>");
                     }
@@ -229,18 +250,14 @@
                                 + "<button class='btn btn-sm btn-default disabled' title='{% trans "Suspend" %}'>"
                                 + "<span class='glyphicon glyphicon-pause'></span>"
                                 + "</button> "
-                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Save" %}'>"
-                                + "<span class='glyphicon glyphicon-download-alt'></span>"
-                                + "</button> "
+                                + save
                                 + "<button class='btn btn-sm btn-default disabled' title='{% trans "Shutdown" %}'>"
                                 + "<span class='glyphicon glyphicon-off'></span>"
                                 + "</button> "
                                 + "<button class='btn btn-sm btn-default disabled' title='{% trans "Force Shutdown" %}'>"
                                 + "<span class='glyphicon glyphicon-stop'></span>"
                                 + "</button> "
-                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Console" %}'>"
-                                + "<span class='glyphicon glyphicon-align-justify'></span>"
-                                + "</button> "
+                                + console
                                 + "</form>"
                                 + "</td>");
                     }

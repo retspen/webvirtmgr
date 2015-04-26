@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% block title %}{% trans "403" %}{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-12" id="error">
+            <h1>Oops!</h1>
+            <p class="lead">{% trans "403 Forbidden" %}</p>
+            <p>{% trans "You do not have the permission to access this page." %}</p>
+            <a class="btn btn-medium btn-success" href="javascript:history.back()">&larr; Back</a>
+        </div>
+    </div>
+{% endblock %}

@@ -2,6 +2,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
+from django.core.exceptions import PermissionDenied
 
 from servers.models import Compute
 from instance.models import Instance
@@ -39,6 +40,7 @@ def servers_list(request):
             all_hosts.append({'id': host.id,
                               'name': host.name,
                               'hostname': host.hostname,
+                              'hypervisor': host.hypervisor,
                               'status': connection_manager.host_is_up(host.type, host.hostname),
                               'type': host.type,
                               'login': host.login,
@@ -51,6 +53,10 @@ def servers_list(request):
     form = None
 
     if request.method == 'POST':
+
+        if not request.user.is_staff:
+            raise PermissionDenied
+
         if 'host_del' in request.POST:
             compute_id = request.POST.get('host_id', '')
             try:
@@ -66,6 +72,7 @@ def servers_list(request):
                 data = form.cleaned_data
                 new_tcp_host = Compute(name=data['name'],
                                        hostname=data['hostname'],
+                                       hypervisor=data['hypervisor'],
                                        type=CONN_TCP,
                                        login=data['login'],
                                        password=data['password'])
@@ -77,6 +84,7 @@ def servers_list(request):
                 data = form.cleaned_data
                 new_ssh_host = Compute(name=data['name'],
                                        hostname=data['hostname'],
+                                       hypervisor=data['hypervisor'],
                                        type=CONN_SSH,
                                        login=data['login'])
                 new_ssh_host.save()
@@ -87,6 +95,7 @@ def servers_list(request):
                 data = form.cleaned_data
                 new_tls_host = Compute(name=data['name'],
                                        hostname=data['hostname'],
+                                       hypervisor=data['hypervisor'],
                                        type=CONN_TLS,
                                        login=data['login'],
                                        password=data['password'])
@@ -99,6 +108,7 @@ def servers_list(request):
                 data = form.cleaned_data
                 compute_edit = Compute.objects.get(id=data['host_id'])
                 compute_edit.name = data['name']
+                compute_edit.hypervisor = data['hypervisor']
                 compute_edit.hostname = data['hostname']
                 compute_edit.login = data['login']
                 compute_edit.password = data['password']
@@ -111,6 +121,7 @@ def servers_list(request):
                 data = form.cleaned_data
                 new_socket_host = Compute(name=data['name'],
                                           hostname='localhost',
+                                          hypervisor=data['hypervisor'],
                                           type=CONN_SOCKET,
                                           login='',
                                           password='')
@@ -127,6 +138,9 @@ def infrastructure(request):
     if not request.user.is_authenticated():
         return HttpResponseRedirect(reverse('login'))
 
+    if not request.user.is_staff:
+        raise PermissionDenied
+
     compute = Compute.objects.filter()
     hosts_vms = {}
 
@@ -134,7 +148,8 @@ def infrastructure(request):
         status = connection_manager.host_is_up(host.type, host.hostname)
         if status:
             try:
-                conn = wvmHostDetails(host, host.login, host.password, host.type)
+                conn = wvmHostDetails(host, host.login, host.password,
+                                      host.type, host.hypervisor)
                 host_info = conn.get_node_info()
                 host_mem = conn.get_memory_usage()
                 hosts_vms[host.id, host.name, status, host_info[3], host_info[2],

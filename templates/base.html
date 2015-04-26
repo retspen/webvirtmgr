@@ -23,16 +23,22 @@
         </div>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
+                {% if request.user.is_staff %}
                 <li>
                     <a href="{% url 'infrastructure' %}"
-                       title="{% trans "Show all host and vm's" %}">{% trans "Infrastructure" %}</a>
+                       title="{% trans "Show all host and vm" %}">{% trans "Infrastructure" %}</a>
                 </li>
+                <li>
+                    <a href="{% url 'admin:index' %}"
+                       title="{% trans "Admin area" %}">{% trans "Admin" %}</a>
+                </li>
+                {% endif %}
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
                 {% if request.user.is_authenticated or user.is_authenticated %}
                     <li class="">
-                        <a href="{% url 'logout' %}">{% trans "Sign out" %}</a>
+                        <a href="{% url 'logout' %}">{% trans "Sign out" %} ({{ user.username }})</a>
                     </li>
                 {% else %}
                     <li class="">

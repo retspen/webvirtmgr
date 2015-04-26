@@ -66,9 +66,11 @@
             <span class="glyphicon glyphicon-briefcase"></span><br>{% trans "Access" %}
         </a>
         </li>
+        {% ifequal compute.hypervisor 'qemu' %}
         <li><a class="inst-btn" href="#snapshots" data-toggle="tab">
             <span class="glyphicon glyphicon-camera"></span><br>{% trans "Snapshots" %}
         </a>
+        {% endifequal %}
         </li>
         <li><a class="inst-btn" href="#graph" data-toggle="tab">
             <span class="glyphicon glyphicon-signal"></span><br>{% trans "Statistics" %}
@@ -78,14 +80,18 @@
             <span class="glyphicon glyphicon-wrench"></span><br>{% trans "Settings" %}
         </a>
         </li>
+        {% ifequal compute.hypervisor 'qemu' %}
         <li><a class="inst-btn" href="#migrate" data-toggle="tab">
             <span class="glyphicon glyphicon-cloud-download"></span><br>{% trans "Migrate" %}
         </a>
         </li>
+        {% endifequal %}
+        {% if user.is_staff %}
         <li><a class="inst-btn" href="#delete" data-toggle="tab">
             <span class="glyphicon glyphicon-trash"></span><br>{% trans "Destroy" %}
         </a>
         </li>
+        {% endif %}
     </ul>
     <div class="tab-content">
     <div class="tab-pane active" id="power" style="margin-top: 20px">
@@ -95,9 +101,11 @@
             <li><a href="#forceshutdown" data-toggle="tab">{% trans "Force Shutdown" %}</a></li>
             <li><a href="#suspend" data-toggle="tab">{% trans "Suspend" %}</a></li>
             {% endifnotequal %}
+            {% ifequal compute.hypervisor 'qemu' %}
             {% if status != 5 or has_managed_save_image == 1 %}
             <li><a href="#managedsave" data-toggle="tab">{% trans "Save" %}</a></li>
             {% endif %}
+            {% endifequal %}
         </ul>
         <div class="tab-content">
             <div class="tab-pane tab-inst active" id="shutdown">
@@ -129,7 +137,7 @@
                 <form action="" method="post" role="form">{% csrf_token %}
                     {% ifequal status 1 %}
                         <button data-id="shutoff" type="submit" name="power" value="destroy"
-                                class="btn btn-lg btn-primary pull-right">{% trans "Force Shutdown" %}</button>
+                                class="btn btn-lg btn-danger pull-right">{% trans "Force Shutdown" %}</button>
                     {% endifequal %}
                     {% ifequal status 3 %}
                         <button class="btn btn-lg btn-primary pull-right disabled">{% trans "Force Shutdown" %}</button>
@@ -326,7 +334,9 @@
     <div class="tab-pane" id="settings" style="margin-top: 20px">
     <ul class="nav nav-tabs nav-btn-act" style="margin-top: 20px">
         <li class="active"><a href="#instancesettings" data-toggle="tab">{% trans "VCPU's and Memory" %}</a></li>
+        {% ifequal compute.hypervisor 'qemu' %}
         <li><a href="#instancemedia" data-toggle="tab">{% trans "Media" %}</a></li>
+        {% endifequal %}
         <li><a href="#instancedevice" data-toggle="tab">{% trans "Disks and Networks" %}</a></li>
         <li><a href="#instanceclone" data-toggle="tab">{% trans "Clone" %}</a></li>
         <li><a href="#instancexml" data-toggle="tab">{% trans "XML" %}</a></li>
@@ -487,6 +497,7 @@
                 {% endif %}
             {% endfor %}
         </div>
+        {% ifequal compute.hypervisor 'qemu' %}
         <p style="font-weight:bold;">{% trans "Storage devices" %}</p>
 
         <div class="col-sm-3">
@@ -499,6 +510,7 @@
                 <p>{{ disk.image }} ({{ disk.format }})</p>
             {% endfor %}
         </div>
+        {% endifequal %}
         <div class="clearfix"></div>
     </div>
     <div class="tab-pane tab-inst" id="instanceclone">
@@ -750,9 +762,14 @@
         </ul>
         <div class="tab-content">
             <div class="tab-pane tab-inst active" id="destroy">
+                {% ifequal compute.hypervisor 'qemu' %}
                 <p>{% trans "Delete HDD image?" %}</p>
+                {% else %}
+                <p><strong><span class="label label-danger">{% trans "Warning:" %}</span> {% trans "The container rootfs must be deleted manually." %}</strong>
+                {% endifequal %}
 
                 <form class="form-group" method="post" role="form">{% csrf_token %}
+                    {% ifequal compute.hypervisor 'qemu' %}
                     <div class="checkbox" style="margin-left: 8px;">
                         <label>
                             <input type="checkbox" name="delete_disk" value="true">
@@ -761,7 +778,8 @@
                             </strong>
                         </label>
                     </div>
-                    <button type="submit" class="btn btn-lg btn-primary pull-right"
+                    {% endifequal %}
+                    <button type="submit" class="btn btn-lg btn-danger pull-right"
                             name="delete">{% trans "Delete" %}</button>
                 </form>
                 <div class="clearfix"></div>
