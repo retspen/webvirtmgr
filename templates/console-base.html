@@ -1,0 +1,124 @@
+{% load i18n %}
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.min.css">
+    <link href="{{ STATIC_URL }}css/webvirtmgr.css" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color:#494949;
+        }
+
+        .navbar {
+            margin-bottom: 2px;
+        }
+
+        #main_container {
+            margin: 0;
+            padding: 0;
+            border-bottom-right-radius: 800px 600px;
+            background-color: #313131;
+            height: 100%;
+        }
+
+        #main_container canvas {
+            padding-left: 0;
+            padding-right: 0;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+        }
+       
+	#status {
+            z-index: 10000;
+            width: 80%;
+            position: absolute;
+            top: 5px;
+            left: 10%;
+            text-align: center;
+	}
+    </style>
+
+{% block head %}{% endblock %}
+
+</head>
+
+<body>
+<nav class="navbar navbar-inverse navbar-static-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand">{{ instance.name }}</a>
+        </div>
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Send key(s) <span class="caret"></span></a>
+                  <ul class="dropdown-menu" role="menu">
+                      <li onclick='sendCtrlAltDel();'><a href='#'>Ctrl+Alt+Del</a></li>
+                      <li class="divider"></li>
+                      <li onclick='sendCtrlAltFN(0);'><a href='#'>Ctrl+Alt+F1</a></li>
+                      <li onclick='sendCtrlAltFN(1);'><a href='#'>Ctrl+Alt+F2</a></li>
+                      <li onclick='sendCtrlAltFN(2);'><a href='#'>Ctrl+Alt+F3</a></li>
+                      <li onclick='sendCtrlAltFN(3);'><a href='#'>Ctrl+Alt+F4</a></li>
+                      <li onclick='sendCtrlAltFN(4);'><a href='#'>Ctrl+Alt+F5</a></li>
+                      <li onclick='sendCtrlAltFN(5);'><a href='#'>Ctrl+Alt+F6</a></li>
+                      <li onclick='sendCtrlAltFN(6);'><a href='#'>Ctrl+Alt+F7</a></li>
+                      <li onclick='sendCtrlAltFN(7);'><a href='#'>Ctrl+Alt+F8</a></li>
+                      <li onclick='sendCtrlAltFN(8);'><a href='#'>Ctrl+Alt+F9</a></li>
+                      <li onclick='sendCtrlAltFN(9);'><a href='#'>Ctrl+Alt+F10</a></li>
+                      <li onclick='sendCtrlAltFN(10);'><a href='#'>Ctrl+Alt+F11</a></li>
+                      <li onclick='sendCtrlAltFN(11);'><a href='#'>Ctrl+Alt+F12</a></li>
+                  </ul>
+                </li>
+                <li onclick='fullscreen()'><a href='#'>{% trans "Fullscreen" %}</a></li>
+{% block navbarmenu %}{% endblock %}
+            </ul>
+        </div>
+    </div>
+</nav>
+<div id='main_container' class="container">
+{% block content %}{% endblock %}
+</div>
+<script src="{{ STATIC_URL }}js/jquery-1.10.2.js"></script>
+<script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
+
+<script>
+    function log_message(msg,type) {
+        var exist=$('#status').is('div');
+        status_div=$('<div id="status" class="alert alert-'+type+' role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+msg+'</div>');
+        if (exist) {
+          $('#status').remove();
+          $('body').prepend(status_div);
+        }
+        else {
+          status_div.hide();
+          $('body').prepend(status_div);
+          status_div.fadeIn(200);
+        }
+        if (type!='danger') {
+          status_div.delay(3000).fadeOut(200);
+        }
+    }
+
+    function log_error(msg) {
+        log_message(msg,'danger');
+    }
+
+    function log_info(msg) {
+        log_message(msg,'info');
+    }
+</script>
+
+{% block foot %}{% endblock %}
+</body>
+</html>
