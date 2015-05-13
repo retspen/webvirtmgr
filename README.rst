@@ -2,7 +2,7 @@
 WebVirtMgr panel - v4.8.9
 =========================
 -------
-New project like WebVirtMgr with User Management - `WebVirtCloud <https://github.com/retspen/webvirtmgr>`_
+New project like WebVirtMgr with User Management - `WebVirtCloud <https://github.com/retspen/webvirtcloud>`_
 -------
 
 -------
