@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, url
 from django.conf import settings
+from instance.views import InstanceList
 
 urlpatterns = patterns('',
     url(r'^$', 'servers.views.index', name='index'),
@@ -16,7 +17,7 @@ urlpatterns = patterns('',
     url(r'^interfaces/(\d+)/$', 'interfaces.views.interfaces', name='interfaces'),
     url(r'^interface/(\d+)/([\w\.\:]+)/$', 'interfaces.views.interface', name='interface'),
     url(r'^instance/(\d+)/([\w\-\.]+)/$', 'instance.views.instance', name='instance'),
-    url(r'^instances/(\d+)/$', 'instance.views.instances', name='instances'),
+    url(r'^instances/(?P<host_id>[\d]+)/$', InstanceList.as_view(), name='instances'),
     url(r'^secrets/(\d+)/$', 'secrets.views.secrets', name='secrets'),
     url(r'^console/$', 'console.views.console', name='console'),
     url(r'^info/hostusage/(\d+)/$', 'hostdetail.views.hostusage', name='hostusage'),
