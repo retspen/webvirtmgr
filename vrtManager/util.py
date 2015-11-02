@@ -1,7 +1,6 @@
 #
 # Copyright (C) 2013 Webvirtmgr.
 #
-import re
 import random
 import libxml2
 import libvirt
