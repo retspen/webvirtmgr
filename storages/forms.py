@@ -55,6 +55,7 @@ class AddImage(forms.Form):
     name = forms.CharField(max_length=20)
     format = forms.ChoiceField(required=True, choices=(('qcow2', 'qcow2 (recommended)'),
                                                        ('qcow', 'qcow'),
+                                                       ('qed', 'qed'),
                                                        ('raw', 'raw')))
     size = forms.IntegerField()
     meta_prealloc = forms.BooleanField(required=False)
@@ -75,6 +76,7 @@ class CloneImage(forms.Form):
     convert = forms.BooleanField(required=False)
     format = forms.ChoiceField(required=False, choices=(('qcow2', 'qcow2 (recommended)'),
                                                         ('qcow', 'qcow'),
+                                                        ('qed', 'qed'),
                                                         ('raw', 'raw')))
     meta_prealloc = forms.BooleanField(required=False)
 
