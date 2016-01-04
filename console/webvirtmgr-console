@@ -17,7 +17,7 @@ if ROOT_PATH not in sys.path:
 
 import Cookie
 import socket
-from webvirtmgr.settings import WS_PORT, WS_HOST, WS_CERT
+from webvirtmgr.settings import WS_PORT, WS_HOST, WS_CERT, WS_KEY
 
 from vrtManager.connection import CONN_SSH, CONN_SOCKET
 
@@ -62,6 +62,20 @@ parser.add_option("-c",
                   action="store",
                   help="Certificate file path",
                   default=WS_CERT or CERT)
+  
+parser.add_option("-k",
+                  "--key",
+                  dest="key",
+                  action="store",
+                  help="Certificate key file path",
+                  default=WS_KEY)
+
+parser.add_option("--ssl-only",
+                  dest="ssl_only",
+                  action="store_true",
+                  help="Deny non-ssl connections",
+                  default=False)
+
 
 (options, args) = parser.parse_args()
 
@@ -242,8 +256,8 @@ if __name__ == '__main__':
                                 source_is_ipv6=False,
                                 verbose=options.verbose,
                                 cert=options.cert,
-                                key=None,
-                                ssl_only=False,
+                                key=options.key,
+                                ssl_only=options.ssl_only,
                                 daemon=False,
                                 record=False,
                                 web=False,
@@ -259,8 +273,8 @@ if __name__ == '__main__':
                                     source_is_ipv6=False,
                                     verbose=options.verbose,
                                     cert=options.cert,
-                                    key=None,
-                                    ssl_only=False,
+                                    key=options.key,
+                                    ssl_only=options.ssl_only,
                                     daemon=False,
                                     record=False,
                                     web=False,
