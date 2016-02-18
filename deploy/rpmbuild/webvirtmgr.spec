@@ -109,6 +109,7 @@ fi
 %files
 %defattr(-,root,root)
 %{python_sitelib}/*
+%config %{python_sitelib}/%{name}/conf/gunicorn.conf.py
 %if %{with systemd}
 %{_unitdir}/webvirtmgr.service
 %{_unitdir}/webvirtmgr-console.service
@@ -116,6 +117,7 @@ fi
 %{_sysconfdir}/init/*
 %{_sysconfdir}/init.d/*
 %endif
+
 %changelog
 * Mon Jan 18 2016 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 4.8.9
 - Support rhel 7
