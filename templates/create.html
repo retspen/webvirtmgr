@@ -265,6 +265,17 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label class="col-sm-3 control-label">{% trans "HDD cache mode" %}</label>
+
+                        <div class="col-sm-6">
+                            <select id="cache_mode" name="cache_mode" class="form-control">
+                                {% for mode, name in cache_modes %}
+                                    <option value="{{ mode }}">{% trans name %}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label class="col-sm-3 control-label">{% trans "Network" %}</label>
 
                         <div class="col-sm-6">
@@ -413,6 +424,17 @@
                                 {% else %}
                                     <option value="">{% trans "None" %}</option>
                                 {% endif %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">{% trans "HDD cache mode" %}</label>
+
+                        <div class="col-sm-6">
+                            <select id="cache_mode" name="cache_mode" class="form-control">
+                                {% for mode, name in cache_modes %}
+                                    <option value="{{ mode }}">{% trans name %}</option>
+                                {% endfor %}
                             </select>
                         </div>
                     </div>
