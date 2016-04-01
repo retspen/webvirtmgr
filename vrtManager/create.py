@@ -11,9 +11,16 @@ from webvirtmgr.settings import QEMU_CONSOLE_DEFAULT_TYPE
 def get_rbd_storage_data(stg):
     xml = stg.XMLDesc(0)
     ceph_user = util.get_xml_path(xml, "/pool/source/auth/@username")
-    ceph_host = util.get_xml_path(xml, "/pool/source/host/@name")
-    secrt_uuid = util.get_xml_path(xml, "/pool/source/auth/secret/@uuid")
-    return ceph_user, secrt_uuid, ceph_host
+    def get_ceph_hosts(ctx):
+        hosts=[]
+        for host in ctx.xpathEval("/pool/source/host"):
+            name=host.prop("name")
+            if name:
+                hosts.append({'name': name, 'port': host.prop("port")})
+        return hosts
+    ceph_hosts = util.get_xml_path(xml, func=get_ceph_hosts)
+    secret_uuid = util.get_xml_path(xml, "/pool/source/auth/secret/@uuid")
+    return ceph_user, secret_uuid, ceph_hosts
 
 
 class wvmCreate(wvmConnect):
@@ -177,15 +184,23 @@ class wvmCreate(wvmConnect):
             stg_type = util.get_xml_path(stg.XMLDesc(0), "/pool/@type")
 
             if stg_type == 'rbd':
-                ceph_user, secrt_uuid, ceph_host = get_rbd_storage_data(stg)
+                ceph_user, secret_uuid, ceph_hosts = get_rbd_storage_data(stg)
                 xml += """<disk type='network' device='disk'>
                             <driver name='qemu' type='%s' cache='%s'/>
                             <auth username='%s'>
                                 <secret type='ceph' uuid='%s'/>
                             </auth>
-                            <source protocol='rbd' name='%s'>
-                                <host name='%s' port='6789'/>
-                            </source>""" % (img_type, cache_mode, ceph_user, secrt_uuid, image, ceph_host)
+                            <source protocol='rbd' name='%s'>""" % (img_type, cache_mode, ceph_user, secret_uuid, image)
+                if isinstance(ceph_hosts, list):
+                    for host in ceph_hosts:
+                        if host.get('port'):
+                            xml += """
+                                   <host name='%s' port='%s'/>""" % (host.get('name'), host.get('port'))
+                        else:
+                            xml += """
+                                   <host name='%s'/>""" % host.get('name')
+		xml += """
+                            </source>"""
             else:
                 xml += """<disk type='file' device='disk'>
                             <driver name='qemu' type='%s' cache='%s'/>
