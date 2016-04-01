@@ -1,15 +1,14 @@
 #
 # Copyright (C) 2013 Webvirtmgr.
 #
-import re
 import random
 import libxml2
 import libvirt
 
 
 def is_kvm_available(xml):
-    capabilites = re.search('kvm', xml)
-    if capabilites:
+    kvm_domains = get_xml_path(xml, "//domain/@type='kvm'")
+    if kvm_domains > 0:
         return True
     else:
         return False

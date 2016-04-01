@@ -12,12 +12,8 @@ def network_size(net, dhcp=None):
     """
     mask = IP(net).strNetmask()
     addr = IP(net)
-    if addr[0].strNormal()[-1] == '0':
-        gateway = addr[1].strNormal()
-        dhcp_pool = [addr[2].strNormal(), addr[addr.len() - 2].strNormal()]
-    else:
-        gateway = addr[0].strNormal()
-        dhcp_pool = [addr[1].strNormal(), addr[addr.len() - 2].strNormal()]
+    gateway = addr[1].strNormal()
+    dhcp_pool = [addr[2].strNormal(), addr[addr.len() - 2].strNormal()]
     if dhcp:
         return gateway, mask, dhcp_pool
     else:

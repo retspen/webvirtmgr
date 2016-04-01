@@ -588,10 +588,21 @@ install_debian() {
 }
 
 install_debian_post() {
-    if [ -f /etc/default/libvirt-bin ]; then
-        sed -i 's/libvirtd_opts="-d"/libvirtd_opts="-d -l"/g' /etc/default/libvirt-bin
+    if [ $DISTRO_MAJOR_VERSION -ge 8 ]; then
+        LIBVIRTSVC=libvirtd
     else
-        echoerror "/etc/default/libvirt-bin not found. Exiting..."
+        LIBVIRTSVC=libvirt-bin
+    fi
+    if [ -f /etc/default/$LIBVIRTSVC ]; then
+        if [ "$( grep -c '^libvirtd_opts *=' /etc/default/$LIBVIRTSVC )" -gt 0 ]; then
+            if [ $( grep -c '^libvirtd_opts *=.*-l' /etc/default/$LIBVIRTSVC ) -eq 0 ]; then
+                sed -i 's/^libvirtd_opts="\([^"]*\)"/libvirtd_opts="\1 -l"/g' /etc/default/$LIBVIRTSVC
+            fi
+        else
+            sed -i 's/^#libvirtd_opts=.*$/libvirtd_opts="-l"/g' /etc/default/$LIBVIRTSVC
+        fi
+    else
+        echoerror "/etc/default/$LIBVIRTSVC not found. Exiting..."
         exit 1
     fi
     if [ -f /etc/libvirt/libvirtd.conf ]; then
@@ -612,9 +623,14 @@ install_debian_post() {
 }
 
 daemons_running_debian() {
-    if [ -f /etc/init.d/libvirt-bin ]; then
-        /etc/init.d/libvirt-bin stop > /dev/null 2>&1
-        /etc/init.d/libvirt-bin start
+    if [ $DISTRO_MAJOR_VERSION -ge 8 ]; then
+        LIBVIRTSVC=libvirtd
+    else
+        LIBVIRTSVC=libvirt-bin
+    fi
+    if [ -f /etc/init.d/$LIBVIRTSVC ]; then
+        /etc/init.d/$LIBVIRTSVC stop > /dev/null 2>&1
+        /etc/init.d/$LIBVIRTSVC start
     fi
     return 0
 } 
