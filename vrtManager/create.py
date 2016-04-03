@@ -200,7 +200,7 @@ class wvmCreate(wvmConnect):
                         else:
                             xml += """
                                    <host name='%s'/>""" % host.get('name')
-		xml += """
+                xml += """
                             </source>"""
             else:
                 xml += """<disk type='file' device='disk'>
