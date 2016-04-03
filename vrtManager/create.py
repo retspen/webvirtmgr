@@ -11,10 +11,11 @@ from webvirtmgr.settings import QEMU_CONSOLE_DEFAULT_TYPE
 def get_rbd_storage_data(stg):
     xml = stg.XMLDesc(0)
     ceph_user = util.get_xml_path(xml, "/pool/source/auth/@username")
+
     def get_ceph_hosts(ctx):
-        hosts=[]
+        hosts = []
         for host in ctx.xpathEval("/pool/source/host"):
-            name=host.prop("name")
+            name = host.prop("name")
             if name:
                 hosts.append({'name': name, 'port': host.prop("port")})
         return hosts
@@ -58,8 +59,8 @@ class wvmCreate(wvmConnect):
             'none': 'Disabled',
             'writethrough': 'Write through',
             'writeback': 'Write back',
-            'directsync': 'Direct sync', # since libvirt 0.9.5
-            'unsafe': 'Unsafe', # since libvirt 0.9.7
+            'directsync': 'Direct sync',  # since libvirt 0.9.5
+            'unsafe': 'Unsafe',  # since libvirt 0.9.7
         }
 
     def create_volume(self, storage, name, size, format='qcow2', metadata=False):
