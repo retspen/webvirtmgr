@@ -167,7 +167,7 @@ class CompatibilityMixIn(object):
             self.msg('Try to open local socket %s' % console_socket)
             tsock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
             tsock.connect(console_socket)
-        elif console_socket or re.match('^127\.', console_host):
+        elif console_socket or re.match('^127\.', console_host) and conntype != CONN_SOCKET:
             # Need tunnel to physical host
             if conntype != CONN_SSH:
                 self.msg("Need a tunnel to access console but can't mount " +

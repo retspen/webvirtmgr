@@ -42,6 +42,7 @@ class NewVMForm(forms.Form):
     storage = forms.CharField(max_length=20, required=False)
     template = forms.CharField(required=False)
     images = forms.CharField(required=False)
+    cache_mode = forms.CharField(error_messages={'required': _('Please select HDD cache mode')})
     hdd_size = forms.IntegerField(required=False)
     meta_prealloc = forms.BooleanField(required=False)
     virtio = forms.BooleanField(required=False)

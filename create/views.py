@@ -40,6 +40,7 @@ def create(request, host_id):
         networks = sorted(conn.get_networks())
         instances = conn.get_instances()
         get_images = sorted(conn.get_storages_images())
+        cache_modes = sorted(conn.get_cache_modes().items())
         mac_auto = util.randomMAC()
     except libvirtError as err:
         errors.append(err)
@@ -121,11 +122,15 @@ def create(request, host_id):
                                         volumes[path] = conn.get_volume_type(path)
                                     except libvirtError as msg_error:
                                         errors.append(msg_error.message)
+                        if data['cache_mode'] not in conn.get_cache_modes():
+                            msg = _("Invalid cache mode")
+                            errors.append(msg)
                         if not errors:
                             uuid = util.randomUUID()
                             try:
                                 conn.create_instance(data['name'], data['memory'], data['vcpu'], data['host_model'],
-                                                     uuid, volumes, data['networks'], data['virtio'], data['mac'])
+                                                     uuid, volumes, data['cache_mode'], data['networks'], data['virtio'],
+                                                     data['mac'])
                                 create_instance = Instance(compute_id=host_id, name=data['name'], uuid=uuid)
                                 create_instance.save()
                                 return HttpResponseRedirect(reverse('instance', args=[host_id, data['name']]))
