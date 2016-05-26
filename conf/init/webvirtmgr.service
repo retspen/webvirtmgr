@@ -1,0 +1,9 @@
+[Unit]
+Description=WebVirtMgr Gunicorn Server
+ 
+[Service]
+WorkingDirectory=/usr/lib/python2.7/site-packages/webvirtmgr
+ExecStart=/usr/bin/python /usr/lib/python2.7/site-packages/webvirtmgr/manage.py run_gunicorn -c /usr/lib/python2.7/site-packages/webvirtmgr/conf/gunicorn.conf.py
+ 
+[Install]
+WantedBy=multi-user.target

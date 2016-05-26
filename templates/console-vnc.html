@@ -1,48 +1,37 @@
+{% extends "console-base.html" %}
 {% load i18n %}
-<html>
-<head>
-    <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.ico">
-    <link rel="stylesheet" href="{{ STATIC_URL }}js/novnc/base.css" title="plain">
-    <!--
-    <script type='text/javascript'
-        src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>
-    -->
-    <script src="{{ STATIC_URL }}js/novnc/util.js"></script>
-</head>
-<body style="margin: 0px;">
-<div id="noVNC_screen">
-    <div id="noVNC_status_bar" class="noVNC_status_bar" style="margin-top: 0px;">
-        <table border=0 width="100%">
-            <tr>
-                <td>
-                    <div id="noVNC_status">{% trans "Loading..." %}</div>
-                </td>
-                <td width="32%" style="text-align:right;">
-                    <div id="noVNC_buttons">
-                        <!-- dirty fix for keyboard on iOS devices -->
-                        <input type="button" id="showKeyboard" value="Keyboard" title="Show Keyboard"/>
-                        <!-- Note that Google Chrome on Android doesn't respect any of these,
-                        html attributes which attempt to disable text suggestions on the
-                        on-screen keyboard. Let's hope Chrome implements the ime-mode
-                        style for example -->
-                        <!-- TODO: check if this is needed on iOS -->
-                        <textarea id="keyboardinput" autocapitalize="off"
-                                  autocorrect="off" autocomplete="off" spellcheck="false"
-                                  mozactionhint="Enter" onsubmit="return false;"
-                                  style="ime-mode: disabled;">
-                        </textarea>
+{% load staticfiles %}
+{% block head %}
+    <script src="{% static "js/novnc/util.js" %}"></script>
 
-                        <input type=button value="Ctrl+Alt+Del" id="sendCtrlAltDelButton">
-                        <input type=button value="Fullscreen" id="askFullscreen">
-                    </div>
-                </td>
-            </tr>
-        </table>
-    </div>
+{% endblock %}
+
+{% block navbarmenu %}
+                <!-- dirty fix for keyboard on iOS devices -->
+                <li id="showKeyboard"><a href='#'>{% trans "Show Keyboad" %}</a></li>
+{% endblock %}
+
+{% block content %}
+    <div id='noVNC_area'>
     <canvas id="noVNC_canvas" width="640px" height="20px">
         {% trans "Canvas not supported." %}
     </canvas>
-</div>
+    </div>
+
+    <!-- Note that Google Chrome on Android doesn't respect any of these,
+    html attributes which attempt to disable text suggestions on the
+    on-screen keyboard. Let's hope Chrome implements the ime-mode
+    style for example -->
+    <!-- TODO: check if this is needed on iOS -->
+    <textarea id="keyboardinput" autocapitalize="off"
+              autocorrect="off" autocomplete="off" spellcheck="false"
+              mozactionhint="Enter" onsubmit="return false;"
+              style="display: none;">
+    </textarea>
+
+{% endblock %}
+
+{% block foot %}
 <script>
     /*jslint white: false */
     /*global window, $, Util, RFB, */
@@ -60,24 +49,51 @@
     var rfb;
 
     function passwordRequired(rfb) {
-        var msg;
-        msg = '<form onsubmit="return setPassword();"';
-        msg += 'role="form"';
-        msg += '  style="margin-bottom: 0px">';
-        msg += 'Password Required: ';
-        msg += '<input type=password size=10 id="password_input" class="noVNC_status">';
-        msg += '<\/form>';
-        $D('noVNC_status_bar').setAttribute("class", "noVNC_status_warn");
-        $D('noVNC_status').innerHTML = msg;
+        var modal;
+        modal = '<div class="modal fade">';
+        modal += '  <div class="modal-dialog">';
+        modal += '    <div class="modal-content">';
+        modal += '      <div class="modal-header">';
+        modal += '        <h4 class="modal-title">{% trans "Password required" %}</h4>';
+        modal += '      </div>';
+        modal += '      <div class="modal-body">';
+        modal += '        <form id="password_form" onsubmit="return setPassword();">';
+        modal += '          <div class="form-group">';
+        modal += '            <label for="password_input">Password</label>';
+        modal += '            <input type="password" class="form-control" id="password_input" placeholder="Password"/>';
+        modal += '          </div>';
+        modal += '        </form>';
+        modal += '      </div>';
+        modal += '      <div class="modal-footer">';
+        modal += '        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="return setPassword();">{% trans "OK" %}</button>';
+        modal += '      </div>';
+        modal += '    </div>';
+        modal += '  </div>';
+        modal += '</div>';
+        $('body').append(modal);
+        $('div.modal').modal();
     }
     function setPassword() {
-        rfb.sendPassword($D('password_input').value);
+        rfb.sendPassword($('#password_input').val());
         return false;
     }
     function sendCtrlAltDel() {
         rfb.sendCtrlAltDel();
         return false;
     }
+
+    function sendCtrlAltFN(f) {
+        var keys_code=[0xFFBE,0xFFBF,0xFFC0,0xFFC1,0xFFC2,0xFFC3,0xFFC4,0xFFC5,0xFFC6,0xFFC7,0xFFC8,0xFFC9];
+        if (keys_code[f]==undefined) {
+            return;
+        }
+        rfb.sendKey(0xFFE3, 'down');
+        rfb.sendKey(0xFFE9, 'down');
+        rfb.sendKey(keys_code[f], 'down');
+        rfb.sendKey(keys_code[f], 'up');
+        rfb.sendKey(0xFFE9, 'up');
+        rfb.sendKey(0xFFE3, 'up');
+    };
 
     // dirty fix for keyboard on iOS devices
     function showKeyboard() {
@@ -103,48 +119,36 @@
 
     function updateState(rfb, state, oldstate, msg) {
         var s, sb, cad, af, level;
-        s = $D('noVNC_status');
-        sb = $D('noVNC_status_bar');
         cad = $D('sendCtrlAltDelButton');
         af = $D('askFullscreen');
         switch (state) {
             case 'failed':
-                level = "error";
+                level = "danger";
                 break;
             case 'fatal':
-                level = "error";
+                level = "danger";
                 break;
             case 'normal':
-                level = "normal";
+                level = "info";
                 break;
             case 'disconnected':
-                level = "normal";
+                level = "info";
                 break;
             case 'loaded':
-                level = "normal";
+                level = "info";
                 break;
             default:
-                level = "warn";
+                level = "warning";
                 break;
-        }
-
-        if (state === "normal") {
-            cad.disabled = false;
-            af.disabled = false;
-        }
-        else {
-            cad.disabled = true;
-            af.disabled = true;
         }
 
         if (typeof(msg) !== 'undefined') {
-            sb.setAttribute("class", "noVNC_status_" + level);
-            s.innerHTML = msg;
+            log_message(msg,level);
         }
     }
 
     function fullscreen() {
-        var screen=document.getElementById('noVNC_canvas');
+        var screen=document.getElementById('main_container');
         if(screen.requestFullscreen) {
             screen.requestFullscreen();
         } else if(screen.mozRequestFullScreen) {
@@ -158,11 +162,6 @@
 
     window.onscriptsload = function () {
         var host, port, password, path, token;
-
-        $D('sendCtrlAltDelButton').style.display = "inline";
-        $D('sendCtrlAltDelButton').onclick = sendCtrlAltDel;
-        $D('askFullscreen').style.display = "inline";
-        $D('askFullscreen').onclick = fullscreen;
 
         // dirty fix for keyboard on iOS devices
         if (isTouchDevice) {
@@ -188,7 +187,7 @@
             return;
         }
 
-        rfb = new RFB({'target': $D('noVNC_canvas'),
+        rfb = new RFB({'target': document.getElementById('noVNC_canvas'),
             'encrypt': WebUtil.getQueryVar('encrypt',
                     (window.location.protocol === "https:")),
             'repeaterID': WebUtil.getQueryVar('repeaterID', ''),
@@ -201,5 +200,4 @@
         rfb.connect(host, port, password, path);
     };
 </script>
-</body>
-</html>
+{% endblock %}
