@@ -308,6 +308,9 @@ def instances(request, host_id):
                 if 'suspend' in request.POST:
                     conn.suspend(name)
                     return HttpResponseRedirect(request.get_full_path())
+                if 'pmwakeup' in request.POST:
+                    conn.pMWakeup(name)
+                    return HttpResponseRedirect(request.get_full_path())
                 if 'resume' in request.POST:
                     conn.resume(name)
                     return HttpResponseRedirect(request.get_full_path())
@@ -415,6 +418,9 @@ def instance(request, host_id, vname):
             if 'suspend' in request.POST:
                 conn.suspend()
                 return HttpResponseRedirect(request.get_full_path() + '#suspend')
+            if 'pmwakeup' in request.POST:
+                conn.pMWakeup()
+                return HttpResponseRedirect(request.get_full_path() + '#pmwakeup')
             if 'resume' in request.POST:
                 conn.resume()
                 return HttpResponseRedirect(request.get_full_path() + '#suspend')

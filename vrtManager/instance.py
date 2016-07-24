@@ -71,6 +71,10 @@ class wvmInstances(wvmConnect):
         dom = self.get_instance(name)
         dom.resume()
 
+    def pMWakeup(self, name):
+        dom = self.get_instance(name)
+        dom.pMWakeup()
+
     def moveto(self, conn, name, live, unsafe, undefine):
         flags = 0
         if live and conn.get_status() == 1:
@@ -113,6 +117,9 @@ class wvmInstance(wvmConnect):
 
     def resume(self):
         self.instance.resume()
+
+    def pMWakeup(self):
+        self.instance.pMWakeup()
 
     def delete(self):
         try:
