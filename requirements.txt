@@ -5,3 +5,6 @@ gunicorn==18.0
 lockfile>=0.9
 # Uncoment for support ldap
 #django-auth-ldap==1.2.0
+libvirt-python==1.3.2
+websockify==0.8.0
+http://git.gnome.org/browse/libxml2/snapshot/libxml2-2.9.1.tar.gz#egg=libxml2-python&subdirectory=python
