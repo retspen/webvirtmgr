@@ -12,6 +12,14 @@ from libvirt import libvirtError
 from rwlock import ReadWriteLock
 from django.conf import settings
 
+CONN_ESX = 2
+CONN_SOCKET = 4
+CONN_TLS = 5
+CONN_SSH = 3
+CONN_TCP = 1
+TLS_PORT = 16514
+SSH_PORT = 22
+TCP_PORT = 16509
 
 CONN_SOCKET = 4
 CONN_TLS = 3
@@ -182,7 +190,22 @@ class wvmConnection(object):
         except libvirtError as e:
             self.last_error = 'Connection Failed: ' + str(e)
             self.connection = None
+## ESX connection definition
+# See https://libvirt.org/drvesx.html
+# esx://example-esx.com/?no_verify=1     (ESX over HTTPS, but doesn't verify the server's SSL certificate)
+    def __connect_esx(self):
+        flags = [libvirt.VIR_CRED_AUTHNAME, libvirt.VIR_CRED_PASSPHRASE]
+        auth = [flags, self.__libvirt_auth_credentials_callback, None]
+        uri = 'esx://%s@/?no_verify=1' % (self.login, self.host)
 
+        try:
+            self.connection = libvirt.openAuth(uri, auth, 0)
+            self.last_error = None
+
+        except libvirtError as e:
+            self.last_error = 'Connection Failed: ' + str(e)
+            self.connection = None
+## End of ESX section
     def __connect_socket(self):
         uri = 'qemu:///system'
 
@@ -227,6 +250,9 @@ class wvmConnection(object):
             type_str = u'ssh'
         elif self.type == CONN_TLS:
             type_str = u'tls'
+## Will probably need ESX entry below
+        elif self.type == CONN_ESX:
+            type_str = u'esx'
         else:
             type_str = u'invalid_type'
 
@@ -335,6 +361,7 @@ class wvmConnectionManager(object):
                 socket_host.connect((hostname, TLS_PORT))
             socket_host.close()
             return True
+## Do we need ESX here too            
         except Exception as err:
             return err
 
