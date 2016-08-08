@@ -450,7 +450,9 @@ class wvmConnect(object):
                 vcpu = cur_vcpu
             else:
                 vcpu = util.get_xml_path(dom.XMLDesc(0), "/domain/vcpu")
-            vname[dom.name()] = (dom.info()[0], vcpu, mem, mem_usage)
+            # Only show running or suspended VMs.
+            if dom.info()[0] != 5:
+                vname[dom.name()] = (dom.info()[0], vcpu, mem, mem_usage)
         return vname
 
     def close(self):
