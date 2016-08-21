@@ -311,6 +311,30 @@ class wvmInstance(wvmConnect):
             xmldom = ElementTree.tostring(tree)
         self._defineXML(xmldom)
 
+    def add_cdrom(self):
+        tree = ElementTree.fromstring(self._XMLDesc(0))
+        slots={}
+        for x in range(ord('a'),ord('z')+1):
+            slots["hd%s"%chr(x)]=True
+        for disk in tree.findall('devices/disk'):
+            if disk.get('device') == 'cdrom':
+                target=disk.find('target')
+                slots[target.get('dev')]=False
+        for x in range(ord('a'),ord('z')+1):
+            if(slots["hd%s"%chr(x)]):
+                empty="hd%s"%chr(x)
+                break
+        devices = tree.find('devices')
+        xml = """<disk type='file' device='cdrom'>
+        <driver name='qemu' type='raw'/>
+        <source file=''/>
+        <target dev='%s' bus='ide'/>
+        </disk>"""%empty
+        cdrom = ElementTree.fromstring(xml)
+        devices.append(cdrom)
+        xmldom = ElementTree.tostring(tree)
+        self._defineXML(xmldom)
+
     def cpu_usage(self):
         cpu_usage = {}
         if self.get_status() == 1:

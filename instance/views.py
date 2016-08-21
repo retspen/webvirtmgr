@@ -449,6 +449,9 @@ def instance(request, host_id, vname):
                 dev = request.POST.get('mount_iso', '')
                 conn.mount_iso(dev, image)
                 return HttpResponseRedirect(request.get_full_path() + '#instancemedia')
+            if 'add_cdrom' in request.POST:
+                conn.add_cdrom()
+                return HttpResponseRedirect(request.get_full_path() + '#instancemedia')
             if 'set_autostart' in request.POST:
                 conn.set_autostart(1)
                 return HttpResponseRedirect(request.get_full_path() + '#instancesettings')
