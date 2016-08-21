@@ -44,6 +44,7 @@
                 {% endifequal %}
                 {% ifequal status 1 %}"label label-success">{% trans "Running" %}{% endifequal %}
                 {% ifequal status 3 %}"label label-warning">{% trans "Suspend" %}{% endifequal %}
+                {% ifequal status 7 %}"label label-warning">{% trans "PMsuspend" %}{% endifequal %}
                             </span>
             {% else %}
                 {% trans "None" %}
@@ -119,6 +120,9 @@
                     {% ifequal status 3 %}
                         <button class="btn btn-lg btn-primary pull-right disabled">{% trans "Shutdown" %}</button>
                     {% endifequal %}
+                    {% ifequal status 7 %}
+                        <button class="btn btn-lg btn-primary pull-right disabled">{% trans "Shutdown" %}</button>
+                    {% endifequal %}
                 </form>
                 <div class="clearfix"></div>
             </div>
@@ -132,6 +136,9 @@
                                 class="btn btn-lg btn-primary pull-right">{% trans "Force Shutdown" %}</button>
                     {% endifequal %}
                     {% ifequal status 3 %}
+                        <button class="btn btn-lg btn-primary pull-right disabled">{% trans "Force Shutdown" %}</button>
+                    {% endifequal %}
+                    {% ifequal status 7 %}
                         <button class="btn btn-lg btn-primary pull-right disabled">{% trans "Force Shutdown" %}</button>
                     {% endifequal %}
                 </form>
@@ -148,6 +155,10 @@
                     {% ifequal status 3 %}
                         <button type="submit" name="resume"
                                 class="btn btn-lg btn-primary pull-right">{% trans "Resume" %}</button>
+                    {% endifequal %}
+                    {% ifequal status 7 %}
+                        <button type="submit" name="pmwakeup"
+                                class="btn btn-lg btn-primary pull-right">{% trans "Wakeup" %}</button>
                     {% endifequal %}
                 </form>
                 <div class="clearfix"></div>
@@ -172,6 +183,9 @@
                                 class="btn btn-lg btn-primary pull-right">{% trans "Save" %}</button>
                     {% endifequal %}
                     {% ifequal status 3 %}
+                        <button class="btn btn-lg btn-primary pull-right disabled">{% trans "Save" %}</button>
+                    {% endifequal %}
+                    {% ifequal status 7 %}
                         <button class="btn btn-lg btn-primary pull-right disabled">{% trans "Save" %}</button>
                     {% endifequal %}
                 </form>
@@ -448,8 +462,9 @@
                         </div>
                         <div class="col-sm-2">
                             {% if media_iso %}
-                                <button type="submit" class="btn btn-primary btn-sm pull-left" value="{{ cd.dev }}"
+                                <button type="submit" class="btn btn-primary btn pull-left" value="{{ cd.dev }}"
                                         name="mount_iso">{% trans "Connect" %}</button>
+
                             {% else %}
                                 <button class="btn btn-primary btn-sm pull-left disabled"
                                         name="mount_iso">{% trans "Connect" %}</button>
@@ -461,12 +476,25 @@
                         </div>
                         <div class="col-sm-2">
                             <input type="hidden" name="path" value="{{ cd.path }}">
-                            <button type="submit" class="btn btn-primary btn-sm pull-left" value="{{ cd.dev }}"
+                            <button type="submit" class="btn btn-primary btn pull-left" value="{{ cd.dev }}"
                                     name="umount_iso">{% trans "Disconnect" %}</button>
                         </div>
                     {% endif %}
                 </div>
             {% endfor %}
+                <div class="form-group">
+                    <label class="col-sm-3 control-label"></label>
+					<div class="col-sm-6"></div>
+					<div class="col-sm-2">
+						{% ifequal status 5 %}
+						<button type="submit" class="btn btn-primary btn pull-left"
+								name="add_cdrom">{% trans "Add CDROM" %}</button>
+						{% else %}
+						<button type="submit" class="btn btn-primary btn pull-left disabled"
+								name="add_cdrom">{% trans "Add CDROM" %}</button>
+						{% endifequal %}
+					</div>
+                </div>
         </form>
         <div class="clearfix"></div>
     </div>
