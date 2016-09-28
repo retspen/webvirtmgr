@@ -5,7 +5,7 @@ python:
 env:
   - DJANGO=1.5.5
 install:
-  - pip install -r dev-requirements.txt --use-mirrors
+  - pip install -r dev-requirements.txt
 script:
   - pep8 --exclude=IPy.py --ignore=E501 console hostdetail instance networks servers storages vrtManager
   - pyflakes console hostdetail instance networks servers storages vrtManager
