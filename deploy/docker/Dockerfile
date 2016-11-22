@@ -29,7 +29,8 @@ RUN yum clean all && \
 RUN yum clean all && \
     yum -y install telnet openssh-server sudo && \
     service sshd start && \
-    service sshd stop
+    service sshd stop && \
+    yum clean all
 
 RUN mkdir /var/www && \
     cd /var/www && \
