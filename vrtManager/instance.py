@@ -5,9 +5,11 @@ import time
 import os.path
 try:
     from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE, VIR_MIGRATE_LIVE, \
-        VIR_MIGRATE_UNSAFE, VIR_DOMAIN_UNDEFINE_SNAPSHOTS_METADATA
+        VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_LEASE, VIR_MIGRATE_UNSAFE, \
+        VIR_DOMAIN_UNDEFINE_SNAPSHOTS_METADATA
 except:
-    from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE, VIR_MIGRATE_LIVE
+    from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE, VIR_MIGRATE_LIVE, \
+        VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_LEASE
 from vrtManager import util
 from xml.etree import ElementTree
 from datetime import datetime
@@ -182,6 +184,7 @@ class wvmInstance(wvmConnect):
 
         def networks(ctx):
             result = []
+            ifaddrs = self.instance.interfaceAddresses(VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_LEASE)
             for net in ctx.xpathEval('/domain/devices/interface'):
                 mac_host = net.xpathEval('mac/@address')[0].content
                 nic_host = net.xpathEval('source/@network|source/@bridge|source/@dev')[0].content
@@ -190,6 +193,14 @@ class wvmInstance(wvmConnect):
                     ip = get_mac_ipaddr(net, mac_host)
                 except:
                     ip = None
+
+                if not ip:
+                    # Try to get the IP address from domifaddrs
+                    for iface in ifaddrs.values():
+                        if iface.get('hwaddr') == mac_host:
+                            ip = ', '.join(['%s/%d' % (a['addr'], a['prefix']) for a in iface.get('addrs', [])])
+                            break
+
                 result.append({'mac': mac_host, 'nic': nic_host, 'ip': ip})
             return result
 
