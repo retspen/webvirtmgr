@@ -184,7 +184,7 @@ class wvmInstance(wvmConnect):
             result = []
             for net in ctx.xpathEval('/domain/devices/interface'):
                 mac_host = net.xpathEval('mac/@address')[0].content
-                nic_host = net.xpathEval('source/@network|source/@bridge|source/@dev')[0].content
+                nic_host = net.xpathEval('source/@network|source/@bridge|source/@dev|alias/@name')[0].content
                 try:
                     net = self.get_network(nic_host)
                     ip = get_mac_ipaddr(net, mac_host)
