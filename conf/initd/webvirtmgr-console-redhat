@@ -50,7 +50,7 @@ stop() {
     killproc -p $pidfile $exec
     retval=$?
     echo
-    [ $retval -eq 0 ] && rm -f $lockfile
+    [ $retval -eq 0 ] && (rm -f $lockfile; rm -f $pidfile)
     return $retval
 }
 
