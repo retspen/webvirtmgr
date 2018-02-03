@@ -127,7 +127,7 @@ def get_connection_infos(token):
             connport = instance.compute.hostname.split(':')[1]
         else:
             connhost = instance.compute.hostname
-            connport = 22
+            connport = None
         connuser = instance.compute.login
         conntype = instance.compute.type
         console_host = conn.get_console_listen_addr()
