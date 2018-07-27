@@ -9,7 +9,7 @@ from create.models import Flavor
 class FlavorAddForm(forms.Form):
     label = forms.CharField(label="Name",
                             error_messages={'required': _('No flavor name has been entered')},
-                            max_length=20)
+                            max_length=50)
     vcpu = forms.IntegerField(label="VCPU",
                               error_messages={'required': _('No VCPU has been entered')}, )
     disk = forms.IntegerField(label="HDD",
@@ -22,7 +22,7 @@ class FlavorAddForm(forms.Form):
         have_symbol = re.match('^[a-zA-Z0-9._-]+$', label)
         if not have_symbol:
             raise forms.ValidationError(_('The flavor name must not contain any special characters'))
-        elif len(label) > 20:
+        elif len(label) > 50:
             raise forms.ValidationError(_('The flavor name must not exceed 20 characters'))
         try:
             Flavor.objects.get(label=label)
@@ -33,7 +33,7 @@ class FlavorAddForm(forms.Form):
 
 class NewVMForm(forms.Form):
     name = forms.CharField(error_messages={'required': _('No Virtual Machine name has been entered')},
-                           max_length=20)
+                           max_length=50)
     vcpu = forms.IntegerField(error_messages={'required': _('No VCPU has been entered')})
     host_model = forms.BooleanField(required=False)
     disk = forms.IntegerField(required=False)
