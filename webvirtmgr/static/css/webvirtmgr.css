@@ -213,3 +213,7 @@ p {
 #viewXMLpre .pre-scrollable {
     width: 100%;
 }
+
+.panel-title { 
+    overflow: hidden;
+}

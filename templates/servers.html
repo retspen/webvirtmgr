@@ -54,7 +54,7 @@
                             <div class="panel-heading">
                                 {% ifequal host.status 1 %}
                                     <h3 class="panel-title">
-                                        <a href="{% url 'instances' host.id %}"><strong>{{ host.name }}</strong></a>
+                                        <a alt="{{ host.name }}" href="{% url 'instances' host.id %}"><strong>{{ host.name }}</strong></a>
                                         <a data-toggle="modal" href="#editHost{{ host.id }}" class="pull-right"
                                            title="{% trans "Edit" %}">
                                             <span class="glyphicon glyphicon-pencil"></span>
@@ -62,7 +62,7 @@
                                     </h3>
                                 {% else %}
                                     <h3 class="panel-title"><strong>{{ host.name }}</strong>
-                                        <a data-toggle="modal" href="#editHost{{ host.id }}" class="pull-right"
+                                        <a alt="{{ host.id }}" data-toggle="modal" href="#editHost{{ host.id }}" class="pull-right"
                                            title="{% trans "Edit" %}">
                                             <span class="glyphicon glyphicon-pencil"></span>
                                         </a>
