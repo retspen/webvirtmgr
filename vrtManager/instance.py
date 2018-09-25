@@ -184,7 +184,7 @@ class wvmInstance(wvmConnect):
             result = []
             for net in ctx.xpathEval('/domain/devices/interface'):
                 mac_host = net.xpathEval('mac/@address')[0].content
-                nic_host = net.xpathEval('source/@network|source/@bridge|source/@dev')[0].content
+                nic_host = net.xpathEval('source/@network|source/@bridge|source/@dev|alias/@name')[0].content
                 try:
                     net = self.get_network(nic_host)
                     ip = get_mac_ipaddr(net, mac_host)
@@ -546,13 +546,23 @@ class wvmInstance(wvmConnect):
         self.instance.snapshotCreateXML(xml, flag)
 
     def create_snapshot(self, name):
+        if self.get_status() == 1:
+            state = 'running'
+        elif self.get_status() == 5:
+            state = 'shutoff'
+        else:
+            state = ''
+
         xml = """<domainsnapshot>
                      <name>%s</name>
-                     <state>shutoff</state>
-                     <creationTime>%d</creationTime>""" % (name, time.time())
+                     <state>%s</state>
+                     <creationTime>%d</creationTime>""" % (name, state, time.time())
         xml += self._XMLDesc(VIR_DOMAIN_XML_SECURE)
-        xml += """<active>0</active>
-                  </domainsnapshot>"""
+        
+        if state == 'shutoff':
+            xml += "<active>0</active>"
+        
+        xml += "</domainsnapshot>"
         self._snapshotCreateXML(xml, 0)
 
     def get_snapshot(self):
