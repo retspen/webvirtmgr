@@ -1,11 +1,13 @@
 #
 # Copyright (C) 2013 Webvirtmgr.
 #
-import time
 import os.path
+import time
+
+
 try:
-    from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE, VIR_MIGRATE_LIVE, \
-        VIR_MIGRATE_UNSAFE, VIR_DOMAIN_UNDEFINE_SNAPSHOTS_METADATA
+    from libvirt import (libvirtError, VIR_DOMAIN_XML_SECURE, VIR_MIGRATE_LIVE,
+                         VIR_MIGRATE_UNSAFE, VIR_DOMAIN_UNDEFINE_SNAPSHOTS_METADATA)
 except:
     from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE, VIR_MIGRATE_LIVE
 from vrtManager import util
@@ -220,8 +222,8 @@ class wvmInstance(wvmConnect):
                     except:
                         pass
                     finally:
-                        result.append(
-                            {'dev': dev, 'image': volume, 'storage': storage, 'path': src_fl, 'format': disk_format})
+                        result.append({'dev': dev, 'image': volume, 'storage': storage, 'path': src_fl,
+                                       'format': disk_format})
             return result
 
         return util.get_xml_path(self._XMLDesc(0), func=disks)
@@ -622,6 +624,12 @@ class wvmInstance(wvmConnect):
                                         <allocation>0</allocation>
                                         <target>
                                             <format type='%s'/>
+                                            <permissions>
+                                                <owner>107</owner>
+                                                <group>107</group>
+                                                <mode>0644</mode>
+                                                <label>virt_image_t</label>
+                                            </permissions>                                            
                                         </target>
                                     </volume>""" % (target_file, vol_format)
                     stg = vol.storagePoolLookupByVolume()

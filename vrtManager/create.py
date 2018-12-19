@@ -2,9 +2,9 @@
 # Copyright (C) 2013 Webvirtmgr.
 #
 import string
+
 from vrtManager import util
 from vrtManager.connection import wvmConnect
-
 from webvirtmgr.settings import QEMU_CONSOLE_DEFAULT_TYPE
 
 
@@ -19,6 +19,7 @@ def get_rbd_storage_data(stg):
             if name:
                 hosts.append({'name': name, 'port': host.prop("port")})
         return hosts
+
     ceph_hosts = util.get_xml_path(xml, func=get_ceph_hosts)
     secret_uuid = util.get_xml_path(xml, "/pool/source/auth/secret/@uuid")
     return ceph_user, secret_uuid, ceph_hosts
@@ -61,7 +62,7 @@ class wvmCreate(wvmConnect):
             'writeback': 'Write back',
             'directsync': 'Direct sync',  # since libvirt 0.9.5
             'unsafe': 'Unsafe',  # since libvirt 0.9.7
-        }
+            }
 
     def create_volume(self, storage, name, size, format='qcow2', metadata=False):
         size = int(size) * 1073741824
@@ -80,6 +81,12 @@ class wvmCreate(wvmConnect):
                 <allocation>%s</allocation>
                 <target>
                     <format type='%s'/>
+                    <permissions>
+                        <owner>107</owner>
+                        <group>107</group>
+                        <mode>0644</mode>
+                        <label>virt_image_t</label>
+                    </permissions>
                 </target>
             </volume>""" % (name, size, alloc, format)
         stg.createXML(xml, metadata)
@@ -131,6 +138,12 @@ class wvmCreate(wvmConnect):
                 <allocation>0</allocation>
                 <target>
                     <format type='%s'/>
+                    <permissions>
+                        <owner>107</owner>
+                        <group>107</group>
+                        <mode>0644</mode>
+                        <label>virt_image_t</label>
+                    </permissions>
                 </target>
             </volume>""" % (clone, format)
         stg.createXMLFrom(xml, vol, metadata)
