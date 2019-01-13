@@ -44,6 +44,18 @@ class wvmCreate(wvmConnect):
                 else:
                     images.append(img)
         return images
+    
+    def get_images_without_template(self):
+        """
+        :return: images list without template 
+        """
+        return [name for name in self.get_storages_images() if "template"  not in name.lower()]
+        
+    def get_template_images(self):
+        """
+        return template name
+        """
+        return [name for name in self.get_storages_images() if "template" in name.lower()]
 
     def get_os_type(self):
         """Get guest capabilities"""
@@ -87,6 +99,10 @@ class wvmCreate(wvmConnect):
                         <mode>0644</mode>
                         <label>virt_image_t</label>
                     </permissions>
+                    <compat>1.1</compat>
+                    <features>
+                      <lazy_refcounts/>
+                    </features>
                 </target>
             </volume>""" % (name, size, alloc, format)
         stg.createXML(xml, metadata)
@@ -122,6 +138,10 @@ class wvmCreate(wvmConnect):
         vol = self.get_volume_by_path(vol_path)
         return vol.storagePoolLookupByVolume()
 
+    def get_storage_capacity_by_vol_path(self, vol_path):
+        vol = self.get_volume_by_path(vol_path)
+        return vol.info()[1] / 1024.0 / 1024.0 / 1024.0
+
     def clone_from_template(self, clone, template, metadata=False):
         vol = self.get_volume_by_path(template)
         stg = vol.storagePoolLookupByVolume()
@@ -144,6 +164,10 @@ class wvmCreate(wvmConnect):
                         <mode>0644</mode>
                         <label>virt_image_t</label>
                     </permissions>
+                    <compat>1.1</compat>
+                    <features>
+                      <lazy_refcounts/>
+                    </features>                    
                 </target>
             </volume>""" % (clone, format)
         stg.createXMLFrom(xml, vol, metadata)

@@ -24,6 +24,26 @@ def randomMAC():
                  random.randint(0x00, 0xff)]
     return ':'.join(map(lambda x: "%02x" % x, mac))
 
+def gen_MAC_via_ip(ip_str):
+    """
+    return MAC whose last four bytes are same as ip
+    :param ip_str: 
+    :return: 
+    """
+    mac_strs = ['%02x' % int(num) for num in ip_str.split(".")]
+    return "52:54" + ":%s:%s:%s:%s" % tuple(mac_strs)
+
+def get_ip_via_mac(mac_str):
+    """
+    return a ip according to the last for bytes in mac
+    :param mac_str: 
+    :return: 
+    """
+    # default MAC is not the user's input
+    if mac_str.startswith("52:54:00"):
+        return None
+    mac_split =  mac_str.split(":")
+    return ".".join(["%s" % int(item, 16) for item in mac_split[2:]])
 
 def randomUUID():
     """Generate a random UUID."""

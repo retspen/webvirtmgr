@@ -577,6 +577,10 @@ class wvmInstance(wvmConnect):
     def get_managed_save_image(self):
         return self.instance.hasManagedSaveImage(0)
 
+    def get_storage_capacity_by_vol_path(self, vol_path):
+        vol = self.get_volume_by_path(vol_path)
+        return vol.info()[1] / 1024.0 / 1024.0 / 1024.0
+
     def clone_instance(self, clone_data):
         clone_dev_path = []
 
@@ -629,7 +633,11 @@ class wvmInstance(wvmConnect):
                                                 <group>107</group>
                                                 <mode>0644</mode>
                                                 <label>virt_image_t</label>
-                                            </permissions>                                            
+                                            </permissions>
+                                            <compat>1.1</compat>
+                                            <features>
+                                              <lazy_refcounts/>
+                                            </features>                                                                                        
                                         </target>
                                     </volume>""" % (target_file, vol_format)
                     stg = vol.storagePoolLookupByVolume()

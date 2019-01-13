@@ -473,12 +473,12 @@
     <div class="tab-pane tab-inst" id="instancedevice">
         <p style="font-weight:bold;">{% trans "Network devices" %}</p>
 
-        <div class="col-sm-3">
+        <div class="col-sm-4">
             {% for network in networks %}
                 <p style="text-align: right;">eth{{ forloop.counter0 }} ({{ network.nic }})</p>
             {% endfor %}
         </div>
-        <div class="col-sm-9">
+        <div class="col-sm-8">
             {% for network in networks %}
                 {% if network.ip %}
                     <p>{{ network.ip }}</p>
@@ -489,12 +489,12 @@
         </div>
         <p style="font-weight:bold;">{% trans "Storage devices" %}</p>
 
-        <div class="col-sm-3">
+        <div class="col-sm-4">
             {% for disk in disks %}
                 <p style="text-align: right;">{{ disk.dev }} ({{ disk.storage }})</p>
             {% endfor %}
         </div>
-        <div class="col-sm-9">
+        <div class="col-sm-8">
             {% for disk in disks %}
                 <p>{{ disk.image }} ({{ disk.format }})</p>
             {% endfor %}
