@@ -1,11 +1,13 @@
 #
 # Copyright (C) 2013 Webvirtmgr.
 #
-import time
 import os.path
+import time
+
+
 try:
-    from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE, VIR_MIGRATE_LIVE, \
-        VIR_MIGRATE_UNSAFE, VIR_DOMAIN_UNDEFINE_SNAPSHOTS_METADATA
+    from libvirt import (libvirtError, VIR_DOMAIN_XML_SECURE, VIR_MIGRATE_LIVE,
+                         VIR_MIGRATE_UNSAFE, VIR_DOMAIN_UNDEFINE_SNAPSHOTS_METADATA)
 except:
     from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE, VIR_MIGRATE_LIVE
 from vrtManager import util
@@ -220,8 +222,8 @@ class wvmInstance(wvmConnect):
                     except:
                         pass
                     finally:
-                        result.append(
-                            {'dev': dev, 'image': volume, 'storage': storage, 'path': src_fl, 'format': disk_format})
+                        result.append({'dev': dev, 'image': volume, 'storage': storage, 'path': src_fl,
+                                       'format': disk_format})
             return result
 
         return util.get_xml_path(self._XMLDesc(0), func=disks)
@@ -575,6 +577,10 @@ class wvmInstance(wvmConnect):
     def get_managed_save_image(self):
         return self.instance.hasManagedSaveImage(0)
 
+    def get_storage_capacity_by_vol_path(self, vol_path):
+        vol = self.get_volume_by_path(vol_path)
+        return vol.info()[1] / 1024.0 / 1024.0 / 1024.0
+
     def clone_instance(self, clone_data):
         clone_dev_path = []
 
@@ -622,6 +628,16 @@ class wvmInstance(wvmConnect):
                                         <allocation>0</allocation>
                                         <target>
                                             <format type='%s'/>
+                                            <permissions>
+                                                <owner>107</owner>
+                                                <group>107</group>
+                                                <mode>0644</mode>
+                                                <label>virt_image_t</label>
+                                            </permissions>
+                                            <compat>1.1</compat>
+                                            <features>
+                                              <lazy_refcounts/>
+                                            </features>                                                                                        
                                         </target>
                                     </volume>""" % (target_file, vol_format)
                     stg = vol.storagePoolLookupByVolume()

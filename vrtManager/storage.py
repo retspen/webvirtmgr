@@ -197,10 +197,10 @@ class wvmStorage(wvmConnect):
 
         for volname in vols:
             vol_list.append(
-                {'name': volname,
-                 'size': self.get_volume_size(volname),
-                 'type': self.get_volume_type(volname)}
-            )
+                    {'name': volname,
+                     'size': self.get_volume_size(volname),
+                     'type': self.get_volume_type(volname)}
+                    )
         return vol_list
 
     def create_volume(self, name, size, vol_fmt='qcow2', metadata=False):
@@ -219,6 +219,16 @@ class wvmStorage(wvmConnect):
                 <allocation>%s</allocation>
                 <target>
                     <format type='%s'/>
+                    <permissions>
+                        <owner>107</owner>
+                        <group>107</group>
+                        <mode>0644</mode>
+                        <label>virt_image_t</label>
+                    </permissions>
+                    <compat>1.1</compat>
+                    <features>
+                      <lazy_refcounts/>
+                    </features>                    
                 </target>
             </volume>""" % (name, size, alloc, vol_fmt)
         self._createXML(xml, metadata)
@@ -237,6 +247,16 @@ class wvmStorage(wvmConnect):
                 <allocation>0</allocation>
                 <target>
                     <format type='%s'/>
+                    <permissions>
+                        <owner>107</owner>
+                        <group>107</group>
+                        <mode>0644</mode>
+                        <label>virt_image_t</label>
+                    </permissions>
+                    <compat>1.1</compat>
+                    <features>
+                      <lazy_refcounts/>
+                    </features>                    
                 </target>
             </volume>""" % (clone, vol_fmt)
         self._createXMLFrom(xml, vol, metadata)
