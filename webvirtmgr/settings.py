@@ -148,7 +148,6 @@ WS_PORT = 6080
 WS_HOST = '0.0.0.0'
 WS_PUBLIC_HOST = None
 WS_CERT = None
-WS_KEY = None
 
 # keepalive interval and count for libvirt connections
 #

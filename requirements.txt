@@ -1,5 +1,5 @@
 django==1.5.5
-gunicorn==19.5.0
+gunicorn==18.0
 # Utility Requirements
 # for SECURE_KEY generation
 lockfile>=0.9

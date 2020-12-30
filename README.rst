@@ -1,9 +1,6 @@
 =========================
 WebVirtMgr panel - v4.8.9
 =========================
--------
-New project like WebVirtMgr with User Management and Filesystem management - `WebVirtCloud <https://github.com/retspen/webvirtcloud>`_
--------
 
 -------
 Warning
@@ -54,3 +51,7 @@ License
 *******
 
 WebVirtMgr is licensed under the `Apache Licence, Version 2.0 <http://www.apache.org/licenses/LICENSE-2.0.html>`_.
+
+.. image:: https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif
+    :target: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=CEN82VLX7GD7S
+    :alt: Donate

@@ -196,7 +196,6 @@
                                                                     <option value="raw">{% trans "raw" %}</option>
                                                                     <option value="qcow">{% trans "qcow" %}</option>
                                                                     <option value="qcow2">{% trans "qcow2" %}</option>
-                                                                    <option value="qed">{% trans "qed" %}</option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -275,7 +274,6 @@
                             <select name="format" class="form-control image-format">
                                 <option value="qcow2">{% trans "qcow2" %}</option>
                                 <option value="qcow">{% trans "qcow" %}</option>
-                                <option value="qed">{% trans "qed" %}</option>
                                 <option value="raw">{% trans "raw" %}</option>
                             </select>
                         </div>
@@ -284,7 +282,7 @@
                         <label class="col-sm-3 control-label">{% trans "Size" %}</label>
 
                         <div class="col-sm-6">
-                            <input type="text" class="form-control" name="size" value="10" maxlength="6" required
+                            <input type="text" class="form-control" name="size" value="10" maxlength="4" required
                                    pattern="[0-9]+">
                         </div>
                         <label class="col-sm-1 control-label">{% trans "GB" %}</label>
