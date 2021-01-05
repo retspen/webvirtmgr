@@ -86,6 +86,9 @@
                                     {% ifequal host.type 3 %}TLS{% endifequal %}
                                     {% ifequal host.type 4 %}SOCKET{% endifequal %} ]
                                 </p>
+                                {% if host.arch %}
+                                    <p><strong>{% trans "ARCH" %}:</strong> {{ host.arch }}</p>
+                                {% endif %}
                                 <p><strong>{% trans "Host" %}:</strong> <a
                                         href="ssh://{{ host.hostname }}" title="{{ host.status }}">{{ host.hostname }}</a></p>
                                 <!-- Modal Edit -->
@@ -177,6 +180,14 @@
                                                             <div class="col-sm-6">
                                                                 <input type="text" name="login" class="form-control"
                                                                        value="{{ host.login }}">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label">{% trans "Arch" %}</label>
+
+                                                            <div class="col-sm-6">
+                                                                <input type="text" name="arch" class="form-control"
+                                                                       value="{{ host.arch }}">
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">
@@ -272,7 +283,7 @@
                     </ul>
                 </div>
                 <div class="tab-content">
-                    <div class="tab-pane active" id="1">
+                    <div class="tab-pane" id="1">
                         <form class="form-horizontal" method="post" role="form">{% csrf_token %}
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">{% trans "Label" %}</label>
@@ -315,7 +326,7 @@
                             </div>
                         </form>
                     </div>
-                    <div class="tab-pane" id="2">
+                    <div class="tab-pane active" id="2">
                         <form class="form-horizontal" method="post" role="form">{% csrf_token %}
                             <p class="modal-body">{% trans "You must create ssh <a href='https://github.com/retspen/webvirtmgr/wiki/Setup-SSH-Authorization'>authorization key</a>. If you have another SSH port on your server, you can add IP:PORT like '192.168.1.1:2222'." %}</p>
 
@@ -342,6 +353,14 @@
                                 <div class="col-sm-6">
                                     <input type="text" name="login" class="form-control"
                                            placeholder="{% trans "Username" %}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">{% trans "Arch" %}</label>
+
+                                <div class="col-sm-6">
+                                    <input type="text" name="arch" class="form-control"
+                                           placeholder="arm/x86">
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -381,7 +400,6 @@
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">{% trans "Password" %}</label>
-
                                 <div class="col-sm-6">
                                     <input type="password" name="password" class="form-control"
                                            placeholder="{% trans "Password" %}">

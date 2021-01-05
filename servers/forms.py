@@ -5,6 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from servers.models import Compute
 
+ARCH_TYPE = (('arm','AARCH64'),('x86','X_86'))
 
 class ComputeAddTcpForm(forms.Form):
     name = forms.CharField(error_messages={'required': _('No hostname has been entered')},
@@ -50,6 +51,8 @@ class ComputeAddSshForm(forms.Form):
     hostname = forms.CharField(error_messages={'required': _('No IP / Domain name has been entered')},
                                max_length=100)
     login = forms.CharField(error_messages={'required': _('No login has been entered')},
+                            max_length=20)
+    arch = forms.CharField(error_messages={'required': _('No login has been entered')},
                             max_length=20)
 
     def clean_name(self):
