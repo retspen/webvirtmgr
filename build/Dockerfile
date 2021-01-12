@@ -5,7 +5,7 @@ RUN yum -y install epel-release vim && \
     yum -y install python2-pip python-devel libvirt-python libxml2-python git novnc python-websockify numpy supervisor && \
     yum clean all && rm -rf /var/cache/yum
 
-RUN git clone https://github.com/jxph025319/webvirtmgr.git /opt/webvirtmgr
+RUN git clone -b cestc https://github.com/jxph025319/webvirtmgr.git /opt/webvirtmgr
 WORKDIR /opt/webvirtmgr
 #RUN git checkout cestc #v4.8.8
 RUN pip install -r requirements.txt
