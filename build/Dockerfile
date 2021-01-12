@@ -12,7 +12,7 @@ RUN pip install -r requirements.txt
 #ADD local_settings.py /opt/webvirtmgr/webvirtmgr/local/local_settings.py
 #RUN sed -i 's/0.0.0.0/172.17.42.1/g' vrtManager/create.py
 RUN /usr/bin/python /opt/webvirtmgr/manage.py collectstatic --noinput
-RUN cp build/webvirtmgr.conf /etc/supervisord.d/webvirtmgr.conf &&  mkdir -p /data/vm/ && \
+RUN cp build/webvirtmgr.ini /etc/supervisord.d/webvirtmgr.ini &&  mkdir -p /data/vm/ && \
 cp /opt/webvirtmgr/build/local_settings.py /opt/webvirtmgr/webvirtmgr/local/local_settings.py
 #ADD gunicorn.conf.py /opt/webvirtmgr/conf/gunicorn.conf.py
 #ADD bootstrap.sh /opt/webvirtmgr/bootstrap.sh
