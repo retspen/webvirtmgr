@@ -1,0 +1,19 @@
+docker鏡像部署後：
+宿主機
+
+groupadd -g 1010 libvirtd
+useradd -u 1010 -g webvirtmgr -s /sbin/nologin -d /data/vm webvirtmgr
+chown -R webvirtmgr:libvirtd /data/vm
+# 默認賬號密碼為root/Cestc_01
+
+docker鏡像
+
+chown -R webvirtmgr:libvirtd /data/vm
+su - webvirtmgr -s /bin/bash
+ssh-keygen -t rsa
+touch ~/.ssh/config && echo -e "StrictHostKeyChecking=no\nUserKnownHostsFile=/dev/null" >> ~/.ssh/config
+chmod 0600 ~/.ssh/config
+
+針對客戶物理機的操作
+su - webvirtmgr -s /bin/bash
+ssh-copy-id root@10.101.236.6
