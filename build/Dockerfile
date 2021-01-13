@@ -29,4 +29,4 @@ EXPOSE 6080
 CMD ["supervisord", "-n"]
 
 #  docker build -t xcharbor.cestc.cn/centos/webvirtmgr:v1 .
-#docker run -d --name webvirtmgr_dev -h webvirtmgr_dev -v /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime  --privileged=true -p 2100:22 -p 8180:8080 -p 6180:6080 -m 4g xcharbor.cestc.cn/centos/webvirtmgr:v1
+#docker run -d --name webvirtmgr_dev -h webvirtmgr_dev -v /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime  --privileged=true -v /data/vm1:/data/vm -p 2100:22 -p 8180:8080 -p 6180:6080 -m 4g xcharbor.cestc.cn/centos/webvirtmgr:v1
