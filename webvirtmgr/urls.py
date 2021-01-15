@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, url
 from django.conf import settings
 
-urlpatterns = patterns('',
+urlpatterns = ['',
     url(r'^$', 'servers.views.index', name='index'),
     url(r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}, name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'template_name': 'logout.html'}, name='logout'),
@@ -23,8 +23,8 @@ urlpatterns = patterns('',
     url(r'^info/insts_status/(\d+)/$', 'instance.views.insts_status', name='insts_status'),
     url(r'^info/inst_status/(\d+)/([\w\-\.]+)/$', 'instance.views.inst_status', name='inst_status'),
     url(r'^info/instusage/(\d+)/([\w\-\.]+)/$', 'instance.views.instusage', name='instusage'),
-)
+]
 
-urlpatterns += patterns('',
+urlpatterns += ['',
     (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),
-)
+]
