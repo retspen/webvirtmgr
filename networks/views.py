@@ -1,4 +1,4 @@
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, render
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
@@ -53,8 +53,8 @@ def networks(request, host_id):
     except libvirtError as err:
         errors.append(err)
 
-    return render_to_response('networks.html', locals(), context_instance=RequestContext(request))
-
+    # return render_to_response('networks.html', locals(), context_instance=RequestContext(request))
+    return render(request, 'networks.html', locals())
 
 def network(request, host_id, pool):
     """
@@ -118,4 +118,5 @@ def network(request, host_id, pool):
 
     conn.close()
 
-    return render_to_response('network.html', locals(), context_instance=RequestContext(request))
+    # return render_to_response('network.html', locals(), context_instance=RequestContext(request))
+    return render(request, 'network.html', locals())

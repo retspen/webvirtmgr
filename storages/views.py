@@ -1,4 +1,4 @@
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, render
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
@@ -61,8 +61,8 @@ def storages(request, host_id):
     except libvirtError as err:
         errors.append(err)
 
-    return render_to_response('storages.html', locals(), context_instance=RequestContext(request))
-
+    # return render_to_response('storages.html', locals(), context_instance=RequestContext(request))
+    return render(request, 'storages.html', locals())
 
 def storage(request, host_id, pool):
     """
@@ -190,4 +190,5 @@ def storage(request, host_id, pool):
                         errors.append(err)
     conn.close()
 
-    return render_to_response('storage.html', locals(), context_instance=RequestContext(request))
+    # return render_to_response('storage.html', locals(), context_instance=RequestContext(request))
+    return render(request, 'storage.html', locals())

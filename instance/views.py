@@ -2,7 +2,7 @@ from string import letters, digits
 from random import choice
 from bisect import insort
 
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
@@ -316,7 +316,7 @@ def instances(request, host_id):
         except libvirtError as err:
             errors.append(err)
 
-    return render_to_response('instances.html', locals(), context_instance=RequestContext(request))
+    return render(request, 'instances.html', locals())
 
 
 def instance(request, host_id, vname):
@@ -540,4 +540,4 @@ def instance(request, host_id, vname):
     except libvirtError as err:
         errors.append(err)
 
-    return render_to_response('instance.html', locals(), context_instance=RequestContext(request))
+    return render(request, 'instance.html', locals())

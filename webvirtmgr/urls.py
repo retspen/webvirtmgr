@@ -1,7 +1,8 @@
-from django.conf.urls import include,url
+from django.conf.urls import url
+from django.conf.urls.static import static
 from django.conf import settings
 from servers.views import index,servers_list, infrastructure
-from django.contrib.auth.views import login, logout
+from django.contrib.auth import views as auth_views
 from hostdetail.views import overview
 from create.views import create
 from storages.views import storages, storage
@@ -13,10 +14,10 @@ from console.views import console
 from hostdetail.views import hostusage
 
 
-urlpatterns = ['',
+urlpatterns = [
     url(r'^$', index, name='index'),
-    url(r'^login/$', login, {'template_name': 'login.html'}, name='login'),
-    url(r'^logout/$', logout, {'template_name': 'logout.html'}, name='logout'),
+    url(r'^login/$', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
+    url(r'^logout/$',auth_views.LogoutView.as_view(template_name='logout.html'), name='logout'),
     url(r'^servers/$', servers_list, name='servers_list'),
     url(r'^infrastructure/$', infrastructure, name='infrastructure'),
     url(r'^host/(\d+)/$', overview, name='overview'),
@@ -37,6 +38,7 @@ urlpatterns = ['',
     url(r'^info/instusage/(\d+)/([\w\-\.]+)/$', instusage, name='instusage'),
 ]
 
-urlpatterns += ['',
-    (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),
-]
+# urlpatterns += [
+#     (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),
+# ]
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
