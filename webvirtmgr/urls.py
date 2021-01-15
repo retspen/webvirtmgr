@@ -1,28 +1,40 @@
-from django.conf.urls import url
+from django.conf.urls import include,url
 from django.conf import settings
+from servers.views import index,servers_list, infrastructure
+from django.contrib.auth.views import login, logout
+from hostdetail.views import overview
+from create.views import create
+from storages.views import storages, storage
+from networks.views import networks, network
+from interfaces.views import interfaces, interface
+from instance.views import instance, instances, insts_status, inst_status, instusage
+from secrets.views import secrets
+from console.views import console
+from hostdetail.views import hostusage
+
 
 urlpatterns = ['',
-    url(r'^$', 'servers.views.index', name='index'),
-    url(r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}, name='login'),
-    url(r'^logout/$', 'django.contrib.auth.views.logout', {'template_name': 'logout.html'}, name='logout'),
-    url(r'^servers/$', 'servers.views.servers_list', name='servers_list'),
-    url(r'^infrastructure/$', 'servers.views.infrastructure', name='infrastructure'),
-    url(r'^host/(\d+)/$', 'hostdetail.views.overview', name='overview'),
-    url(r'^create/(\d+)/$', 'create.views.create', name='create'),
-    url(r'^storages/(\d+)/$', 'storages.views.storages', name='storages'),
-    url(r'^storage/(\d+)/([\w\-\.]+)/$', 'storages.views.storage', name='storage'),
-    url(r'^networks/(\d+)/$', 'networks.views.networks', name='networks'),
-    url(r'^network/(\d+)/([\w\-\.]+)/$', 'networks.views.network', name='network'),
-    url(r'^interfaces/(\d+)/$', 'interfaces.views.interfaces', name='interfaces'),
-    url(r'^interface/(\d+)/([\w\.\:]+)/$', 'interfaces.views.interface', name='interface'),
-    url(r'^instance/(\d+)/([\w\-\.]+)/$', 'instance.views.instance', name='instance'),
-    url(r'^instances/(\d+)/$', 'instance.views.instances', name='instances'),
-    url(r'^secrets/(\d+)/$', 'secrets.views.secrets', name='secrets'),
-    url(r'^console/$', 'console.views.console', name='console'),
-    url(r'^info/hostusage/(\d+)/$', 'hostdetail.views.hostusage', name='hostusage'),
-    url(r'^info/insts_status/(\d+)/$', 'instance.views.insts_status', name='insts_status'),
-    url(r'^info/inst_status/(\d+)/([\w\-\.]+)/$', 'instance.views.inst_status', name='inst_status'),
-    url(r'^info/instusage/(\d+)/([\w\-\.]+)/$', 'instance.views.instusage', name='instusage'),
+    url(r'^$', index, name='index'),
+    url(r'^login/$', login, {'template_name': 'login.html'}, name='login'),
+    url(r'^logout/$', logout, {'template_name': 'logout.html'}, name='logout'),
+    url(r'^servers/$', servers_list, name='servers_list'),
+    url(r'^infrastructure/$', infrastructure, name='infrastructure'),
+    url(r'^host/(\d+)/$', overview, name='overview'),
+    url(r'^create/(\d+)/$', create, name='create'),
+    url(r'^storages/(\d+)/$', storages, name='storages'),
+    url(r'^storage/(\d+)/([\w\-\.]+)/$', storage, name='storage'),
+    url(r'^networks/(\d+)/$', networks, name='networks'),
+    url(r'^network/(\d+)/([\w\-\.]+)/$', network, name='network'),
+    url(r'^interfaces/(\d+)/$', interfaces, name='interfaces'),
+    url(r'^interface/(\d+)/([\w\.\:]+)/$', interface, name='interface'),
+    url(r'^instance/(\d+)/([\w\-\.]+)/$', instance, name='instance'),
+    url(r'^instances/(\d+)/$', instances, name='instances'),
+    url(r'^secrets/(\d+)/$', secrets, name='secrets'),
+    url(r'^console/$', console, name='console'),
+    url(r'^info/hostusage/(\d+)/$', hostusage, name='hostusage'),
+    url(r'^info/insts_status/(\d+)/$', insts_status, name='insts_status'),
+    url(r'^info/inst_status/(\d+)/([\w\-\.]+)/$', inst_status, name='inst_status'),
+    url(r'^info/instusage/(\d+)/([\w\-\.]+)/$', instusage, name='instusage'),
 ]
 
 urlpatterns += ['',
