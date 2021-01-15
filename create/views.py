@@ -1,4 +1,4 @@
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, render
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
@@ -136,4 +136,5 @@ def create(request, host_id):
 
         conn.close()
 
-    return render_to_response('create.html', locals(), context_instance=RequestContext(request))
+    # return render_to_response('create.html', locals(), context_instance=RequestContext(request))
+    return render(request, 'create.html', locals())
