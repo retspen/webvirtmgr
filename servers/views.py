@@ -43,7 +43,7 @@ def servers_list(request):
                               'type': host.type,
                               'login': host.login,
                               'password': host.password,
-                              'arch': host.arch,
+                              'arch': host.arch
                               })
         return all_hosts
 
@@ -79,12 +79,9 @@ def servers_list(request):
                 new_ssh_host = Compute(name=data['name'],
                                        hostname=data['hostname'],
                                        type=CONN_SSH,
-                                       login=data['login'],
-                                       arch=data['arch'])
+                                       login=data['login'])
                 new_ssh_host.save()
                 return HttpResponseRedirect(request.get_full_path())
-            else:
-                print "form error", request.POST
         if 'host_tls_add' in request.POST:
             form = ComputeAddTlsForm(request.POST)
             if form.is_valid():
