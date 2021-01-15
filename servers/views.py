@@ -42,7 +42,8 @@ def servers_list(request):
                               'status': connection_manager.host_is_up(host.type, host.hostname),
                               'type': host.type,
                               'login': host.login,
-                              'password': host.password
+                              'password': host.password,
+                              'arch': host.arch
                               })
         return all_hosts
 
