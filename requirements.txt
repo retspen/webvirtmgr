@@ -1,5 +1,5 @@
-django==1.8.0
-gunicorn==18.0
+django==1.11.0
+gunicorn==19.10.0
 # Utility Requirements
 # for SECURE_KEY generation
 lockfile>=0.9

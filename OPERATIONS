@@ -1,10 +1,12 @@
 docker鏡像部署後：
 宿主機
-
+mkdir -p /data/vm1
 groupadd -g 1010 libvirtd
-useradd -u 1010 -g webvirtmgr -s /sbin/nologin -d /data/vm webvirtmgr
-chown -R webvirtmgr:libvirtd /data/vm
+useradd -u 1010 -g libvirtd -s /sbin/nologin -d /data/vm1 webvirtmgr
+chown -R webvirtmgr:libvirtd /data/vm1
 # 默認賬號密碼為root/Cestc_01
+
+docker run -d --name webvirtmgr_dev -h webvirtmgr_dev -v /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime  --privileged=true -v /data/vm1:/data/vm -p 2100:22 -p 8080:8080 -p 6080:6080 -m 4g whharbor.cestc.cn/centos/webvirtmgr:v1 /usr/sbin/init
 
 docker鏡像
 
