@@ -240,8 +240,10 @@
                         <label class="col-sm-3 control-label">{% trans "RAM" %}</label>
 
                         <div class="col-sm-6">
-                            <input type="text" class="form-control" name="memory" value="512" maxlength="6" required
-                                   pattern="[0-9]+">
+                            <input type="text" class="form-control" name="memory" value=
+                                   {% ifequal compute.arch "aarch64" %}2048{% endifequal %}
+                                    {% ifequal compute.arch "x86_64" %}512{% endifequal %}
+                            maxlength="6" required pattern="[0-9]+">
                         </div>
                         <label class="col-sm-1 control-label">{% trans "MB" %}</label>
                     </div>
