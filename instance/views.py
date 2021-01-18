@@ -41,7 +41,7 @@ def instusage(request, host_id, vname):
     points = 5
     curent_time = time.strftime("%H:%M:%S")
     compute = Compute.objects.get(id=host_id)
-    cookies = request._get_cookies()
+    cookies = request.COOKIES
     response = HttpResponse()
     response['Content-Type'] = "text/javascript"
 
@@ -427,7 +427,7 @@ def instance(request, host_id, vname):
                     if request.POST.get('delete_disk', ''):
                         conn.delete_disk()
                 finally:
-                    conn.delete()
+                    conn.delete(compute.arch)
                 return HttpResponseRedirect(reverse('instances', args=[host_id]))
             if 'snapshot' in request.POST:
                 name = request.POST.get('name', '')

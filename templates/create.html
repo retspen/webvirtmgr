@@ -229,7 +229,10 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">{% trans "Host-Model" %}</label>
+                        <label class="col-sm-3 control-label">
+                            {% ifequal compute.arch "aarch64" %}{% trans "host-passthrough" %}{% endifequal %}
+                            {% ifequal compute.arch "x86_64" %}{% trans "Host-Model" %}{% endifequal %}
+                        </label>
 
                         <div class="col-sm-6">
                             <input type="checkbox" name="host_model" value="true" checked>
