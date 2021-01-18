@@ -243,4 +243,5 @@ INSTALLED_APPS = (
     'instance',
     'create',
     'gunicorn',
+    'serverlog'
 )
