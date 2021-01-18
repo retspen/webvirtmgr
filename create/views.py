@@ -125,7 +125,7 @@ def create(request, host_id):
                             uuid = util.randomUUID()
                             try:
                                 conn.create_instance(data['name'], data['memory'], data['vcpu'], data['host_model'],
-                                                     uuid, volumes, data['networks'], data['virtio'], data['mac'])
+                                                     uuid, volumes, data['networks'], data['virtio'], data['mac'], compute.arch)
                                 create_instance = Instance(compute_id=host_id, name=data['name'], uuid=uuid)
                                 create_instance.save()
                                 return HttpResponseRedirect(reverse('instance', args=[host_id, data['name']]))

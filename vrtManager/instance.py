@@ -5,7 +5,7 @@ import time
 import os.path
 try:
     from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE, VIR_MIGRATE_LIVE, \
-        VIR_MIGRATE_UNSAFE, VIR_DOMAIN_UNDEFINE_SNAPSHOTS_METADATA
+        VIR_MIGRATE_UNSAFE, VIR_DOMAIN_UNDEFINE_SNAPSHOTS_METADATA, VIR_DOMAIN_UNDEFINE_NVRAM
 except:
     from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE, VIR_MIGRATE_LIVE
 from vrtManager import util
@@ -114,9 +114,12 @@ class wvmInstance(wvmConnect):
     def resume(self):
         self.instance.resume()
 
-    def delete(self):
+    def delete(self, arch="x86_64"):
         try:
-            self.instance.undefineFlags(VIR_DOMAIN_UNDEFINE_SNAPSHOTS_METADATA)
+            if arch == "x86_64":
+                self.instance.undefineFlags(VIR_DOMAIN_UNDEFINE_SNAPSHOTS_METADATA)
+            else:
+                self.instance.undefineFlags(VIR_DOMAIN_UNDEFINE_NVRAM)
         except:
             self.instance.undefine()
 

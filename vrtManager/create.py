@@ -125,7 +125,7 @@ class wvmCreate(wvmConnect):
         vol = self.get_volume_by_path(path)
         vol.delete()
 
-    def create_instance(self, name, memory, vcpu, host_model, uuid, images, networks, virtio, mac=None):
+    def create_instance(self, name, memory, vcpu, host_model, uuid, images, networks, virtio, mac=None, arch="x86_64"):
         """
         Create VM function
         """
@@ -135,36 +135,76 @@ class wvmCreate(wvmConnect):
             hypervisor_type = 'kvm'
         else:
             hypervisor_type = 'qemu'
-
-        xml = """
+        if arch == "x86_64":
+            xml = """
                 <domain type='%s'>
                   <name>%s</name>
                   <description>None</description>
                   <uuid>%s</uuid>
                   <memory unit='KiB'>%s</memory>
                   <vcpu>%s</vcpu>""" % (hypervisor_type, name, uuid, memory, vcpu)
-        if host_model:
-            xml += """<cpu mode='host-model'/>"""
-        xml += """<os>
-                    <type arch='%s'>%s</type>
-                    <boot dev='hd'/>
-                    <boot dev='cdrom'/>
-                    <bootmenu enable='yes'/>
-                  </os>""" % (self.get_host_arch(), self.get_os_type())
-        xml += """<features>
-                    <acpi/><apic/><pae/>
-                  </features>
-                  <clock offset="utc"/>
-                  <on_poweroff>destroy</on_poweroff>
-                  <on_reboot>restart</on_reboot>
-                  <on_crash>restart</on_crash>
-                  <devices>"""
+        else:
+            xml = """
+                <domain type='%s'>
+                  <name>%s</name>
+                  <description>None</description>
+                  <uuid>%s</uuid>
+                    <metadata>
+                      <libosinfo:libosinfo xmlns:libosinfo="http://libosinfo.org/xmlns/libvirt/domain/1.0">
+                        <libosinfo:os id="http://redhat.com/rhel/7.0"/>
+                      </libosinfo:libosinfo>
+                    </metadata>
+                  <memory unit='KiB'>%s</memory>
+                  <currentMemory unit='KiB'>%s</currentMemory>
+                  <vcpu>%s</vcpu>
+                <resource>
+                  <partition>/machine</partition>
+                </resource>
+                """ % (hypervisor_type, name, uuid, memory, memory, vcpu)
+        if arch == "x86_64":
+            if host_model:
+                xml += """<cpu mode='host-model'/>"""
+            xml += """<os>
+                        <type arch='%s'>%s</type>
+                        <boot dev='hd'/>
+                        <boot dev='cdrom'/>
+                        <bootmenu enable='yes'/>
+                      </os>""" % (self.get_host_arch(), self.get_os_type())
+            xml += """<features>
+                        <acpi/><apic/><pae/>
+                      </features>
+                      <clock offset="utc"/>
+                      <on_poweroff>destroy</on_poweroff>
+                      <on_reboot>restart</on_reboot>
+                      <on_crash>restart</on_crash>
+                      <devices>"""
+        else:
+            xml += """<os>
+                        <type arch='%s' machine='virt-4.0'>%s</type>
+                        <loader readonly='yes' type='pflash'>/usr/share/edk2.git/aarch64/QEMU_EFI-pflash.raw</loader>
+                        <nvram>/var/lib/libvirt/qemu/nvram/%s_VARS.fd</nvram>
+                        <boot dev='hd'/>
+                        <boot dev='cdrom'/>
+                        <bootmenu enable='yes'/>
+                      </os>""" % (self.get_host_arch(), self.get_os_type(), name)
+            if host_model:
+                xml += """<cpu mode='host-passthrough'/>"""
+            xml += """<features>
+                        <acpi/>
+                        <gic version='3'/>
+                      </features>
+                      <clock offset="utc"/>
+                      <on_poweroff>destroy</on_poweroff>
+                      <on_reboot>restart</on_reboot>
+                      <on_crash>destroy</on_crash>
+                      <devices>"""
 
         disk_letters = list(string.lowercase)
         for image, img_type in images.items():
+            print "image is ", image, "image type is ", img_type
             stg = self.get_storage_by_vol_path(image)
             stg_type = util.get_xml_path(stg.XMLDesc(0), "/pool/@type")
-
+            print "stg is ", stg, "stg type is ", stg_type
             if stg_type == 'rbd':
                 ceph_user, secrt_uuid, ceph_host = get_rbd_storage_data(stg)
                 xml += """<disk type='network' device='disk'>
@@ -185,14 +225,23 @@ class wvmCreate(wvmConnect):
             else:
                 xml += """<target dev='sd%s' bus='ide'/>""" % (disk_letters.pop(0),)
             xml += """</disk>"""
-
-        xml += """  <disk type='file' device='cdrom'>
+        if arch == "x86_64":
+            xml += """  <disk type='file' device='cdrom'>
                       <driver name='qemu' type='raw'/>
                       <source file=''/>
                       <target dev='hda' bus='ide'/>
                       <readonly/>
                       <address type='drive' controller='0' bus='1' target='0' unit='1'/>
                     </disk>"""
+        else:
+            xml += """  <disk type='file' device='cdrom'>
+                      <driver name='qemu' type='raw'/>
+                      <source file=''/>
+                      <target dev='sda' bus='scsi'/>
+                      <readonly/>
+                    </disk>
+                    <controller type='scsi' model='virtio-scsi'/>
+                    """
         for net in networks.split(','):
             xml += """<interface type='network'>"""
             if mac:
@@ -201,8 +250,8 @@ class wvmCreate(wvmConnect):
             if virtio:
                 xml += """<model type='virtio'/>"""
             xml += """</interface>"""
-
-        xml += """  <input type='mouse' bus='ps2'/>
+        if arch == "x86_64":
+            xml += """  <input type='mouse' bus='ps2'/>
                     <input type='tablet' bus='usb'/>
                     <graphics type='%s' port='-1' autoport='yes' listen='0.0.0.0'>
                       <listen type='address' address='0.0.0.0'/>
@@ -214,4 +263,13 @@ class wvmCreate(wvmConnect):
                     <memballoon model='virtio'/>
                   </devices>
                 </domain>""" % QEMU_CONSOLE_DEFAULT_TYPE
+        else:
+            xml += """  
+                    <controller type='usb' index='0' model='qemu-xhci' ports='15'/>
+                    <input type='mouse' bus='ps2'/>
+                    <console type='pty'/>
+                    <memballoon model='virtio'/>
+                  </devices>
+                </domain>"""
+        print xml
         self._defineXML(xml)
