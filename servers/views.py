@@ -1,8 +1,8 @@
 from django.shortcuts import render_to_response, render
 from django.http import HttpResponseRedirect
-from django.template import RequestContext
+# from django.template import RequestContext
 from django.core.urlresolvers import reverse
-
+from vrtManager.util import get_xml_path
 from servers.models import Compute
 from instance.models import Instance
 from servers.forms import ComputeAddTcpForm, ComputeAddSshForm, ComputeEditHostForm, ComputeAddTlsForm, ComputeAddSocketForm
@@ -45,6 +45,7 @@ def servers_list(request):
                               'password': host.password,
                               'arch': host.arch
                               })
+        print all_hosts
         return all_hosts
 
     computes = Compute.objects.filter()
@@ -76,10 +77,13 @@ def servers_list(request):
             form = ComputeAddSshForm(request.POST)
             if form.is_valid():
                 data = form.cleaned_data
+                new_conn = connection_manager.get_connection(login=data['login'], host=data['hostname'], conn= CONN_SSH, passwd=None)
+                arch = get_xml_path(new_conn.getCapabilities(), "/capabilities/host/cpu/arch")
                 new_ssh_host = Compute(name=data['name'],
                                        hostname=data['hostname'],
                                        type=CONN_SSH,
-                                       login=data['login'])
+                                       login=data['login'],
+                                       arch=arch)
                 new_ssh_host.save()
                 return HttpResponseRedirect(request.get_full_path())
         if 'host_tls_add' in request.POST:
@@ -117,7 +121,7 @@ def servers_list(request):
                                           password='')
                 new_socket_host.save()
                 return HttpResponseRedirect(request.get_full_path())
-    print 'RequestContext is ', RequestContext(request), dir(request), request.content_params
+
     return render(request, 'servers.html', locals())
 
 
