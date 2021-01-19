@@ -1,6 +1,6 @@
 import re
 
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, render
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
@@ -47,11 +47,9 @@ def console(request):
         ws_host = re.sub(':[0-9]+', '', ws_host)
 
     if console_type == 'vnc':
-        response = render_to_response('console-vnc.html', locals(),
-                                      context_instance=RequestContext(request))
+        response = render(request, 'console-vnc.html', locals())
     elif console_type == 'spice':
-        response = render_to_response('console-spice.html', locals(),
-                                      context_instance=RequestContext(request))
+        response = render(request, 'console-spice.html', locals())
     else:
         response = "Console type %s no support" % console_type
 
