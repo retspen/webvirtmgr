@@ -1,0 +1,18 @@
+table#sortTable th {
+    background-image: url('../img/bg.gif');
+    background-repeat: no-repeat;
+    background-position: center right;
+    cursor: pointer;
+}
+
+table#sortTable th.sorter-false {
+    background-image: none;
+}
+
+table#sortTable thead tr .tablesorter-headerAsc {
+    background-image: url('../img/asc.gif');
+}
+
+table#sortTable thead tr .tablesorter-headerDesc {
+    background-image: url('../img/desc.gif');
+}

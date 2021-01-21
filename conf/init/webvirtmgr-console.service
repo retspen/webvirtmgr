@@ -1,0 +1,9 @@
+[Unit]
+Description=WebVirtMgr NoVNC proxy
+
+[Service]
+ExecStart=/usr/lib/python2.7/site-packages/webvirtmgr/console/webvirtmgr-console
+Type=simple
+
+[Install]
+WantedBy=multi-user.target

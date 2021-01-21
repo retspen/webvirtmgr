@@ -45,7 +45,6 @@ def servers_list(request):
                               'password': host.password,
                               'arch': host.arch
                               })
-        print all_hosts
         return all_hosts
 
     computes = Compute.objects.filter()
