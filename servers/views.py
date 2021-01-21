@@ -85,6 +85,8 @@ def servers_list(request):
                                        arch=arch)
                 new_ssh_host.save()
                 return HttpResponseRedirect(request.get_full_path())
+            # else:
+            #     print "form error", request.POST
         if 'host_tls_add' in request.POST:
             form = ComputeAddTlsForm(request.POST)
             if form.is_valid():
