@@ -79,7 +79,7 @@
                                         <span class="glyphicon glyphicon-trash"></span>
                                     </button>
                                 </form>
-                                <p>
+                                <p><strong>{% trans "Arch" %}:</strong> {{host.arch}}</p>
                                 <p><strong>{% trans "Type" %}:</strong> [
                                     {% ifequal host.type 1 %}TCP{% endifequal %}
                                     {% ifequal host.type 2 %}SSH{% endifequal %}

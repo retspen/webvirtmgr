@@ -320,7 +320,7 @@ class wvmConnectionManager(object):
         """
         try:
             socket_host = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            socket_host.settimeout(1)
+            socket_host.settimeout(2)
             if conn_type == CONN_SSH:
                 if ':' in hostname:
                     LIBVIRT_HOST, PORT = (hostname).split(":")

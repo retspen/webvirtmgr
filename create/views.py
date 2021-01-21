@@ -1,4 +1,4 @@
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, render
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
@@ -125,7 +125,7 @@ def create(request, host_id):
                             uuid = util.randomUUID()
                             try:
                                 conn.create_instance(data['name'], data['memory'], data['vcpu'], data['host_model'],
-                                                     uuid, volumes, data['networks'], data['virtio'], data['mac'])
+                                                     uuid, volumes, data['networks'], data['virtio'], data['mac'], compute.arch)
                                 create_instance = Instance(compute_id=host_id, name=data['name'], uuid=uuid)
                                 create_instance.save()
                                 return HttpResponseRedirect(reverse('instance', args=[host_id, data['name']]))
@@ -136,4 +136,5 @@ def create(request, host_id):
 
         conn.close()
 
-    return render_to_response('create.html', locals(), context_instance=RequestContext(request))
+    # return render_to_response('create.html', locals(), context_instance=RequestContext(request))
+    return render(request, 'create.html', locals())

@@ -1,4 +1,4 @@
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, render
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
@@ -51,8 +51,8 @@ def interfaces(request, host_id):
     except libvirtError as err:
         errors.append(err)
 
-    return render_to_response('interfaces.html', locals(), context_instance=RequestContext(request))
-
+    # return render_to_response('interfaces.html', locals(), context_instance=RequestContext(request))
+    return render(request, 'interfaces.html', locals())
 
 def interface(request, host_id, iface):
     """
@@ -96,4 +96,5 @@ def interface(request, host_id, iface):
     except libvirtError as err:
         errors.append(err)
 
-    return render_to_response('interface.html', locals(), context_instance=RequestContext(request))
+    # return render_to_response('interface.html', locals(), context_instance=RequestContext(request))
+    return render(request, 'interface.html', locals())

@@ -1,8 +1,8 @@
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, render
 from django.http import HttpResponseRedirect
-from django.template import RequestContext
+# from django.template import RequestContext
 from django.core.urlresolvers import reverse
-
+from vrtManager.util import get_xml_path
 from servers.models import Compute
 from instance.models import Instance
 from servers.forms import ComputeAddTcpForm, ComputeAddSshForm, ComputeEditHostForm, ComputeAddTlsForm, ComputeAddSocketForm
@@ -43,8 +43,9 @@ def servers_list(request):
                               'type': host.type,
                               'login': host.login,
                               'password': host.password,
-                              'arch': host.arch,
+                              'arch': host.arch
                               })
+        print all_hosts
         return all_hosts
 
     computes = Compute.objects.filter()
@@ -76,11 +77,13 @@ def servers_list(request):
             form = ComputeAddSshForm(request.POST)
             if form.is_valid():
                 data = form.cleaned_data
+                new_conn = connection_manager.get_connection(login=data['login'], host=data['hostname'], conn= CONN_SSH, passwd=None)
+                arch = get_xml_path(new_conn.getCapabilities(), "/capabilities/host/cpu/arch")
                 new_ssh_host = Compute(name=data['name'],
                                        hostname=data['hostname'],
                                        type=CONN_SSH,
                                        login=data['login'],
-                                       arch=data['arch'])
+                                       arch=arch)
                 new_ssh_host.save()
                 return HttpResponseRedirect(request.get_full_path())
         if 'host_tls_add' in request.POST:
@@ -119,7 +122,7 @@ def servers_list(request):
                 new_socket_host.save()
                 return HttpResponseRedirect(request.get_full_path())
 
-    return render_to_response('servers.html', locals(), context_instance=RequestContext(request))
+    return render(request, 'servers.html', locals())
 
 
 def infrastructure(request):
@@ -147,4 +150,4 @@ def infrastructure(request):
         else:
             hosts_vms[host.id, host.name, 2, 0, 0, 0] = None
 
-    return render_to_response('infrastructure.html', locals(), context_instance=RequestContext(request))
+    return render(request, 'infrastructure.html', locals())

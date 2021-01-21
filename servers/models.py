@@ -9,6 +9,7 @@ class Compute(models.Model):
     password = models.CharField(max_length=14, blank=True, null=True)
     arch = models.CharField(max_length=20, choices=ARCH_TYPE, default='x86')
     type = models.IntegerField()
+    arch = models.CharField(max_length=20, default="x86_64")
 
     def __unicode__(self):
         return self.hostname

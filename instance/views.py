@@ -2,7 +2,7 @@ from string import letters, digits
 from random import choice
 from bisect import insort
 
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
@@ -41,7 +41,7 @@ def instusage(request, host_id, vname):
     points = 5
     curent_time = time.strftime("%H:%M:%S")
     compute = Compute.objects.get(id=host_id)
-    cookies = request._get_cookies()
+    cookies = request.COOKIES
     response = HttpResponse()
     response['Content-Type'] = "text/javascript"
 
@@ -316,7 +316,7 @@ def instances(request, host_id):
         except libvirtError as err:
             errors.append(err)
 
-    return render_to_response('instances.html', locals(), context_instance=RequestContext(request))
+    return render(request, 'instances.html', locals())
 
 
 def instance(request, host_id, vname):
@@ -427,7 +427,7 @@ def instance(request, host_id, vname):
                     if request.POST.get('delete_disk', ''):
                         conn.delete_disk()
                 finally:
-                    conn.delete()
+                    conn.delete(compute.arch)
                 return HttpResponseRedirect(reverse('instances', args=[host_id]))
             if 'snapshot' in request.POST:
                 name = request.POST.get('name', '')
@@ -540,4 +540,4 @@ def instance(request, host_id, vname):
     except libvirtError as err:
         errors.append(err)
 
-    return render_to_response('instance.html', locals(), context_instance=RequestContext(request))
+    return render(request, 'instance.html', locals())
