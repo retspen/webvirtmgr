@@ -7,7 +7,7 @@ WebVirtMgr panel - v5.0
 -------
 模块升级
 django 框架已经升级到1.11版
-gunicorn 升级到1.9.4
+gunicorn 升级到19.10.0
 
 功能调整
 1、调整磁盘和虚拟机创建时的页面位数限制
