@@ -1,3 +1,7 @@
+git clone https://github.com/jxph025319/webvirtmgr.git
+cd webvirtmgr/build
+docker build --no-cache -t whharbor.centos.org/centos/webvirtmgr:v1 .
+
 docker鏡像部署後：
 宿主機
 mkdir -p /data/vm1

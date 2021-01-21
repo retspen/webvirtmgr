@@ -1,4 +1,4 @@
-FROM whharbor.centos.org/centos/bash:v1
+FROM centos:centos7.4.1708
 MAINTAINER Jiajun Chen<48853342@qq.com>
 
 RUN yum -y install epel-release vim && \
@@ -21,13 +21,10 @@ cp /opt/webvirtmgr/build/local_settings.py /opt/webvirtmgr/webvirtmgr/local/loca
 RUN groupadd -g 1010 libvirtd && useradd webvirtmgr -g libvirtd -u 1010 -d /data/vm/
 RUN chown webvirtmgr:libvirtd -R /opt/webvirtmgr
 
-WORKDIR /
+WORKDIR /opt
 VOLUME /data/vm
 
 EXPOSE 8080
 EXPOSE 6080
 CMD ["supervisord", "-n"]
 
-#  docker build --no-cache -t whharbor.cestc.cn/centos/webvirtmgr:v1 .
-#docker run -d --name webvirtmgr_dev -h webvirtmgr_dev -v /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime  --privileged=true -v /data/vm1:/data/vm -p 2100:22 -p 8180:8080 -p 6180:6080 -m 4g whharbor.cestc.cn/centos/webvirtmgr:v1
-#docker run -d --name webvirtmgr_dev -h webvirtmgr_dev -v /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime  --privileged=true -v /data/vm1:/data/vm -p 2100:22 -p 8180:8080 -p 6180:6080 -m 4g whharbor.cestc.cn/centos/webvirtmgr:v1 /usr/sbin/init
