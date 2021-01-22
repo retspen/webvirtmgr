@@ -18,9 +18,7 @@ cp /opt/webvirtmgr/build/local_settings.py /opt/webvirtmgr/webvirtmgr/local/loca
 #ADD bootstrap.sh /opt/webvirtmgr/bootstrap.sh
 
 #RUN groupadd -g 1010 libvirtd && useradd webvirtmgr -g libvirtd -u 1010 -d /data/vm/ -s /sbin/nologin
-RUN groupadd -g 1010 libvirtd && useradd webvirtmgr -g libvirtd -u 1010 -d /data/vm/
-RUN chown webvirtmgr:libvirtd -R /opt/webvirtmgr
-RUN su - webvirtmgr -s /bin/bash && ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa
+RUN groupadd -g 1010 libvirtd && useradd webvirtmgr -g libvirtd -u 1010 -d /data/vm/ && chown webvirtmgr:libvirtd -R /opt/webvirtmgr
 
 WORKDIR /opt
 VOLUME /data/vm

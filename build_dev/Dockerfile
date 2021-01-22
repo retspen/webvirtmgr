@@ -12,15 +12,13 @@ RUN pip install -r requirements.txt
 #ADD local_settings.py /opt/webvirtmgr/webvirtmgr/local/local_settings.py
 #RUN sed -i 's/0.0.0.0/172.17.42.1/g' vrtManager/create.py
 RUN /usr/bin/python /opt/webvirtmgr/manage.py collectstatic --noinput
-RUN cp build/webvirtmgr.ini /etc/supervisord.d/webvirtmgr.ini &&  mkdir -p /data/vm/ && \
+RUN cp build/webvirtmgr.ini /etc/supervisord.d/webvirtmgr.ini &&  mkdir -p /data/vm/.ssh && \
 cp /opt/webvirtmgr/build/local_settings.py /opt/webvirtmgr/webvirtmgr/local/local_settings.py
 #ADD gunicorn.conf.py /opt/webvirtmgr/conf/gunicorn.conf.py
 #ADD bootstrap.sh /opt/webvirtmgr/bootstrap.sh
 
 #RUN groupadd -g 1010 libvirtd && useradd webvirtmgr -g libvirtd -u 1010 -d /data/vm/ -s /sbin/nologin
-RUN groupadd -g 1010 libvirtd && useradd webvirtmgr -g libvirtd -u 1010 -d /data/vm/
-RUN chown webvirtmgr:libvirtd -R /opt/webvirtmgr
-RUN su - webvirtmgr -s /bin/bash && ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa
+RUN groupadd -g 1010 libvirtd && useradd webvirtmgr -g libvirtd -u 1010 -d /data/vm/ && chown webvirtmgr:libvirtd -R /opt/webvirtmgr
 
 WORKDIR /opt
 VOLUME /data/vm
