@@ -1,7 +1,7 @@
-FROM centos:centos7.4.1708
+FROM whharbor.centos.org/centos/bash:v1
 MAINTAINER Jiajun Chen<48853342@qq.com>
 
-RUN yum -y install epel-release vim openssh-clients openssh-server && \
+RUN yum -y install epel-release vim && \
     yum -y install python2-pip python-devel libvirt-python libxml2-python git novnc python-websockify numpy supervisor && \
     yum clean all && rm -rf /var/cache/yum
 
