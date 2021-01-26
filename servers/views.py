@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.shortcuts import render_to_response, render
 from django.http import HttpResponseRedirect
 # from django.template import RequestContext
@@ -9,7 +10,7 @@ from servers.forms import ComputeAddTcpForm, ComputeAddSshForm, ComputeEditHostF
 from vrtManager.hostdetails import wvmHostDetails
 from vrtManager.connection import CONN_SSH, CONN_TCP, CONN_TLS, CONN_SOCKET, connection_manager
 from libvirt import libvirtError
-
+from django.utils.translation import ungettext
 
 def index(request):
     """

@@ -25,11 +25,26 @@
             <ul class="nav navbar-nav">
                 <li>
                     <a href="{% url 'infrastructure' %}"
-                       title="{% trans "Show all host and vm's" %}">{% trans "Infrastructure" %}</a>
+                       title="{% trans   "Show all host and vm's" %}">{% trans "Infrastructure" %}</a>
                 </li>
             </ul>
-
             <ul class="nav navbar-nav navbar-right">
+                <li class="">
+                    <form style="padding:10px 15px;" action="{% url 'set_language' %}" method="post">{% csrf_token %}
+                    <input name="next" type="hidden" value="{{ redirect_to }}">
+                    <select name="language">
+                        {% get_current_language as LANGUAGE_CODE %}
+                        {% get_available_languages as LANGUAGES %}
+                        {% get_language_info_list for LANGUAGES as languages %}
+                        {% for language in languages %}
+                            <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                                {{ language.name_local }} ({{ language.code }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <input type="submit" value={% trans "go" %}>
+                    </form>
+                </li>
                 {% if request.user.is_authenticated or user.is_authenticated %}
                     <li class="">
                         <a href="{% url 'logout' %}">{% trans "Sign out" %}</a>

@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.conf import settings
 from servers.views import index,servers_list, infrastructure
@@ -36,6 +36,7 @@ urlpatterns = [
     url(r'^info/insts_status/(\d+)/$', insts_status, name='insts_status'),
     url(r'^info/inst_status/(\d+)/([\w\-\.]+)/$', inst_status, name='inst_status'),
     url(r'^info/instusage/(\d+)/([\w\-\.]+)/$', instusage, name='instusage'),
+    url(r'^i18n/', include('django.conf.urls.i18n')),
 ]
 
 # urlpatterns += [
