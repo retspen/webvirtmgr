@@ -1,8 +1,8 @@
 FROM centos:centos7.4.1708
 MAINTAINER Jiajun Chen<48853342@qq.com>
 
-RUN yum -y install epel-release vim openssh-clients openssh-server gettext && \
-    yum -y install python2-pip python-devel libvirt-python libxml2-python git novnc python-websockify numpy supervisor && \
+RUN yum -y install epel-release vim openssh-clients openssh-server && \
+    yum -y install python2-pip python-devel libvirt-python libxml2-python git novnc python-websockify numpy supervisor gettext && \
     yum clean all && rm -rf /var/cache/yum
 
 RUN git clone -b cestc https://github.com/jxph025319/webvirtmgr.git /opt/webvirtmgr
