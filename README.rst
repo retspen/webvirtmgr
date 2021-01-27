@@ -1,5 +1,5 @@
 =========================
-WebVirtMgr panel - v5.0
+WebVirtMgr panel - v5.0.1
 =========================
 
 -------
@@ -8,6 +8,9 @@ WebVirtMgr panel - v5.0
 模块升级
 django 框架已经升级到1.11版
 gunicorn 升级到19.10.0
+升级i18n国际化
+修复bug
+添加admin管理平台
 
 In latest version app `console/webvirtmgr-novnc` move to `console/webvirtmgr-console` you need check your supervisor settings.
 
