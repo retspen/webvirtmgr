@@ -1,7 +1,8 @@
+# -*- coding: utf-8 -*-
 # Django settings for webvirtmgr project.
 import os
 import logging
-
+from django.utils.translation import ugettext as _
 
 DEBUG = True
 # TEMPLATE_DEBUG = DEBUG
@@ -32,12 +33,20 @@ ALLOWED_HOSTS = ['*']
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
 # In a Windows environment this must be set to your system time zone.
-TIME_ZONE = 'Europe/Zaporozhye'
+TIME_ZONE = 'Asia/Shanghai'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en-us'
-
+# LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'zh-hans'
+# LANGUAGES = (
+#    ('en-us', ('English')),
+#    ('zh-CN', ('中文简体')),
+# )
+LANGUAGES = (
+    ('en', ('English')),
+    ('zh-hans', ('Chinese'))
+)
 SITE_ID = 1
 
 # If you set this to False, Django will make some optimizations so as not
@@ -106,6 +115,7 @@ LOCALE_PATHS = (
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    # 'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -131,6 +141,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.i18n',
             ],
             # 'loaders': [
             #     (

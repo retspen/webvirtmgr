@@ -86,9 +86,6 @@
                                     {% ifequal host.type 3 %}TLS{% endifequal %}
                                     {% ifequal host.type 4 %}SOCKET{% endifequal %} ]
                                 </p>
-                                {% if host.arch %}
-                                    <p><strong>{% trans "ARCH" %}:</strong> {{ host.arch }}</p>
-                                {% endif %}
                                 <p><strong>{% trans "Host" %}:</strong> <a
                                         href="ssh://{{ host.hostname }}" title="{{ host.status }}">{{ host.hostname }}</a></p>
                                 <!-- Modal Edit -->
@@ -186,8 +183,7 @@
                                                             <label class="col-sm-4 control-label">{% trans "Arch" %}</label>
 
                                                             <div class="col-sm-6">
-                                                                <input type="text" name="arch" class="form-control"
-                                                                       value="{{ host.arch }}">
+                                                                <p> {{host.arch}}</p>
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">

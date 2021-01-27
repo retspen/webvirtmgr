@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.conf import settings
 from servers.views import index,servers_list, infrastructure
@@ -12,7 +12,7 @@ from instance.views import instance, instances, insts_status, inst_status, instu
 from secrets.views import secrets
 from console.views import console
 from hostdetail.views import hostusage
-
+from django.contrib import admin
 
 urlpatterns = [
     url(r'^$', index, name='index'),
@@ -36,6 +36,8 @@ urlpatterns = [
     url(r'^info/insts_status/(\d+)/$', insts_status, name='insts_status'),
     url(r'^info/inst_status/(\d+)/([\w\-\.]+)/$', inst_status, name='inst_status'),
     url(r'^info/instusage/(\d+)/([\w\-\.]+)/$', instusage, name='instusage'),
+    url(r'^i18n/', include('django.conf.urls.i18n')),
+    url(r'^admin/',include(admin.site.urls)),
 ]
 
 # urlpatterns += [
