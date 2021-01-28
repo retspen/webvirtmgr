@@ -548,7 +548,7 @@ class wvmInstance(wvmConnect):
     def _snapshotCreateXML(self, xml, flag):
         self.instance.snapshotCreateXML(xml, flag)
 
-    def create_snapshot(self, name):
+    def create_snapshot(self, name, flag=0):
         xml = """<domainsnapshot>
                      <name>%s</name>
                      <state>shutoff</state>
@@ -556,7 +556,7 @@ class wvmInstance(wvmConnect):
         xml += self._XMLDesc(VIR_DOMAIN_XML_SECURE)
         xml += """<active>0</active>
                   </domainsnapshot>"""
-        self._snapshotCreateXML(xml, 0)
+        self._snapshotCreateXML(xml, flag)
 
     def get_snapshot(self):
         snapshots = []
@@ -567,9 +567,9 @@ class wvmInstance(wvmConnect):
             snapshots.append({'date': datetime.fromtimestamp(int(snap_time_create)), 'name': snapshot})
         return snapshots
 
-    def snapshot_delete(self, snapshot):
+    def snapshot_delete(self, snapshot, flag=0):
         snap = self.instance.snapshotLookupByName(snapshot, 0)
-        snap.delete(0)
+        snap.delete(flag)
 
     def snapshot_revert(self, snapshot):
         snap = self.instance.snapshotLookupByName(snapshot, 0)

@@ -15,7 +15,7 @@ from servers.models import Compute
 
 from vrtManager.instance import wvmInstances, wvmInstance
 
-from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE
+from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE, VIR_DOMAIN_SNAPSHOT_CREATE_DISK_ONLY, VIR_DOMAIN_SNAPSHOT_DELETE_METADATA_ONLY
 from webvirtmgr.settings import TIME_JS_REFRESH, QEMU_KEYMAPS, QEMU_CONSOLE_TYPES
 
 
@@ -369,7 +369,10 @@ def instance(request, host_id, vname):
         networks = conn.get_net_device()
         media_iso = sorted(conn.get_iso_media())
         vcpu_range = conn.get_max_cpus()
-        memory_range = [256, 512, 768, 1024, 2048, 4096, 6144, 8192, 16384]
+        if compute.arch == "aarch64":
+            memory_range = [2048, 4096, 6144, 8192, 16384]
+        elif compute.arch == "x86_64":
+            memory_range = [256, 512, 768, 1024, 2048, 4096, 6144, 8192, 16384]
         if memory not in memory_range:
             insort(memory_range, memory)
         if cur_memory not in memory_range:
@@ -431,7 +434,10 @@ def instance(request, host_id, vname):
                 return HttpResponseRedirect(reverse('instances', args=[host_id]))
             if 'snapshot' in request.POST:
                 name = request.POST.get('name', '')
-                conn.create_snapshot(name)
+                if compute.arch == "aarch64":
+                    conn.create_snapshot(name, VIR_DOMAIN_SNAPSHOT_CREATE_DISK_ONLY)
+                elif compute.arch == "x86_64":
+                    conn.create_snapshot(name, 0)
                 return HttpResponseRedirect(request.get_full_path() + '#istaceshapshosts')
             if 'umount_iso' in request.POST:
                 image = request.POST.get('path', '')
@@ -516,7 +522,10 @@ def instance(request, host_id, vname):
                 return HttpResponseRedirect(reverse('instance', args=[compute_id, vname]))
             if 'delete_snapshot' in request.POST:
                 snap_name = request.POST.get('name', '')
-                conn.snapshot_delete(snap_name)
+                if compute.arch == "aarch64":
+                    conn.snapshot_delete(snap_name, VIR_DOMAIN_SNAPSHOT_DELETE_METADATA_ONLY)
+                elif compute.arch == "x86_64":
+                    conn.snapshot_delete(snap_name, VIR_DOMAIN_SNAPSHOT_DELETE_METADATA_ONLY)
                 return HttpResponseRedirect(request.get_full_path() + '#istaceshapshosts')
             if 'revert_snapshot' in request.POST:
                 snap_name = request.POST.get('name', '')
