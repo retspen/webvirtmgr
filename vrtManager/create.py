@@ -300,5 +300,4 @@ class wvmCreate(wvmConnect):
                     <memballoon model='virtio'/>
                   </devices>
                 </domain>"""
-        print xml
         self._defineXML(xml)

@@ -1,63 +1,13 @@
 =========================
-WebVirtMgr panel - v5.0.1
+WebVirtMgr panel - v5.0.2
 =========================
 
 -------
 更新信息
 -------
-模块升级
-django 框架已经升级到1.11版
-gunicorn 升级到19.10.0
-升级i18n国际化
-修复bug
-添加admin管理平台
 
-In latest version app `console/webvirtmgr-novnc` move to `console/webvirtmgr-console` you need check your supervisor settings.
-
-----------
-Whats new?
-----------
-
-- Added RPM specs (Thanks: `Edoardo Spadoni <https://github.com/edospadoni>`_)
-- Added support SPICE, SSH Tunnel, fixed some bugs (Thanks: `brenard <https://github.com/brenard>`_)
-- Responsive design (Thanks: `Michel Käser <https://github.com/MaddinXx>`_)
-- Added VNC WebSocket support (Thanks: `Tolbkni Kao <https://github.com/tolbkni>`_)
-- Added novnc proxy supporting new websockify versions (Thanks: `casell <https://github.com/casell>`_)
-- Added support `TLS <http://libvirt.org/remote.html#Remote_certificates>`_ connection (Thanks: `junkb <https://github.com/junkb>`_)
-- `Puppet module to control libvirt/kvm <https://github.com/ITBlogger/puppet-kvm>`_ (Thanks: `Alex Scoble <https://github.com/ITBlogger>`_)
-- `Deployment via Fabric/Fabtools <https://github.com/retspen/webvirtmgr/tree/master/deploy/fabric>`_ (Thanks: `Mohab Usama <https://github.com/mohabusama>`_)
-
-Screenshots
------------
-`Show <https://github.com/retspen/webvirtmgr/wiki/Screenshots>`_
-
-
-Introduction
-------------
-
-WebVirtMgr is a libvirt-based Web interface for managing virtual machines. It allows you to create and configure new domains, and adjust a domain's resource allocation. A VNC viewer presents a full graphical console to the guest domain. KVM is currently the only hypervisor supported.
-
-Technology:
-***********
-
-The application logic is written in Python & Django. The LIBVIRT Python bindings are used to interacting with the underlying hypervisor.
-
-Installation (Only web panel)
------------------------------
-
-`Install WebVirtMgr <https://github.com/retspen/webvirtmgr/wiki/Install-WebVirtMgr>`_
-
-
-Setup host server (Server for VM's)
------------------------------------
-
-`Setup Host Server <https://github.com/retspen/webvirtmgr/wiki/Setup-Host-Server>`_
-
-License
-*******
-
-WebVirtMgr is licensed under the `Apache Licence, Version 2.0 <http://www.apache.org/licenses/LICENSE-2.0.html>`_.
-
-.. image:: https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif
-    :target: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=CEN82VLX7GD7S
-    :alt: Donate
+1、为开发环境调整dockerfile，使其能自动生产root密码
+2、添加磁盘的添加顺序，避免多次创建时的倒序
+3、更新启动脚本，能自动创建证书，方便配置信任
+4、支持arm架构的pflash模式的虚拟机快照，但需要手动回滚和删除。
+5、清理部分无效代码。

@@ -3,8 +3,8 @@ cd webvirtmgr/build
 docker build --no-cache -t whharbor.centos.org/centos/webvirtmgr:v1 .
 
 #docker build --no-cache -t whharbor.cestc.cn/centos/webvirtmgr:v1 .
-#docker run -d --name webvirtmgr_dev -h webvirtmgr_dev -v /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime  --privileged=true -v /data/vm1:/data/vm -p 2100:22 -p 8080:8080 -p 6080:6080 -m 4g whharbor.cestc.cn/centos/webvirtmgr:v5.0.1
-#docker run -d --name webvirtmgr_dev -h webvirtmgr_dev -v /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime  --privileged=true -v /data/vm1:/data/vm -p 2100:22 -p 8180:8080 -p 6180:6080 -m 4g whharbor.cestc.cn/centos/webvirtmgr:v5.0.1 /usr/sbin/init
+#docker run -d --name webvirtmgr_dev -h webvirtmgr_dev -v /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime  --privileged=true -v /data/vm1:/data/vm -p 2100:22 -p 8080:8080 -p 6080:6080 -m 4g whharbor.cestc.cn/centos/webvirtmgr:v5.0.2
+#docker run -d --name webvirtmgr_dev -h webvirtmgr_dev -v /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime  --privileged=true -v /data/vm1:/data/vm -p 2100:22 -p 8180:8080 -p 6180:6080 -m 4g whharbor.cestc.cn/centos/webvirtmgr:v5.0.2 /usr/sbin/init
 #docker run -d --name webvirtmgr_dev -h webvirtmgr_dev -v /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime  --privileged=true -v /data/vm1:/data/vm -p 2100:22 -p 8080:8080 -p 6080:6080 -m 4g whharbor.cestc.cn/centos/webvirtmgr:v1
 
 docker鏡像部署後：
