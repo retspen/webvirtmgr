@@ -115,17 +115,20 @@ def create(request, host_id):
                                 msg = _("First you need to create or select an image")
                                 errors.append(msg)
                             else:
+                                volumes_order = []
                                 for vol in data['images'].split(','):
                                     try:
                                         path = conn.get_volume_path(vol)
                                         volumes[path] = conn.get_volume_type(path)
+                                        volumes_order.append(path)
                                     except libvirtError as msg_error:
                                         errors.append(msg_error.message)
                         if not errors:
                             uuid = util.randomUUID()
                             try:
+                                print volumes, volumes_order
                                 conn.create_instance(data['name'], data['memory'], data['vcpu'], data['host_model'],
-                                                     uuid, volumes, data['networks'], data['virtio'], data['mac'], compute.arch)
+                                                     uuid, volumes, data['networks'], data['virtio'], data['mac'], compute.arch, volumes_order)
                                 create_instance = Instance(compute_id=host_id, name=data['name'], uuid=uuid)
                                 create_instance.save()
                                 return HttpResponseRedirect(reverse('instance', args=[host_id, data['name']]))

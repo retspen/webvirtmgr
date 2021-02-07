@@ -44,6 +44,9 @@ class wvmCreate(wvmConnect):
         """Get guest capabilities"""
         return util.get_xml_path(self.get_cap_xml(), "/capabilities/host/cpu/arch")
 
+    def update_volume_xml(self):
+        pass
+
     def create_volume(self, storage, name, size, format='qcow2', metadata=False):
         size = int(size) * 1073741824
         stg = self.get_storage(storage)
@@ -125,7 +128,7 @@ class wvmCreate(wvmConnect):
         vol = self.get_volume_by_path(path)
         vol.delete()
 
-    def create_instance(self, name, memory, vcpu, host_model, uuid, images, networks, virtio, mac=None, arch="x86_64"):
+    def create_instance(self, name, memory, vcpu, host_model, uuid, images, networks, virtio, mac=None, arch="x86_64", volumes_order=[]):
         """
         Create VM function
         """
@@ -200,31 +203,57 @@ class wvmCreate(wvmConnect):
                       <devices>"""
 
         disk_letters = list(string.lowercase)
-        for image, img_type in images.items():
-            print "image is ", image, "image type is ", img_type
-            stg = self.get_storage_by_vol_path(image)
-            stg_type = util.get_xml_path(stg.XMLDesc(0), "/pool/@type")
-            print "stg is ", stg, "stg type is ", stg_type
-            if stg_type == 'rbd':
-                ceph_user, secrt_uuid, ceph_host = get_rbd_storage_data(stg)
-                xml += """<disk type='network' device='disk'>
-                            <driver name='qemu' type='%s'/>
-                            <auth username='%s'>
-                                <secret type='ceph' uuid='%s'/>
-                            </auth>
-                            <source protocol='rbd' name='%s'>
-                                <host name='%s' port='6789'/>
-                            </source>""" % (img_type, ceph_user, secrt_uuid, image, ceph_host)
-            else:
-                xml += """<disk type='file' device='disk'>
-                            <driver name='qemu' type='%s'/>
-                            <source file='%s'/>""" % (img_type, image)
+        if volumes_order == []:
+            for image, img_type in images.items():
+                stg = self.get_storage_by_vol_path(image)
+                stg_type = util.get_xml_path(stg.XMLDesc(0), "/pool/@type")
+                if stg_type == 'rbd':
+                    ceph_user, secrt_uuid, ceph_host = get_rbd_storage_data(stg)
+                    xml += """<disk type='network' device='disk'>
+                                <driver name='qemu' type='%s'/>
+                                <auth username='%s'>
+                                    <secret type='ceph' uuid='%s'/>
+                                </auth>
+                                <source protocol='rbd' name='%s'>
+                                    <host name='%s' port='6789'/>
+                                </source>""" % (img_type, ceph_user, secrt_uuid, image, ceph_host)
+                else:
+                    xml += """<disk type='file' device='disk'>
+                                <driver name='qemu' type='%s'/>
+                                <source file='%s'/>""" % (img_type, image)
 
-            if virtio:
-                xml += """<target dev='vd%s' bus='virtio'/>""" % (disk_letters.pop(0),)
-            else:
-                xml += """<target dev='sd%s' bus='ide'/>""" % (disk_letters.pop(0),)
-            xml += """</disk>"""
+                if virtio:
+                    xml += """<target dev='vd%s' bus='virtio'/>""" % (disk_letters.pop(0),)
+                else:
+                    xml += """<target dev='sd%s' bus='ide'/>""" % (disk_letters.pop(0),)
+                xml += """</disk>"""
+        else:
+            for p in volumes_order:
+                image = p
+                img_type = images[p]
+                stg = self.get_storage_by_vol_path(image)
+                stg_type = util.get_xml_path(stg.XMLDesc(0), "/pool/@type")
+                if stg_type == 'rbd':
+                    ceph_user, secrt_uuid, ceph_host = get_rbd_storage_data(stg)
+                    xml += """<disk type='network' device='disk'>
+                                                <driver name='qemu' type='%s'/>
+                                                <auth username='%s'>
+                                                    <secret type='ceph' uuid='%s'/>
+                                                </auth>
+                                                <source protocol='rbd' name='%s'>
+                                                    <host name='%s' port='6789'/>
+                                                </source>""" % (img_type, ceph_user, secrt_uuid, image, ceph_host)
+                else:
+                    xml += """<disk type='file' device='disk'>
+                                                <driver name='qemu' type='%s'/>
+                                                <source file='%s'/>""" % (img_type, image)
+
+                if virtio:
+                    xml += """<target dev='vd%s' bus='virtio'/>""" % (disk_letters.pop(0),)
+                else:
+                    xml += """<target dev='sd%s' bus='ide'/>""" % (disk_letters.pop(0),)
+                xml += """</disk>"""
+
         if arch == "x86_64":
             xml += """  <disk type='file' device='cdrom'>
                       <driver name='qemu' type='raw'/>
