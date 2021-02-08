@@ -1,0 +1,12 @@
+r'^$          无参数     servers.views.index
+r'^login/$'   无参数     auth_views.LoginView.as_view(template_name='login.html')
+r'^logout/$'  无参数     auth_views.LogoutView.as_view(template_name='logout.html')
+r'^servers/$' 无参数     servers.views.servers_list
+r'^infrastructure/$' 无参数  servers.views.infrastructure
+r'^host/(\d+)/$' \d+    hostdetail.views.overview
+r'^create/(\d+)/$' \d+  create.views.create
+r'^storages/(\d+)/$'  \d+  storages.views.storages
+r'^storage/(\d+)/([\w\-\.]+)/$' (\d+)/([\w\-\.]+) storages.views.storage
+
+
+
