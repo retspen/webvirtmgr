@@ -3,8 +3,8 @@ MAINTAINER Jiajun Chen<48853342@qq.com>
 
 RUN yum -y install epel-release vim openssh-clients openssh-server net-tools && \
     yum -y install python2-pip python-devel libvirt-python libxml2-python git novnc python-websockify numpy supervisor gettext && \
-    yum clean all && rm -rf /var/cache/yum && echo cestc01 | passwd --stdin root
-
+    yum clean all && rm -rf /var/cache/yum
+RUN echo cestc01 | passwd --stdin root
 RUN git clone -b cestc https://github.com/jxph025319/webvirtmgr.git /opt/webvirtmgr
 WORKDIR /opt/webvirtmgr
 RUN git checkout v5.0.3

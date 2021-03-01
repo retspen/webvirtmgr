@@ -26,4 +26,3 @@ VOLUME /data/vm
 EXPOSE 8080
 EXPOSE 6080
 CMD ["supervisord", "-n"]
-

@@ -8,6 +8,10 @@ if [ ! -f "/data/vm/webvirtmgr.sqlite3" ]; then
 echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@localhost', 'Cestc_01')" | /usr/bin/python /opt/webvirtmgr/manage.py shell
 chown -R webvirtmgr:libvirtd /data/vm
 ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa && touch ~/.ssh/config && echo -e "StrictHostKeyChecking=no\nUserKnownHostsFile=/dev/null" >> ~/.ssh/config && chmod 0600 ~/.ssh/config
-
+  if [ $? -ne 0 ]; then
+      echo "ssh keygen error!"
+  else
+      echo "ssh keygen correct!"
+  fi
 fi
 
