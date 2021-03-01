@@ -28,3 +28,6 @@ chmod 0600 ~/.ssh/config
 針對客戶物理機的操作
 su - webvirtmgr -s /bin/bash
 ssh-copy-id root@172.16.87.64
+
+rm -rf vm1
+userdel webvirtmgr
