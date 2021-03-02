@@ -31,3 +31,4 @@ ssh-copy-id root@172.16.87.64
 
 rm -rf vm1
 userdel webvirtmgr
+docker exec webvirtmgr_dev /bin/bash /opt/webvirtmgr/sshtrust.sh ipaddress password account

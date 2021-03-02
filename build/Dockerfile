@@ -1,13 +1,13 @@
 FROM centos:centos7.4.1708
 MAINTAINER Jiajun Chen<48853342@qq.com>
 
-RUN yum -y install epel-release vim openssh-clients openssh-server net-tools && \
+RUN yum -y install epel-release vim openssh-clients openssh-server net-tools sshpass && \
     yum -y install python2-pip python-devel libvirt-python libxml2-python git novnc python-websockify numpy supervisor gettext && \
     yum clean all && rm -rf /var/cache/yum
 RUN echo cestc01 | passwd --stdin root
 RUN git clone -b cestc https://github.com/jxph025319/webvirtmgr.git /opt/webvirtmgr
 WORKDIR /opt/webvirtmgr
-RUN git checkout v5.0.4
+RUN git checkout v5.0.5
 RUN pip install -r requirements.txt
 #ADD local_settings.py /opt/webvirtmgr/webvirtmgr/local/local_settings.py
 #RUN sed -i 's/0.0.0.0/172.17.42.1/g' vrtManager/create.py
