@@ -254,5 +254,6 @@ INSTALLED_APPS = (
     'instance',
     'create',
     'gunicorn',
-    'serverlog'
+    'serverlog',
+    'rbac'
 )
