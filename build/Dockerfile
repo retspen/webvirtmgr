@@ -18,7 +18,7 @@ cp /opt/webvirtmgr/build/local_settings.py /opt/webvirtmgr/webvirtmgr/local/loca
 #ADD bootstrap.sh /opt/webvirtmgr/bootstrap.sh
 
 #RUN groupadd -g 1010 libvirtd && useradd webvirtmgr -g libvirtd -u 1010 -d /data/vm/ -s /sbin/nologin
-RUN groupadd -g 1010 libvirtd && useradd webvirtmgr -g libvirtd -u 1010 -d /data/vm/ && chown webvirtmgr:libvirtd -R /opt/webvirtmgr
+RUN groupadd -g 1010 libvirtd && useradd webvirtmgr -g libvirtd -u 1010 -d /data/vm/ && chown webvirtmgr:libvirtd -R /opt/webvirtmgr && echo cestc01 | passwd --stdin webvirtmgr
 
 WORKDIR /opt
 VOLUME /data/vm
@@ -26,3 +26,4 @@ VOLUME /data/vm
 EXPOSE 8080
 EXPOSE 6080
 CMD ["supervisord", "-n"]
+0o777
