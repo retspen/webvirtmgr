@@ -1,0 +1,23 @@
+{% extends "base_auth.html" %}
+{% load i18n %}
+{% block title %}{% trans "Sign In" %}{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-xs-12" role="main">
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    {% trans "Incorrect username or password." %}
+                </div>
+            {% endif %}
+            <form class="form-signin" method="post" role="form">{% csrf_token %}
+                <h2 class="form-signin-heading">{% trans "Sign In" %}</h2>
+                <input type="text" class="form-control" name="username" placeholder="Login" autocapitalize="none"
+                       autocorrect="off" autofocus>
+                <input type="password" class="form-control" name="password" placeholder="Password">
+                <input name="next" id="next" type="hidden" value="{% url 'servers_list' %}">
+                <button class="btn btn-lg btn-success btn-block" type="submit">{% trans "Sign In" %}</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

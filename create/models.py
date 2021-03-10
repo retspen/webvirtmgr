@@ -8,4 +8,4 @@ class Flavor(models.Model):
     disk = models.IntegerField()
 
     def __unicode__(self):
-        return self.name
+        return self.label
