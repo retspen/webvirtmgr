@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
-from django.shortcuts import render, HttpResponse, redirect
-from models import UserInfo, Role, Permission
+from django.shortcuts import render, redirect
+from models import UserInfo
+from rbac.permission_init import init_permission
+from django.contrib.auth import  login as login_func, logout as logout_func
 
 # Create your views here.
+
+
 def login(request):
     if request.method == "GET":
         return render(request, 'login2.html')
@@ -12,16 +15,19 @@ def login(request):
     user = request.POST.get('username')
     pwd = request.POST.get('password')
     next = request.POST.get('next')
-    obj = UserInfo.objects.filter(name=user, password=pwd).first()
+    obj = UserInfo.objects.filter(username=user).first()
     if not obj:
-        print "there is no permissions"
+        print 'obj is empty', user, pwd, obj
         return render(request, 'login2.html', {'msg': 'user or password invalid'})
-    permission_quiryset = obj.roles.filter(permissions__isnull=False).values("permissions__id", "permissions__url").distinct()
-    print obj, permission_quiryset
-    # permission_list = []
-    # for item in permission_quiryset:
-    #     permission_list.append(item["permissions_url"])
+    # form.error 需要研究。
 
-    permission_list = [ item["permissions__url"] for item in permission_quiryset]
-    request.session["webvirtmgr_permission_url_list_key"] = permission_list
+    init_permission(request, obj)
+    print 'next login'
+    login_func(request, obj)
+    print 'redirct login'
     return redirect(next)
+
+
+def logout(request):
+    logout_func(request)
+    return redirect('/login')

@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 
@@ -21,12 +22,12 @@ class Role(models.Model):
     def __str__(self):
         return self.title
 
-class UserInfo(models.Model):
+class UserInfo(AbstractUser):
     "用户表"
-    name = models.CharField(verbose_name='用户名', max_length=32)
-    password = models.CharField(verbose_name='密码', max_length=64)
-    email = models.CharField(verbose_name='邮箱', max_length=32)
+    # username = models.CharField(verbose_name='用户名', max_length=32)
+    # password = models.CharField(verbose_name='密码', max_length=64)
+    # email = models.CharField(verbose_name='邮箱', max_length=32)
     roles = models.ManyToManyField(verbose_name='拥有的所有角色', to='Role', blank=True)
-
-    def __str__(self):
-        return self.name
+    #
+    # def __str__(self):
+    #     return self.name

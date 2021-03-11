@@ -13,13 +13,14 @@ from secrets.views import secrets
 from console.views import console
 from hostdetail.views import hostusage
 from django.contrib import admin
-from rbac.views import login
+from rbac.views import login, logout
 
 urlpatterns = [
     url(r'^$', index, name='index'),
     # url(r'^login/$', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
-    url(r'^login$', login, name='login'),
-    url(r'^logout/$',auth_views.LogoutView.as_view(template_name='logout.html'), name='logout'),
+    url(r'^login/?$', login, name='login'),
+    # url(r'^logout/$',auth_views.LogoutView.as_view(template_name='logout.html'), name='logout'),
+    url(r'^logout/?$', logout, name='logout'),
     url(r'^servers/$', servers_list, name='servers_list'),
     url(r'^infrastructure/$', infrastructure, name='infrastructure'),
     url(r'^host/(\d+)/$', overview, name='overview'),
