@@ -315,7 +315,9 @@ def instances(request, host_id):
             conn.close()
         except libvirtError as err:
             errors.append(err)
+    button = {}
 
+    menu = {}
     return render(request, 'instances.html', locals())
 
 

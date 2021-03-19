@@ -11,6 +11,7 @@
                 </div>
             {% endif %}
             <form class="form-signin" method="post" role="form">{% csrf_token %}
+                {{ login_form }}
                 <h2 class="form-signin-heading">{% trans "Sign In" %}</h2>
                 <input type="text" class="form-control" name="username" placeholder="Login" autocapitalize="none"
                        autocorrect="off" autofocus>
