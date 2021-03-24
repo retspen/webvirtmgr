@@ -11,6 +11,8 @@ from vrtManager.hostdetails import wvmHostDetails
 from vrtManager.connection import CONN_SSH, CONN_TCP, CONN_TLS, CONN_SOCKET, connection_manager
 from libvirt import libvirtError
 from django.utils.translation import ungettext
+from perm_util.page_permission import get_menus, get_buttons
+
 
 def index(request):
     """
@@ -46,7 +48,6 @@ def servers_list(request):
                               'password': host.password,
                               'arch': host.arch
                               })
-        print all_hosts
         return all_hosts
 
     computes = Compute.objects.filter()
@@ -124,7 +125,8 @@ def servers_list(request):
                                           password='')
                 new_socket_host.save()
                 return HttpResponseRedirect(request.get_full_path())
-
+    button = get_buttons(request)
+    menu = get_menus(request)
     return render(request, 'servers.html', locals())
 
 
@@ -152,5 +154,6 @@ def infrastructure(request):
                 hosts_vms[host.id, host.name, status, 0, 0, 0] = None
         else:
             hosts_vms[host.id, host.name, 2, 0, 0, 0] = None
-
+    button = get_buttons(request)
+    menu = get_menus(request)
     return render(request, 'infrastructure.html', locals())

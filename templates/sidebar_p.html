@@ -1,0 +1,52 @@
+{% load i18n %}
+{% load tags_active %}
+<div class="row">
+    <div class="col-xs-12">
+        <div class="page-header">
+            {% if 'a' in button %}
+            <a href="{% url 'create' host_id %}" class="btn btn-sm btn-success pull-right">{% trans "New Instance" %}</a>
+            {% endif %}
+            <h1><a href="{% url 'overview' host_id %}">{{ compute.name }}</a></h1>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="sidebar col-xs-12 col-sm-3">
+        <ul>
+            {% if 'instances' in menu %}
+            <li>
+                <a href="{% url 'instances' host_id %}"
+                   class="list {% active request "^/instance" %}">{% trans "Instances" %}</a>
+            </li>
+            {% endif %}
+            {% if 'storages' in menu %}
+            <li>
+                <a href="{% url 'storages' host_id %}"
+                   class="list {% active request "^/storage" %}">{% trans "Storages" %}</a>
+            </li>
+            {% endif %}
+            {% if 'networks' in menu %}
+            <li>
+                <a href="{% url 'networks' host_id %}"
+                   class="list {% active request "^/network" %}">{% trans "Networks" %}</a>
+            </li>
+            {% endif %}
+            {% if 'interfaces' in menu %}
+            <li>
+                <a href="{% url 'interfaces' host_id %}"
+                   class="list {% active request "^/interface" %}">{% trans "Interfaces" %}</a>
+            </li>
+            {% endif %}
+            {% if 'secrets' in menu %}
+            <li>
+                <a href="{% url 'secrets' host_id %}"
+                   class="list {% active request "^/secrets" %}">{% trans "Secrets" %}</a>
+            </li>
+            {% endif %}
+            {% if 'overview' in menu %}
+            <li>
+                <a href="{% url 'overview' host_id %}" class="list {% active request "^/host" %}">{% trans "Overview" %}</a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>

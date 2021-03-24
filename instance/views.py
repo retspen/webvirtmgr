@@ -9,14 +9,12 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 import json
 import time
-
 from instance.models import Instance
 from servers.models import Compute
-
 from vrtManager.instance import wvmInstances, wvmInstance
-
 from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE, VIR_DOMAIN_SNAPSHOT_CREATE_DISK_ONLY, VIR_DOMAIN_SNAPSHOT_DELETE_METADATA_ONLY
 from webvirtmgr.settings import TIME_JS_REFRESH, QEMU_KEYMAPS, QEMU_CONSOLE_TYPES
+from perm_util.page_permission import get_menus, get_buttons
 
 
 def instusage(request, host_id, vname):
@@ -230,7 +228,7 @@ def insts_status(request, host_id):
         get_instances = conn.get_instances()
     except libvirtError as err:
         errors.append(err)
-
+    button = get_buttons(request)
     for instance in get_instances:
         instances.append({'name': instance,
                           'status': conn.get_instance_status(instance),
@@ -238,7 +236,8 @@ def insts_status(request, host_id):
                           'vcpu': conn.get_instance_vcpu(instance),
                           'uuid': conn.get_uuid(instance),
                           'host': host_id,
-                          'dump': conn.get_instance_managed_save_image(instance)
+                          'dump': conn.get_instance_managed_save_image(instance),
+                          'button': button,
                           })
 
     data = json.dumps(instances)
@@ -315,9 +314,8 @@ def instances(request, host_id):
             conn.close()
         except libvirtError as err:
             errors.append(err)
-    button = {}
-
-    menu = {}
+    button = get_buttons(request)
+    menu = get_menus(request)
     return render(request, 'instances.html', locals())
 
 
@@ -542,10 +540,8 @@ def instance(request, host_id, vname):
                 for post in request.POST:
                     if 'disk' or 'meta' in post:
                         clone_data[post] = request.POST.get(post, '')
-
                 conn.clone_instance(clone_data)
                 return HttpResponseRedirect(reverse('instance', args=[host_id, clone_data['name']]))
-
         conn.close()
 
     except libvirtError as err:

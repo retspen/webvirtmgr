@@ -263,5 +263,6 @@ PERMISSION_SESSION_KEY = "webvirtmgr_permission_url_list_key"
 MENU_SESSION_KEY = "webvirtmgr_menu_url_list_key"
 BUTTON_SESSION_KEY = "webvirtmgr_button_url_list_key"
 VALID_URL_LIST = ['^/login/?$', '^/admin/?', '^/logout/?$', '^/info/hostusage/(\d+)/$', '^/info/insts_status/(\d+)/$',
-                  '^/info/inst_status/(\d+)/([\w\-\.]+)/$', '^/info/instusage/(\d+)/([\w\-\.]+)/$', '^/$']
+                  '^/info/inst_status/(\d+)/([\w\-\.]+)/$', '^/info/instusage/(\d+)/([\w\-\.]+)/$', '^/$', '^/i18n/setlang/$',
+                  '/console/?']
 AUTH_USER_MODEL = 'rbac.UserInfo'

@@ -62,8 +62,13 @@
                                 {% for vm, info in vms.items %}
                                     <tr data-status="{{ info.0 }}">
                                         <td></td>
-                                        <td>{{ forloop.counter }} &emsp; <a
-                                                href="{% url 'instance' host.0 vm %}">{{ vm }}</a></td>
+                                        <td>{{ forloop.counter }} &emsp;
+                                            {% if "a" in button %}
+                                                <a href="{% url 'instance' host.0 vm %}">{{ vm }}</a>
+                                            {% else %}
+                                                {{ vm }}
+                                            {% endif %}
+                                        </td>
                                         <td>{% ifequal info.0 1 %}<span class="label label-success">{% trans "Running" %}
                                             </span>{% endifequal %}
                                             {% ifequal info.0 3 %}<span class="label label-warning">{% trans "Suspend" %}

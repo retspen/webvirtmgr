@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.conf import settings
-from django.urls import resolve
 
 
 def init_permission(request, current_user):
@@ -41,7 +40,6 @@ def init_permission(request, current_user):
     else:
         request.session.get(settings.BUTTON_SESSION_KEY)[current_user.username] = button_list
     print request.session.get(settings.BUTTON_SESSION_KEY), "session BUTTON_SESSION_KEY"
-
 
 
 def get_button_permissions(request):
