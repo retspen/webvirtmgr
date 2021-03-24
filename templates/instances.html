@@ -85,7 +85,7 @@
                                                 </button>
                                             {% endifequal %}
                                         {% endif %}
-                                        {% if "force shutdown" in button %}
+                                        {% if "force_shutdown" in button %}
                                         <button class="btn btn-sm btn-default disabled"
                                                 title="{% trans "Force Shutdown" %}">
                                             <span class="glyphicon glyphicon-stop"></span>
@@ -120,7 +120,7 @@
                                             <span class="glyphicon glyphicon-off"></span>
                                         </button>
                                         {% endif %}
-                                        {% if "force shutdown" in button %}
+                                        {% if "force_shutdown" in button %}
                                         <button class="btn btn-sm btn-default disabled"
                                                 title="{% trans "Force Shutdown" %}">
                                             <span class="glyphicon glyphicon-stop"></span>
@@ -160,6 +160,12 @@
                                         <button class="btn btn-sm btn-default" type="submit" name="destroy"
                                                 title="{% trans "Force Shutdown" %}"
                                                 onclick="return confirm('Are you sure?')">
+                                            <span class="glyphicon glyphicon-stop"></span>
+                                        </button>
+                                        {% endif %}
+                                        {% if "force_shutdown" in button %}
+                                        <button class="btn btn-sm btn-default "
+                                                title="{% trans "Force Shutdown" %}">
                                             <span class="glyphicon glyphicon-stop"></span>
                                         </button>
                                         {% endif %}

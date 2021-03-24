@@ -74,6 +74,7 @@ def storage(request, host_id, pool):
     def handle_uploaded_file(path, f_name):
         target = path + '/' + str(f_name)
         destination = open(target, 'wb+')
+        print target
         for chunk in f_name.chunks():
             destination.write(chunk)
         destination.close()
