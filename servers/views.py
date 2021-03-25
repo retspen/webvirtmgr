@@ -160,5 +160,4 @@ def infrastructure(request):
             hosts_vms[host.id, host.name, 2, 0, 0, 0] = None
     button = get_buttons(request)
     menu = get_menus(request)
-    print 'hosts_vms', hosts_vms
     return render(request, 'infrastructure.html', locals())

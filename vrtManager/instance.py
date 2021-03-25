@@ -499,10 +499,8 @@ class wvmInstance(wvmConnect):
         """
         Function change ram and cpu on vds.
         """
-        print type(memory), float(memory)
         memory = int(float(memory) * 1024 * 1024)
         cur_memory = int(float(cur_memory) * 1024 * 1024)
-        print memory, cur_memory
         xml = self._XMLDesc(VIR_DOMAIN_XML_SECURE)
         tree = ElementTree.fromstring(xml)
 

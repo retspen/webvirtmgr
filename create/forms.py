@@ -59,6 +59,6 @@ class NewVMForm(forms.Form):
     def clean_memory(self):
         memory = self.cleaned_data['memory']
         if not isinstance(memory, int):
-            raise forms.ValidationError(_('The memory of the virtual machine must be a int'))
+            raise forms.ValidationError(_('The memory of the virtual machine must be int'))
         else:
             return memory

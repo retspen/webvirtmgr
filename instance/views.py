@@ -316,7 +316,6 @@ def instances(request, host_id):
             errors.append(err)
     button = get_buttons(request)
     menu = get_menus(request)
-    print button, 'button list'
     return render(request, 'instances.html', locals())
 
 

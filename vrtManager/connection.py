@@ -440,13 +440,11 @@ class wvmConnect(object):
     def get_host_instances(self):
         vname = {}
         memory = self.wvm.getInfo()[1] * 1048576
-        print "instances mem ", memory
         for name in self.get_instances():
             dom = self.get_instance(name)
             mem = util.get_xml_path(dom.XMLDesc(0), "/domain/currentMemory")
             mem = int(mem) * 1024
             mem_usage = (mem * 100) / memory
-            print "percent", mem, memory, mem_usage
             cur_vcpu = util.get_xml_path(dom.XMLDesc(0), "/domain/vcpu/@current")
             if cur_vcpu:
                 vcpu = cur_vcpu

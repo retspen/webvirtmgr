@@ -21,7 +21,6 @@ class wvmHostDetails(wvmConnect):
         """
         get_all_mem = self.wvm.getInfo()[1] * 1048576
         get_freemem = self.wvm.getMemoryStats(-1, 0)
-        print "free mem ", get_freemem
         if type(get_freemem) == dict:
             free = (get_freemem.values()[0] +
                     get_freemem.values()[2] +
@@ -69,7 +68,6 @@ class wvmHostDetails(wvmConnect):
         info.append(self.wvm.getInfo()[2])
         info.append(get_xml_path(self.wvm.getSysinfo(0), func=cpu_version))
         info.append(self.wvm.getURI())
-        print "info ", info
         return info
 
     def hypervisor_type(self):
