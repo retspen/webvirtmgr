@@ -39,9 +39,9 @@ def hostusage(request, host_id):
         mem_usage = 0
     # print request._cookies.get('cpu'), request._cookies
     try:
-        cookies['cpu'] = request._cookies['cpu']
-        cookies['mem'] = request._cookies['mem']
-        cookies['timer'] = request._cookies['timer']
+        cookies['cpu'] = request.COOKIES['cpu']
+        cookies['mem'] = request.COOKIES['mem']
+        cookies['timer'] = request.COOKIES['timer']
     except KeyError:
         cookies['cpu'] = None
         cookies['mem'] = None

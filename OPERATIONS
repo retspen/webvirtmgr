@@ -39,3 +39,6 @@ docker exec -it webvirtmgr_dev su - webvirtmgr -c "sshpass -p Cestc_01 ssh-copy-
 echo "from rbac.models import UserInfo as User ; User.objects.create_superuser('admin', 'admin@localhost', 'Cestc_01')" | /usr/bin/python /opt/webvirtmgr/manage.py shell
 
 国际化
+python manage.py makemessages -l zh_Hans
+vim /opt/webvirtmgr/locale/zh_Hans/LC_MESSAGES/django.po
+python manage.py compilemessages --locale /opt/webvirtmgr/locale/zh_Hans
