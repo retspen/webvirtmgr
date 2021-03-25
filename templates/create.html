@@ -244,11 +244,11 @@
 
                         <div class="col-sm-6">
                             <input type="text" class="form-control" name="memory" value=
-                                   {% ifequal compute.arch "aarch64" %}2048{% endifequal %}
-                                    {% ifequal compute.arch "x86_64" %}512{% endifequal %}
+                                   {% ifequal compute.arch "aarch64" %}2{% endifequal %}
+                                    {% ifequal compute.arch "x86_64" %}1{% endifequal %}
                             maxlength="6" required pattern="[0-9]+">
                         </div>
-                        <label class="col-sm-1 control-label">{% trans "MB" %}</label>
+                        <label class="col-sm-1 control-label">{% trans "GB" %}</label>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">{% trans "HDD" %}</label>
@@ -338,7 +338,7 @@
                         <label class="col-sm-3 control-label">{% trans "RAM" %}</label>
 
                         <div class="col-sm-6">
-                            <input type="text" class="form-control" name="memory" value="512" maxlength="5" required
+                            <input type="text" class="form-control" name="memory" value="1" maxlength="5" required
                                    pattern="[0-9]+">
                         </div>
                         <label class="col-sm-1 control-label">{% trans "MB" %}</label>
@@ -401,7 +401,7 @@
                         <label class="col-sm-3 control-label">{% trans "RAM" %}</label>
 
                         <div class="col-sm-6">
-                            <input type="text" class="form-control" name="memory" value="512" maxlength="5" required
+                            <input type="text" class="form-control" name="memory" value="1" maxlength="5" required
                                    pattern="[0-9]+">
                         </div>
                         <label class="col-sm-1 control-label">{% trans "MB" %}</label>

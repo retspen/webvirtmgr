@@ -125,8 +125,8 @@ def create(request, host_id):
                                         errors.append(msg_error.message)
                         if not errors:
                             uuid = util.randomUUID()
+                            data['memory'] = data['memory']*1024
                             try:
-                                print volumes, volumes_order
                                 conn.create_instance(data['name'], data['memory'], data['vcpu'], data['host_model'],
                                                      uuid, volumes, data['networks'], data['virtio'], data['mac'], compute.arch, volumes_order)
                                 create_instance = Instance(compute_id=host_id, name=data['name'], uuid=uuid)
@@ -138,6 +138,5 @@ def create(request, host_id):
                                 errors.append(err)
 
         conn.close()
-
     # return render_to_response('create.html', locals(), context_instance=RequestContext(request))
     return render(request, 'create.html', locals())

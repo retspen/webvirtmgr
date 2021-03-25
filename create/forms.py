@@ -55,3 +55,10 @@ class NewVMForm(forms.Form):
         elif len(name) > 20:
             raise forms.ValidationError(_('The name of the virtual machine must not exceed 20 characters'))
         return name
+
+    def clean_memory(self):
+        memory = self.cleaned_data['memory']
+        if not isinstance(memory, int):
+            raise forms.ValidationError(_('The memory of the virtual machine must be a int'))
+        else:
+            return memory

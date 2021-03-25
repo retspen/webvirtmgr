@@ -371,9 +371,9 @@ def instance(request, host_id, vname):
         media_iso = sorted(conn.get_iso_media())
         vcpu_range = conn.get_max_cpus()
         if compute.arch == "aarch64":
-            memory_range = [2048, 4096, 6144, 8192, 16384]
+            memory_range = [1, 2, 4, 8, 16, 32, 64]
         elif compute.arch == "x86_64":
-            memory_range = [256, 512, 768, 1024, 2048, 4096, 6144, 8192, 16384]
+            memory_range = [1, 2, 4, 8, 16, 32, 64]
         if memory not in memory_range:
             insort(memory_range, memory)
         if cur_memory not in memory_range:

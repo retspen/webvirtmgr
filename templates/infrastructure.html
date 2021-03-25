@@ -39,6 +39,7 @@
                             <th>{% trans "Status" %}</th>
                             <th style="text-align:center;width:50px;">{% trans "VCPUs" %}</th>
                             <th style="text-align:center;width:100px;">{% trans "Memory" %}</th>
+                            <th style="text-align:center;width:80px;">{% trans "distribution" %}</th>
                             <th style="text-align:center;width:80px;">{% trans "Usage" %}</th>
                         </tr>
                     </thead>
@@ -56,6 +57,13 @@
                                 </td>
                                 <td style="text-align:center;">{{ host.3 }}</td>
                                 <td style="text-align:center;">{{ host.4|filesizeformat }}</td>
+                                {% if host.6 >= 70 %}
+                                    <td style="text-align:center"><span style="color: red">{{ host.6 }}%</span></td>
+                                {% elif host.6 < 70 and host.6 > 50 %}
+                                    <td style="text-align:center"><span style="color: #f5dd5d">{{ host.6 }}%</span></td>
+                                {% else %}
+                                    <td style="text-align:center;">{{ host.6 }}%</td>
+                                {% endif %}
                                 <td style="text-align:center;">{{ host.5 }}%</td>
                             </tr>
                             {% if vms %}

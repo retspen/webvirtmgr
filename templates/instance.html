@@ -50,7 +50,7 @@
             {% endif %}
             </td>
             <td>{% if cur_vcpu %}{{ cur_vcpu }}{% else %}{{ vcpu }}{% endif %}</td>
-            <td>{{ cur_memory }}{% trans "MB" %}</td>
+            <td>{{ cur_memory }}{% trans "GB" %}</td>
             <td>{{ description }}</td>
         <tr>
         </tbody>
@@ -392,7 +392,7 @@
 
             <div class="form-group">
                 <label class="col-sm-4 control-label"
-                       style="font-weight:normal;">{% trans "Current allocation" %} ({% trans "MB" %})</label>
+                       style="font-weight:normal;">{% trans "Current allocation" %} ({% trans "GB" %})</label>
 
                 <div class="col-sm-4 js-custom__container">
                     <select name="cur_memory" class="form-control js-custom__toggle">
@@ -407,7 +407,7 @@
             </div>
             <div class="form-group">
                 <label class="col-sm-4 control-label"
-                       style="font-weight:normal;">{% trans "Maximum allocation" %} ({% trans "MB" %})</label>
+                       style="font-weight:normal;">{% trans "Maximum allocation" %} ({% trans "GB" %})</label>
 
                 <div class="col-sm-4 js-custom__container">
                     <select name="memory" class="form-control js-custom__toggle">

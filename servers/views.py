@@ -147,8 +147,12 @@ def infrastructure(request):
                 conn = wvmHostDetails(host, host.login, host.password, host.type)
                 host_info = conn.get_node_info()
                 host_mem = conn.get_memory_usage()
+                data = conn.get_host_instances()
+                distribution = 0
+                for d in data.values():
+                    distribution += d[2]
                 hosts_vms[host.id, host.name, status, host_info[3], host_info[2],
-                          host_mem['percent']] = conn.get_host_instances()
+                          host_mem['percent'], (distribution*100)/host_info[2]] = conn.get_host_instances()
                 conn.close()
             except libvirtError:
                 hosts_vms[host.id, host.name, status, 0, 0, 0] = None
@@ -156,4 +160,5 @@ def infrastructure(request):
             hosts_vms[host.id, host.name, 2, 0, 0, 0] = None
     button = get_buttons(request)
     menu = get_menus(request)
+    print 'hosts_vms', hosts_vms
     return render(request, 'infrastructure.html', locals())

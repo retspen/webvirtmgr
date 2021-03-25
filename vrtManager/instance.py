@@ -24,7 +24,7 @@ class wvmInstances(wvmConnect):
     def get_instance_memory(self, name):
         inst = self.get_instance(name)
         mem = util.get_xml_path(inst.XMLDesc(0), "/domain/currentMemory")
-        return int(mem) / 1024
+        return int(mem) / 1024 / 1024
 
     def get_instance_vcpu(self, name):
         inst = self.get_instance(name)
@@ -152,11 +152,11 @@ class wvmInstance(wvmConnect):
 
     def get_memory(self):
         mem = util.get_xml_path(self._XMLDesc(0), "/domain/memory")
-        return int(mem) / 1024
+        return int(mem) / 1024 /1024
 
     def get_cur_memory(self):
         mem = util.get_xml_path(self._XMLDesc(0), "/domain/currentMemory")
-        return int(mem) / 1024
+        return int(mem) / 1024 /1024
 
     def get_description(self):
         return util.get_xml_path(self._XMLDesc(0), "/domain/description")
@@ -499,9 +499,10 @@ class wvmInstance(wvmConnect):
         """
         Function change ram and cpu on vds.
         """
-        memory = int(memory) * 1024
-        cur_memory = int(cur_memory) * 1024
-
+        print type(memory), float(memory)
+        memory = int(float(memory) * 1024 * 1024)
+        cur_memory = int(float(cur_memory) * 1024 * 1024)
+        print memory, cur_memory
         xml = self._XMLDesc(VIR_DOMAIN_XML_SECURE)
         tree = ElementTree.fromstring(xml)
 
