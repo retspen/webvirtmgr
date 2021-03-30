@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 #
 # Copyright (C) 2013 Webvirtmgr.
 #
@@ -11,6 +13,7 @@ from libvirt import libvirtError
 
 from rwlock import ReadWriteLock
 from django.conf import settings
+import os
 
 
 CONN_SOCKET = 4
@@ -20,6 +23,25 @@ CONN_TCP = 1
 TLS_PORT = 16514
 SSH_PORT = 22
 TCP_PORT = 16509
+
+
+class SSHConnect(object):
+    def __init__(self, username, address, port="22", password=None):
+        self.username = username
+        self.port = str(port)
+        self.address = address    #存在字符串拼接的端口和地址
+        self.password = ""
+        if password:
+            self.password = password
+
+    def connect(self,  command):
+        if self.port == "22":
+            port_para = ""
+        else:
+            port_para = "-p " + self.port
+        conn = os.system('ssh ' + port_para + self.username + "@" + self.address + " " + command )
+        print 'ssh ' + port_para + self.username + "@" + self.address + " " + command
+        return conn
 
 
 class wvmEventLoop(threading.Thread):
@@ -281,7 +303,6 @@ class wvmConnectionManager(object):
         host = unicode(host)
         login = unicode(login)
         passwd = unicode(passwd) if passwd is not None else None
-
         connection = self._search_connection(host, login, passwd, conn)
 
         if (connection is None):

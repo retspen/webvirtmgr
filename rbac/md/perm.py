@@ -18,16 +18,16 @@ class CheckPermission(MiddlewareMixin):
         current_url = request.path_info
         for valid_url in settings.VALID_URL_LIST:
             if re.match(valid_url, current_url):
-                print "valid list pass"
+                # print "valid list pass"
                 return None
         permission_dict = request.session.get(settings.PERMISSION_SESSION_KEY)
         # if permission_dict or not permission_dict.has_keys(request.user.username):
         if permission_dict is None or request.user.username not in permission_dict:
             return redirect(reverse('login'))
-        else:
-            print permission_dict.keys()
+        # else:
+        #     print permission_dict.keys()
         for dict in permission_dict[request.user.username]:
-            print re.match(dict['url'], current_url), dict['url'], current_url, dict['method'], request.method
+            # print re.match(dict['url'], current_url), dict['url'], current_url, dict['method'], request.method
             if re.match(dict['url'], current_url):
                  #'有权限'
                 if dict['method'] == request.method:

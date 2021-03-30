@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-25 11:07+0800\n"
+"POT-Creation-Date: 2021-03-30 16:23+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -64,7 +64,7 @@ msgstr "虚拟机名称不能多于20个字符"
 #: create/forms.py:62
 #, fuzzy
 #| msgid "The name of the virtual machine must not exceed 20 characters"
-msgid "The memory of the virtual machine must be a int"
+msgid "The memory of the virtual machine must be int"
 msgstr "虚拟机名称不能多于20个字符"
 
 #: create/views.py:49
@@ -269,23 +269,23 @@ msgstr "镜像名称不能包含特殊字符"
 msgid "The image name must not exceed 20 characters"
 msgstr "镜像名称不能多于20个字符"
 
-#: storages/views.py:39
+#: storages/views.py:42
 msgid "Pool name already use"
 msgstr "池名称已被占用"
 
-#: storages/views.py:43
+#: storages/views.py:46
 msgid "You need create secret for pool"
 msgstr "你需要为池创建密码"
 
-#: storages/views.py:46
+#: storages/views.py:49
 msgid "You need input all fields for creating ceph pool"
 msgstr "你需要输入所有字段来穿件ceph池"
 
-#: storages/views.py:166
+#: storages/views.py:173
 msgid "ISO image already exist"
 msgstr "ISO镜像文件已存在"
 
-#: storages/views.py:178
+#: storages/views.py:185
 msgid "Name of volume name already use"
 msgstr "卷名称已被占用"
 
@@ -374,14 +374,14 @@ msgstr "添加收藏"
 #: templates/create.html:216 templates/create.html:219
 #: templates/create.html:322 templates/create.html:377
 #: templates/create.html:380 templates/instance.html:27
-#: templates/instance.html:585 templates/instance.html:588
-#: templates/instance.html:607 templates/instances.html:24
+#: templates/instance.html:612 templates/instance.html:615
+#: templates/instance.html:634 templates/instances.html:24
 #: templates/instances1.html:24 templates/interfaces.html:52
 #: templates/networks.html:77 templates/servers.html:228
-#: templates/storage.html:103 templates/storage.html:147
-#: templates/storage.html:173 templates/storage.html:177
-#: templates/storage.html:263 templates/storage.html:266
-#: templates/storage.html:319 templates/storages.html:100
+#: templates/storage.html:103 templates/storage.html:149
+#: templates/storage.html:175 templates/storage.html:179
+#: templates/storage.html:265 templates/storage.html:268
+#: templates/storage.html:371 templates/storages.html:100
 #: templates/storages.html:134 templates/storages.html:168
 #: templates/storages.html:238 templates/storages.html:293
 msgid "Name"
@@ -401,10 +401,10 @@ msgstr "内存"
 msgid "HDD"
 msgstr "磁盘"
 
-#: templates/create.html:76 templates/instance.html:609
+#: templates/create.html:76 templates/instance.html:636
 #: templates/instances.html:28 templates/instances1.html:28
 #: templates/secrets.html:26 templates/storage.html:106
-#: templates/storage.html:150
+#: templates/storage.html:152
 msgid "Action"
 msgstr "执行"
 
@@ -420,7 +420,7 @@ msgstr "MB"
 #: templates/instance.html:410 templates/instances.html:56
 #: templates/instances.html:206 templates/instances.html:214
 #: templates/instances.html:263 templates/instances.html:292
-#: templates/storage.html:288
+#: templates/storage.html:290
 msgid "GB"
 msgstr "GB"
 
@@ -441,12 +441,11 @@ msgid "None"
 msgstr "无"
 
 #: templates/create.html:127 templates/create.html:425
-#: templates/storage.html:203 templates/storage.html:291
+#: templates/storage.html:205 templates/storage.html:293
 msgid "Metadata"
 msgstr "元数据"
 
 #: templates/create.html:132 templates/create.html:430
-#: venv/Lib/site-packages/django/db/models/fields/files.py:322
 msgid "Image"
 msgstr "光盘镜像"
 
@@ -477,17 +476,17 @@ msgstr "VirtIO模式"
 
 #: templates/create.html:170 templates/create.html:296
 #: templates/create.html:356 templates/create.html:451
-#: templates/create.html:482 templates/instance.html:567
+#: templates/create.html:482 templates/instance.html:594
 #: templates/interfaces.html:179 templates/networks.html:134
 #: templates/secrets.html:81 templates/secrets.html:155
 #: templates/servers.html:150 templates/servers.html:196
 #: templates/servers.html:241 templates/servers.html:324
 #: templates/servers.html:361 templates/servers.html:404
-#: templates/servers.html:422 templates/storage.html:212
-#: templates/storage.html:298 templates/storage.html:326
-#: templates/storages.html:117 templates/storages.html:151
-#: templates/storages.html:217 templates/storages.html:284
-#: templates/storages.html:311
+#: templates/servers.html:422 templates/storage.html:214
+#: templates/storage.html:300 templates/storage.html:350
+#: templates/storage.html:378 templates/storages.html:117
+#: templates/storages.html:151 templates/storages.html:217
+#: templates/storages.html:284 templates/storages.html:311
 msgid "Close"
 msgstr "关闭"
 
@@ -496,29 +495,28 @@ msgstr "关闭"
 #: templates/create.html:301 templates/create.html:454
 #: templates/create.html:456 templates/create.html:483
 #: templates/interfaces.html:180 templates/networks.html:135
-#: templates/secrets.html:156 templates/storage.html:299
+#: templates/secrets.html:156 templates/storage.html:301
 #: templates/storages.html:119 templates/storages.html:153
 #: templates/storages.html:220 templates/storages.html:222
 #: templates/storages.html:286 templates/storages.html:313
 msgid "Create"
 msgstr "创建"
 
-#: templates/create.html:189 templates/instance.html:633
-#: templates/instance.html:765 templates/interface.html:54
+#: templates/create.html:189 templates/instance.html:660
+#: templates/instance.html:792 templates/interface.html:54
 #: templates/network.html:42 templates/secrets.html:52
 #: templates/servers.html:81 templates/storage.html:63
-#: templates/storage.html:120 templates/storage.html:234
-#: venv/Lib/site-packages/django/forms/formsets.py:328
+#: templates/storage.html:120 templates/storage.html:236
 msgid "Delete"
 msgstr "删除"
 
-#: templates/create.html:190 templates/instance.html:633
+#: templates/create.html:190 templates/instance.html:660
 #: templates/interface.html:55 templates/interface.html:58
 #: templates/network.html:42 templates/network.html:45
 #: templates/network.html:59 templates/secrets.html:53
 #: templates/servers.html:82 templates/storage.html:64
 #: templates/storage.html:67 templates/storage.html:81
-#: templates/storage.html:121 templates/storage.html:235
+#: templates/storage.html:121 templates/storage.html:237
 msgid "Are you sure?"
 msgstr "确定操作？"
 
@@ -600,7 +598,7 @@ msgstr "架构"
 msgid "Performance"
 msgstr "性能"
 
-#: templates/hostdetail.html:52 templates/instance.html:653
+#: templates/hostdetail.html:52 templates/instance.html:680
 msgid "CPU usage"
 msgstr "CPU占用"
 
@@ -709,8 +707,8 @@ msgstr "统计"
 msgid "Settings"
 msgstr "设置"
 
-#: templates/instance.html:82 templates/instance.html:738
-#: templates/instance.html:740
+#: templates/instance.html:82 templates/instance.html:765
+#: templates/instance.html:767
 msgid "Migrate"
 msgstr "迁移"
 
@@ -751,7 +749,7 @@ msgid "Force Shutdown"
 msgstr "强制关机"
 
 #: templates/instance.html:99 templates/instance.html:172
-#: templates/instance.html:175 templates/instance.html:568
+#: templates/instance.html:175 templates/instance.html:595
 #: templates/instances.html:72 templates/instances.html:114
 #: templates/instances.html:149 templates/instances.html:230
 #: templates/instances.html:273 templates/instances.html:302
@@ -861,7 +859,6 @@ msgid "Generate"
 msgstr "自动生成"
 
 #: templates/instance.html:257 templates/instance.html:297
-#: venv/Lib/site-packages/django/forms/widgets.py:338
 msgid "Clear"
 msgstr "清除"
 
@@ -904,9 +901,9 @@ msgstr "光盘介质"
 msgid "Disks and Networks"
 msgstr "磁盘与网络"
 
-#: templates/instance.html:331 templates/instance.html:547
-#: templates/instance.html:549 templates/storage.html:214
-#: templates/storage.html:225 templates/storage.html:227
+#: templates/instance.html:331 templates/instance.html:574
+#: templates/instance.html:576 templates/storage.html:216
+#: templates/storage.html:227 templates/storage.html:229
 msgid "Clone"
 msgstr "克隆"
 
@@ -954,7 +951,6 @@ msgid "Custom value"
 msgstr "自定义数值"
 
 #: templates/instance.html:425 templates/instance.html:427
-#: venv/Lib/site-packages/django/forms/widgets.py:337
 msgid "Change"
 msgstr "改变"
 
@@ -970,131 +966,139 @@ msgstr "连接"
 msgid "Disconnect"
 msgstr "断开连接"
 
-#: templates/instance.html:474 templates/instance.html:515
+#: templates/instance.html:474 templates/instance.html:542
 msgid "Network devices"
 msgstr "网络设备"
 
-#: templates/instance.html:490 templates/instance.html:529
+#: templates/instance.html:490 templates/instance.html:556
 msgid "Storage devices"
 msgstr "存储设备"
 
-#: templates/instance.html:505
+#: templates/instance.html:512 templates/storage.html:344
+msgid "Disk Tag"
+msgstr "磁盘标签"
+
+#: templates/instance.html:522 templates/instance.html:524
+msgid "Detach Disk"
+msgstr "分离磁盘"
+
+#: templates/instance.html:532
 msgid "Create a clone"
 msgstr "创建一台克隆机"
 
-#: templates/instance.html:509
+#: templates/instance.html:536
 msgid "Clone Name"
 msgstr "克隆机名称"
 
-#: templates/instance.html:525
+#: templates/instance.html:552
 msgid "Random MAC address"
 msgstr "随机MAC地址"
 
-#: templates/instance.html:559 templates/instance.html:561
+#: templates/instance.html:586 templates/instance.html:588
 #: templates/secrets.html:48 templates/servers.html:61
 #: templates/servers.html:69 templates/servers.html:152
 #: templates/servers.html:198
 msgid "Edit"
 msgstr "编辑"
 
-#: templates/instance.html:576 templates/instance.html:594
-#: templates/instance.html:596
+#: templates/instance.html:603 templates/instance.html:621
+#: templates/instance.html:623
 msgid "Create Snapshot"
 msgstr "创建快照"
 
-#: templates/instance.html:577
+#: templates/instance.html:604
 msgid "Restore from Snapshot"
 msgstr "恢复快照"
 
-#: templates/instance.html:581
+#: templates/instance.html:608
 msgid "To take a snapshot, shutdown the instance."
 msgstr "关闭虚机实例来创建一个快照"
 
-#: templates/instance.html:602
+#: templates/instance.html:629
 msgid "To revert to a snapshot, shutdown the instance"
 msgstr "关闭虚机实例来恢复快照"
 
-#: templates/instance.html:608
+#: templates/instance.html:635
 msgid "Date"
 msgstr "日期"
 
-#: templates/instance.html:622 templates/instance.html:625
+#: templates/instance.html:649 templates/instance.html:652
 msgid "Revert"
 msgstr "回退"
 
-#: templates/instance.html:641
+#: templates/instance.html:668
 msgid "You do not have any snapshots"
 msgstr "没有快照"
 
-#: templates/instance.html:648
+#: templates/instance.html:675
 msgid "Instance Statistics"
 msgstr "虚机实例状态"
 
-#: templates/instance.html:658
+#: templates/instance.html:685
 msgid "Bandwidth"
 msgstr "带宽"
 
-#: templates/instance.html:662
+#: templates/instance.html:689
 msgid "In"
 msgstr "入"
 
-#: templates/instance.html:663
+#: templates/instance.html:690
 msgid "Out"
 msgstr "出"
 
-#: templates/instance.html:669
+#: templates/instance.html:696
 msgid "Disk I/O"
 msgstr "磁盘 I/O"
 
-#: templates/instance.html:672
+#: templates/instance.html:699
 msgid "Read"
 msgstr "读"
 
-#: templates/instance.html:673
+#: templates/instance.html:700
 msgid "Write"
 msgstr "写"
 
-#: templates/instance.html:682
+#: templates/instance.html:709
 msgid "Instance Migrate"
 msgstr "虚机实例迁移"
 
-#: templates/instance.html:687 templates/instance.html:760
+#: templates/instance.html:714 templates/instance.html:787
 msgid "Warning:"
 msgstr "警告："
 
-#: templates/instance.html:687
+#: templates/instance.html:714
 msgid "Both host servers must have equal settings and OS type"
 msgstr "两台主机服务器需要一致的配置和OS类型"
 
-#: templates/instance.html:693
+#: templates/instance.html:720
 msgid "Original host"
 msgstr "源主机"
 
-#: templates/instance.html:701
+#: templates/instance.html:728
 msgid "Host migration"
 msgstr "主机迁移"
 
-#: templates/instance.html:716
+#: templates/instance.html:743
 msgid "Live migration"
 msgstr "热迁移"
 
-#: templates/instance.html:723
+#: templates/instance.html:750
 msgid "Unsafe migration"
 msgstr "不安全迁移"
 
-#: templates/instance.html:730
+#: templates/instance.html:757
 msgid "Delete original"
 msgstr "删除原件"
 
-#: templates/instance.html:749
+#: templates/instance.html:776
 msgid "Delete Instance"
 msgstr "删除虚机实例"
 
-#: templates/instance.html:753
+#: templates/instance.html:780
 msgid "Delete HDD image?"
 msgstr "删除磁盘镜像"
 
-#: templates/instance.html:760
+#: templates/instance.html:787
 msgid "If you check this box, Instance's data will be lost!"
 msgstr "警告：勾选此选项，该虚拟机虚拟磁盘数据将被删除！"
 
@@ -1546,7 +1550,7 @@ msgid "Pool status"
 msgstr "池状态"
 
 #: templates/storage.html:54 templates/storage.html:104
-#: templates/storage.html:148 templates/storage.html:282
+#: templates/storage.html:150 templates/storage.html:284
 #: templates/storages.html:57
 msgid "Size"
 msgstr "容量"
@@ -1559,8 +1563,8 @@ msgstr "光盘镜像"
 msgid "Upload ISO"
 msgstr "上传ISO"
 
-#: templates/storage.html:105 templates/storage.html:149
-#: templates/storage.html:192 templates/storage.html:271
+#: templates/storage.html:105 templates/storage.html:151
+#: templates/storage.html:194 templates/storage.html:273
 #: templates/storages.html:263
 msgid "Format"
 msgstr "格式"
@@ -1577,39 +1581,59 @@ msgstr "卷"
 msgid "Add Image"
 msgstr "添加镜像"
 
-#: templates/storage.html:168
+#: templates/storage.html:139 templates/storage.html:351
+msgid "Attach Disk"
+msgstr "附加磁盘"
+
+#: templates/storage.html:170
 msgid "Clone image"
 msgstr "克隆镜像"
 
-#: templates/storage.html:184
+#: templates/storage.html:186
 msgid "Convert"
 msgstr "转换"
 
-#: templates/storage.html:196 templates/storage.html:277
+#: templates/storage.html:198 templates/storage.html:279
 msgid "raw"
 msgstr "raw"
 
-#: templates/storage.html:197 templates/storage.html:276
+#: templates/storage.html:199 templates/storage.html:278
 msgid "qcow"
 msgstr "qcow"
 
-#: templates/storage.html:198 templates/storage.html:275
+#: templates/storage.html:200 templates/storage.html:277
 msgid "qcow2"
 msgstr "qcow2"
 
-#: templates/storage.html:245
+#: templates/storage.html:247
 msgid "You do not have any volumes or storage pools active"
 msgstr "无任何卷或存储池未激活"
 
-#: templates/storage.html:259
+#: templates/storage.html:261
 msgid "Add New Image"
 msgstr "添加镜像"
 
-#: templates/storage.html:315
+#: templates/storage.html:317
+msgid "Attach New Disk"
+msgstr "新磁盘"
+
+#: templates/storage.html:321
+msgid "Instance Name"
+msgstr "虚机实例名"
+
+#: templates/storage.html:333
+msgid "Image Name"
+msgstr "磁盘镜像名"
+
+#: templates/storage.html:346
+msgid "vda"
+msgstr "vda"
+
+#: templates/storage.html:367
 msgid "Upload ISO Image"
 msgstr "上传ISO镜像"
 
-#: templates/storage.html:327
+#: templates/storage.html:379
 msgid "Upload"
 msgstr "上传"
 
@@ -1685,1065 +1709,90 @@ msgstr "cifs"
 msgid "Local Path"
 msgstr "分配路径"
 
-#: venv/Lib/site-packages/django/core/validators.py:21
-#: venv/Lib/site-packages/django/forms/fields.py:52
-msgid "Enter a valid value."
-msgstr ""
+#~ msgid "Storage Name"
+#~ msgstr "存储池"
 
-#: venv/Lib/site-packages/django/core/validators.py:104
-#: venv/Lib/site-packages/django/forms/fields.py:464
-msgid "Enter a valid email address."
-msgstr ""
-
-#: venv/Lib/site-packages/django/core/validators.py:107
-#: venv/Lib/site-packages/django/forms/fields.py:1013
-msgid ""
-"Enter a valid 'slug' consisting of letters, numbers, underscores or hyphens."
-msgstr ""
-
-#: venv/Lib/site-packages/django/core/validators.py:110
-#: venv/Lib/site-packages/django/core/validators.py:129
-#: venv/Lib/site-packages/django/forms/fields.py:987
-msgid "Enter a valid IPv4 address."
-msgstr ""
-
-#: venv/Lib/site-packages/django/core/validators.py:115
-#: venv/Lib/site-packages/django/core/validators.py:130
-msgid "Enter a valid IPv6 address."
-msgstr ""
-
-#: venv/Lib/site-packages/django/core/validators.py:125
-#: venv/Lib/site-packages/django/core/validators.py:128
-msgid "Enter a valid IPv4 or IPv6 address."
-msgstr ""
-
-#: venv/Lib/site-packages/django/core/validators.py:151
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:656
-msgid "Enter only digits separated by commas."
-msgstr ""
-
-#: venv/Lib/site-packages/django/core/validators.py:157
-#, python-format
-msgid "Ensure this value is %(limit_value)s (it is %(show_value)s)."
-msgstr ""
-
-#: venv/Lib/site-packages/django/core/validators.py:176
-#: venv/Lib/site-packages/django/forms/fields.py:210
-#: venv/Lib/site-packages/django/forms/fields.py:263
-#, python-format
-msgid "Ensure this value is less than or equal to %(limit_value)s."
-msgstr ""
-
-#: venv/Lib/site-packages/django/core/validators.py:182
-#: venv/Lib/site-packages/django/forms/fields.py:211
-#: venv/Lib/site-packages/django/forms/fields.py:264
-#, python-format
-msgid "Ensure this value is greater than or equal to %(limit_value)s."
-msgstr ""
-
-#: venv/Lib/site-packages/django/core/validators.py:189
-#, python-format
-msgid ""
-"Ensure this value has at least %(limit_value)d characters (it has "
-"%(show_value)d)."
-msgstr ""
-
-#: venv/Lib/site-packages/django/core/validators.py:196
-#, python-format
-msgid ""
-"Ensure this value has at most %(limit_value)d characters (it has "
-"%(show_value)d)."
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/base.py:866
-#, python-format
-msgid "%(field_name)s must be unique for %(date_field)s %(lookup)s."
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/base.py:889
-#: venv/Lib/site-packages/django/forms/models.py:593
 #, fuzzy
-#| msgid "End"
-msgid "and"
-msgstr "结束"
+#~| msgid "Device"
+#~ msgid "Device name"
+#~ msgstr "设备名称"
 
-#: venv/Lib/site-packages/django/db/models/base.py:890
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:70
-#, fuzzy, python-format
-#| msgid "A virtual machine with this name already exists"
-msgid "%(model_name)s with this %(field_label)s already exists."
-msgstr "同名虚拟机已存在"
-
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:67
-#, python-format
-msgid "Value %r is not a valid choice."
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:68
-msgid "This field cannot be null."
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:69
-msgid "This field cannot be blank."
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:76
-#, python-format
-msgid "Field of type: %(field_type)s"
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:518
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:986
 #, fuzzy
-#| msgid "Interface"
-msgid "Integer"
-msgstr "接口"
+#~| msgid "End"
+#~ msgid "and"
+#~ msgstr "结束"
 
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:522
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:984
-#, python-format
-msgid "'%s' value must be an integer."
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:570
-#, python-format
-msgid "'%s' value must be either True or False."
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:572
-msgid "Boolean (Either True or False)"
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:623
-#, python-format
-msgid "String (up to %(max_length)s)"
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:651
-msgid "Comma-separated integers"
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:665
-#, python-format
-msgid "'%s' value has an invalid date format. It must be in YYYY-MM-DD format."
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:667
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:755
-#, python-format
-msgid ""
-"'%s' value has the correct format (YYYY-MM-DD) but it is an invalid date."
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:670
-msgid "Date (without time)"
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:753
-#, python-format
-msgid ""
-"'%s' value has an invalid format. It must be in YYYY-MM-DD HH:MM[:ss[."
-"uuuuuu]][TZ] format."
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:757
-#, python-format
-msgid ""
-"'%s' value has the correct format (YYYY-MM-DD HH:MM[:ss[.uuuuuu]][TZ]) but "
-"it is an invalid date/time."
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:761
-msgid "Date (with time)"
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:850
-#, python-format
-msgid "'%s' value must be a decimal number."
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:852
-msgid "Decimal number"
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:909
 #, fuzzy
-#| msgid "Fixed Address"
-msgid "Email address"
-msgstr "混合地址"
+#~| msgid "A virtual machine with this name already exists"
+#~ msgid "%(model_name)s with this %(field_label)s already exists."
+#~ msgstr "同名虚拟机已存在"
 
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:928
 #, fuzzy
-#| msgid "Pool path"
-msgid "File path"
-msgstr "池路径"
+#~| msgid "Interface"
+#~ msgid "Integer"
+#~ msgstr "接口"
 
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:955
-#, python-format
-msgid "'%s' value must be a float."
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:957
-msgid "Floating point number"
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:1018
-msgid "Big (8 byte) integer"
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:1032
 #, fuzzy
-#| msgid "IPv4 Address"
-msgid "IPv4 address"
-msgstr "IPv4地址"
+#~| msgid "Fixed Address"
+#~ msgid "Email address"
+#~ msgstr "混合地址"
 
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:1048
 #, fuzzy
-#| msgid "IPv4 Address"
-msgid "IP address"
-msgstr "IPv4地址"
+#~| msgid "Pool path"
+#~ msgid "File path"
+#~ msgstr "池路径"
 
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:1091
-#, python-format
-msgid "'%s' value must be either None, True or False."
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:1093
-msgid "Boolean (Either True, False or None)"
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:1142
-msgid "Positive integer"
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:1153
-msgid "Positive small integer"
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:1164
-#, python-format
-msgid "Slug (up to %(max_length)s)"
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:1182
-msgid "Small integer"
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:1188
-msgid "Text"
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:1206
-#, python-format
-msgid ""
-"'%s' value has an invalid format. It must be in HH:MM[:ss[.uuuuuu]] format."
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:1208
-#, python-format
-msgid ""
-"'%s' value has the correct format (HH:MM[:ss[.uuuuuu]]) but it is an invalid "
-"time."
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:1211
-msgid "Time"
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/__init__.py:1273
-msgid "URL"
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/files.py:215
-msgid "File"
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/related.py:985
-#, python-format
-msgid "Model %(model)s with pk %(pk)r does not exist."
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/related.py:987
-msgid "Foreign Key (type determined by related field)"
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/related.py:1117
-msgid "One-to-one relationship"
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/related.py:1184
-msgid "Many-to-many relationship"
-msgstr ""
-
-#: venv/Lib/site-packages/django/db/models/fields/related.py:1209
-msgid ""
-"Hold down \"Control\", or \"Command\" on a Mac, to select more than one."
-msgstr ""
-
-#: venv/Lib/site-packages/django/forms/fields.py:51
-msgid "This field is required."
-msgstr ""
-
-#: venv/Lib/site-packages/django/forms/fields.py:209
-msgid "Enter a whole number."
-msgstr ""
-
-#: venv/Lib/site-packages/django/forms/fields.py:241
-#: venv/Lib/site-packages/django/forms/fields.py:262
-msgid "Enter a number."
-msgstr ""
-
-#: venv/Lib/site-packages/django/forms/fields.py:265
-#, python-format
-msgid "Ensure that there are no more than %s digits in total."
-msgstr ""
-
-#: venv/Lib/site-packages/django/forms/fields.py:266
-#, python-format
-msgid "Ensure that there are no more than %s decimal places."
-msgstr ""
-
-#: venv/Lib/site-packages/django/forms/fields.py:267
-#, python-format
-msgid "Ensure that there are no more than %s digits before the decimal point."
-msgstr ""
-
-#: venv/Lib/site-packages/django/forms/fields.py:355
-#: venv/Lib/site-packages/django/forms/fields.py:953
-msgid "Enter a valid date."
-msgstr ""
-
-#: venv/Lib/site-packages/django/forms/fields.py:378
-#: venv/Lib/site-packages/django/forms/fields.py:954
-msgid "Enter a valid time."
-msgstr ""
-
-#: venv/Lib/site-packages/django/forms/fields.py:399
-msgid "Enter a valid date/time."
-msgstr ""
-
-#: venv/Lib/site-packages/django/forms/fields.py:475
-msgid "No file was submitted. Check the encoding type on the form."
-msgstr ""
-
-#: venv/Lib/site-packages/django/forms/fields.py:476
-msgid "No file was submitted."
-msgstr ""
-
-#: venv/Lib/site-packages/django/forms/fields.py:477
-msgid "The submitted file is empty."
-msgstr ""
-
-#: venv/Lib/site-packages/django/forms/fields.py:478
-#, python-format
-msgid ""
-"Ensure this filename has at most %(max)d characters (it has %(length)d)."
-msgstr ""
-
-#: venv/Lib/site-packages/django/forms/fields.py:479
-msgid "Please either submit a file or check the clear checkbox, not both."
-msgstr ""
-
-#: venv/Lib/site-packages/django/forms/fields.py:534
-msgid ""
-"Upload a valid image. The file you uploaded was either not an image or a "
-"corrupted image."
-msgstr ""
-
-#: venv/Lib/site-packages/django/forms/fields.py:580
-msgid "Enter a valid URL."
-msgstr ""
-
-#: venv/Lib/site-packages/django/forms/fields.py:666
-#: venv/Lib/site-packages/django/forms/fields.py:746
-#, python-format
-msgid "Select a valid choice. %(value)s is not one of the available choices."
-msgstr ""
-
-#: venv/Lib/site-packages/django/forms/fields.py:747
-#: venv/Lib/site-packages/django/forms/fields.py:835
-#: venv/Lib/site-packages/django/forms/models.py:1022
-msgid "Enter a list of values."
-msgstr ""
-
-#: venv/Lib/site-packages/django/forms/formsets.py:324
-#: venv/Lib/site-packages/django/forms/formsets.py:326
-msgid "Order"
-msgstr ""
-
-#: venv/Lib/site-packages/django/forms/models.py:587
-#, python-format
-msgid "Please correct the duplicate data for %(field)s."
-msgstr ""
-
-#: venv/Lib/site-packages/django/forms/models.py:591
-#, python-format
-msgid "Please correct the duplicate data for %(field)s, which must be unique."
-msgstr ""
-
-#: venv/Lib/site-packages/django/forms/models.py:597
-#, python-format
-msgid ""
-"Please correct the duplicate data for %(field_name)s which must be unique "
-"for the %(lookup)s in %(date_field)s."
-msgstr ""
-
-#: venv/Lib/site-packages/django/forms/models.py:605
-msgid "Please correct the duplicate values below."
-msgstr ""
-
-#: venv/Lib/site-packages/django/forms/models.py:872
-msgid "The inline foreign key did not match the parent instance primary key."
-msgstr ""
-
-#: venv/Lib/site-packages/django/forms/models.py:933
-msgid "Select a valid choice. That choice is not one of the available choices."
-msgstr ""
-
-#: venv/Lib/site-packages/django/forms/models.py:1023
-#, python-format
-msgid "Select a valid choice. %s is not one of the available choices."
-msgstr ""
-
-#: venv/Lib/site-packages/django/forms/models.py:1025
-#, python-format
-msgid "\"%s\" is not a valid value for a primary key."
-msgstr ""
-
-#: venv/Lib/site-packages/django/forms/util.py:81
-#, python-format
-msgid ""
-"%(datetime)s couldn't be interpreted in time zone %(current_timezone)s; it "
-"may be ambiguous or it may not exist."
-msgstr ""
-
-#: venv/Lib/site-packages/django/forms/widgets.py:336
-msgid "Currently"
-msgstr ""
-
-#: venv/Lib/site-packages/django/forms/widgets.py:594
-msgid "Unknown"
-msgstr ""
-
-#: venv/Lib/site-packages/django/forms/widgets.py:595
 #, fuzzy
-#| msgid "yes"
-msgid "Yes"
-msgstr "是"
+#~| msgid "IPv4 Address"
+#~ msgid "IPv4 address"
+#~ msgstr "IPv4地址"
 
-#: venv/Lib/site-packages/django/forms/widgets.py:596
 #, fuzzy
-#| msgid "None"
-msgid "No"
-msgstr "无"
+#~| msgid "IPv4 Address"
+#~ msgid "IP address"
+#~ msgstr "IPv4地址"
 
-#: venv/Lib/site-packages/django/template/defaultfilters.py:794
-msgid "yes,no,maybe"
-msgstr ""
-
-#: venv/Lib/site-packages/django/template/defaultfilters.py:822
-#: venv/Lib/site-packages/django/template/defaultfilters.py:833
-#, python-format
-msgid "%(size)d byte"
-msgid_plural "%(size)d bytes"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/Lib/site-packages/django/template/defaultfilters.py:835
-#, python-format
-msgid "%s KB"
-msgstr ""
-
-#: venv/Lib/site-packages/django/template/defaultfilters.py:837
-#, python-format
-msgid "%s MB"
-msgstr ""
-
-#: venv/Lib/site-packages/django/template/defaultfilters.py:839
-#, python-format
-msgid "%s GB"
-msgstr ""
-
-#: venv/Lib/site-packages/django/template/defaultfilters.py:841
-#, python-format
-msgid "%s TB"
-msgstr ""
-
-#: venv/Lib/site-packages/django/template/defaultfilters.py:842
-#, python-format
-msgid "%s PB"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dateformat.py:47
-msgid "p.m."
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dateformat.py:48
-msgid "a.m."
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dateformat.py:53
-msgid "PM"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dateformat.py:54
 #, fuzzy
-#| msgid "RAM"
-msgid "AM"
-msgstr "内存"
+#~| msgid "yes"
+#~ msgid "Yes"
+#~ msgstr "是"
 
-#: venv/Lib/site-packages/django/utils/dateformat.py:103
-msgid "midnight"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dateformat.py:105
-msgid "noon"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:6
-msgid "Monday"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:6
-msgid "Tuesday"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:6
-msgid "Wednesday"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:6
-msgid "Thursday"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:6
-msgid "Friday"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:7
-msgid "Saturday"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:7
-msgid "Sunday"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:10
 #, fuzzy
-#| msgid "on"
-msgid "Mon"
-msgstr "开"
+#~| msgid "None"
+#~ msgid "No"
+#~ msgstr "无"
 
-#: venv/Lib/site-packages/django/utils/dates.py:10
-msgid "Tue"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:10
-msgid "Wed"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:10
-msgid "Thu"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:10
-msgid "Fri"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:11
 #, fuzzy
-#| msgid "Start"
-msgid "Sat"
-msgstr "关机"
+#~| msgid "RAM"
+#~ msgid "AM"
+#~ msgstr "内存"
 
-#: venv/Lib/site-packages/django/utils/dates.py:11
 #, fuzzy
-#| msgid "Suspend"
-msgid "Sun"
-msgstr "暂停"
+#~| msgid "on"
+#~ msgid "Mon"
+#~ msgstr "开"
 
-#: venv/Lib/site-packages/django/utils/dates.py:18
-msgid "January"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:18
-msgid "February"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:18
-msgid "March"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:18
-msgid "April"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:18
-msgid "May"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:18
-msgid "June"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:19
-msgid "July"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:19
-msgid "August"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:19
-msgid "September"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:19
-msgid "October"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:19
-msgid "November"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:20
-msgid "December"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:23
-msgid "jan"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:23
-msgid "feb"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:23
-msgid "mar"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:23
-msgid "apr"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:23
-msgid "may"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:23
-msgid "jun"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:24
-msgid "jul"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:24
-msgid "aug"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:24
-msgid "sep"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:31
-msgctxt "abbrev. month"
-msgid "Jan."
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:32
-msgctxt "abbrev. month"
-msgid "Feb."
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:33
-msgctxt "abbrev. month"
-msgid "March"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:34
-msgctxt "abbrev. month"
-msgid "April"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:35
-msgctxt "abbrev. month"
-msgid "May"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:36
-msgctxt "abbrev. month"
-msgid "June"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:37
-msgctxt "abbrev. month"
-msgid "July"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:38
-msgctxt "abbrev. month"
-msgid "Aug."
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:39
-msgctxt "abbrev. month"
-msgid "Sept."
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:40
-msgctxt "abbrev. month"
-msgid "Oct."
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:41
-msgctxt "abbrev. month"
-msgid "Nov."
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:42
-msgctxt "abbrev. month"
-msgid "Dec."
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:45
-msgctxt "alt. month"
-msgid "January"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:46
-msgctxt "alt. month"
-msgid "February"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:47
-msgctxt "alt. month"
-msgid "March"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:48
-msgctxt "alt. month"
-msgid "April"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:49
-msgctxt "alt. month"
-msgid "May"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:50
-msgctxt "alt. month"
-msgid "June"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:51
-msgctxt "alt. month"
-msgid "July"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:52
-msgctxt "alt. month"
-msgid "August"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:53
-msgctxt "alt. month"
-msgid "September"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:54
-msgctxt "alt. month"
-msgid "October"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:55
-msgctxt "alt. month"
-msgid "November"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/dates.py:56
-msgctxt "alt. month"
-msgid "December"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/text.py:70
-#, python-format
-msgctxt "String to return when truncating text"
-msgid "%(truncated_text)s..."
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/text.py:239
-msgid "or"
-msgstr ""
-
-#. Translators: This string is used as a separator between list elements
-#: venv/Lib/site-packages/django/utils/text.py:256
-msgid ", "
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/timesince.py:23
-msgid "year"
-msgid_plural "years"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/Lib/site-packages/django/utils/timesince.py:24
-msgid "month"
-msgid_plural "months"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/Lib/site-packages/django/utils/timesince.py:25
-msgid "week"
-msgid_plural "weeks"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/Lib/site-packages/django/utils/timesince.py:26
-msgid "day"
-msgid_plural "days"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/Lib/site-packages/django/utils/timesince.py:27
-msgid "hour"
-msgid_plural "hours"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/Lib/site-packages/django/utils/timesince.py:28
-msgid "minute"
-msgid_plural "minutes"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/Lib/site-packages/django/utils/timesince.py:44
-msgid "minutes"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/timesince.py:49
-#, python-format
-msgid "%(number)d %(type)s"
-msgstr ""
-
-#: venv/Lib/site-packages/django/utils/timesince.py:55
-#, python-format
-msgid ", %(number)d %(type)s"
-msgstr ""
-
-#: venv/Lib/site-packages/django/views/generic/dates.py:42
-msgid "No year specified"
-msgstr ""
-
-#: venv/Lib/site-packages/django/views/generic/dates.py:98
-msgid "No month specified"
-msgstr ""
-
-#: venv/Lib/site-packages/django/views/generic/dates.py:157
-msgid "No day specified"
-msgstr ""
-
-#: venv/Lib/site-packages/django/views/generic/dates.py:213
-msgid "No week specified"
-msgstr ""
-
-#: venv/Lib/site-packages/django/views/generic/dates.py:368
-#: venv/Lib/site-packages/django/views/generic/dates.py:393
-#, python-format
-msgid "No %(verbose_name_plural)s available"
-msgstr ""
-
-#: venv/Lib/site-packages/django/views/generic/dates.py:646
-#, python-format
-msgid ""
-"Future %(verbose_name_plural)s not available because %(class_name)s."
-"allow_future is False."
-msgstr ""
-
-#: venv/Lib/site-packages/django/views/generic/dates.py:678
-#, python-format
-msgid "Invalid date string '%(datestr)s' given format '%(format)s'"
-msgstr ""
-
-#: venv/Lib/site-packages/django/views/generic/detail.py:54
-#, python-format
-msgid "No %(verbose_name)s found matching the query"
-msgstr ""
-
-#: venv/Lib/site-packages/django/views/generic/list.py:51
-msgid "Page is not 'last', nor can it be converted to an int."
-msgstr ""
-
-#: venv/Lib/site-packages/django/views/generic/list.py:56
-#, python-format
-msgid "Invalid page (%(page_number)s): %(message)s"
-msgstr ""
-
-#: venv/Lib/site-packages/django/views/generic/list.py:137
-#, python-format
-msgid "Empty list and '%(class_name)s.allow_empty' is False."
-msgstr ""
-
-#: venv/Lib/site-packages/django/views/static.py:56
-msgid "Directory indexes are not allowed here."
-msgstr ""
-
-#: venv/Lib/site-packages/django/views/static.py:58
-#, python-format
-msgid "\"%(path)s\" does not exist"
-msgstr ""
-
-#: venv/Lib/site-packages/django/views/static.py:98
-#, python-format
-msgid "Index of %(directory)s"
-msgstr ""
-
-#: venv/Lib/site-packages/gunicorn/argparse_compat.py:313
 #, fuzzy
-#| msgid "Usage"
-msgid "usage: "
-msgstr "用量"
+#~| msgid "Start"
+#~ msgid "Sat"
+#~ msgstr "关机"
 
-#: venv/Lib/site-packages/gunicorn/argparse_compat.py:821
-msgid ".__call__() not defined"
-msgstr ""
+#, fuzzy
+#~| msgid "Suspend"
+#~ msgid "Sun"
+#~ msgstr "暂停"
 
-#: venv/Lib/site-packages/gunicorn/argparse_compat.py:1105
-#, python-format
-msgid "unknown parser %r (choices: %s)"
-msgstr ""
+#, fuzzy
+#~| msgid "Connect"
+#~ msgid "oct"
+#~ msgstr "连接"
 
-#: venv/Lib/site-packages/gunicorn/argparse_compat.py:1146
-#, python-format
-msgid "argument \"-\" with mode %r"
-msgstr ""
+#, fuzzy
+#~| msgid "no"
+#~ msgid "nov"
+#~ msgstr "不"
 
-#: venv/Lib/site-packages/gunicorn/argparse_compat.py:1349
-#, python-format
-msgid "cannot merge actions - two groups are named %r"
-msgstr ""
-
-#: venv/Lib/site-packages/gunicorn/argparse_compat.py:1387
-msgid "'required' is an invalid argument for positionals"
-msgstr ""
-
-#: venv/Lib/site-packages/gunicorn/argparse_compat.py:1407
-#, python-format
-msgid "invalid option string %r: must start with a character %r"
-msgstr ""
-
-#: venv/Lib/site-packages/gunicorn/argparse_compat.py:1428
-#, python-format
-msgid "dest= is required for options like %r"
-msgstr ""
-
-#: venv/Lib/site-packages/gunicorn/argparse_compat.py:1445
-#, python-format
-msgid "invalid conflict_resolution value: %r"
-msgstr ""
-
-#: venv/Lib/site-packages/gunicorn/argparse_compat.py:1463
-#, python-format
-msgid "conflicting option string(s): %s"
-msgstr ""
-
-#: venv/Lib/site-packages/gunicorn/argparse_compat.py:1526
-msgid "mutually exclusive arguments must be optional"
-msgstr ""
-
-#: venv/Lib/site-packages/gunicorn/argparse_compat.py:1596
-msgid "positional arguments"
-msgstr ""
-
-#: venv/Lib/site-packages/gunicorn/argparse_compat.py:1597
-msgid "optional arguments"
-msgstr ""
-
-#: venv/Lib/site-packages/gunicorn/argparse_compat.py:1615
-msgid "show this help message and exit"
-msgstr ""
-
-#: venv/Lib/site-packages/gunicorn/argparse_compat.py:1621
-msgid "show program's version number and exit"
-msgstr ""
-
-#: venv/Lib/site-packages/gunicorn/argparse_compat.py:1653
-msgid "cannot have multiple subparser arguments"
-msgstr ""
-
-#: venv/Lib/site-packages/gunicorn/argparse_compat.py:1705
-#, python-format
-msgid "unrecognized arguments: %s"
-msgstr ""
-
-#: venv/Lib/site-packages/gunicorn/argparse_compat.py:1802
-#, python-format
-msgid "not allowed with argument %s"
-msgstr ""
-
-#: venv/Lib/site-packages/gunicorn/argparse_compat.py:1848
-#: venv/Lib/site-packages/gunicorn/argparse_compat.py:1862
-#, python-format
-msgid "ignored explicit argument %r"
-msgstr ""
-
-#: venv/Lib/site-packages/gunicorn/argparse_compat.py:1952
-msgid "too few arguments"
-msgstr ""
-
-#: venv/Lib/site-packages/gunicorn/argparse_compat.py:1959
-#, python-format
-msgid "argument %s is required"
-msgstr ""
-
-#: venv/Lib/site-packages/gunicorn/argparse_compat.py:1973
-#, python-format
-msgid "one of the arguments %s is required"
-msgstr ""
-
-#: venv/Lib/site-packages/gunicorn/argparse_compat.py:2019
-msgid "expected one argument"
-msgstr ""
-
-#: venv/Lib/site-packages/gunicorn/argparse_compat.py:2020
-msgid "expected at most one argument"
-msgstr ""
-
-#: venv/Lib/site-packages/gunicorn/argparse_compat.py:2021
-msgid "expected at least one argument"
-msgstr ""
-
-#: venv/Lib/site-packages/gunicorn/argparse_compat.py:2023
-#, python-format
-msgid "expected %s argument(s)"
-msgstr ""
-
-#: venv/Lib/site-packages/gunicorn/argparse_compat.py:2080
-#, python-format
-msgid "ambiguous option: %s could match %s"
-msgstr ""
-
-#: venv/Lib/site-packages/gunicorn/argparse_compat.py:2142
-#, python-format
-msgid "unexpected option string: %s"
-msgstr ""
-
-#: venv/Lib/site-packages/gunicorn/argparse_compat.py:2243
-#, python-format
-msgid "%r is not callable"
-msgstr ""
-
-#: venv/Lib/site-packages/gunicorn/argparse_compat.py:2259
-#, python-format
-msgid "invalid %s value: %r"
-msgstr ""
-
-#: venv/Lib/site-packages/gunicorn/argparse_compat.py:2269
-#, python-format
-msgid "invalid choice: %r (choose from %s)"
-msgstr ""
-
-#: venv/Lib/site-packages/gunicorn/argparse_compat.py:2362
-#, python-format
-msgid "%s: error: %s\n"
-msgstr ""
+#, fuzzy
+#~| msgid "Usage"
+#~ msgid "usage: "
+#~ msgstr "用量"

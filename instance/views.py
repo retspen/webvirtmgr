@@ -15,6 +15,7 @@ from vrtManager.instance import wvmInstances, wvmInstance
 from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE, VIR_DOMAIN_SNAPSHOT_CREATE_DISK_ONLY, VIR_DOMAIN_SNAPSHOT_DELETE_METADATA_ONLY
 from webvirtmgr.settings import TIME_JS_REFRESH, QEMU_KEYMAPS, QEMU_CONSOLE_TYPES
 from perm_util.page_permission import get_menus, get_buttons
+from vrtManager.connection import SSHConnect
 
 
 def instusage(request, host_id, vname):
@@ -536,12 +537,24 @@ def instance(request, host_id, vname):
             if 'clone' in request.POST:
                 clone_data = {}
                 clone_data['name'] = request.POST.get('name', '')
-
                 for post in request.POST:
                     if 'disk' or 'meta' in post:
                         clone_data[post] = request.POST.get(post, '')
                 conn.clone_instance(clone_data)
                 return HttpResponseRedirect(reverse('instance', args=[host_id, clone_data['name']]))
+            if 'detach' in request.POST:
+                print request.POST
+                tag = request.POST.get('tag', '')
+                if not tag == "":
+                    command = "virsh detach-disk " + vname + " " + tag + " --config"
+                    if ":" in compute.hostname:
+                        addr, port = compute.hostname.split(":")
+                    else:
+                        port = "22"
+                        addr = compute.hostname
+                    ssh_conn = SSHConnect(compute.login, compute.hostname, port)
+                    result = ssh_conn.connect(command)
+                return HttpResponseRedirect(request.get_full_path() + '#instancedevice')
         conn.close()
 
     except libvirtError as err:

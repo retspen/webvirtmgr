@@ -135,7 +135,9 @@
                 <h3>{% trans "Volumes" %}</h3>
                 <hr>
                 {% ifnotequal state 0 %}
-                    <a href="#AddImage" class="btn btn-success" data-toggle="modal">{% trans "Add Image" %}</a><br><br>
+                    <a href="#AddImage" class="btn btn-success" data-toggle="modal">{% trans "Add Image" %}</a>
+                    <a href="#AttachDisk" class="btn btn-success" data-toggle="modal">{% trans "Attach Disk" %}</a>
+                    <br><br>
                 {% endifnotequal %}
 
                 {% if volumes %}
@@ -297,6 +299,56 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
                         <button type="submit" class="btn btn-primary" name="add_volume">{% trans "Create" %}</button>
+                    </div>
+                </form>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <!-- Modal Attach -->
+    <div class="modal fade" id="AttachDisk" tabindex="-1" role="dialog" aria-labelledby="AttachDiskLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">{% trans "Attach New Disk" %}</h4>
+                </div>
+                <form class="form-horizontal" method="post" role="form">{% csrf_token %}
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">{% trans "Instance Name" %}：</label>
+
+                        <div class="col-sm-6">
+{#                            <input type="text" class="form-control" name="vname" placeholder="{% trans "VM Name" %}" >#}
+                            <select name="vname" class="form-control image-format">
+                                {% for instance in get_instances %}
+                                    <option value={{ instance }}>{{ instance }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group" id="image_format">
+                        <label class="col-sm-3 control-label">{% trans "Image Name" %}：</label>
+
+                        <div class="col-sm-6">
+                            <select name="iname" class="form-control image-format">
+                                {% for volume in volumes %}
+                                    <option value={{ volume.name }}>{{ volume.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">{% trans "Disk Tag" %}：</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" name="tag" placeholder="{% trans "vda" %}" >
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+                        <button type="submit" class="btn btn-primary" name="attach_disk">{% trans "Attach Disk" %}</button>
                     </div>
                 </form>
             </div>

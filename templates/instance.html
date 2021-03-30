@@ -489,16 +489,43 @@
         </div>
         <p style="font-weight:bold;">{% trans "Storage devices" %}</p>
 
-        <div class="col-sm-3">
-            {% for disk in disks %}
+{#        <div class="col-sm-3">#}
+{#            {% for disk in disks %}#}
+{#                <p style="text-align: right;">{{ disk.dev }} ({{ disk.storage }})</p>#}
+{#            {% endfor %}#}
+{#        </div>#}
+{#        <div class="col-sm-9">#}
+{#            {% for disk in disks %}#}
+{#                <p>{{ disk.image }} ({{ disk.format }})</p>#}
+{#            {% endfor %}#}
+{#        </div>#}
+        {% for disk in disks %}
+            <div class="col-sm-3">
                 <p style="text-align: right;">{{ disk.dev }} ({{ disk.storage }})</p>
-            {% endfor %}
-        </div>
-        <div class="col-sm-9">
-            {% for disk in disks %}
+            </div>
+            <div class="col-sm-9">
                 <p>{{ disk.image }} ({{ disk.format }})</p>
-            {% endfor %}
+            </div>
+        {% endfor %}
+        <br>
+        <form class="form-horizontal" action="" method="post" role="form">{% csrf_token %}
+        <label class="col-sm-3 text-right">{% trans "Disk Tag" %}：</label>
+        <div class="col-sm-6">
+            <select name="tag" class="form-control image-format" >
+                <option value="">--------------------------------</option>
+                {% for disk in disks %}
+                    <option value={{ disk.dev }}>{{ disk.dev }}（{{ disk.image }}）</option>
+                {% endfor %}
+            </select>
+            <br>
+            {% ifequal status 5 %}
+                <button type="submit" class="btn btn-primary btn-sm pull-right" value="detach" name="detach">{% trans "Detach Disk" %}</button>
+            {% else %}
+                <button type="submit" class="btn btn-primary btn-sm pull-right disabled" value="detach" name="detach">{% trans "Detach Disk" %}</button>
+            {% endifequal %}
+{#            <button type="submit" class="btn btn-primary btn-sm pull-right" value="detach" name="detach">{% trans "Detach Disk" %}</button>#}
         </div>
+        </form>
         <div class="clearfix"></div>
     </div>
     <div class="tab-pane tab-inst" id="instanceclone">

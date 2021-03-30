@@ -10,6 +10,9 @@ from storages.forms import AddStgPool, AddImage, CloneImage
 from vrtManager.storage import wvmStorage, wvmStorages
 
 from libvirt import libvirtError
+from vrtManager.instance import wvmInstances
+from vrtManager.connection import SSHConnect
+import os
 
 
 def storages(request, host_id):
@@ -89,7 +92,6 @@ def storage(request, host_id, pool):
                           compute.password,
                           compute.type,
                           pool)
-
         storages = conn.get_storages()
         state = conn.is_active()
         size, free = conn.get_size()
@@ -110,7 +112,12 @@ def storage(request, host_id, pool):
             volumes = None
     except libvirtError as err:
         errors.append(err)
-
+    conn2 = wvmInstances(compute.hostname,
+                        compute.login,
+                        compute.password,
+                        compute.type)
+    get_instances = conn2.get_instances()
+    print "get instances ", get_instances
     if request.method == 'POST':
         if 'start' in request.POST:
             try:
@@ -189,6 +196,24 @@ def storage(request, host_id, pool):
                         return HttpResponseRedirect(request.get_full_path())
                     except libvirtError as err:
                         errors.append(err)
+        if 'attach_disk' in request.POST:
+            print "attach disk begin"
+            tag = request.POST.get('tag', '')
+            vname = request.POST.get('vname', '')
+            iname = request.POST.get('iname', '')
+            disk_path = path + os.sep + iname
+            command = "virsh attach-disk " + vname + " " + disk_path + " " + tag + " --subdriver=qcow2 --persistent"
+            print "command ", command
+            print "disk path ", disk_path
+            if ":" in compute.hostname:
+                addr, port = compute.hostname.split(":")
+            else:
+                port = "22"
+                addr = compute.hostname
+            ssh_conn = SSHConnect(compute.login, compute.hostname, port)
+            result = ssh_conn.connect(command)
+            print "result ", result
+            return HttpResponseRedirect(request.get_full_path())
     conn.close()
 
     # return render_to_response('storage.html', locals(), context_instance=RequestContext(request))

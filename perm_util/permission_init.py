@@ -10,7 +10,6 @@ def init_permission(request, current_user):
     :param request: 请求所有相关属性
     :return:
     """
-    print request.session.get(settings.PERMISSION_SESSION_KEY), "session PERMISSION_SESSION_KEY"
     permission_quiryset = current_user.roles.filter(permissions__isnull=False).values("permissions__method", "permissions__url").distinct()
     permission_list = []
     for item in permission_quiryset:
@@ -20,7 +19,6 @@ def init_permission(request, current_user):
         request.session[settings.PERMISSION_SESSION_KEY]= {current_user.username: permission_list}
     else:
         request.session.get(settings.PERMISSION_SESSION_KEY)[current_user.username] = permission_list
-    print request.session[settings.PERMISSION_SESSION_KEY]
     menu_quiryset = current_user.roles.filter(menu__isnull=False).values("menu__menuname", "menu__pagename").distinct()
     menu_list = []
     for item in menu_quiryset:
@@ -29,7 +27,6 @@ def init_permission(request, current_user):
         request.session[settings.MENU_SESSION_KEY] = {current_user.username: menu_list}
     else:
         request.session.get(settings.MENU_SESSION_KEY)[current_user.username] = menu_list
-    print request.session.get(settings.MENU_SESSION_KEY), "session MENU_SESSION_KEY"
 
     button_quiryset = current_user.roles.filter(button__isnull=False).values("button__buttonname", "button__pagename").distinct()
     button_list = []
@@ -39,7 +36,6 @@ def init_permission(request, current_user):
         request.session[settings.BUTTON_SESSION_KEY] = {current_user.username: button_list}
     else:
         request.session.get(settings.BUTTON_SESSION_KEY)[current_user.username] = button_list
-    print request.session.get(settings.BUTTON_SESSION_KEY), "session BUTTON_SESSION_KEY"
 
 
 def get_button_permissions(request):

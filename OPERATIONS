@@ -25,6 +25,7 @@ ssh-keygen -t rsa
 touch ~/.ssh/config && echo -e "StrictHostKeyChecking=no\nUserKnownHostsFile=/dev/null" >> ~/.ssh/config
 chmod 0600 ~/.ssh/config
 
+删除数据库文件和用户
 rm -rf vm1
 userdel webvirtmgr
 
@@ -42,3 +43,7 @@ echo "from rbac.models import UserInfo as User ; User.objects.create_superuser('
 python manage.py makemessages -l zh_Hans
 vim /opt/webvirtmgr/locale/zh_Hans/LC_MESSAGES/django.po
 python manage.py compilemessages --locale /opt/webvirtmgr/locale/zh_Hans
+
+备份和还原数据库
+python manage.py dumpdata rbac > init.json
+python manage.py loaddata init.json
