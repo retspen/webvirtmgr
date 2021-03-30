@@ -7,7 +7,7 @@ RUN yum -y install epel-release vim openssh-clients openssh-server net-tools ssh
 RUN echo cestc01 | passwd --stdin root
 RUN git clone -b cestc https://github.com/jxph025319/webvirtmgr.git /opt/webvirtmgr
 WORKDIR /opt/webvirtmgr
-RUN git checkout v5.0.5
+RUN git checkout v6.0.0
 RUN pip install -r requirements.txt
 #ADD local_settings.py /opt/webvirtmgr/webvirtmgr/local/local_settings.py
 #RUN sed -i 's/0.0.0.0/172.17.42.1/g' vrtManager/create.py
