@@ -21,7 +21,7 @@ cp /opt/webvirtmgr/build/local_settings.py /opt/webvirtmgr/webvirtmgr/local/loca
 #RUN groupadd -g 1010 libvirtd && useradd webvirtmgr -g libvirtd -u 1010 -d /data/vm/ -s /sbin/nologin
 RUN groupadd -g 1010 libvirtd && useradd webvirtmgr -g libvirtd -u 1010 -d /data/vm/ && chown webvirtmgr:libvirtd -R /opt/webvirtmgr
 
-WORKDIR /opt
+WORKDIR /opt/webvirtmgr
 VOLUME /data/vm
 
 EXPOSE 8080
