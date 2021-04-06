@@ -18,9 +18,6 @@ docker run -d --name webvirtmgr_dev -h webvirtmgr_dev -v /usr/share/zoneinfo/Asi
 生产部署命令
 docker run -d --name webvirtmgr_dev -h webvirtmgr_dev -v /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime  --privileged=true -v /data/vm:/data/vm -p 8080:8080 -p 6080:6080 -m 4g whharbor.cestc.cn/centos/webvirtmgr:v6.0.0
 
-#docker run -d --name webvirtmgr_dev -h webvirtmgr_dev -v /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime  --privileged=true -v /data/vm1:/data/vm -p 2100:22 -p 8080:8080 -p 6080:6080 -m 4g whharbor.cestc.cn/centos/webvirtmgr:v1 /usr/sbin/init
-#docker run -d --name webvirtmgr_dev -h webvirtmgr_dev -v /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime  --privileged=true -v /data/vm1:/data/vm -p 8080:8080 -p 6080:6080 -m 4g whharbor.cestc.cn/centos/webvirtmgr:v5.0.4
-#docker鏡像
 
 docker实例内信任部署：
 chown -R webvirtmgr:libvirtd /data/vm
@@ -39,7 +36,7 @@ ssh-copy-id root@172.16.87.64
 
 宿主机创建信任
 docker exec -it webvirtmgr_dev su - webvirtmgr -c "ssh-keygen -t rsa"
-docker exec -it webvirtmgr_dev su - webvirtmgr -c "sshpass -p Cestc_01 ssh-copy-id -o StrictHostKeyChecking=no root@10.101.232.254"
+docker exec -it webvirtmgr_dev su - webvirtmgr -c "sshpass -p yHTq58js\&s9C\!ceV ssh-copy-id -o StrictHostKeyChecking=no root@10.101.232.254"
 
 初始化admin 账号密码
 echo "from rbac.models import UserInfo as User ; User.objects.create_superuser('admin', 'admin@localhost', 'Cestc_01')" | /usr/bin/python /opt/webvirtmgr/manage.py shell
