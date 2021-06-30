@@ -1,4 +1,4 @@
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, render
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
@@ -10,6 +10,9 @@ from storages.forms import AddStgPool, AddImage, CloneImage
 from vrtManager.storage import wvmStorage, wvmStorages
 
 from libvirt import libvirtError
+from vrtManager.instance import wvmInstances
+from vrtManager.connection import SSHConnect
+import os
 
 
 def storages(request, host_id):
@@ -61,7 +64,8 @@ def storages(request, host_id):
     except libvirtError as err:
         errors.append(err)
 
-    return render_to_response('storages.html', locals(), context_instance=RequestContext(request))
+    # return render_to_response('storages.html', locals(), context_instance=RequestContext(request))
+    return render(request, 'storages.html', locals())
 
 
 def storage(request, host_id, pool):
@@ -74,6 +78,7 @@ def storage(request, host_id, pool):
     def handle_uploaded_file(path, f_name):
         target = path + '/' + str(f_name)
         destination = open(target, 'wb+')
+        print target
         for chunk in f_name.chunks():
             destination.write(chunk)
         destination.close()
@@ -88,7 +93,6 @@ def storage(request, host_id, pool):
                           compute.password,
                           compute.type,
                           pool)
-
         storages = conn.get_storages()
         state = conn.is_active()
         size, free = conn.get_size()
@@ -109,7 +113,12 @@ def storage(request, host_id, pool):
             volumes = None
     except libvirtError as err:
         errors.append(err)
-
+    conn2 = wvmInstances(compute.hostname,
+                        compute.login,
+                        compute.password,
+                        compute.type)
+    get_instances = conn2.get_instances()
+    print "get instances ", get_instances
     if request.method == 'POST':
         if 'start' in request.POST:
             try:
@@ -188,6 +197,25 @@ def storage(request, host_id, pool):
                         return HttpResponseRedirect(request.get_full_path())
                     except libvirtError as err:
                         errors.append(err)
+        if 'attach_disk' in request.POST:
+            print "attach disk begin"
+            tag = request.POST.get('tag', '')
+            vname = request.POST.get('vname', '')
+            iname = request.POST.get('iname', '')
+            disk_path = path + os.sep + iname
+            command = "virsh attach-disk " + vname + " " + disk_path + " " + tag + " --subdriver=qcow2 --persistent"
+            print "command ", command
+            print "disk path ", disk_path
+            if ":" in compute.hostname:
+                addr, port = compute.hostname.split(":")
+            else:
+                port = "22"
+                addr = compute.hostname
+            ssh_conn = SSHConnect(compute.login, compute.hostname, port)
+            result = ssh_conn.connect(command)
+            print "result ", result
+            return HttpResponseRedirect(request.get_full_path())
     conn.close()
 
-    return render_to_response('storage.html', locals(), context_instance=RequestContext(request))
+    # return render_to_response('storage.html', locals(), context_instance=RequestContext(request))
+    return render(request, 'storage.html', locals())

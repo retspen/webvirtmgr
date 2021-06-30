@@ -224,12 +224,15 @@
                         <label class="col-sm-3 control-label">{% trans "VCPU" %}</label>
 
                         <div class="col-sm-6">
-                            <input type="text" class="form-control" name="vcpu" value="1" maxlength="1" required
-                                   pattern="[0-9]">
+                            <input type="text" class="form-control" name="vcpu" value="1" maxlength="2" required
+                                   pattern="[0-9]+">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">{% trans "Host-Model" %}</label>
+                        <label class="col-sm-3 control-label">
+                            {% ifequal compute.arch "aarch64" %}{% trans "host-passthrough" %}{% endifequal %}
+                            {% ifequal compute.arch "x86_64" %}{% trans "Host-Model" %}{% endifequal %}
+                        </label>
 
                         <div class="col-sm-6">
                             <input type="checkbox" name="host_model" value="true" checked>
@@ -240,10 +243,12 @@
                         <label class="col-sm-3 control-label">{% trans "RAM" %}</label>
 
                         <div class="col-sm-6">
-                            <input type="text" class="form-control" name="memory" value="512" maxlength="5" required
-                                   pattern="[0-9]+">
+                            <input type="text" class="form-control" name="memory" value=
+                                   {% ifequal compute.arch "aarch64" %}2{% endifequal %}
+                                    {% ifequal compute.arch "x86_64" %}1{% endifequal %}
+                            maxlength="6" required pattern="[0-9]+">
                         </div>
-                        <label class="col-sm-1 control-label">{% trans "MB" %}</label>
+                        <label class="col-sm-1 control-label">{% trans "GB" %}</label>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">{% trans "HDD" %}</label>
@@ -261,17 +266,6 @@
                                 {% else %}
                                     <option value="">{% trans "None" %}</option>
                                 {% endif %}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">{% trans "HDD cache mode" %}</label>
-
-                        <div class="col-sm-6">
-                            <select id="cache_mode" name="cache_mode" class="form-control">
-                                {% for mode, name in cache_modes %}
-                                    <option value="{{ mode }}">{% trans name %}</option>
-                                {% endfor %}
                             </select>
                         </div>
                     </div>
@@ -344,7 +338,7 @@
                         <label class="col-sm-3 control-label">{% trans "RAM" %}</label>
 
                         <div class="col-sm-6">
-                            <input type="text" class="form-control" name="memory" value="512" maxlength="5" required
+                            <input type="text" class="form-control" name="memory" value="1" maxlength="5" required
                                    pattern="[0-9]+">
                         </div>
                         <label class="col-sm-1 control-label">{% trans "MB" %}</label>
@@ -407,7 +401,7 @@
                         <label class="col-sm-3 control-label">{% trans "RAM" %}</label>
 
                         <div class="col-sm-6">
-                            <input type="text" class="form-control" name="memory" value="512" maxlength="5" required
+                            <input type="text" class="form-control" name="memory" value="1" maxlength="5" required
                                    pattern="[0-9]+">
                         </div>
                         <label class="col-sm-1 control-label">{% trans "MB" %}</label>
@@ -424,17 +418,6 @@
                                 {% else %}
                                     <option value="">{% trans "None" %}</option>
                                 {% endif %}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">{% trans "HDD cache mode" %}</label>
-
-                        <div class="col-sm-6">
-                            <select id="cache_mode" name="cache_mode" class="form-control">
-                                {% for mode, name in cache_modes %}
-                                    <option value="{{ mode }}">{% trans name %}</option>
-                                {% endfor %}
                             </select>
                         </div>
                     </div>

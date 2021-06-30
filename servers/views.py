@@ -1,14 +1,17 @@
-from django.shortcuts import render_to_response
+# -*- coding: utf-8 -*-
+from django.shortcuts import render_to_response, render
 from django.http import HttpResponseRedirect
-from django.template import RequestContext
+# from django.template import RequestContext
 from django.core.urlresolvers import reverse
-
+from vrtManager.util import get_xml_path
 from servers.models import Compute
 from instance.models import Instance
 from servers.forms import ComputeAddTcpForm, ComputeAddSshForm, ComputeEditHostForm, ComputeAddTlsForm, ComputeAddSocketForm
 from vrtManager.hostdetails import wvmHostDetails
 from vrtManager.connection import CONN_SSH, CONN_TCP, CONN_TLS, CONN_SOCKET, connection_manager
 from libvirt import libvirtError
+from django.utils.translation import ungettext
+from perm_util.page_permission import get_menus, get_buttons
 
 
 def index(request):
@@ -42,7 +45,8 @@ def servers_list(request):
                               'status': connection_manager.host_is_up(host.type, host.hostname),
                               'type': host.type,
                               'login': host.login,
-                              'password': host.password
+                              'password': host.password,
+                              'arch': host.arch
                               })
         return all_hosts
 
@@ -75,12 +79,17 @@ def servers_list(request):
             form = ComputeAddSshForm(request.POST)
             if form.is_valid():
                 data = form.cleaned_data
+                new_conn = connection_manager.get_connection(login=data['login'], host=data['hostname'], conn= CONN_SSH, passwd=None)
+                arch = get_xml_path(new_conn.getCapabilities(), "/capabilities/host/cpu/arch")
                 new_ssh_host = Compute(name=data['name'],
                                        hostname=data['hostname'],
                                        type=CONN_SSH,
-                                       login=data['login'])
+                                       login=data['login'],
+                                       arch=arch)
                 new_ssh_host.save()
                 return HttpResponseRedirect(request.get_full_path())
+            # else:
+            #     print "form error", request.POST
         if 'host_tls_add' in request.POST:
             form = ComputeAddTlsForm(request.POST)
             if form.is_valid():
@@ -116,8 +125,9 @@ def servers_list(request):
                                           password='')
                 new_socket_host.save()
                 return HttpResponseRedirect(request.get_full_path())
-
-    return render_to_response('servers.html', locals(), context_instance=RequestContext(request))
+    button = get_buttons(request)
+    menu = get_menus(request)
+    return render(request, 'servers.html', locals())
 
 
 def infrastructure(request):
@@ -137,12 +147,17 @@ def infrastructure(request):
                 conn = wvmHostDetails(host, host.login, host.password, host.type)
                 host_info = conn.get_node_info()
                 host_mem = conn.get_memory_usage()
+                data = conn.get_host_instances()
+                distribution = 0
+                for d in data.values():
+                    distribution += d[2]
                 hosts_vms[host.id, host.name, status, host_info[3], host_info[2],
-                          host_mem['percent']] = conn.get_host_instances()
+                          host_mem['percent'], (distribution*100)/host_info[2]] = conn.get_host_instances()
                 conn.close()
             except libvirtError:
                 hosts_vms[host.id, host.name, status, 0, 0, 0] = None
         else:
             hosts_vms[host.id, host.name, 2, 0, 0, 0] = None
-
-    return render_to_response('infrastructure.html', locals(), context_instance=RequestContext(request))
+    button = get_buttons(request)
+    menu = get_menus(request)
+    return render(request, 'infrastructure.html', locals())

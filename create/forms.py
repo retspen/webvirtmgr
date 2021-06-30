@@ -42,7 +42,6 @@ class NewVMForm(forms.Form):
     storage = forms.CharField(max_length=20, required=False)
     template = forms.CharField(required=False)
     images = forms.CharField(required=False)
-    cache_mode = forms.CharField(error_messages={'required': _('Please select HDD cache mode')})
     hdd_size = forms.IntegerField(required=False)
     meta_prealloc = forms.BooleanField(required=False)
     virtio = forms.BooleanField(required=False)
@@ -56,3 +55,10 @@ class NewVMForm(forms.Form):
         elif len(name) > 20:
             raise forms.ValidationError(_('The name of the virtual machine must not exceed 20 characters'))
         return name
+
+    def clean_memory(self):
+        memory = self.cleaned_data['memory']
+        if not isinstance(memory, int):
+            raise forms.ValidationError(_('The memory of the virtual machine must be int'))
+        else:
+            return memory

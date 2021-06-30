@@ -5,7 +5,7 @@ import time
 import os.path
 try:
     from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE, VIR_MIGRATE_LIVE, \
-        VIR_MIGRATE_UNSAFE, VIR_DOMAIN_UNDEFINE_SNAPSHOTS_METADATA
+        VIR_MIGRATE_UNSAFE, VIR_DOMAIN_UNDEFINE_SNAPSHOTS_METADATA, VIR_DOMAIN_UNDEFINE_NVRAM
 except:
     from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE, VIR_MIGRATE_LIVE
 from vrtManager import util
@@ -24,7 +24,7 @@ class wvmInstances(wvmConnect):
     def get_instance_memory(self, name):
         inst = self.get_instance(name)
         mem = util.get_xml_path(inst.XMLDesc(0), "/domain/currentMemory")
-        return int(mem) / 1024
+        return int(mem) / 1024 / 1024
 
     def get_instance_vcpu(self, name):
         inst = self.get_instance(name)
@@ -114,9 +114,12 @@ class wvmInstance(wvmConnect):
     def resume(self):
         self.instance.resume()
 
-    def delete(self):
+    def delete(self, arch="x86_64"):
         try:
-            self.instance.undefineFlags(VIR_DOMAIN_UNDEFINE_SNAPSHOTS_METADATA)
+            if arch == "x86_64":
+                self.instance.undefineFlags(VIR_DOMAIN_UNDEFINE_SNAPSHOTS_METADATA)
+            else:
+                self.instance.undefineFlags(VIR_DOMAIN_UNDEFINE_NVRAM)
         except:
             self.instance.undefine()
 
@@ -149,11 +152,11 @@ class wvmInstance(wvmConnect):
 
     def get_memory(self):
         mem = util.get_xml_path(self._XMLDesc(0), "/domain/memory")
-        return int(mem) / 1024
+        return int(mem) / 1024 /1024
 
     def get_cur_memory(self):
         mem = util.get_xml_path(self._XMLDesc(0), "/domain/currentMemory")
-        return int(mem) / 1024
+        return int(mem) / 1024 /1024
 
     def get_description(self):
         return util.get_xml_path(self._XMLDesc(0), "/domain/description")
@@ -496,9 +499,8 @@ class wvmInstance(wvmConnect):
         """
         Function change ram and cpu on vds.
         """
-        memory = int(memory) * 1024
-        cur_memory = int(cur_memory) * 1024
-
+        memory = int(float(memory) * 1024 * 1024)
+        cur_memory = int(float(cur_memory) * 1024 * 1024)
         xml = self._XMLDesc(VIR_DOMAIN_XML_SECURE)
         tree = ElementTree.fromstring(xml)
 
@@ -532,7 +534,7 @@ class wvmInstance(wvmConnect):
                 except:
                     pass
                 for img in stg.listVolumes():
-                    if img.lower().endswith('.iso'):
+                    if img.endswith('.iso'):
                         iso.append(img)
         return iso
 
@@ -545,7 +547,7 @@ class wvmInstance(wvmConnect):
     def _snapshotCreateXML(self, xml, flag):
         self.instance.snapshotCreateXML(xml, flag)
 
-    def create_snapshot(self, name):
+    def create_snapshot(self, name, flag=0):
         xml = """<domainsnapshot>
                      <name>%s</name>
                      <state>shutoff</state>
@@ -553,7 +555,7 @@ class wvmInstance(wvmConnect):
         xml += self._XMLDesc(VIR_DOMAIN_XML_SECURE)
         xml += """<active>0</active>
                   </domainsnapshot>"""
-        self._snapshotCreateXML(xml, 0)
+        self._snapshotCreateXML(xml, flag)
 
     def get_snapshot(self):
         snapshots = []
@@ -564,9 +566,9 @@ class wvmInstance(wvmConnect):
             snapshots.append({'date': datetime.fromtimestamp(int(snap_time_create)), 'name': snapshot})
         return snapshots
 
-    def snapshot_delete(self, snapshot):
+    def snapshot_delete(self, snapshot, flag=0):
         snap = self.instance.snapshotLookupByName(snapshot, 0)
-        snap.delete(0)
+        snap.delete(flag)
 
     def snapshot_revert(self, snapshot):
         snap = self.instance.snapshotLookupByName(snapshot, 0)

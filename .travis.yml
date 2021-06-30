@@ -1,10 +1,11 @@
 language: python
 python:
+  - "2.6"
   - "2.7"
 env:
   - DJANGO=1.5.5
 install:
-  - pip install -r dev-requirements.txt
+  - pip install -r dev-requirements.txt --use-mirrors
 script:
   - pep8 --exclude=IPy.py --ignore=E501 console hostdetail instance networks servers storages vrtManager
   - pyflakes console hostdetail instance networks servers storages vrtManager

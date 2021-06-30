@@ -1,6 +1,6 @@
 from libvirt import libvirtError
 
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
@@ -10,6 +10,7 @@ import time
 from servers.models import Compute
 from vrtManager.hostdetails import wvmHostDetails
 from webvirtmgr.settings import TIME_JS_REFRESH
+from perm_util.page_permission import get_menus, get_buttons
 
 
 def hostusage(request, host_id):
@@ -36,12 +37,15 @@ def hostusage(request, host_id):
     except libvirtError:
         cpu_usage = 0
         mem_usage = 0
-
+    # print request._cookies.get('cpu'), request._cookies
     try:
-        cookies['cpu'] = request._cookies['cpu']
-        cookies['mem'] = request._cookies['mem']
-        cookies['timer'] = request._cookies['timer']
+        cookies['cpu'] = request.COOKIES['cpu']
+        cookies['mem'] = request.COOKIES['mem']
+        cookies['timer'] = request.COOKIES['timer']
     except KeyError:
+        cookies['cpu'] = None
+        cookies['mem'] = None
+    except AttributeError:
         cookies['cpu'] = None
         cookies['mem'] = None
 
@@ -124,5 +128,7 @@ def overview(request, host_id):
         conn.close()
     except libvirtError as err:
         errors.append(err)
-
-    return render_to_response('hostdetail.html', locals(), context_instance=RequestContext(request))
+    button = get_buttons(request)
+    menu = get_menus(request)
+    # return render_to_response('hostdetail.html', locals(), context_instance=RequestContext(request))
+    return render(request, 'hostdetail.html', locals())

@@ -2,21 +2,20 @@ from string import letters, digits
 from random import choice
 from bisect import insort
 
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 import json
 import time
-
 from instance.models import Instance
 from servers.models import Compute
-
 from vrtManager.instance import wvmInstances, wvmInstance
-
-from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE
+from libvirt import libvirtError, VIR_DOMAIN_XML_SECURE, VIR_DOMAIN_SNAPSHOT_CREATE_DISK_ONLY, VIR_DOMAIN_SNAPSHOT_DELETE_METADATA_ONLY
 from webvirtmgr.settings import TIME_JS_REFRESH, QEMU_KEYMAPS, QEMU_CONSOLE_TYPES
+from perm_util.page_permission import get_menus, get_buttons
+from vrtManager.connection import SSHConnect
 
 
 def instusage(request, host_id, vname):
@@ -41,7 +40,7 @@ def instusage(request, host_id, vname):
     points = 5
     curent_time = time.strftime("%H:%M:%S")
     compute = Compute.objects.get(id=host_id)
-    cookies = request._get_cookies()
+    cookies = request.COOKIES
     response = HttpResponse()
     response['Content-Type'] = "text/javascript"
 
@@ -230,7 +229,7 @@ def insts_status(request, host_id):
         get_instances = conn.get_instances()
     except libvirtError as err:
         errors.append(err)
-
+    button = get_buttons(request)
     for instance in get_instances:
         instances.append({'name': instance,
                           'status': conn.get_instance_status(instance),
@@ -238,7 +237,8 @@ def insts_status(request, host_id):
                           'vcpu': conn.get_instance_vcpu(instance),
                           'uuid': conn.get_uuid(instance),
                           'host': host_id,
-                          'dump': conn.get_instance_managed_save_image(instance)
+                          'dump': conn.get_instance_managed_save_image(instance),
+                          'button': button,
                           })
 
     data = json.dumps(instances)
@@ -315,8 +315,9 @@ def instances(request, host_id):
             conn.close()
         except libvirtError as err:
             errors.append(err)
-
-    return render_to_response('instances.html', locals(), context_instance=RequestContext(request))
+    button = get_buttons(request)
+    menu = get_menus(request)
+    return render(request, 'instances.html', locals())
 
 
 def instance(request, host_id, vname):
@@ -369,7 +370,10 @@ def instance(request, host_id, vname):
         networks = conn.get_net_device()
         media_iso = sorted(conn.get_iso_media())
         vcpu_range = conn.get_max_cpus()
-        memory_range = [256, 512, 768, 1024, 2048, 4096, 6144, 8192, 16384]
+        if compute.arch == "aarch64":
+            memory_range = [1, 2, 4, 8, 16, 32, 64]
+        elif compute.arch == "x86_64":
+            memory_range = [1, 2, 4, 8, 16, 32, 64]
         if memory not in memory_range:
             insort(memory_range, memory)
         if cur_memory not in memory_range:
@@ -427,11 +431,14 @@ def instance(request, host_id, vname):
                     if request.POST.get('delete_disk', ''):
                         conn.delete_disk()
                 finally:
-                    conn.delete()
+                    conn.delete(compute.arch)
                 return HttpResponseRedirect(reverse('instances', args=[host_id]))
             if 'snapshot' in request.POST:
                 name = request.POST.get('name', '')
-                conn.create_snapshot(name)
+                if compute.arch == "aarch64":
+                    conn.create_snapshot(name, VIR_DOMAIN_SNAPSHOT_CREATE_DISK_ONLY)
+                elif compute.arch == "x86_64":
+                    conn.create_snapshot(name, 0)
                 return HttpResponseRedirect(request.get_full_path() + '#istaceshapshosts')
             if 'umount_iso' in request.POST:
                 image = request.POST.get('path', '')
@@ -516,7 +523,10 @@ def instance(request, host_id, vname):
                 return HttpResponseRedirect(reverse('instance', args=[compute_id, vname]))
             if 'delete_snapshot' in request.POST:
                 snap_name = request.POST.get('name', '')
-                conn.snapshot_delete(snap_name)
+                if compute.arch == "aarch64":
+                    conn.snapshot_delete(snap_name, VIR_DOMAIN_SNAPSHOT_DELETE_METADATA_ONLY)
+                elif compute.arch == "x86_64":
+                    conn.snapshot_delete(snap_name, VIR_DOMAIN_SNAPSHOT_DELETE_METADATA_ONLY)
                 return HttpResponseRedirect(request.get_full_path() + '#istaceshapshosts')
             if 'revert_snapshot' in request.POST:
                 snap_name = request.POST.get('name', '')
@@ -527,17 +537,27 @@ def instance(request, host_id, vname):
             if 'clone' in request.POST:
                 clone_data = {}
                 clone_data['name'] = request.POST.get('name', '')
-
                 for post in request.POST:
                     if 'disk' or 'meta' in post:
                         clone_data[post] = request.POST.get(post, '')
-
                 conn.clone_instance(clone_data)
                 return HttpResponseRedirect(reverse('instance', args=[host_id, clone_data['name']]))
-
+            if 'detach' in request.POST:
+                print request.POST
+                tag = request.POST.get('tag', '')
+                if not tag == "":
+                    command = "virsh detach-disk " + vname + " " + tag + " --config"
+                    if ":" in compute.hostname:
+                        addr, port = compute.hostname.split(":")
+                    else:
+                        port = "22"
+                        addr = compute.hostname
+                    ssh_conn = SSHConnect(compute.login, compute.hostname, port)
+                    result = ssh_conn.connect(command)
+                return HttpResponseRedirect(request.get_full_path() + '#instancedevice')
         conn.close()
 
     except libvirtError as err:
         errors.append(err)
 
-    return render_to_response('instance.html', locals(), context_instance=RequestContext(request))
+    return render(request, 'instance.html', locals())

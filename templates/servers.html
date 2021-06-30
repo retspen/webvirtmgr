@@ -41,9 +41,10 @@
             </div>
         {% endif %}
             <div class="page-header">
+                {% if "add connection" in button %}
                 <a data-toggle="modal" href="#addHost"
                    class="btn btn-sm btn-success pull-right">{% trans "Add Connection" %}</a>
-
+                {% endif %}
                 <h1>{% trans "Connections" %}</h1>
             </div>
             <div class="row" role="main">
@@ -55,10 +56,12 @@
                                 {% ifequal host.status 1 %}
                                     <h3 class="panel-title">
                                         <a href="{% url 'instances' host.id %}"><strong>{{ host.name }}</strong></a>
+                                        {% if "edit" in button %}
                                         <a data-toggle="modal" href="#editHost{{ host.id }}" class="pull-right"
                                            title="{% trans "Edit" %}">
                                             <span class="glyphicon glyphicon-pencil"></span>
                                         </a>
+                                        {% endif %}
                                     </h3>
                                 {% else %}
                                     <h3 class="panel-title"><strong>{{ host.name }}</strong>
@@ -71,6 +74,7 @@
                             </div>
                             <div class="panel-body">
                                 <p>
+                                {% if 'delete' in button %}
                                 <form action="" method="post" role="form">{% csrf_token %}
                                     <input type="hidden" name="host_id" value="{{ host.id }}">
                                     <button type="submit" class="pull-right btn btn-xs btn-danger" name="host_del"
@@ -79,7 +83,8 @@
                                         <span class="glyphicon glyphicon-trash"></span>
                                     </button>
                                 </form>
-                                <p>
+                                {% endif %}
+                                <p><strong>{% trans "Arch" %}:</strong> {{host.arch}}</p>
                                 <p><strong>{% trans "Type" %}:</strong> [
                                     {% ifequal host.type 1 %}TCP{% endifequal %}
                                     {% ifequal host.type 2 %}SSH{% endifequal %}
@@ -177,6 +182,13 @@
                                                             <div class="col-sm-6">
                                                                 <input type="text" name="login" class="form-control"
                                                                        value="{{ host.login }}">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label">{% trans "Arch" %}</label>
+
+                                                            <div class="col-sm-6">
+                                                                <p> {{host.arch}}</p>
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">

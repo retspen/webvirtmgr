@@ -1,4 +1,4 @@
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, render
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
@@ -40,7 +40,6 @@ def create(request, host_id):
         networks = sorted(conn.get_networks())
         instances = conn.get_instances()
         get_images = sorted(conn.get_storages_images())
-        cache_modes = sorted(conn.get_cache_modes().items())
         mac_auto = util.randomMAC()
     except libvirtError as err:
         errors.append(err)
@@ -116,21 +115,20 @@ def create(request, host_id):
                                 msg = _("First you need to create or select an image")
                                 errors.append(msg)
                             else:
+                                volumes_order = []
                                 for vol in data['images'].split(','):
                                     try:
                                         path = conn.get_volume_path(vol)
                                         volumes[path] = conn.get_volume_type(path)
+                                        volumes_order.append(path)
                                     except libvirtError as msg_error:
                                         errors.append(msg_error.message)
-                        if data['cache_mode'] not in conn.get_cache_modes():
-                            msg = _("Invalid cache mode")
-                            errors.append(msg)
                         if not errors:
                             uuid = util.randomUUID()
+                            data['memory'] = data['memory']*1024
                             try:
                                 conn.create_instance(data['name'], data['memory'], data['vcpu'], data['host_model'],
-                                                     uuid, volumes, data['cache_mode'], data['networks'], data['virtio'],
-                                                     data['mac'])
+                                                     uuid, volumes, data['networks'], data['virtio'], data['mac'], compute.arch, volumes_order)
                                 create_instance = Instance(compute_id=host_id, name=data['name'], uuid=uuid)
                                 create_instance.save()
                                 return HttpResponseRedirect(reverse('instance', args=[host_id, data['name']]))
@@ -140,5 +138,5 @@ def create(request, host_id):
                                 errors.append(err)
 
         conn.close()
-
-    return render_to_response('create.html', locals(), context_instance=RequestContext(request))
+    # return render_to_response('create.html', locals(), context_instance=RequestContext(request))
+    return render(request, 'create.html', locals())

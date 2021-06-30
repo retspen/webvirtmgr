@@ -1,4 +1,4 @@
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, render
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
@@ -58,4 +58,5 @@ def secrets(request, host_id):
     except libvirtError as err:
         errors.append(err)
 
-    return render_to_response('secrets.html', locals(), context_instance=RequestContext(request))
+    # return render_to_response('secrets.html', locals(), context_instance=RequestContext(request))
+    return render(request, 'secrets.html', locals())

@@ -11,17 +11,9 @@ from webvirtmgr.settings import QEMU_CONSOLE_DEFAULT_TYPE
 def get_rbd_storage_data(stg):
     xml = stg.XMLDesc(0)
     ceph_user = util.get_xml_path(xml, "/pool/source/auth/@username")
-
-    def get_ceph_hosts(ctx):
-        hosts = []
-        for host in ctx.xpathEval("/pool/source/host"):
-            name = host.prop("name")
-            if name:
-                hosts.append({'name': name, 'port': host.prop("port")})
-        return hosts
-    ceph_hosts = util.get_xml_path(xml, func=get_ceph_hosts)
-    secret_uuid = util.get_xml_path(xml, "/pool/source/auth/secret/@uuid")
-    return ceph_user, secret_uuid, ceph_hosts
+    ceph_host = util.get_xml_path(xml, "/pool/source/host/@name")
+    secrt_uuid = util.get_xml_path(xml, "/pool/source/auth/secret/@uuid")
+    return ceph_user, secrt_uuid, ceph_host
 
 
 class wvmCreate(wvmConnect):
@@ -52,16 +44,8 @@ class wvmCreate(wvmConnect):
         """Get guest capabilities"""
         return util.get_xml_path(self.get_cap_xml(), "/capabilities/host/cpu/arch")
 
-    def get_cache_modes(self):
-        """Get cache available modes"""
-        return {
-            'default': 'Default',
-            'none': 'Disabled',
-            'writethrough': 'Write through',
-            'writeback': 'Write back',
-            'directsync': 'Direct sync',  # since libvirt 0.9.5
-            'unsafe': 'Unsafe',  # since libvirt 0.9.7
-        }
+    def update_volume_xml(self):
+        pass
 
     def create_volume(self, storage, name, size, format='qcow2', metadata=False):
         size = int(size) * 1073741824
@@ -144,7 +128,7 @@ class wvmCreate(wvmConnect):
         vol = self.get_volume_by_path(path)
         vol.delete()
 
-    def create_instance(self, name, memory, vcpu, host_model, uuid, images, cache_mode, networks, virtio, mac=None):
+    def create_instance(self, name, memory, vcpu, host_model, uuid, images, networks, virtio, mac=None, arch="x86_64", volumes_order=[]):
         """
         Create VM function
         """
@@ -154,72 +138,139 @@ class wvmCreate(wvmConnect):
             hypervisor_type = 'kvm'
         else:
             hypervisor_type = 'qemu'
-
-        xml = """
+        if arch == "x86_64":
+            xml = """
                 <domain type='%s'>
                   <name>%s</name>
                   <description>None</description>
                   <uuid>%s</uuid>
                   <memory unit='KiB'>%s</memory>
                   <vcpu>%s</vcpu>""" % (hypervisor_type, name, uuid, memory, vcpu)
-        if host_model:
-            xml += """<cpu mode='host-model'/>"""
-        xml += """<os>
-                    <type arch='%s'>%s</type>
-                    <boot dev='hd'/>
-                    <boot dev='cdrom'/>
-                    <bootmenu enable='yes'/>
-                  </os>""" % (self.get_host_arch(), self.get_os_type())
-        xml += """<features>
-                    <acpi/><apic/><pae/>
-                  </features>
-                  <clock offset="utc"/>
-                  <on_poweroff>destroy</on_poweroff>
-                  <on_reboot>restart</on_reboot>
-                  <on_crash>restart</on_crash>
-                  <devices>"""
+        else:
+            xml = """
+                <domain type='%s'>
+                  <name>%s</name>
+                  <description>None</description>
+                  <uuid>%s</uuid>
+                    <metadata>
+                      <libosinfo:libosinfo xmlns:libosinfo="http://libosinfo.org/xmlns/libvirt/domain/1.0">
+                        <libosinfo:os id="http://redhat.com/rhel/7.0"/>
+                      </libosinfo:libosinfo>
+                    </metadata>
+                  <memory unit='KiB'>%s</memory>
+                  <currentMemory unit='KiB'>%s</currentMemory>
+                  <vcpu>%s</vcpu>
+                <resource>
+                  <partition>/machine</partition>
+                </resource>
+                """ % (hypervisor_type, name, uuid, memory, memory, vcpu)
+        if arch == "x86_64":
+            if host_model:
+                xml += """<cpu mode='host-model'/>"""
+            xml += """<os>
+                        <type arch='%s'>%s</type>
+                        <boot dev='hd'/>
+                        <boot dev='cdrom'/>
+                        <bootmenu enable='yes'/>
+                      </os>""" % (self.get_host_arch(), self.get_os_type())
+            xml += """<features>
+                        <acpi/><apic/><pae/>
+                      </features>
+                      <clock offset="utc"/>
+                      <on_poweroff>destroy</on_poweroff>
+                      <on_reboot>restart</on_reboot>
+                      <on_crash>restart</on_crash>
+                      <devices>"""
+        else:
+            xml += """<os>
+                        <type arch='%s' machine='virt-4.0'>%s</type>
+                        <loader readonly='yes' type='pflash'>/usr/share/edk2.git/aarch64/QEMU_EFI-pflash.raw</loader>
+                        <nvram>/var/lib/libvirt/qemu/nvram/%s_VARS.fd</nvram>
+                        <boot dev='hd'/>
+                        <boot dev='cdrom'/>
+                        <bootmenu enable='yes'/>
+                      </os>""" % (self.get_host_arch(), self.get_os_type(), name)
+            if host_model:
+                xml += """<cpu mode='host-passthrough'/>"""
+            xml += """<features>
+                        <acpi/>
+                        <gic version='3'/>
+                      </features>
+                      <clock offset="utc"/>
+                      <on_poweroff>destroy</on_poweroff>
+                      <on_reboot>restart</on_reboot>
+                      <on_crash>destroy</on_crash>
+                      <devices>"""
 
         disk_letters = list(string.lowercase)
-        for image, img_type in images.items():
-            stg = self.get_storage_by_vol_path(image)
-            stg_type = util.get_xml_path(stg.XMLDesc(0), "/pool/@type")
+        if volumes_order == []:
+            for image, img_type in images.items():
+                stg = self.get_storage_by_vol_path(image)
+                stg_type = util.get_xml_path(stg.XMLDesc(0), "/pool/@type")
+                if stg_type == 'rbd':
+                    ceph_user, secrt_uuid, ceph_host = get_rbd_storage_data(stg)
+                    xml += """<disk type='network' device='disk'>
+                                <driver name='qemu' type='%s'/>
+                                <auth username='%s'>
+                                    <secret type='ceph' uuid='%s'/>
+                                </auth>
+                                <source protocol='rbd' name='%s'>
+                                    <host name='%s' port='6789'/>
+                                </source>""" % (img_type, ceph_user, secrt_uuid, image, ceph_host)
+                else:
+                    xml += """<disk type='file' device='disk'>
+                                <driver name='qemu' type='%s'/>
+                                <source file='%s'/>""" % (img_type, image)
 
-            if stg_type == 'rbd':
-                ceph_user, secret_uuid, ceph_hosts = get_rbd_storage_data(stg)
-                xml += """<disk type='network' device='disk'>
-                            <driver name='qemu' type='%s' cache='%s'/>
-                            <auth username='%s'>
-                                <secret type='ceph' uuid='%s'/>
-                            </auth>
-                            <source protocol='rbd' name='%s'>""" % (img_type, cache_mode, ceph_user, secret_uuid, image)
-                if isinstance(ceph_hosts, list):
-                    for host in ceph_hosts:
-                        if host.get('port'):
-                            xml += """
-                                   <host name='%s' port='%s'/>""" % (host.get('name'), host.get('port'))
-                        else:
-                            xml += """
-                                   <host name='%s'/>""" % host.get('name')
-                xml += """
-                            </source>"""
-            else:
-                xml += """<disk type='file' device='disk'>
-                            <driver name='qemu' type='%s' cache='%s'/>
-                            <source file='%s'/>""" % (img_type, cache_mode, image)
+                if virtio:
+                    xml += """<target dev='vd%s' bus='virtio'/>""" % (disk_letters.pop(0),)
+                else:
+                    xml += """<target dev='sd%s' bus='ide'/>""" % (disk_letters.pop(0),)
+                xml += """</disk>"""
+        else:
+            for p in volumes_order:
+                image = p
+                img_type = images[p]
+                stg = self.get_storage_by_vol_path(image)
+                stg_type = util.get_xml_path(stg.XMLDesc(0), "/pool/@type")
+                if stg_type == 'rbd':
+                    ceph_user, secrt_uuid, ceph_host = get_rbd_storage_data(stg)
+                    xml += """<disk type='network' device='disk'>
+                                                <driver name='qemu' type='%s'/>
+                                                <auth username='%s'>
+                                                    <secret type='ceph' uuid='%s'/>
+                                                </auth>
+                                                <source protocol='rbd' name='%s'>
+                                                    <host name='%s' port='6789'/>
+                                                </source>""" % (img_type, ceph_user, secrt_uuid, image, ceph_host)
+                else:
+                    xml += """<disk type='file' device='disk'>
+                                                <driver name='qemu' type='%s'/>
+                                                <source file='%s'/>""" % (img_type, image)
 
-            if virtio:
-                xml += """<target dev='vd%s' bus='virtio'/>""" % (disk_letters.pop(0),)
-            else:
-                xml += """<target dev='sd%s' bus='ide'/>""" % (disk_letters.pop(0),)
-            xml += """</disk>"""
+                if virtio:
+                    xml += """<target dev='vd%s' bus='virtio'/>""" % (disk_letters.pop(0),)
+                else:
+                    xml += """<target dev='sd%s' bus='ide'/>""" % (disk_letters.pop(0),)
+                xml += """</disk>"""
 
-        xml += """  <disk type='file' device='cdrom'>
+        if arch == "x86_64":
+            xml += """  <disk type='file' device='cdrom'>
                       <driver name='qemu' type='raw'/>
                       <source file=''/>
                       <target dev='hda' bus='ide'/>
                       <readonly/>
                       <address type='drive' controller='0' bus='1' target='0' unit='1'/>
                     </disk>"""
+        else:
+            xml += """  <disk type='file' device='cdrom'>
+                      <driver name='qemu' type='raw'/>
+                      <source file=''/>
+                      <target dev='sda' bus='scsi'/>
+                      <readonly/>
+                    </disk>
+                    <controller type='scsi' model='virtio-scsi'/>
+                    """
         for net in networks.split(','):
             xml += """<interface type='network'>"""
             if mac:
@@ -228,8 +279,8 @@ class wvmCreate(wvmConnect):
             if virtio:
                 xml += """<model type='virtio'/>"""
             xml += """</interface>"""
-
-        xml += """  <input type='mouse' bus='ps2'/>
+        if arch == "x86_64":
+            xml += """  <input type='mouse' bus='ps2'/>
                     <input type='tablet' bus='usb'/>
                     <graphics type='%s' port='-1' autoport='yes' listen='0.0.0.0'>
                       <listen type='address' address='0.0.0.0'/>
@@ -241,4 +292,12 @@ class wvmCreate(wvmConnect):
                     <memballoon model='virtio'/>
                   </devices>
                 </domain>""" % QEMU_CONSOLE_DEFAULT_TYPE
+        else:
+            xml += """  
+                    <controller type='usb' index='0' model='qemu-xhci' ports='15'/>
+                    <input type='mouse' bus='ps2'/>
+                    <console type='pty'/>
+                    <memballoon model='virtio'/>
+                  </devices>
+                </domain>"""
         self._defineXML(xml)

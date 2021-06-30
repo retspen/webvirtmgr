@@ -3,6 +3,7 @@
 import os
 import sys
 import logging
+import django
 
 DIR_PATH = os.path.dirname(os.path.abspath(__file__))
 ROOT_PATH = os.path.abspath(os.path.join(DIR_PATH, '..', ''))
@@ -14,10 +15,13 @@ if ROOT_PATH not in sys.path:
     sys.path.append(ROOT_PATH)
 # if VENV_PATH not in sys.path:
 # sys.path.append(VENV_PATH)
+# base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# print sys.path, base_dir
+django.setup()
 
 import Cookie
 import socket
-from webvirtmgr.settings import WS_PORT, WS_HOST, WS_CERT, WS_KEY
+from webvirtmgr.settings import WS_PORT, WS_HOST, WS_CERT
 
 from vrtManager.connection import CONN_SSH, CONN_SOCKET
 
@@ -62,20 +66,6 @@ parser.add_option("-c",
                   action="store",
                   help="Certificate file path",
                   default=WS_CERT or CERT)
-  
-parser.add_option("-k",
-                  "--key",
-                  dest="key",
-                  action="store",
-                  help="Certificate key file path",
-                  default=WS_KEY)
-
-parser.add_option("--ssl-only",
-                  dest="ssl_only",
-                  action="store_true",
-                  help="Deny non-ssl connections",
-                  default=False)
-
 
 (options, args) = parser.parse_args()
 
@@ -167,7 +157,7 @@ class CompatibilityMixIn(object):
             self.msg('Try to open local socket %s' % console_socket)
             tsock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
             tsock.connect(console_socket)
-        elif console_socket or re.match('^127\.', console_host) and conntype != CONN_SOCKET:
+        elif console_socket or re.match('^127\.', console_host):
             # Need tunnel to physical host
             if conntype != CONN_SSH:
                 self.msg("Need a tunnel to access console but can't mount " +
@@ -256,8 +246,8 @@ if __name__ == '__main__':
                                 source_is_ipv6=False,
                                 verbose=options.verbose,
                                 cert=options.cert,
-                                key=options.key,
-                                ssl_only=options.ssl_only,
+                                key=None,
+                                ssl_only=False,
                                 daemon=False,
                                 record=False,
                                 web=False,
@@ -273,8 +263,8 @@ if __name__ == '__main__':
                                     source_is_ipv6=False,
                                     verbose=options.verbose,
                                     cert=options.cert,
-                                    key=options.key,
-                                    ssl_only=options.ssl_only,
+                                    key=None,
+                                    ssl_only=False,
                                     daemon=False,
                                     record=False,
                                     web=False,

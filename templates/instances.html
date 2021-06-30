@@ -6,7 +6,7 @@
     <link href="{% static "css/table-sort.css" %}" rel="stylesheet">
 {% endblock %}
 {% block content %}
-    {% include 'sidebar.html' %}
+    {% include 'sidebar_p.html' %}
     <div class="main col-xs-12 col-sm-9" role="main">
         {% if errors %}
             {% for error in errors %}
@@ -31,8 +31,13 @@
                     <tbody>
                     {% for inst in instances|dictsort:"name.lower"|dictsort:"status" %}
                         <tr id="{{ inst.name }}">
-                            <td><a href="{% url 'instance' host_id inst.name %}"><i
-                                    class="icon-th-large"></i> {{ inst.name }}</a></td>
+                            <td>
+                                {% if "a" in button %}
+                                    <a href="{% url 'instance' host_id inst.name %}"><i class="icon-th-large"></i> {{ inst.name }}</a>
+                                {% else %}
+                                    {{ inst.name }}
+                                {% endif %}
+                            </td>
                             <td>{% ifequal inst.status 1 %}
                                 <span class="label label-success">{% trans "Running" %}</span>
                             {% endifequal %}
@@ -48,86 +53,128 @@
                                 {% endifequal %}
                             </td>
                             <td>{{ inst.vcpu }}</td>
-                            <td>{{ inst.memory }}{% trans "MB" %}</td>
+                            <td>{{ inst.memory }}{% trans "GB" %}</td>
                             <td>
                                 <form action="" method="post" role="form">{% csrf_token %}
                                     <input type="hidden" name="name" value="{{ inst.name }}"/>
                                     {% ifequal inst.status 5 %}
+                                        {% if "start" in button %}
                                         <button class="btn btn-sm btn-default" type="submit" name="start" title="Start">
                                             <span class="glyphicon glyphicon-play"></span>
                                         </button>
+                                        {% endif %}
+                                        {% if "suspend" in button %}
                                         <button class="btn btn-sm btn-default disabled" title="{% trans "Suspend" %}">
                                             <span class="glyphicon glyphicon-pause"></span>
                                         </button>
+                                        {% endif %}
+                                        {% if "save" in button %}
                                         <button class="btn btn-sm btn-default disabled" title="{% trans "Save" %}">
                                             <span class="glyphicon glyphicon-download-alt"></span>
                                         </button>
-                                        {% ifequal inst.has_managed_save_image 1 %}
-                                            <button class="btn btn-sm btn-default" type="submit" name="deletesaveimage"
-                                                    title="{% trans "Delete Save Image" %}">
-                                                <span class="glyphicon glyphicon-remove"></span>
-                                            </button>
-                                        {% else %}
-                                            <button class="btn btn-sm btn-default disabled" title="{% trans "Shutdown" %}">
-                                                <span class="glyphicon glyphicon-off"></span>
-                                            </button>
-                                        {% endifequal %}
+                                        {% endif %}
+                                        {% if "shutdown" in button %}
+                                            {% ifequal inst.has_managed_save_image 1 %}
+                                                <button class="btn btn-sm btn-default" type="submit" name="deletesaveimage"
+                                                        title="{% trans "Delete Save Image" %}">
+                                                    <span class="glyphicon glyphicon-remove"></span>
+                                                </button>
+                                            {% else %}
+                                                <button class="btn btn-sm btn-default disabled" title="{% trans "Shutdown" %}">
+                                                    <span class="glyphicon glyphicon-off"></span>
+                                                </button>
+                                            {% endifequal %}
+                                        {% endif %}
+                                        {% if "force_shutdown" in button %}
                                         <button class="btn btn-sm btn-default disabled"
                                                 title="{% trans "Force Shutdown" %}">
                                             <span class="glyphicon glyphicon-stop"></span>
                                         </button>
+                                        {% endif %}
+                                        {% if "console" in button %}
                                         <button class="btn btn-sm btn-default disabled" title="{% trans "Console" %}">
                                             <span class="glyphicon glyphicon-align-justify"></span>
                                         </button>
+                                        {% endif %}
                                     {% endifequal %}
                                     {% ifequal inst.status 3 %}
+                                        {% if "resume" in button %}
                                         <button class="btn btn-sm btn-default" type="submit" name="resume"
                                                 title="{% trans "Resume" %}">
                                             <span class="glyphicon glyphicon-play"></span>
                                         </button>
+                                        {% endif %}
+                                        {% if "suspend" in button %}
                                         <button class="btn btn-sm btn-default disabled" title="{% trans "Suspend" %}">
                                             <span class="glyphicon glyphicon-pause"></span>
                                         </button>
+                                        {% endif %}
+                                        {% if "save" in button %}
                                         <button class="btn btn-sm btn-default" type="submit" name="managedsave"
                                                 title="{% trans "Save" %}">
                                             <span class="glyphicon glyphicon-download-alt"></span>
                                         </button>
+                                        {% endif %}
+                                        {% if "shutdown" in button %}
                                         <button class="btn btn-sm btn-default disabled" title="{% trans "Shutdown" %}">
                                             <span class="glyphicon glyphicon-off"></span>
                                         </button>
+                                        {% endif %}
+                                        {% if "force_shutdown" in button %}
                                         <button class="btn btn-sm btn-default disabled"
                                                 title="{% trans "Force Shutdown" %}">
                                             <span class="glyphicon glyphicon-stop"></span>
                                         </button>
+                                        {% endif %}
+                                        {% if "console" in button %}
                                         <button class="btn btn-sm btn-default disabled" title="{% trans "Console" %}">
                                             <span class="glyphicon glyphicon-align-justify"></span>
                                         </button>
+                                        {% endif %}
                                     {% endifequal %}
                                     {% ifequal inst.status 1 %}
+                                        {% if "start" in button %}
                                         <button class="btn btn-sm btn-default disabled" title="{% trans "Start" %}">
                                             <span class="glyphicon glyphicon-play"></span>
                                         </button>
+                                        {% endif %}
+                                        {% if "suspend" in button %}
                                         <button class="btn btn-sm btn-default" type="submit" name="suspend"
                                                 title="{% trans "Suspend" %}">
                                             <span class="glyphicon glyphicon-pause"></span>
                                         </button>
+                                        {% endif %}
+                                        {% if "save" in button %}
                                         <button class="btn btn-sm btn-default" type="submit" name="managedsave"
                                                 title="{% trans "Save" %}">
                                             <span class="glyphicon glyphicon-download-alt"></span>
                                         </button>
+                                        {% endif %}
+                                        {% if "shutdown" in button %}
                                         <button class="btn btn-sm btn-default" type="submit" name="shutdown"
                                                 title="{% trans "Shutdown" %}">
                                             <span class="glyphicon glyphicon-off"></span>
                                         </button>
+                                        {% endif %}
+                                        {% if "destroy" in button %}
                                         <button class="btn btn-sm btn-default" type="submit" name="destroy"
                                                 title="{% trans "Force Shutdown" %}"
                                                 onclick="return confirm('Are you sure?')">
                                             <span class="glyphicon glyphicon-stop"></span>
                                         </button>
+                                        {% endif %}
+                                        {% if "force_shutdown" in button %}
+                                        <button class="btn btn-sm btn-default "
+                                                title="{% trans "Force Shutdown" %}">
+                                            <span class="glyphicon glyphicon-stop"></span>
+                                        </button>
+                                        {% endif %}
+                                        {% if "console" in button %}
                                         <a href="#" class="btn btn-sm btn-default"
                                            onclick='open_console("{{ host_id }}-{{ inst.uuid }}")' title="{% trans "Console" %}">
                                             <span class="glyphicon glyphicon-align-justify"></span>
                                         </a>
+                                        {% endif %}
                                     {% endifequal %}
                                 </form>
                             </td>
@@ -150,99 +197,165 @@
             $.getJSON('{% url 'insts_status' host_id %}', function (data) {
                 for (var i = 0; i < data.length; i++) {
                     var elem = '#' + data[i]['name']
+                    var buttons=data[i]['button']
                     if (data[i]['status'] === 1) {
-                        if (data[i]['dump'] === 1) {
+                        if(buttons.indexOf('a')>-1){
+                            var str="<td><a href='/instance/{{ host_id }}/" + data[i]['name'] + "'><i class='icon-th-large'></i> " + data[i]['name'] + "</a></td>"
+                                + "<td><span class='label label-success'>{% trans "Running" %}</span></td>"
+                                + "<td>" + data[i]['vcpu'] + "</td>"
+                                + "<td>" + data[i]['memory'] + "{% trans "GB" %}</td>"
+                                + "<td>"
+                                + "<form action='' method='post'>{% csrf_token %}"
+                                + "<input type='hidden' name='name' value='" + data[i]['name'] + "' />";
+                        } else {
+                            var str="<td><i class='icon-th-large'></i> " + data[i]['name'] + "</td>"
+                                + "<td><span class='label label-success'>{% trans "Running" %}</span></td>"
+                                + "<td>" + data[i]['vcpu'] + "</td>"
+                                + "<td>" + data[i]['memory'] + "{% trans "GB" %}</td>"
+                                + "<td>"
+                                + "<form action='' method='post'>{% csrf_token %}"
+                                + "<input type='hidden' name='name' value='" + data[i]['name'] + "' />";
+                        }
+                        if(buttons.indexOf('Start')>-1){
+                                str=str+"<button class='btn btn-sm btn-default disabled' title='{% trans "Start" %}'>"
+                                + "<span class='glyphicon glyphicon-play'></span>"
+                                + "</button> ";
+                        }
+                        if(buttons.indexOf('Suspend')>-1){
+                                str=str+ "<button class='btn btn-sm btn-default' type='submit' name='suspend' title='{% trans "Suspend" %}'>"
+                                + "<span class='glyphicon glyphicon-pause'></span>"
+                                + "</button> ";
+                        }
+                        if(buttons.indexOf('Save')>-1){
+                                str=str+  "<button class='btn btn-sm btn-default' type='submit' name='managedsave' title='{% trans "Save" %}'>"
+                                + "<span class='glyphicon glyphicon-download-alt'></span>"
+                                + "</button> ";
+                        }
+                        if(buttons.indexOf('Shutdown')>-1){
+                            if (data[i]['dump'] === 1) {
                             var btn = "<button class='btn btn-sm btn-default' type='submit' name='deletesaveimage' title='{% trans "Delete Save Image" %}'>"
                                     + "<span class='glyphicon glyphicon-remove'></span>"
                                     + "</button> ";
-                        } else {
+                            } else {
                             var btn = "<button class='btn btn-sm btn-default' type='submit' name='shutdown' title='{% trans "Shutdown" %}'>"
                                     + "<span class='glyphicon glyphicon-off'></span>"
                                     + "</button> ";
+                                    str=str+ btn;
+                            }
                         }
-                        $(elem).html("<td><a href='/instance/{{ host_id }}/" + data[i]['name'] + "'><i class='icon-th-large'></i> " + data[i]['name'] + "</a></td>"
-                                + "<td><span class='label label-success'>{% trans "Running" %}</span></td>"
-                                + "<td>" + data[i]['vcpu'] + "</td>"
-                                + "<td>" + data[i]['memory'] + "{% trans "MB" %}</td>"
-                                + "<td>"
-                                + "<form action='' method='post'>{% csrf_token %}"
-                                + "<input type='hidden' name='name' value='" + data[i]['name'] + "' />"
-                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Start" %}'>"
-                                + "<span class='glyphicon glyphicon-play'></span>"
-                                + "</button> "
-                                + "<button class='btn btn-sm btn-default' type='submit' name='suspend' title='{% trans "Suspend" %}'>"
-                                + "<span class='glyphicon glyphicon-pause'></span>"
-                                + "</button> "
-                                + "<button class='btn btn-sm btn-default' type='submit' name='managedsave' title='{% trans "Save" %}'>"
-                                + "<span class='glyphicon glyphicon-download-alt'></span>"
-                                + "</button> "
-                                + btn
-                                + "<button class='btn btn-sm btn-default' type='submit' name='destroy' title='{% trans "Force Shutdown" %}' onclick='return confirm('Are you sure?')'>"
+                        if(buttons.indexOf('Force Shutdown')>-1){
+                                str=str+ "<button class='btn btn-sm btn-default' type='submit' name='destroy' title='{% trans "Force Shutdown" %}' onclick='return confirm('Are you sure?')'>"
                                 + "<span class='glyphicon glyphicon-stop'></span>"
-                                + "</button> "
-                                + "<a href='#' class='btn btn-sm btn-default' onclick='open_console(\"" + data[i]['host'] + "-" + data[i]['uuid'] + "\")' title='{% trans "Console" %}'>"
+                                + "</button> ";
+                        }
+                        if(buttons.indexOf('Console')>-1){
+                                str=str+"<button class='btn btn-sm btn-default' title='{% trans "Console" %}'>"
                                 + "<span class='glyphicon glyphicon-align-justify'></span>"
-                                + "</a> "
-                                + "</form>"
-                                + "</td>");
+                                + "</button> ";
+                        }
+                        str=str+ "</form></td>";
+                        $(elem).html(str);
                     }
                     if (data[i]['status'] === 3) {
-                        $(elem).html("<td><a href='/instance/{{ host_id }}/" + data[i]['name'] + "'><i class='icon-th-large'></i> " + data[i]['name'] + "</a></td>"
+                         if(buttons.indexOf('a')>-1){
+                         var str="<td><a href='/instance/{{ host_id }}/" + data[i]['name'] + "'><i class='icon-th-large'></i> " + data[i]['name'] + "</a></td>"
                                 + "<td><span class='label label-warning'>{% trans "Suspend" %}</span></td>"
                                 + "<td>" + data[i]['vcpu'] + "</td>"
-                                + "<td>" + data[i]['memory'] + "{% trans "MB" %}</td>"
+                                + "<td>" + data[i]['memory'] + "{% trans "GB" %}</td>"
                                 + "<td>"
-                                + "<form action='' method='post'>{% csrf_token %}"
+                         } else {
+                         var str="<td><i class='icon-th-large'></i> " + data[i]['name'] + "</td>"
+                                + "<td><span class='label label-warning'>{% trans "Suspend" %}</span></td>"
+                                + "<td>" + data[i]['vcpu'] + "</td>"
+                                + "<td>" + data[i]['memory'] + "{% trans "GB" %}</td>"
+                                + "<td>"
+                         }
+                         if(buttons.indexOf('Resume')>-1){
+                         str=str + "<form action='' method='post'>{% csrf_token %}"
                                 + "<input type='hidden' name='name' value='" + data[i]['name'] + "' />"
                                 + "<button class='btn btn-sm btn-default' type='submit' name='resume' title='{% trans "Resume" %}'>"
                                 + "<span class='glyphicon glyphicon-play'></span>"
                                 + "</button> "
-                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Suspend" %}'>"
+                         }
+                         if(buttons.indexOf('Suspend')>-1){
+                         str=str + "<button class='btn btn-sm btn-default disabled' title='{% trans "Suspend" %}'>"
                                 + "<span class='glyphicon glyphicon-pause'></span>"
                                 + "</button> "
-                                + "<button class='btn btn-sm btn-default' type='submit' name='managedsave' title='{% trans "Save" %}'>"
+                         }
+                         if(buttons.indexOf('Save')>-1){
+                         str=str + "<button class='btn btn-sm btn-default' type='submit' name='managedsave' title='{% trans "Save" %}'>"
                                 + "<span class='glyphicon glyphicon-download-alt'></span>"
                                 + "</button> "
-                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Shutdown" %}'>"
+                         }
+                         if(buttons.indexOf('Shutdown')>-1){
+                         str=str + "<button class='btn btn-sm btn-default disabled' title='{% trans "Shutdown" %}'>"
                                 + "<span class='glyphicon glyphicon-off''></span>"
                                 + "</button> "
-                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Force Shutdown" %}'>"
+                         }
+                         if(buttons.indexOf('Force Shutdown')>-1){
+                         str=str + "<button class='btn btn-sm btn-default disabled' title='{% trans "Force Shutdown" %}'>"
                                 + "<span class='glyphicon glyphicon-stop'></span>"
                                 + "</button> "
-                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Console" %}'>"
+                         }
+                         if(buttons.indexOf('Console')>-1){
+                         str=str + "<button class='btn btn-sm btn-default disabled' title='{% trans "Console" %}'>"
                                 + "<span class='glyphicon glyphicon-align-justify'></span>"
                                 + "</button> "
-                                + "</form>"
-                                + "</td>");
+                         }
+                         str=str + "</form></td>";
+                        $(elem).html(str);
+
                     }
                     if (data[i]['status'] == 5) {
-                        $(elem).html("<td><a href='/instance/{{ host_id }}/" + data[i]['name'] + "'><i class='icon-th-large'></i> " + data[i]['name'] + "</a></td>"
-                                + "<td><span class='label label-danger'>{% trans "Shutoff" %}</span></td>"
-                                + "<td>" + data[i]['vcpu'] + "</td>"
-                                + "<td>" + data[i]['memory'] + "{% trans "MB" %}</td>"
-                                + "<td>"
-                                + "<form action='' method='post'>{% csrf_token %}"
-                                + "<input type='hidden' name='name' value='" + data[i]['name'] + "' />"
-                                + "<button class='btn btn-sm btn-default' type='submit' name='start' title='{% trans "Start" %}'>"
+                        if(buttons.indexOf('a')>-1){
+                        var str="<td><a href='/instance/{{ host_id }}/" + data[i]['name'] + "'><i class='icon-th-large'></i> " + data[i]['name'] + "</a></td>"
+                            + "<td><span class='label label-danger'>{% trans "Shutoff" %}</span></td>"
+                            + "<td>" + data[i]['vcpu'] + "</td>"
+                            + "<td>" + data[i]['memory'] + "{% trans "GB" %}</td>"
+                            + "<td>"
+                            + "<form action='' method='post'>{% csrf_token %}"
+                            + "<input type='hidden' name='name' value='" + data[i]['name'] + "' />"
+                        } else {
+                        var str="<td><i class='icon-th-large'></i> " + data[i]['name'] + "</td>"
+                            + "<td><span class='label label-danger'>{% trans "Shutoff" %}</span></td>"
+                            + "<td>" + data[i]['vcpu'] + "</td>"
+                            + "<td>" + data[i]['memory'] + "{% trans "GB" %}</td>"
+                            + "<td>"
+                            + "<form action='' method='post'>{% csrf_token %}"
+                            + "<input type='hidden' name='name' value='" + data[i]['name'] + "' />"
+                        }
+                        if(buttons.indexOf('Start')>-1){
+                        str=str + "<button class='btn btn-sm btn-default' type='submit' name='start' title='{% trans "Start" %}'>"
                                 + "<span class='glyphicon glyphicon-play'></span>"
                                 + "</button> "
-                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Suspend" %}'>"
-                                + "<span class='glyphicon glyphicon-pause'></span>"
-                                + "</button> "
-                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Save" %}'>"
-                                + "<span class='glyphicon glyphicon-download-alt'></span>"
-                                + "</button> "
-                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Shutdown" %}'>"
-                                + "<span class='glyphicon glyphicon-off'></span>"
-                                + "</button> "
-                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Force Shutdown" %}'>"
-                                + "<span class='glyphicon glyphicon-stop'></span>"
-                                + "</button> "
-                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Console" %}'>"
+                        }
+                        if(buttons.indexOf('Suspend')>-1){
+                        str=str + "<button class='btn btn-sm btn-default disabled' title='{% trans "Suspend" %}'>"
+                            + "<span class='glyphicon glyphicon-pause'></span>"
+                            + "</button> "
+                        }
+                        if(buttons.indexOf('Save')>-1){
+                        str=str + "<button class='btn btn-sm btn-default disabled' title='{% trans "Save" %}'>"
+                            + "<span class='glyphicon glyphicon-download-alt'></span>"
+                            + "</button> "
+                        }
+                        if(buttons.indexOf('Shutdown')>-1){
+                        str=str + "<button class='btn btn-sm btn-default disabled' title='{% trans "Shutdown" %}'>"
+                            + "<span class='glyphicon glyphicon-off'></span>"
+                            + "</button> "
+                        }
+                        if(buttons.indexOf('Force Shutdown')>-1){
+                        str=str + "<button class='btn btn-sm btn-default disabled' title='{% trans "Force Shutdown" %}'>"
+                            + "<span class='glyphicon glyphicon-stop'></span>"
+                            + "</button> "
+                        }
+                        if(buttons.indexOf('Console')>-1){
+                        str=str + "<button class='btn btn-sm btn-default disabled' title='{% trans "Console" %}'>"
                                 + "<span class='glyphicon glyphicon-align-justify'></span>"
                                 + "</button> "
-                                + "</form>"
-                                + "</td>");
+                        }
+                        str=str + "</form></td>";
+                        $(elem).html(str);
                     }
                 }
             });

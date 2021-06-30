@@ -1,56 +1,11 @@
 =========================
-WebVirtMgr panel - v4.8.9
+WebVirtMgr panel - v6.0.0
 =========================
--------
-New project like WebVirtMgr with User Management and Filesystem management - `WebVirtCloud <https://github.com/retspen/webvirtcloud>`_
--------
 
 -------
-Warning
+更新信息
 -------
 
-In latest version app `console/webvirtmgr-novnc` move to `console/webvirtmgr-console` you need check your supervisor settings.
-
-----------
-Whats new?
-----------
-
-- Added RPM specs (Thanks: `Edoardo Spadoni <https://github.com/edospadoni>`_)
-- Added support SPICE, SSH Tunnel, fixed some bugs (Thanks: `brenard <https://github.com/brenard>`_)
-- Responsive design (Thanks: `Michel Käser <https://github.com/MaddinXx>`_)
-- Added VNC WebSocket support (Thanks: `Tolbkni Kao <https://github.com/tolbkni>`_)
-- Added novnc proxy supporting new websockify versions (Thanks: `casell <https://github.com/casell>`_)
-- Added support `TLS <http://libvirt.org/remote.html#Remote_certificates>`_ connection (Thanks: `junkb <https://github.com/junkb>`_)
-- `Puppet module to control libvirt/kvm <https://github.com/ITBlogger/puppet-kvm>`_ (Thanks: `Alex Scoble <https://github.com/ITBlogger>`_)
-- `Deployment via Fabric/Fabtools <https://github.com/retspen/webvirtmgr/tree/master/deploy/fabric>`_ (Thanks: `Mohab Usama <https://github.com/mohabusama>`_)
-
-Screenshots
------------
-`Show <https://github.com/retspen/webvirtmgr/wiki/Screenshots>`_
-
-
-Introduction
-------------
-
-WebVirtMgr is a libvirt-based Web interface for managing virtual machines. It allows you to create and configure new domains, and adjust a domain's resource allocation. A VNC viewer presents a full graphical console to the guest domain. KVM is currently the only hypervisor supported.
-
-Technology:
-***********
-
-The application logic is written in Python & Django. The LIBVIRT Python bindings are used to interacting with the underlying hypervisor.
-
-Installation (Only web panel)
------------------------------
-
-`Install WebVirtMgr <https://github.com/retspen/webvirtmgr/wiki/Install-WebVirtMgr>`_
-
-
-Setup host server (Server for VM's)
------------------------------------
-
-`Setup Host Server <https://github.com/retspen/webvirtmgr/wiki/Setup-Host-Server>`_
-
-License
-*******
-
-WebVirtMgr is licensed under the `Apache Licence, Version 2.0 <http://www.apache.org/licenses/LICENSE-2.0.html>`_.
+1、对页面、菜单和按钮新增权限，默认对使用者分成2组，管理员和viewer。
+2、新增对虚拟机添加和删除磁盘功能，其中删除必须在虚拟机关闭后才可以。
+3、调整国际化
