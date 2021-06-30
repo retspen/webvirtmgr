@@ -3,6 +3,7 @@ git clone https://github.com/jxph025319/webvirtmgr.git
 cd webvirtmgr/build
 或者
 cp webvirtmgr/build_dev ~
+注意更新目录文件
 mv webvirtmgr ~/build_dev
 
 docker build --no-cache -t whharbor.centos.org/centos/webvirtmgr:v1 .
@@ -16,7 +17,7 @@ chown -R webvirtmgr:libvirtd /data/vm
 开发部署命令
 docker run -d --name webvirtmgr_dev -h webvirtmgr_dev -v /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime  --privileged=true -v /data/vm1:/data/vm -p 2100:22 -p 8080:8080 -p 6080:6080 -m 4g whharbor.cestc.cn/centos/webvirtmgr:v5.0.5 /usr/sbin/init
 生产部署命令
-docker run -d --name webvirtmgr_dev -h webvirtmgr_dev -v /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime  --privileged=true -v /data/vm:/data/vm -p 8080:8080 -p 6080:6080 -m 4g whharbor.cestc.cn/centos/webvirtmgr:v6.0.0
+docker run -d --name webvirtmgr -h webvirtmgr -v /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime  --privileged=true -v /data/vm:/data/vm -p 8080:8080 -p 6080:6080 -m 4g whharbor.cestc.cn/centos/webvirtmgr:v6.0.0
 
 
 docker实例内信任部署：

@@ -59,4 +59,4 @@ def secrets(request, host_id):
         errors.append(err)
 
     # return render_to_response('secrets.html', locals(), context_instance=RequestContext(request))
-    return render(request, 'interfaces.html', locals())
+    return render(request, 'secrets.html', locals())

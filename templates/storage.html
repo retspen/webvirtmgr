@@ -201,7 +201,7 @@
                                                                 </select>
                                                             </div>
                                                         </div>
-                                                        <div class="form-group meta-prealloc" style="display: none;">
+                                                        <div class="form-group meta-prealloc" >
                                                             <label class="col-sm-3 control-label">{% trans "Metadata" %}</label>
 
                                                             <div class="col-sm-6">
@@ -406,9 +406,11 @@
                 $('.meta-prealloc').hide();
             }
         });
-        {% ifnotequal type 'dir' %}
-            $('#image_format').hide();
-        {% endifnotequal %}
+{#        {% ifnotequal type 'dir' %}#}
+{#            $('#image_format').hide();#}
+{#        {% elifnotequal type 'rdb' %}#}
+{#            $('#image_format').hide();#}
+{#        {% endifnotequal %}#}
     </script>
     <script src="{% static "js/jquery.tablesorter.js" %}"></script>
     <script>

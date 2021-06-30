@@ -67,6 +67,7 @@ def storages(request, host_id):
     # return render_to_response('storages.html', locals(), context_instance=RequestContext(request))
     return render(request, 'storages.html', locals())
 
+
 def storage(request, host_id, pool):
     """
     Storage pool block

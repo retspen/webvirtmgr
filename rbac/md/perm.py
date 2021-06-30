@@ -26,14 +26,17 @@ class CheckPermission(MiddlewareMixin):
             return redirect(reverse('login'))
         # else:
         #     print permission_dict.keys()
+        print permission_dict[request.user.username]
         for dict in permission_dict[request.user.username]:
             # print re.match(dict['url'], current_url), dict['url'], current_url, dict['method'], request.method
             if re.match(dict['url'], current_url):
+                print "match ", request.method, dict['method']
                  #'有权限'
                 if dict['method'] == request.method:
                     return None
             else:
                 pass
+        print "current_url ", current_url, "method ", request.method
         return render(request, '403.html')
 
     # def process_response(self, request, response):

@@ -3,10 +3,11 @@ from vrtManager.connection import wvmConnect
 
 
 class wvmSecrets(wvmConnect):
-    def create_secret(self, ephemeral, private, secret_type, data):
+    def create_secret(self, ephemeral, private, secret_type, data, uuid=""):
         xml = """<secret ephemeral='%s' private='%s'>
                     <usage type='%s'>""" % (ephemeral, private, secret_type)
         if secret_type == 'ceph':
+
             xml += """<name>%s</name>""" % (data)
         if secret_type == 'volume':
             xml += """<volume>%s</volume>""" % (data)
@@ -14,6 +15,7 @@ class wvmSecrets(wvmConnect):
             xml += """<target>%s</target>""" % (data)
         xml += """</usage>
                  </secret>"""
+        print "secrets info: ", xml
         self.wvm.secretDefineXML(xml)
 
     def get_secret_value(self, uuid):
@@ -23,6 +25,7 @@ class wvmSecrets(wvmConnect):
 
     def set_secret_value(self, uuid, value):
         secrt = self.get_secret(uuid)
+        print value
         value = base64.b64decode(value)
         secrt.setValue(value)
 
