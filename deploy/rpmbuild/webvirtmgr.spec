@@ -1,6 +1,6 @@
 %global name webvirtmgr
 %global version 4.8.9
-%global release 1
+%global release 2
 
 Name:           %{name}
 Version:        %{version}
@@ -11,7 +11,7 @@ License:        Apache Licence, Version 2.0
 URL:            http://github.com/retspen/webvirtmgr
 Source0:        https://github.com/retspen/webvirtmgr/archive/master.tar.gz
 
-%if 0%{?rhel} >= 7 || 0%{?fedora}
+%if 0%{?rhel} >= 7 || 0%{?fedora} || 0%{?uos}
 %bcond_without systemd	# enabled
 Requires(post):   systemd
 Requires(preun):  systemd
@@ -29,7 +29,7 @@ BuildArch:      noarch
 BuildRequires:  python-setuptools
 
 Requires:       python-setuptools libvirt-python libxml2-python python-websockify python-gunicorn python-lockfile
-%if 0%{?rhel} >= 7
+%if 0%{?rhel} >= 7 || 0%{?uos}
 Requires:	python-django
 %else
 Requires:       python-django15
@@ -119,6 +119,10 @@ fi
 %endif
 
 %changelog
+* Mon Mar 7 2022 zhaoshuang <zhaoshuang@uniontech.com> - 4.8.9-2
+- Support uos
+- Upgrade to 4.8.9-2
+
 * Mon Jan 18 2016 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 4.8.9
 - Support rhel 7
 - Upgrade to 4.8.9
